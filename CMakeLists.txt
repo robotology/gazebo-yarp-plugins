@@ -1,0 +1,26 @@
+# Copyright: (C) iCub Facility 2013 Istituto Italiano di Tenologia
+# Author: Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+cmake_minimum_required(VERSION 2.6)
+
+PROJECT(yarp_gazebo)
+
+find_package(YARP REQUIRED)
+find_package(Boost REQUIRED)
+
+include (FindPkgConfig)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(GAZEBO gazebo)
+endif()
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+
+include_directories(${YARP_INCLUDE_DIRS} include)
+
+add_library(yarp_gazebo SHARED src/yarp_gazebo.cc)
+add_library(fakebot SHARED src/fakebot.cpp src/gazebo_world.cpp)
+
+target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries}
+-lboost_system ${Boost_LIBRARIES})
+

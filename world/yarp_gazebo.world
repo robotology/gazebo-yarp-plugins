@@ -17,28 +17,7 @@
       <include>
         <uri>model://coman_urdf</uri>
       </include>
-      <plugin name="yarp_gazebo" filename="libyarp_gazebo.so"/>
-      <!-- camera -->
-      <gazebo reference="RAnkSag_FT">
-      <plugin name="gazebo_RAnkSag_FT" filename="libFakebotForceTorquePlugin.so">
-	<boardId>1</boardId>
-      </plugin>
-      </gazebo>
-      <gazebo reference="LAnkSag_FT">
-      <plugin name="gazebo_LAnkSag_FT" filename="libFakebotForceTorquePlugin.so">
-	<boardId>2</boardId>
-      </plugin>
-      </gazebo>
-      <gazebo reference="RElbj_FT">
-      <plugin name="gazebo_RAnkSag_FT" filename="libFakebotForceTorquePlugin.so">
-	<boardId>3</boardId>
-      </plugin>
-      </gazebo>  
-      <gazebo reference="LElbj_FT">
-      <plugin name="gazebo_RAnkSag_FT" filename="libFakebotForceTorquePlugin.so">
-	<boardId>4</boardId>
-      </plugin>
-      </gazebo>  
+      <plugin name="yarp_gazebo" filename="libyarp_gazebo.so"/>  
     </model>
 
   </world>

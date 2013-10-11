@@ -22,6 +22,9 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo_world.h>
+#include <gazebo/transport/transport.hh>
+
+#define toRad(X) (X*M_PI/180.0)
 
 namespace yarp {
     namespace dev {
@@ -45,6 +48,12 @@ public:
     {
         _robot = gazebo_world::getModel();
 
+        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
+        gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
+        jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
+                (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
+
+
         _robot_number_of_joints = _robot->GetJoints().size();
 
         pos.size(_robot_number_of_joints);
@@ -55,7 +64,7 @@ public:
         ref_speed.size(_robot_number_of_joints);
         ref_pos.size(_robot_number_of_joints);
         ref_acc.size(_robot_number_of_joints);
-        max_pos.size(_robot_number_of_joints);
+        max_pos.resize(_robot_number_of_joints);
         min_pos.size(_robot_number_of_joints);
         joint_names.reserve(_robot_number_of_joints);
 
@@ -104,24 +113,22 @@ public:
 
     virtual bool positionMove(int j, double ref) {
         if (j<_robot_number_of_joints) {
-            //ref_pos[j] = ref;
-            gazebo::physics::JointControllerPtr p =_robot->GetJointController();
-            gazebo::physics::JointPtr jj = _robot->GetJoint(joint_names[j]);
-            p->SetJointPosition(jj, ref);
-            p->Update();
+            gazebo::msgs::JointCmd j_cmd;
+            ref_pos[j] = ref;
+            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+            j_cmd.mutable_position()->set_target(toRad(ref));
+            j_cmd.mutable_position()->set_p_gain(500.0); //move somewhere else!
+            jointCmdPub->WaitForConnection();
+            jointCmdPub->Publish(j_cmd);
         }
         return true;
     }
 
     virtual bool positionMove(const double *refs) {
-        gazebo::physics::JointControllerPtr p =_robot->GetJointController();
-        std::map<std::string, double> joints_map;
         for (int i=0; i<_robot_number_of_joints; ++i) {
             //ref_pos[i] = refs[i];
-            joints_map[joint_names[i]] = refs[i];
+            positionMove(i,refs[i]);
         }
-        p->SetJointPositions(joints_map);
-        p->Update();
         return true;
     }
 
@@ -265,7 +272,7 @@ public:
         if (j<_robot_number_of_joints) {
             //(*v) = pos[j];
             gazebo::math::Angle a = _robot->GetJoint(joint_names[j])->GetAngle(0);
-            (*v) = a.Radian();
+            (*v) = a.Degree();
         }
 
         return true;
@@ -276,7 +283,7 @@ public:
         for (int i=0; i<_robot_number_of_joints; ++i) {
             //encs[i] = pos[i];
             a = _robot->GetJoint(joint_names[i])->GetAngle(0);
-            encs[i] = a.Radian();
+            encs[i] = a.Degree();
         }
         return true;
     }
@@ -429,6 +436,8 @@ private:
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
     std::vector<std::string> joint_names;
+    gazebo::transport::NodePtr gazebo_node_ptr;
+    gazebo::transport::PublisherPtr jointCmdPub;
 
     bool *motion_done;
     int  *control_mode;

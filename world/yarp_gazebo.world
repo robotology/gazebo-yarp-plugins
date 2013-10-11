@@ -2,16 +2,23 @@
 <sdf version="1.4">
   <world name="default">
 
+    <!-- Light -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
     <!-- Ground Plane -->
     <include>
       <uri>model://ground_plane</uri>
     </include>
 
     <!-- COMAN -->
-    <include>
-      <uri>model://coman_urdf</uri>
-    </include>
+    <model name="COMAN">
+      <include>
+        <uri>model://coman_urdf</uri>
+      </include>
+      <plugin name="yarp_gazebo" filename="libyarp_gazebo.so"/>
+    </model>
 
-    <plugin name="yarp_gazebo" filename="libyarp_gazebo.so"/>
   </world>
 </sdf>

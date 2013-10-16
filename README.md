@@ -25,10 +25,13 @@ make
 export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:~/gazebo_yarp_plugins/build
 Run
 
+'''
 yarpserver
 gazebo yarp_gazebo.world
+'''
 You should have something like this:
 
+'''
 Robot Name: COMAN
 Joints: 23
 Links: 24
@@ -59,3 +62,4 @@ COMAN::RShYaw max_pos: 90.0002 min_pos: -90.0002
 COMAN::RElbj max_pos: 0 min_pos: -135
 FakeBot thread started
 yarp: created device <fakebot>. See C++ class fakebot for documentation.
+'''

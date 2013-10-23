@@ -75,7 +75,7 @@ static inline bool validate(Bottle &input, Bottle &out, const std::string &key1,
 bool fakebotFTsensor::fromConfig(yarp::os::Searchable &_config)
 {
     return true;
-};
+;
 
 bool fakebotFTsensor::close()
 {

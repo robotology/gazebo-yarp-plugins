@@ -68,7 +68,7 @@ public:
                                           ("coman", "controlboard", "coman"));
         _parameters.put("device", "controlboard");
         _parameters.put("subdevice", "coman");
-        _parameters.put("name", "/coman/head");//TODO what's this?
+        _parameters.put("name", "/coman/test");//TODO what's this?
         //_parameters.put("dT", _dT);
 	
         _driver.open(_parameters);

@@ -23,6 +23,7 @@
 #include <gazebo/physics/physics.hh>
 #include "gazebo_pointer_wrapper.h"
 #include <gazebo/transport/transport.hh>
+#include <mutex>
 
 #define toRad(X) (X*M_PI/180.0)
 
@@ -60,7 +61,7 @@ public:
 
 
         _robot_number_of_joints = _robot->GetJoints().size();
-
+	pos_lock.unlock();
         pos.size(_robot_number_of_joints);
         vel.size(_robot_number_of_joints);
         speed.size(_robot_number_of_joints);
@@ -84,7 +85,7 @@ public:
         ref_acc=0;
         acc = 0;
         amp = 1; // initially on - ok for simulator
-
+	started=false;
         control_mode=new int[_robot_number_of_joints];
         motion_done=new bool[_robot_number_of_joints];
 
@@ -100,14 +101,25 @@ public:
 
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     {
+      if (!started)
+      {
+	started=true;
+	double temp[_robot_number_of_joints];
+	for (int j=0;j<_robot_number_of_joints;j++)
+	  temp[j]=0;
+	positionMove(temp);
+      }
+      pos_lock.lock();
+      // read sensors (for now only joints angle)
 	auto joints=_robot->GetJoints();
 	int j=0;
 	for (auto joint:joints)
 	{
 	  pos[j]=joint->GetAngle(0).Degree();
+	  //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
 	  j++;
-	  std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
 	}
+      pos_lock.unlock();
       
     }
     
@@ -118,12 +130,14 @@ public:
     */
     virtual bool open(yarp::os::Searchable& config);
 
-    
+    /**
+     * This is asyncronous, but do we care?
+     */
     virtual bool positionMove(int j, double ref) {
         if (j<_robot_number_of_joints) {
             gazebo::msgs::JointCmd j_cmd;
-            ref_pos[j] = ref;
-            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+            //TODO ref_pos[j] = ref; who cares about saving ref_pos?
+            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName()); //TODO maybe cache this values inside the class? e.g. set_name(_joint_scoped_names[j])
             j_cmd.mutable_position()->set_target(toRad(ref));
             j_cmd.mutable_position()->set_p_gain(500.0); //move somewhere else!
             jointCmdPub->WaitForConnection();
@@ -133,23 +147,24 @@ public:
     }
     
     virtual bool getEncoder(int j, double *v) {
+      std::cout<<"get encoder chiamata"<<std::endl;
+      //pos_lock.lock();
         if (j<_robot_number_of_joints) {
-            //(*v) = pos[j];
-            gazebo::math::Angle a = _robot->GetJoint(joint_names[j])->GetAngle(0);
-            (*v) = a.Degree();
+            (*v) = pos[j];
         }
-
+      //pos_lock.unlock();
         return true;
+	
     }
 
     virtual bool getEncoders(double *encs) {
-        gazebo::math::Angle a;
+      //pos_lock.lock();
+           //std::cout<<"get encoders chiamata"<<std::endl;
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            //encs[i] = pos[i];
-            a = _robot->GetJoint(joint_names[i])->GetAngle(0);
-            encs[i] = a.Degree();
+            encs[i] = pos[i]; //should we just use memcopy here?
         }
         return true;
+	//pos_lock.unlock();
     }
 
     
@@ -459,6 +474,7 @@ private:
     unsigned int _robot_number_of_joints;
 
     yarp::sig::Vector pos, vel, speed, acc, amp;
+    std::mutex pos_lock;
     yarp::sig::Vector ref_speed, ref_pos, ref_acc;
     yarp::sig::Vector max_pos, min_pos;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
@@ -469,6 +485,8 @@ private:
 
     bool *motion_done;
     int  *control_mode;
+    bool command_changed;
+    bool started;
 
     void setMinMaxPos()
     {

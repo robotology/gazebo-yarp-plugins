@@ -5,7 +5,7 @@
  *
  */
 
-#include <fakebot.h>
+#include <coman.h>
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
@@ -19,29 +19,30 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-bool fakebot::open(yarp::os::Searchable& config) {
+bool coman::open(yarp::os::Searchable& config) {
 
-    int dT = (int)(config.find("dT").asDouble());
-    setRate(dT);
-    robot_refresh_period = dT;
+    //int dT = (int)(config.find("dT").asDouble());
+    //setRate(dT);
+    //robot_refresh_period = dT;
 
-    return RateThread::start();
+   // return RateThread::start();
+  return true;
 }
 
 
-
-bool fakebot::threadInit()
+/*
+bool coman::threadInit()
 {
     printf("FakeBot thread started\n");
     return true;
 }
 
-void fakebot::threadRelease()
+void coman::threadRelease()
 {
     printf("FakeBot thread closed\n");
 }
 
-void fakebot::run()
+void coman::run()
 {
 //    static int count=0;
 //    count++;
@@ -75,3 +76,4 @@ void fakebot::run()
         pos[j]=pos[j]+Random::normal(0,0.01);
     }
 }
+*/

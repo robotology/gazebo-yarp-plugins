@@ -4,7 +4,7 @@
 #include <gazebo/physics/physics.hh>
 #include <yarp/sig/Vector.h>
 
-class gazebo_world
+class gazebo_pointer_wrapper
 {
     static gazebo::physics::ModelPtr modelPtr;
     static yarp::sig::Vector ref_pos;
@@ -21,15 +21,6 @@ public:
         modelPtr = p;
     }
 
-    static void set_ref_pos(yarp::sig::Vector p)
-    {
-        ref_pos = p;
-    }
-
-    static yarp::sig::Vector get_ref_pos()
-    {
-        return ref_pos;
-    }
 };
 
 #endif

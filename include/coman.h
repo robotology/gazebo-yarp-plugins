@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef FAKEBOT_H
-#define FAKEBOT_H
+#ifndef COMAN_H
+#define COMAN_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Network.h>
@@ -21,18 +21,18 @@
 #include <yarp/os/RateThread.h>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
-#include <gazebo_world.h>
+#include "gazebo_pointer_wrapper.h"
 #include <gazebo/transport/transport.hh>
 
 #define toRad(X) (X*M_PI/180.0)
 
 namespace yarp {
     namespace dev {
-      class fakebot;
+      class coman;
     }
 }
 
-class yarp::dev::fakebot : public DeviceDriver,
+class yarp::dev::coman : public DeviceDriver,
             public IPositionControl,
             public IVelocityControl,
             public IAmplifierControl,
@@ -40,15 +40,20 @@ class yarp::dev::fakebot : public DeviceDriver,
             public IControlCalibration2,
             public IControlLimits,
             public DeviceResponder,
-            public IControlMode,
-            private yarp::os::RateThread
+            public IControlMode
+            //,private yarp::os::RateThread
 {
 public:
-    fakebot():RateThread(0)
+    coman()//:RateThread(0)
     {
-        _robot = gazebo_world::getModel();
-
-        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
+        _robot = gazebo_pointer_wrapper::getModel();
+	this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
+          boost::bind(&coman::onUpdate, this, _1));
+	std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
+        std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
+        std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
+        
+	gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
         gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
         jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
                 (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
@@ -87,30 +92,33 @@ public:
             control_mode[j]=VOCAB_CM_POSITION;
     }
 
-    ~fakebot()
+    ~coman()
     {
         delete [] control_mode;
         delete [] motion_done;
     }
 
+    void onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
+    {
+	auto joints=_robot->GetJoints();
+	int j=0;
+	for (auto joint:joints)
+	{
+	  pos[j]=joint->GetAngle(0).Degree();
+	  j++;
+	  std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
+	}
+      
+    }
+    
     // thread
-    virtual bool threadInit();
+    /*virtual bool threadInit();
     virtual void threadRelease();
     virtual void run();
-
+    */
     virtual bool open(yarp::os::Searchable& config);
 
-    // IPositionControl etc.
-
-    virtual bool getAxes(int *ax) {
-        *ax = _robot_number_of_joints;
-        return true;
-    }
-
-    virtual bool setPositionMode() {
-        return true;
-    }
-
+    
     virtual bool positionMove(int j, double ref) {
         if (j<_robot_number_of_joints) {
             gazebo::msgs::JointCmd j_cmd;
@@ -123,6 +131,40 @@ public:
         }
         return true;
     }
+    
+    virtual bool getEncoder(int j, double *v) {
+        if (j<_robot_number_of_joints) {
+            //(*v) = pos[j];
+            gazebo::math::Angle a = _robot->GetJoint(joint_names[j])->GetAngle(0);
+            (*v) = a.Degree();
+        }
+
+        return true;
+    }
+
+    virtual bool getEncoders(double *encs) {
+        gazebo::math::Angle a;
+        for (int i=0; i<_robot_number_of_joints; ++i) {
+            //encs[i] = pos[i];
+            a = _robot->GetJoint(joint_names[i])->GetAngle(0);
+            encs[i] = a.Degree();
+        }
+        return true;
+    }
+
+    
+    // IPositionControl etc.
+
+    virtual bool getAxes(int *ax) {
+        *ax = _robot_number_of_joints;
+        return true;
+    }
+
+    virtual bool setPositionMode() {
+        return true;
+    }
+
+    
 
     virtual bool positionMove(const double *refs) {
         for (int i=0; i<_robot_number_of_joints; ++i) {
@@ -268,26 +310,7 @@ public:
         return true;
     }
 
-    virtual bool getEncoder(int j, double *v) {
-        if (j<_robot_number_of_joints) {
-            //(*v) = pos[j];
-            gazebo::math::Angle a = _robot->GetJoint(joint_names[j])->GetAngle(0);
-            (*v) = a.Degree();
-        }
-
-        return true;
-    }
-
-    virtual bool getEncoders(double *encs) {
-        gazebo::math::Angle a;
-        for (int i=0; i<_robot_number_of_joints; ++i) {
-            //encs[i] = pos[i];
-            a = _robot->GetJoint(joint_names[i])->GetAngle(0);
-            encs[i] = a.Degree();
-        }
-        return true;
-    }
-
+    
     virtual bool getEncoderSpeed(int j, double *sp) {
         if (j<_robot_number_of_joints) {
             (*sp) = 0;
@@ -424,10 +447,15 @@ public:
             {modes[j]=control_mode[j];}
         return true;
     }
+/**/
+
+
+
 
 private:
     unsigned int robot_refresh_period; //ms
     gazebo::physics::ModelPtr _robot;
+    gazebo::event::ConnectionPtr updateConnection;
     unsigned int _robot_number_of_joints;
 
     yarp::sig::Vector pos, vel, speed, acc, amp;
@@ -466,4 +494,4 @@ private:
     }
 };
 
-#endif
+#endif //COMAN_H

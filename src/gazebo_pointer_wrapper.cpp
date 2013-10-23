@@ -1,3 +1,3 @@
-#include <gazebo_world.h>
+#include <gazebo_pointer_wrapper.h>
 
-gazebo::physics::ModelPtr gazebo_world::modelPtr;
+gazebo::physics::ModelPtr gazebo_pointer_wrapper::modelPtr;

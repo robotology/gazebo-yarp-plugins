@@ -19,10 +19,10 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 include_directories(${YARP_INCLUDE_DIRS} include)
 
-add_library(yarp_gazebo SHARED src/yarp_gazebo.cc)
-add_library(fakebot SHARED src/fakebot.cpp src/gazebo_world.cpp)
-add_library(FakebotForceTorquePlugin SHARED src/FakebotForceTorquePlugin.cc)
-add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp)
+add_library(yarp_gazebo SHARED src/coman_yarp_gazebo_plugin.cc)
+add_library(fakebot SHARED src/coman.cpp src/gazebo_pointer_wrapper.cpp)
+#add_library(FakebotForceTorquePlugin SHARED src/FakebotForceTorquePlugin.cc)
+#add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp)
 
 target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries} -lboost_system ${Boost_LIBRARIES})
-target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} -lboost_system ${Boost_LIBRARIES})
+#target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} -lboost_system ${Boost_LIBRARIES})

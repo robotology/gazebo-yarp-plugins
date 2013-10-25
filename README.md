@@ -82,7 +82,7 @@ Testing and moving coman joints
 
 Run in another shell: 
 ```
-./test --robot coman --part test
+./testmotor --robot coman --part test
 ```
 This is a simple_control interface taken from 
 http://wiki.icub.org/iCub_documentation/main_2src_2tools_2simpleClient_2main_8cpp_source.html

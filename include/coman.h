@@ -36,42 +36,42 @@ const double ROBOT_POSITION_TOLERANCE=0.9;
 static const std::string pid_config_abs_path = "../config/pid.ini";
 
 namespace yarp {
-    namespace dev {
-      class coman;
-    }
+namespace dev {
+class coman;
+}
 }
 
 class yarp::dev::coman : public DeviceDriver,
-            public IPositionControl,
-            public IVelocityControl,
-            public IAmplifierControl,
-            public IEncoders,
-            public IControlCalibration2,
-            public IControlLimits,
-            public DeviceResponder,
-            public IControlMode
-            //,private yarp::os::RateThread
+    public IPositionControl,
+    public IVelocityControl,
+    public IAmplifierControl,
+    public IEncoders,
+    public IControlCalibration2,
+    public IControlLimits,
+    public DeviceResponder,
+    public IControlMode
+    //,private yarp::os::RateThread
 {
 public:
     coman()//:RateThread(0)
     {
         _robot = gazebo_pointer_wrapper::getModel();
-	this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
-          boost::bind(&coman::onUpdate, this, _1));
-	std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
+        this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
+                                     boost::bind(&coman::onUpdate, this, _1));
+        std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
         std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
         std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
-	this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
-	gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
+        this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
+        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
         gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
         jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
-                (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
+                      (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
 
 
         _robot_number_of_joints = _robot->GetJoints().size();
-	pos_lock.unlock();
+        pos_lock.unlock();
         pos.size(_robot_number_of_joints);
-	zero_pos.size(_robot_number_of_joints);
+        zero_pos.size(_robot_number_of_joints);
         vel.size(_robot_number_of_joints);
         speed.size(_robot_number_of_joints);
         acc.size(_robot_number_of_joints);
@@ -92,7 +92,7 @@ public:
         setPIDs();
 
         pos = 0;
-	zero_pos=0;
+        zero_pos=0;
         vel = 0;
         speed = 0;
         ref_speed=0;
@@ -100,10 +100,10 @@ public:
         ref_acc=0;
         acc = 0;
         amp = 1; // initially on - ok for simulator
-	started=false;
+        started=false;
         control_mode=new int[_robot_number_of_joints];
         motion_done=new bool[_robot_number_of_joints];
-
+	_clock=0;
         for(int j=0; j<_robot_number_of_joints; ++j)
             control_mode[j]=VOCAB_CM_POSITION;
     }
@@ -114,81 +114,65 @@ public:
         delete [] motion_done;
     }
 
+    /**
+     * Gazebo stuff
+     * 
+     */
+    
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     {
-      if (!started)
-      {
-	started=true;
-	double temp=0;//[_robot_number_of_joints];
-	for (int j=0;j<_robot_number_of_joints;j++)
-	{//	  temp[j]=0;
-//	positionMove(temp);
-	sendPositionToGazebo(j,temp);
-	}
-      }
-      pos_lock.lock();
-      // read sensors (for now only joints angle)
-	auto joints=_robot->GetJoints();
-	int j=0;
-	for (auto joint:joints)
-	{
-	  pos[j]=joint->GetAngle(0).Degree()-zero_pos[j];  //TODO: if zero_pos=0, it works, if zero_pos=pos[j], pos[j] return 0, if zero_pos=k, pos[j]return 0-k, but since it is an angle, you may get 2*pi
-	  //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;        
-	  pos[j]=pos[j]+yarp::os::Random::normal(0,0.01);
-
-	  j++;
-	}
-      pos_lock.unlock();
-      // send positions to the actuators
-      
-      yarp::sig::Vector temp=ref_pos; //if VOCAB_CM_POSITION I will not do anything
-       
-       for(int j=0; j<_robot_number_of_joints; ++j)
-    {
-        // handle position mode
-        if (control_mode[j]==VOCAB_CM_VELOCITY) //TODO check if VOCAB_CM_POSITION or VOCAB_CM_VELOCITY
+        if (!started)
         {
-            if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
-            {
-                temp[j]=pos[j]+ref_speed[j]*robot_refresh_period/1000.0;
-                motion_done[j]=false;
+            started=true;
+            double temp=0;//[_robot_number_of_joints];
+            for (int j=0; j<_robot_number_of_joints; j++)
+            {   //	  temp[j]=0;
+//	positionMove(temp);
+                sendPositionToGazebo(j,temp);
             }
-            else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
-            {
-                temp[j]=pos[j]-ref_speed[j]*robot_refresh_period/1000.0;
-                motion_done[j]=false;
-            }
-            else
-                motion_done[j]=true;
         }
-      
-      
+        pos_lock.lock();
+        // read sensors (for now only joints angle)
+        auto joints=_robot->GetJoints();
+        int j=0;
+	for (auto joint:joints)
+        {
+            pos[j]=joint->GetAngle(0).Degree()-zero_pos[j];  //TODO: if zero_pos=0, it works, if zero_pos=pos[j], pos[j] return 0, if zero_pos=k, pos[j]return 0-k, but since it is an angle, you may get 2*pi
+            //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
+            j++;
+        }
+        pos_lock.unlock();
+        // send positions to the actuators
 
-     }
-      sendPositionsToGazebo(temp);
+        yarp::sig::Vector temp=ref_pos; //if VOCAB_CM_POSITION I will not do anything
+	if (_clock%100==0)
+	{
+	  _clock++;
+        for(int j=0; j<_robot_number_of_joints; ++j)
+        {
+            // handle position mode
+            if (control_mode[j]==VOCAB_CM_VELOCITY) //TODO check if VOCAB_CM_POSITION or VOCAB_CM_VELOCITY
+            {
+                if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
+                {
+                    temp[j]=pos[j]+ref_speed[j]*robot_refresh_period/10.0;
+                    motion_done[j]=false;
+                }
+                else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
+                {
+                    temp[j]=pos[j]-ref_speed[j]*robot_refresh_period/10.0;
+		    std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp[j]<<std::endl;
+                    motion_done[j]=false;
+                }
+                else
+                    motion_done[j]=true;
+            }
+        }
+	}
+        sendPositionsToGazebo(temp);
     }
 
-    
-    bool sendPositionsToGazebo(yarp::sig::Vector refs)
-    {
-       for (int j=0;j<_robot_number_of_joints;j++)
-       {
-	 sendPositionToGazebo(j,refs[j]);
-       }
-    }
-    
-    bool sendPositionToGazebo(int j,double ref)
-    {
-            gazebo::msgs::JointCmd j_cmd;
-            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName()); //TODO maybe cache this values inside the class? e.g. set_name(_joint_scoped_names[j])
-            j_cmd.mutable_position()->set_target(toRad(ref));
-            j_cmd.mutable_position()->set_p_gain(500.0); //move somewhere else!
-            jointCmdPub->WaitForConnection();
-            jointCmdPub->Publish(j_cmd);
- 
-    }
-    
-    // thread
+    // thread stuff
     /*virtual bool threadInit();
     virtual void threadRelease();
     virtual void run();
@@ -196,59 +180,68 @@ public:
     virtual bool open(yarp::os::Searchable& config);
 
     /**
+     * Yarp interfaces start here
+     */
+    
+    /**
      * This is asyncronous, but do we care?
      */
-    virtual bool positionMove(int j, double ref) {
+    virtual bool positionMove(int j, double ref) //WORKS
+    {
         if (j<_robot_number_of_joints) {
             ref_pos[j] = ref; //we will use this ref_pos in the next simulation onUpdate call to ask gazebo to set PIDs ref_pos to this value
         }
         return true;
     }
-    
-    virtual bool getEncoder(int j, double *v) {
-      std::cout<<"get encoder chiamata"<<std::endl;
-      //pos_lock.lock();
+
+    virtual bool getEncoder(int j, double *v) //WORKS
+    {
+        std::cout<<"get encoder chiamata"<<std::endl;
+        //pos_lock.lock();
         if (j<_robot_number_of_joints) {
             (*v) = pos[j];
         }
-      //pos_lock.unlock();
+        //pos_lock.unlock();
         return true;
-	
+
     }
 
-    virtual bool getEncoders(double *encs) {
-      //pos_lock.lock();
-           //std::cout<<"get encoders chiamata"<<std::endl;
+    virtual bool getEncoders(double *encs) //WORKS
+    {
+        //pos_lock.lock();
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            encs[i] = pos[i]; //should we just use memcopy here?
+            encs[i] = pos[i]+yarp::os::Random::normal(0,0.01);  //should we just use memcopy here?
         }
         return true;
-	//pos_lock.unlock();
+        //pos_lock.unlock();
     }
 
-    
+
     // IPositionControl etc.
 
-    virtual bool getAxes(int *ax) {
+    virtual bool getAxes(int *ax) // WORKS
+    {
         *ax = _robot_number_of_joints;
         return true;
     }
 
-    virtual bool setPositionMode() {
+    virtual bool setPositionMode() //NOT IMPLEMENTED
+    {
         return true;
     }
 
-    
 
-    virtual bool positionMove(const double *refs) {
+
+    virtual bool positionMove(const double *refs) //WORKS
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             ref_pos[i] = refs[i];
-            //positionMove(i,refs[i]);
         }
         return true;
     }
 
-    virtual bool relativeMove(int j, double delta) {
+    virtual bool relativeMove(int j, double delta) //NOT TESTED
+    {
         if (j<_robot_number_of_joints) {
             ref_pos[j] =pos[j] + delta; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
         }
@@ -256,40 +249,45 @@ public:
     }
 
 
-    virtual bool relativeMove(const double *deltas) {
+    virtual bool relativeMove(const double *deltas) //NOT TESTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             ref_pos[i] = pos[i]+ deltas[i]; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
         }
         return true;
     }
 
-    virtual bool checkMotionDone(int j, bool *flag) {
+    virtual bool checkMotionDone(int j, bool *flag) //NOT TESTED
+    {
         *flag=motion_done[j];
         return true;
     }
 
 
-    virtual bool checkMotionDone(bool *flag) {
+    virtual bool checkMotionDone(bool *flag) //NOT TESTED
+    {
         bool temp_flag=true;
-	//*flag=true;
+        //*flag=true;
         for(int j=0; j<_robot_number_of_joints; ++j)
-         {
-	   //*flag&&motion_done[j]; //It's compiler job to make code unreadable and optimized, not programmer's 
-	   temp_flag=temp_flag && motion_done[j];
-	}
-	*flag=temp_flag;
+        {
+            //*flag&&motion_done[j]; //It's compiler job to make code unreadable and optimized, not programmer's
+            temp_flag=temp_flag && motion_done[j];
+        }
+        *flag=temp_flag;
         return true;
     }
 
 
-    virtual bool setRefSpeed(int j, double sp) {
+    virtual bool setRefSpeed(int j, double sp) //WORKS
+    {
         if (j<_robot_number_of_joints) {
             ref_speed[j] = sp;
         }
         return true;
     }
 
-    virtual bool setRefSpeeds(const double *spds) {
+    virtual bool setRefSpeeds(const double *spds) //NOT TESTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             ref_speed[i] = spds[i];
         }
@@ -297,7 +295,8 @@ public:
     }
 
 
-    virtual bool setRefAcceleration(int j, double acc) {
+    virtual bool setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             ref_acc[j] = acc;
         }
@@ -305,14 +304,16 @@ public:
     }
 
 
-    virtual bool setRefAccelerations(const double *accs) {
+    virtual bool setRefAccelerations(const double *accs) //NOT IMPLEMENTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             ref_acc[i] = accs[i];
         }
         return true;
     }
 
-    virtual bool getRefSpeed(int j, double *ref) {
+    virtual bool getRefSpeed(int j, double *ref) //WORKS
+    {
         if (j<_robot_number_of_joints) {
             (*ref) = ref_speed[j];
         }
@@ -320,7 +321,8 @@ public:
     }
 
 
-    virtual bool getRefSpeeds(double *spds) {
+    virtual bool getRefSpeeds(double *spds) //WORKS
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             spds[i] = ref_speed[i];
         }
@@ -328,14 +330,16 @@ public:
     }
 
 
-    virtual bool getRefAcceleration(int j, double *acc) {
+    virtual bool getRefAcceleration(int j, double *acc) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             (*acc) = ref_acc[j];
         }
         return true;
     }
 
-    virtual bool getRefAccelerations(double *accs) {
+    virtual bool getRefAccelerations(double *accs) //NOT IMPLEMENTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             accs[i] = ref_acc[i];
         }
@@ -343,98 +347,111 @@ public:
     }
 
 
-    virtual bool stop(int j) {
+    virtual bool stop(int j) //WORKS
+    {
         ref_pos[j]=pos[j];
         return true;
     }
 
 
-    virtual bool stop()
+    virtual bool stop() //WORKS
     {
         ref_pos=pos;
         return true;
     }
 
 
-    virtual bool close() {
+    virtual bool close() //NOT IMPLEMENTED
+    {
         return true;
     }
 
     /**
      * Since we don't know how to reset gazebo encoders, we will simply add the actual value to the future encoders readings
      */
-    virtual bool resetEncoder(int j) {
+    virtual bool resetEncoder(int j) //WORKS
+    {
         if (j<_robot_number_of_joints) {
             zero_pos[j] = pos[j];
-         }
+        }
         return true;
     }
 
-    virtual bool resetEncoders() {
+    virtual bool resetEncoders() //WORKS
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             zero_pos[i] = pos[i];
         }
         return true;
     }
 
-    virtual bool setEncoder(int j, double val) {
+    virtual bool setEncoder(int j, double val) //WORKS
+    {
         if (j<_robot_number_of_joints) {
-            zero_pos[j] = val-pos[j];
+            zero_pos[j] = pos[j]-val;
         }
         return true;
     }
 
-    virtual bool setEncoders(const double *vals) {
+    virtual bool setEncoders(const double *vals) //WORKS
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            zero_pos[i] = vals[i]-pos[i];
+            zero_pos[i] = pos[i]-vals[i];
         }
         return true;
     }
 
-    
-    virtual bool getEncoderSpeed(int j, double *sp) {
+
+    virtual bool getEncoderSpeed(int j, double *sp) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             (*sp) = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderSpeeds(double *spds) {
+    virtual bool getEncoderSpeeds(double *spds) //NOT IMPLEMENTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             spds[i] = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderAcceleration(int j, double *spds) {
+    virtual bool getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             (*spds) = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderAccelerations(double *accs) {
+    virtual bool getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             accs[i] = 0;
         }
         return true;
     }
 
-    virtual bool velocityMove(int j, double sp) {
+    virtual bool velocityMove(int j, double sp) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             vel[j] = sp;
         }
         return true;
     }
 
-    virtual bool velocityMove(const double *sp) {
+    virtual bool velocityMove(const double *sp) //NOT IMPLEMENTED
+    {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             vel[i] = sp[i];
         }
         return true;
     }
 
-    virtual bool enableAmp(int j) {
+    virtual bool enableAmp(int j) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             amp[j] = 1;
             control_mode[j]=VOCAB_CM_POSITION;
@@ -442,7 +459,8 @@ public:
         return true;
     }
 
-    virtual bool disableAmp(int j) {
+    virtual bool disableAmp(int j) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             amp[j] = 0;
             control_mode[j]=VOCAB_CM_IDLE;
@@ -450,56 +468,60 @@ public:
         return true;
     }
 
-    virtual bool getCurrent(int j, double *val) {
+    virtual bool getCurrent(int j, double *val) //NOT IMPLEMENTED
+    {
         if (j<_robot_number_of_joints) {
             val[j] = amp[j];
         }
         return true;
     }
 
-    virtual bool getCurrents(double *vals) {
+    virtual bool getCurrents(double *vals) //NOT IMPLEMENTED
+    {
         for (int i=0; i<_robot_number_of_joints; i++) {
             vals[i] = amp[i];
         }
         return true;
     }
 
-    virtual bool setMaxCurrent(int j, double v) {
+    virtual bool setMaxCurrent(int j, double v) //NOT IMPLEMENTED
+    {
         return true;
     }
 
-    virtual bool getAmpStatus(int *st) {
+    virtual bool getAmpStatus(int *st) //NOT IMPLEMENTED
+    {
         *st = 0;
         return true;
     }
 
-    virtual bool getAmpStatus(int k, int *v)
+    virtual bool getAmpStatus(int k, int *v) //NOT IMPLEMENTED
     {
         *v=0;
         return true;
     }
 
-    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3)
+    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
     {
         fprintf(stderr, "fakebot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
         return true;
     }
 
-    virtual bool done(int j)
+    virtual bool done(int j) // NOT IMPLEMENTED
     {
         fprintf(stderr , "fakebot: calibration done on joint %d.\n", j);
         return true;
     }
 
     // IControlLimits
-    virtual bool getLimits(int axis, double *min, double *max)
+    virtual bool getLimits(int axis, double *min, double *max) //NOT TESTED
     {
         *min=min_pos[axis];
         *max=max_pos[axis];
         return true;
     }
 
-    virtual bool setLimits(int axis, double min, double max)
+    virtual bool setLimits(int axis, double min, double max) //NOT TESTED
     {
         max_pos[axis]=max;
         min_pos[axis]=min;
@@ -508,36 +530,55 @@ public:
 
 
     // IControlMode
-    virtual bool setPositionMode(int j){
-      control_mode[j]=VOCAB_CM_POSITION;
-      std::cout<<"control mode = position"<<j<<std::endl;
-    }
-    virtual bool setVelocityMode(int j){
-      control_mode[j]=VOCAB_CM_VELOCITY;
-      std::cout<<"control mode = speed"<<j<<std::endl;
-    }
-
-    virtual bool setVelocityMode()
+    virtual bool setPositionMode(int j) //WORKS
     {
-       for(int j=0; j<_robot_number_of_joints; j++)
-           { 
-	     control_mode[j]=VOCAB_CM_VELOCITY;
-	    std::cout<<"control mode = speed for all joints"<<std::endl;
-	  }
+        control_mode[j]=VOCAB_CM_POSITION;
+        std::cout<<"control mode = position"<<j<<std::endl;
+    }
+    virtual bool setVelocityMode(int j) //WORKS
+    {
+        control_mode[j]=VOCAB_CM_VELOCITY;
+        std::cout<<"control mode = speed"<<j<<std::endl;
     }
 
-    virtual bool setTorqueMode(int j){ return false; }
-    virtual bool setImpedancePositionMode(int j){return false;}
-    virtual bool setImpedanceVelocityMode(int j){return false;}
-    virtual bool setOpenLoopMode(int j){return false; }
-    virtual bool getControlMode(int j, int *mode){mode[j]=control_mode[j];}
+    virtual bool setVelocityMode() //NOT TESTED
+    {
+        for(int j=0; j<_robot_number_of_joints; j++)
+        {
+            control_mode[j]=VOCAB_CM_VELOCITY;
+            std::cout<<"control mode = speed for all joints"<<std::endl;
+        }
+    }
+
+    virtual bool setTorqueMode(int j) //NOT IMPLEMENTED
+    {
+        return false;
+    }
+    virtual bool setImpedancePositionMode(int j)//NOT IMPLEMENTED
+    {
+        return false;
+    }
+    virtual bool setImpedanceVelocityMode(int j) //NOT IMPLEMENTED
+    {
+        return false;
+    }
+    virtual bool setOpenLoopMode(int j) //NOT IMPLEMENTED
+    {
+        return false;
+    }
+    virtual bool getControlMode(int j, int *mode) //WORKS
+    {
+        mode[j]=control_mode[j];
+    }
     virtual bool getControlModes(int *modes)
     {
-        for(int j=0;j<_robot_number_of_joints; ++j)
-            {modes[j]=control_mode[j];}
+        for(int j=0; j<_robot_number_of_joints; ++j)
+        {
+            modes[j]=control_mode[j];
+        }
         return true;
     }
-/**/
+    /**/
 
 
 
@@ -548,19 +589,19 @@ private:
     gazebo::event::ConnectionPtr updateConnection;
     unsigned int _robot_number_of_joints;
 
-    
-    
+
+
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
      */
     yarp::sig::Vector pos;
-    
+
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
      * i.e. getEncoder(j)=zero_pos+gazebo.getEncoder(j);
      */
     yarp::sig::Vector zero_pos;
-    
+
     yarp::sig::Vector vel, speed, acc, amp;
     std::mutex pos_lock;
     yarp::sig::Vector ref_speed, ref_pos, ref_acc;
@@ -578,8 +619,13 @@ private:
     int  *control_mode;
     bool command_changed;
     bool started;
+    int _clock;
 
-    void setMinMaxPos()
+    /**
+     * Private Gazebo stuff
+     */
+    
+    void setMinMaxPos()  //NOT TESTED
     {
         std::cout<<"Joint Limits"<<std::endl;
         gazebo::physics::Joint_V joints = _robot->GetJoints();
@@ -592,7 +638,7 @@ private:
         }
     }
 
-    void setJointNames()
+    void setJointNames()  //WORKS
     {
         gazebo::physics::Joint_V joints = _robot->GetJoints();
         for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
@@ -602,7 +648,7 @@ private:
         }
     }
 
-    void setPIDs()
+    void setPIDs() //WORKS
     {
         yarp::os::Property prop;
         if(prop.fromConfigFile(pid_config_abs_path.c_str()))
@@ -636,7 +682,24 @@ private:
         }
     }
 
-    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, int joint_index, const double ref)
+     bool sendPositionsToGazebo(yarp::sig::Vector refs)
+    {
+        for (int j=0; j<_robot_number_of_joints; j++)
+        {
+            sendPositionToGazebo(j,refs[j]);
+        }
+    }
+
+    bool sendPositionToGazebo(int j,double ref)
+    {
+        gazebo::msgs::JointCmd j_cmd;
+        prepareJointMsg(j_cmd,j,ref);
+        jointCmdPub->WaitForConnection();
+        jointCmdPub->Publish(j_cmd);
+
+    }
+    
+    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, int joint_index, const double ref)  //WORKS
     {
         j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
         j_cmd.mutable_position()->set_target(toRad(ref));

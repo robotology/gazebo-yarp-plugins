@@ -7,7 +7,14 @@ Gazebo plugin to interface a Coman in GAZEBO with a YARP interface.
 
 Ubuntu 13.04 system with gazebo 1.9 and Ros hydro
 
-# Get coman urdf
+# Put coman model inside Gazebo
+
+extract the archive world/coman.tar.gz into /home/you/.gazebo/models/
+
+where you is your linux username.
+
+Another way to get coman sdf from the URDF sources
+------------------------
 
 clone the repository iit-coman-ros-pkg
 
@@ -105,7 +112,7 @@ Troubleshooting
 =============
 - If gazebo complains about not finding the libyarp, check if you exported the GAZEBO_PLUGIN_PATH in the same shell where you are launching gazebo
 
-- If gazebo complains about not finding coman model, maybe you forgot to compile the URDF and run the script provided in the URDF git repository
+- If gazebo complains about not finding coman model, maybe you forgot to compile the URDF and run the script provided in the URDF git repository (or to extract the files from the coman.tar.gz)
 
 - If you have problems with the Coman inside gazebo starting in strange positions, try
 ```

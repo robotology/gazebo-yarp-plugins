@@ -11,7 +11,6 @@
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
 
-const double ROBOT_POSITION_TOLERANCE=0.9;
 
 using namespace yarp::os;
 using namespace yarp::sig;

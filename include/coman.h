@@ -8,6 +8,9 @@
 #ifndef COMAN_H
 #define COMAN_H
 
+#include <yarp/sig/all.h>
+#include <yarp/sig/ImageFile.h>
+#include <yarp/os/all.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
@@ -26,6 +29,8 @@
 #include <mutex>
 
 #define toRad(X) (X*M_PI/180.0)
+const double ROBOT_POSITION_TOLERANCE=0.9;
+
 
 namespace yarp {
     namespace dev {
@@ -53,7 +58,7 @@ public:
 	std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
         std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
         std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
-        
+	this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
 	gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
         gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
         jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
@@ -63,6 +68,7 @@ public:
         _robot_number_of_joints = _robot->GetJoints().size();
 	pos_lock.unlock();
         pos.size(_robot_number_of_joints);
+	zero_pos.size(_robot_number_of_joints);
         vel.size(_robot_number_of_joints);
         speed.size(_robot_number_of_joints);
         acc.size(_robot_number_of_joints);
@@ -78,6 +84,7 @@ public:
         setMinMaxPos();
 
         pos = 0;
+	zero_pos=0;
         vel = 0;
         speed = 0;
         ref_speed=0;
@@ -104,10 +111,12 @@ public:
       if (!started)
       {
 	started=true;
-	double temp[_robot_number_of_joints];
+	double temp=0;//[_robot_number_of_joints];
 	for (int j=0;j<_robot_number_of_joints;j++)
-	  temp[j]=0;
-	positionMove(temp);
+	{//	  temp[j]=0;
+//	positionMove(temp);
+	sendPositionToGazebo(j,temp);
+	}
       }
       pos_lock.lock();
       // read sensors (for now only joints angle)
@@ -115,12 +124,60 @@ public:
 	int j=0;
 	for (auto joint:joints)
 	{
-	  pos[j]=joint->GetAngle(0).Degree();
-	  //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
+	  pos[j]=joint->GetAngle(0).Degree()-zero_pos[j];  //TODO: if zero_pos=0, it works, if zero_pos=pos[j], pos[j] return 0, if zero_pos=k, pos[j]return 0-k, but since it is an angle, you may get 2*pi
+	  //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;        
+	  pos[j]=pos[j]+yarp::os::Random::normal(0,0.01);
+
 	  j++;
 	}
       pos_lock.unlock();
+      // send positions to the actuators
       
+      yarp::sig::Vector temp=ref_pos; //if VOCAB_CM_POSITION I will not do anything
+       
+       for(int j=0; j<_robot_number_of_joints; ++j)
+    {
+        // handle position mode
+        if (control_mode[j]==VOCAB_CM_VELOCITY) //TODO check if VOCAB_CM_POSITION or VOCAB_CM_VELOCITY
+        {
+            if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
+            {
+                temp[j]=pos[j]+ref_speed[j]*robot_refresh_period/1000.0;
+                motion_done[j]=false;
+            }
+            else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
+            {
+                temp[j]=pos[j]-ref_speed[j]*robot_refresh_period/1000.0;
+                motion_done[j]=false;
+            }
+            else
+                motion_done[j]=true;
+        }
+      
+      
+
+     }
+      sendPositionsToGazebo(temp);
+    }
+
+    
+    bool sendPositionsToGazebo(yarp::sig::Vector refs)
+    {
+       for (int j=0;j<_robot_number_of_joints;j++)
+       {
+	 sendPositionToGazebo(j,refs[j]);
+       }
+    }
+    
+    bool sendPositionToGazebo(int j,double ref)
+    {
+            gazebo::msgs::JointCmd j_cmd;
+            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName()); //TODO maybe cache this values inside the class? e.g. set_name(_joint_scoped_names[j])
+            j_cmd.mutable_position()->set_target(toRad(ref));
+            j_cmd.mutable_position()->set_p_gain(500.0); //move somewhere else!
+            jointCmdPub->WaitForConnection();
+            jointCmdPub->Publish(j_cmd);
+ 
     }
     
     // thread
@@ -135,13 +192,7 @@ public:
      */
     virtual bool positionMove(int j, double ref) {
         if (j<_robot_number_of_joints) {
-            gazebo::msgs::JointCmd j_cmd;
-            //TODO ref_pos[j] = ref; who cares about saving ref_pos?
-            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName()); //TODO maybe cache this values inside the class? e.g. set_name(_joint_scoped_names[j])
-            j_cmd.mutable_position()->set_target(toRad(ref));
-            j_cmd.mutable_position()->set_p_gain(500.0); //move somewhere else!
-            jointCmdPub->WaitForConnection();
-            jointCmdPub->Publish(j_cmd);
+            ref_pos[j] = ref; //we will use this ref_pos in the next simulation onUpdate call to ask gazebo to set PIDs ref_pos to this value
         }
         return true;
     }
@@ -183,15 +234,15 @@ public:
 
     virtual bool positionMove(const double *refs) {
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            //ref_pos[i] = refs[i];
-            positionMove(i,refs[i]);
+            ref_pos[i] = refs[i];
+            //positionMove(i,refs[i]);
         }
         return true;
     }
 
     virtual bool relativeMove(int j, double delta) {
         if (j<_robot_number_of_joints) {
-            ref_pos[j] += delta;
+            ref_pos[j] =pos[j] + delta; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
         }
         return true;
     }
@@ -199,7 +250,7 @@ public:
 
     virtual bool relativeMove(const double *deltas) {
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            ref_pos[i] += deltas[i];
+            ref_pos[i] = pos[i]+ deltas[i]; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
         }
         return true;
     }
@@ -211,10 +262,14 @@ public:
 
 
     virtual bool checkMotionDone(bool *flag) {
-        *flag=true;
+        bool temp_flag=true;
+	//*flag=true;
         for(int j=0; j<_robot_number_of_joints; ++j)
-         { *flag&&motion_done[j]; }
-
+         {
+	   //*flag&&motion_done[j]; //It's compiler job to make code unreadable and optimized, not programmer's 
+	   temp_flag=temp_flag && motion_done[j];
+	}
+	*flag=temp_flag;
         return true;
     }
 
@@ -297,30 +352,33 @@ public:
         return true;
     }
 
+    /**
+     * Since we don't know how to reset gazebo encoders, we will simply add the actual value to the future encoders readings
+     */
     virtual bool resetEncoder(int j) {
         if (j<_robot_number_of_joints) {
-            pos[j] = 0;
+            zero_pos[j] = pos[j];
          }
         return true;
     }
 
     virtual bool resetEncoders() {
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            pos[i] = 0;
+            zero_pos[i] = pos[i];
         }
         return true;
     }
 
     virtual bool setEncoder(int j, double val) {
         if (j<_robot_number_of_joints) {
-            pos[j] = val;
+            zero_pos[j] = val-pos[j];
         }
         return true;
     }
 
     virtual bool setEncoders(const double *vals) {
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            pos[i] = vals[i];
+            zero_pos[i] = vals[i]-pos[i];
         }
         return true;
     }
@@ -442,13 +500,22 @@ public:
 
 
     // IControlMode
-    virtual bool setPositionMode(int j){control_mode[j]=VOCAB_CM_POSITION;}
-    virtual bool setVelocityMode(int j){control_mode[j]=VOCAB_CM_VELOCITY;}
+    virtual bool setPositionMode(int j){
+      control_mode[j]=VOCAB_CM_POSITION;
+      std::cout<<"control mode = position"<<j<<std::endl;
+    }
+    virtual bool setVelocityMode(int j){
+      control_mode[j]=VOCAB_CM_VELOCITY;
+      std::cout<<"control mode = speed"<<j<<std::endl;
+    }
 
     virtual bool setVelocityMode()
     {
        for(int j=0; j<_robot_number_of_joints; j++)
-           { control_mode[j]=VOCAB_CM_VELOCITY;}
+           { 
+	     control_mode[j]=VOCAB_CM_VELOCITY;
+	    std::cout<<"control mode = speed for all joints"<<std::endl;
+	  }
     }
 
     virtual bool setTorqueMode(int j){ return false; }
@@ -473,7 +540,20 @@ private:
     gazebo::event::ConnectionPtr updateConnection;
     unsigned int _robot_number_of_joints;
 
-    yarp::sig::Vector pos, vel, speed, acc, amp;
+    
+    
+    /**
+     * The GAZEBO position of each joints, readonly from outside this interface
+     */
+    yarp::sig::Vector pos;
+    
+    /**
+     * The zero position is the position of the GAZEBO joint that will be read as the starting one
+     * i.e. getEncoder(j)=zero_pos+gazebo.getEncoder(j);
+     */
+    yarp::sig::Vector zero_pos;
+    
+    yarp::sig::Vector vel, speed, acc, amp;
     std::mutex pos_lock;
     yarp::sig::Vector ref_speed, ref_pos, ref_acc;
     yarp::sig::Vector max_pos, min_pos;

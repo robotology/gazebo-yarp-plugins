@@ -28,5 +28,5 @@ target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries}
 #target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 
 
-add_executable(testmotor test.cpp)
+add_executable(testmotor src/test/test.cpp)
 target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} -lboost_system ${Boost_LIBRARIES})

@@ -10,6 +10,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -26,6 +27,8 @@
 #include <mutex>
 
 #define toRad(X) (X*M_PI/180.0)
+
+static const std::string pid_config_abs_path = "../config/pid.ini";
 
 namespace yarp {
     namespace dev {
@@ -73,9 +76,14 @@ public:
         max_pos.resize(_robot_number_of_joints);
         min_pos.size(_robot_number_of_joints);
         joint_names.reserve(_robot_number_of_joints);
+        _p.reserve(_robot_number_of_joints);
+        _i.reserve(_robot_number_of_joints);
+        _d.reserve(_robot_number_of_joints);
+
 
         setJointNames();
         setMinMaxPos();
+        setPIDs();
 
         pos = 0;
         vel = 0;
@@ -137,9 +145,7 @@ public:
         if (j<_robot_number_of_joints) {
             gazebo::msgs::JointCmd j_cmd;
             //TODO ref_pos[j] = ref; who cares about saving ref_pos?
-            j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName()); //TODO maybe cache this values inside the class? e.g. set_name(_joint_scoped_names[j])
-            j_cmd.mutable_position()->set_target(toRad(ref));
-            j_cmd.mutable_position()->set_p_gain(500.0); //move somewhere else!
+            prepareJointMsg(j_cmd, j, ref);
             jointCmdPub->WaitForConnection();
             jointCmdPub->Publish(j_cmd);
         }
@@ -482,6 +488,9 @@ private:
     std::vector<std::string> joint_names;
     gazebo::transport::NodePtr gazebo_node_ptr;
     gazebo::transport::PublisherPtr jointCmdPub;
+    std::vector<double> _p;
+    std::vector<double> _i;
+    std::vector<double> _d;
 
     bool *motion_done;
     int  *control_mode;
@@ -509,6 +518,49 @@ private:
             gazebo::physics::JointPtr j = joints[i];
             joint_names.push_back(j->GetName());
         }
+    }
+
+    void setPIDs()
+    {
+        yarp::os::Property prop;
+        if(prop.fromConfigFile(pid_config_abs_path.c_str()))
+        {
+            std::cout<<"pid.ini FOUND!"<<std::endl;
+            std::string group_name = "PIDS";
+
+            for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+            {
+                std::stringstream property_name;
+                property_name<<"Pid";
+                property_name<<i;
+
+                yarp::os::Bottle& pid = prop.findGroup(group_name.c_str()).findGroup(property_name.str().c_str());
+                _p.push_back(pid.get(1).asDouble());
+                _i.push_back(pid.get(3).asDouble());
+                _d.push_back(pid.get(2).asDouble());
+                std::cout<<"  P: "<<_p[i]<<" I: "<<_i[i]<<" D: "<<_d[i]<<std::endl;
+            }
+            std::cout<<"OK!"<<std::endl;
+        }
+        else
+        {
+            std::cout<<"CAN NOT FIND pid.ini!"<<std::endl;
+            for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+            {
+                _p.push_back(500.0);
+                _i.push_back(0.1);
+                _d.push_back(1.0);
+            }
+        }
+    }
+
+    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, int joint_index, const double ref)
+    {
+        j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
+        j_cmd.mutable_position()->set_target(toRad(ref));
+        j_cmd.mutable_position()->set_p_gain(_p[joint_index]);
+        j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
+        j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
     }
 };
 

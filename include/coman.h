@@ -55,56 +55,7 @@ class yarp::dev::coman : public DeviceDriver,
 public:
     coman()//:RateThread(0)
     {
-        _robot = gazebo_pointer_wrapper::getModel();
-        this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
-                                     boost::bind(&coman::onUpdate, this, _1));
-        std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
-        std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
-        std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
-        this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
-        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
-        gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
-        jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
-                      (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
-
-
-        _robot_number_of_joints = _robot->GetJoints().size();
-        pos_lock.unlock();
-        pos.size(_robot_number_of_joints);
-        zero_pos.size(_robot_number_of_joints);
-        vel.size(_robot_number_of_joints);
-        speed.size(_robot_number_of_joints);
-        acc.size(_robot_number_of_joints);
-        amp.size(_robot_number_of_joints);
-        ref_speed.size(_robot_number_of_joints);
-        ref_pos.size(_robot_number_of_joints);
-        ref_acc.size(_robot_number_of_joints);
-        max_pos.resize(_robot_number_of_joints);
-        min_pos.size(_robot_number_of_joints);
-        joint_names.reserve(_robot_number_of_joints);
-        _p.reserve(_robot_number_of_joints);
-        _i.reserve(_robot_number_of_joints);
-        _d.reserve(_robot_number_of_joints);
-
-
-        setJointNames();
-        setMinMaxPos();
-
-        pos = 0;
-        zero_pos=0;
-        vel = 0;
-        speed = 0;
-        ref_speed=0;
-        ref_pos=0;
-        ref_acc=0;
-        acc = 0;
-        amp = 1; // initially on - ok for simulator
-        started=false;
-        control_mode=new int[_robot_number_of_joints];
-        motion_done=new bool[_robot_number_of_joints];
-	_clock=0;
-        for(int j=0; j<_robot_number_of_joints; ++j)
-            control_mode[j]=VOCAB_CM_POSITION;
+        //almost everything is done in the open() method
     }
 
     ~coman()
@@ -642,11 +593,28 @@ private:
 
     void setJointNames()  //WORKS
     {
-        gazebo::physics::Joint_V joints = _robot->GetJoints();
-        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
-        {
-            gazebo::physics::JointPtr j = joints[i];
-            joint_names.push_back(j->GetName());
+        if( plugin_parameters.check("GAZEBO") ) { 
+            std::cout << ".ini file found, using joint names in ini file" << std::endl;
+            yarp::os::Bottle joint_names_bottle =plugin_parameters.findGroup("GAZEBO").findGroup("jointNames");
+            
+            int nr_of_joints = joint_names_bottle.size()-1;
+            
+            joint_names.resize(nr_of_joints);
+            for(int i=0; i < joint_names.size(); i++ ) {
+                std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
+                joint_names[i] = _robot->GetName()+"::"+joint_name;
+            }
+            
+        } else {
+            std::cout << ".ini file not found, using all the joint names of the robot" << std::endl;
+            joint_names.resize(0);
+            gazebo::physics::Joint_V joints = _robot->GetJoints();
+            int nr_of_joints = _robot->GetJoints().size();
+            for(unsigned int i = 0; i < nr_of_joints; ++i)
+            {
+                gazebo::physics::JointPtr j = joints[i];
+                joint_names.push_back(j->GetName());
+            }
         }
     }
 

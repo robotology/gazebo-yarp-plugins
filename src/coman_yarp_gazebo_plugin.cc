@@ -70,27 +70,30 @@ public:
                                           ("coman", "controlboard", "coman"));
   
         //Getting .ini configuration file from sdf
+        bool configuration_loaded = false;
         if(_sdf->HasElement("yarpConfigurationFile") ) {
             std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
             std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
             yarp::os::Property plugin_parameters;
-            plugin_parameters.fromConfigFile(ini_file_path.c_str());
+            if( ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str()) ) {
+                std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+                _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
             
-            _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
+                std::string gazebo_group = "GAZEBO";
             
-            std::string gazebo_group = "GAZEBO";
+                _parameters.put("device", plugin_parameters.findGroup(gazebo_group.c_str()).find("device").asString().c_str());
+                _parameters.put("subdevice", plugin_parameters.findGroup(gazebo_group.c_str()).find("subdevice").asString().c_str());
+                _parameters.put("name", plugin_parameters.findGroup(gazebo_group.c_str()).find("name").asString().c_str());
+
+                configuration_loaded = true;
+            }
             
-            _parameters.put("device", plugin_parameters.findGroup(gazebo_group.c_str()).find("device").asString().c_str());
-            _parameters.put("subdevice", plugin_parameters.findGroup(gazebo_group.c_str()).find("subdevice").asString().c_str());
-            _parameters.put("name", plugin_parameters.findGroup(gazebo_group.c_str()).find("name").asString().c_str());
-            
-            
-        } else {
+        }
+        if( !configuration_loaded ) {
             _parameters.put("device", "controlboard");
             _parameters.put("subdevice", "coman");
             _parameters.put("name", "/coman/test");//TODO what's this?
-            std::cout << "Loading default parameters" << std::endl;
+            std::cout << "File .ini not found, loading default parameters" << std::endl;
         }
 
         _driver.open(_parameters);

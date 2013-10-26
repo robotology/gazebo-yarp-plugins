@@ -24,9 +24,9 @@ add_library(fakebot SHARED src/coman.cpp src/gazebo_pointer_wrapper.cpp)
 #add_library(FakebotForceTorquePlugin SHARED src/FakebotForceTorquePlugin.cc)
 #add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp)
 
-target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries} -lboost_system ${Boost_LIBRARIES})
+target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 #target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 
 
 add_executable(testmotor src/test/test.cpp)
-target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} -lboost_system ${Boost_LIBRARIES})
+target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})

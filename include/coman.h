@@ -89,7 +89,6 @@ public:
 
         setJointNames();
         setMinMaxPos();
-        setPIDs();
 
         pos = 0;
         zero_pos=0;
@@ -589,7 +588,10 @@ private:
     gazebo::event::ConnectionPtr updateConnection;
     unsigned int _robot_number_of_joints;
 
-
+    //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
+    yarp::os::Property plugin_parameters;
+    
+    
 
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
@@ -649,9 +651,30 @@ private:
     }
 
     void setPIDs() //WORKS
-    {
-        yarp::os::Property prop;
-        if(prop.fromConfigFile(pid_config_abs_path.c_str()))
+    {        
+      yarp::os::Property prop;
+       //now try to load the pid from the plugin configuration file, if that fails fallback to the old methods
+       std::string gazebo_pids_group_name = "GAZEBO_PIDS";
+       
+      
+        if(plugin_parameters.check(gazebo_pids_group_name.c_str())) 
+        {
+            std::cout<<"Found PID information in plugin parameters "<<std::endl;
+
+            for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+            {
+                std::stringstream property_name;
+                property_name<<"Pid";
+                property_name<<i;
+
+                yarp::os::Bottle& pid = plugin_parameters.findGroup(gazebo_pids_group_name.c_str()).findGroup(property_name.str().c_str());
+                _p.push_back(pid.get(1).asDouble());
+                _i.push_back(pid.get(3).asDouble());
+                _d.push_back(pid.get(2).asDouble());
+                std::cout<<"  P: "<<_p[i]<<" I: "<<_i[i]<<" D: "<<_d[i]<<std::endl;
+            }
+            std::cout<<"OK!"<<std::endl;
+        } else if(prop.fromConfigFile(pid_config_abs_path.c_str()))
         {
             std::cout<<"pid.ini FOUND!"<<std::endl;
             std::string group_name = "PIDS";

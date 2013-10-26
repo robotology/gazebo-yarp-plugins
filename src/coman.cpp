@@ -18,13 +18,15 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-bool coman::open(yarp::os::Searchable& config) {
-
-    //int dT = (int)(config.find("dT").asDouble());
-    //setRate(dT);
-    //robot_refresh_period = dT;
-
-   // return RateThread::start();
+bool coman::open(yarp::os::Searchable& config) 
+{
+  //if there is a .ini file, directly load it avoiding copyng all the data from config
+  if( config.check("gazebo_ini_file_path") ) {
+      plugin_parameters.fromConfigFile(config.find("gazebo_ini_file_path").asString().c_str()); 
+  }
+  
+  setPIDs();
+  
   return true;
 }
 

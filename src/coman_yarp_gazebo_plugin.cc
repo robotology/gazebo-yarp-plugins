@@ -6,6 +6,7 @@
  */
 
 #include <gazebo/gazebo.hh>
+#include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 #include <yarp/os/Network.h>
@@ -62,15 +63,36 @@ public:
         //_dT = ms(this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod());
         //std::cout<<"Simulation Time Step: "<<_dT<<" [ms]"<<std::endl;
 
+        //Can this be eliminated??
         gazebo_pointer_wrapper::setModel(this->_robot);
-
+        
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::coman>
                                           ("coman", "controlboard", "coman"));
-        _parameters.put("device", "controlboard");
-        _parameters.put("subdevice", "coman");
-        _parameters.put("name", "/coman/test");//TODO what's this?
-        //_parameters.put("dT", _dT);
-	
+  
+        //Getting .ini configuration file from sdf
+        if(_sdf->HasElement("yarpConfigurationFile") ) {
+            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
+            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+            yarp::os::Property plugin_parameters;
+            plugin_parameters.fromConfigFile(ini_file_path.c_str());
+            
+            _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
+            
+            std::string gazebo_group = "GAZEBO";
+            
+            _parameters.put("device", plugin_parameters.findGroup(gazebo_group.c_str()).find("device").asString().c_str());
+            _parameters.put("subdevice", plugin_parameters.findGroup(gazebo_group.c_str()).find("subdevice").asString().c_str());
+            _parameters.put("name", plugin_parameters.findGroup(gazebo_group.c_str()).find("name").asString().c_str());
+            
+            
+        } else {
+            _parameters.put("device", "controlboard");
+            _parameters.put("subdevice", "coman");
+            _parameters.put("name", "/coman/test");//TODO what's this?
+            std::cout << "Loading default parameters" << std::endl;
+        }
+
         _driver.open(_parameters);
         if (!_driver.isValid())
             fprintf(stderr, "Device did not open\n");

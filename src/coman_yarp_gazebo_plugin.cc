@@ -6,6 +6,7 @@
  */
 
 #include <gazebo/gazebo.hh>
+#include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 #include <yarp/os/Network.h>
@@ -64,12 +65,36 @@ public:
         //std::cout<<"Simulation Time Step: "<<_dT<<" [ms]"<<std::endl;
 
         //gazebo_pointer_wrapper::setModel(this->_robot);
-
+        
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::coman>
                                           ("coman", "controlboard", "coman"));
-        _parameters.put("device", "controlboard");
-        _parameters.put("subdevice", "coman");
-        _parameters.put("name", "/coman/test");//TODO what's this?
+  
+        //Getting .ini configuration file from sdf
+        bool configuration_loaded = false;
+        if(_sdf->HasElement("yarpConfigurationFile") ) {
+            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
+            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+            yarp::os::Property plugin_parameters;
+            if( ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str()) ) {
+                std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+                _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
+            
+                std::string gazebo_group = "GAZEBO";
+            
+                _parameters.put("device", plugin_parameters.findGroup(gazebo_group.c_str()).find("device").asString().c_str());
+                _parameters.put("subdevice", plugin_parameters.findGroup(gazebo_group.c_str()).find("subdevice").asString().c_str());
+                _parameters.put("name", plugin_parameters.findGroup(gazebo_group.c_str()).find("name").asString().c_str());
+
+                configuration_loaded = true;
+            }
+            
+        }
+        if( !configuration_loaded ) {
+            _parameters.put("device", "controlboard");
+            _parameters.put("subdevice", "coman");
+            _parameters.put("name", "/coman/test");//TODO what's this?
+            std::cout << "File .ini not found, loading default parameters" << std::endl;
+        }
 	
 	//Now I love everything and every interface
 	std::ostringstream archive_stream;
@@ -77,7 +102,7 @@ public:
 	uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
 	archive<<cast_boost_to_pointer;
 	_parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
-	
+
         _driver.open(_parameters);
 		
         if (!_driver.isValid())

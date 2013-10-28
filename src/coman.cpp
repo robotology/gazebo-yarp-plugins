@@ -19,8 +19,12 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-bool coman::open(yarp::os::Searchable& config) {
-
+bool coman::open(yarp::os::Searchable& config) 
+{
+    //if there is a .ini file, directly load it avoiding copyng all the data from config
+    if( config.check("gazebo_ini_file_path") ) {
+        plugin_parameters.fromConfigFile(config.find("gazebo_ini_file_path").asString().c_str()); 
+    }    
   
   //I love everything and every interface
   uintptr_t temp;
@@ -34,13 +38,9 @@ bool coman::open(yarp::os::Searchable& config) {
     //TODO
   }
   _robot=reinterpret_cast<gazebo::physics::Model*>(temp);
-    //int dT = (int)(config.find("dT").asDouble());
-    //setRate(dT);
-    //robot_refresh_period = dT;
-
-   // return RateThread::start();
+  
   gazebo_init();
-  return true;
+    return true;
 }
 
 void coman::gazebo_init()
@@ -48,19 +48,17 @@ void coman::gazebo_init()
   //_robot = gazebo_pointer_wrapper::getModel();
   std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
   assert(_robot);
-        this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
-                                     boost::bind(&coman::onUpdate, this, _1));
-        std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
+  
+  std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
         std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
         std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
+  
+        
+        
         this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
-        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
-        gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
-        jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
-                      (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
+          setJointNames();
 
-
-        _robot_number_of_joints = _robot->GetJoints().size();
+	_robot_number_of_joints = _robot->GetJoints().size();
         pos_lock.unlock();
         pos.size(_robot_number_of_joints);
         zero_pos.size(_robot_number_of_joints);
@@ -77,10 +75,8 @@ void coman::gazebo_init()
         _p.reserve(_robot_number_of_joints);
         _i.reserve(_robot_number_of_joints);
         _d.reserve(_robot_number_of_joints);
-
-
-        setJointNames();
-        setMinMaxPos();
+	
+	  setMinMaxPos();
         setPIDs();
 
         pos = 0;
@@ -98,6 +94,19 @@ void coman::gazebo_init()
 	_clock=0;
         for(int j=0; j<_robot_number_of_joints; ++j)
             control_mode[j]=VOCAB_CM_POSITION;
+
+	this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
+                                     boost::bind(&coman::onUpdate, this, _1));
+	gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
+        gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
+        jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
+                      (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
+		      
+		      
+        
+
+
+      
 }
 
 /*

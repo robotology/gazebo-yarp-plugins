@@ -16,9 +16,11 @@
     <model name="COMAN">
       <include>
         <uri>model://coman_urdf</uri>
-	<pose>0 0 0.53 0 0 0  </pose>
+        <pose>0 0 0.53 0 0 0  </pose>
       </include>
-      <plugin name="coman_yarp_gazebo_plugin" filename="libyarp_gazebo.so"/>  
+      <plugin name="coman_yarp_gazebo_plugin" filename="libyarp_gazebo.so">
+	<yarpConfigurationFile>model://coman_urdf/conf/coman_gazebo.ini</yarpConfigurationFile>
+      </plugin>
     </model>
 
   </world>

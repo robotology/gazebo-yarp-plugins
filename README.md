@@ -106,6 +106,21 @@ To get the angles of the joints type:
 ```
 get encs
 ```
+
+You can also set the reference speed:
+Start by changing  the robot control style
+```
+-> icmd set cmv 20
+```
+Set the reference speed (should be degrees/second, need to check)
+```
+-> set vel 20 10
+```
+Set the new position
+```
+-> set pos 20 -40
+```
+
 This is all you can do with coman inside gazebo at the moment.
 
 Troubleshooting

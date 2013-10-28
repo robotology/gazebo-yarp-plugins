@@ -25,7 +25,6 @@
 #include <yarp/os/RateThread.h>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
-#include "gazebo_pointer_wrapper.h"
 #include <gazebo/transport/transport.hh>
 #include <mutex>
 
@@ -55,57 +54,7 @@ class yarp::dev::coman : public DeviceDriver,
 public:
     coman()//:RateThread(0)
     {
-        _robot = gazebo_pointer_wrapper::getModel();
-        this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
-                                     boost::bind(&coman::onUpdate, this, _1));
-        std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
-        std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
-        std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
-        this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
-        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
-        gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
-        jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
-                      (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
-
-
-        _robot_number_of_joints = _robot->GetJoints().size();
-        pos_lock.unlock();
-        pos.size(_robot_number_of_joints);
-        zero_pos.size(_robot_number_of_joints);
-        vel.size(_robot_number_of_joints);
-        speed.size(_robot_number_of_joints);
-        acc.size(_robot_number_of_joints);
-        amp.size(_robot_number_of_joints);
-        ref_speed.size(_robot_number_of_joints);
-        ref_pos.size(_robot_number_of_joints);
-        ref_acc.size(_robot_number_of_joints);
-        max_pos.resize(_robot_number_of_joints);
-        min_pos.size(_robot_number_of_joints);
-        joint_names.reserve(_robot_number_of_joints);
-        _p.reserve(_robot_number_of_joints);
-        _i.reserve(_robot_number_of_joints);
-        _d.reserve(_robot_number_of_joints);
-
-
-        setJointNames();
-        setMinMaxPos();
-        setPIDs();
-
-        pos = 0;
-        zero_pos=0;
-        vel = 0;
-        speed = 0;
-        ref_speed=0;
-        ref_pos=0;
-        ref_acc=0;
-        acc = 0;
-        amp = 1; // initially on - ok for simulator
-        started=false;
-        control_mode=new int[_robot_number_of_joints];
-        motion_done=new bool[_robot_number_of_joints];
-	_clock=0;
-        for(int j=0; j<_robot_number_of_joints; ++j)
-            control_mode[j]=VOCAB_CM_POSITION;
+      
     }
 
     ~coman()
@@ -118,6 +67,9 @@ public:
      * Gazebo stuff
      * 
      */
+    
+     void gazebo_init();
+     
     
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     {
@@ -578,6 +530,7 @@ public:
         }
         return true;
     }
+   
     /**/
 
 
@@ -585,7 +538,7 @@ public:
 
 private:
     unsigned int robot_refresh_period; //ms
-    gazebo::physics::ModelPtr _robot;
+    gazebo::physics::Model* _robot;
     gazebo::event::ConnectionPtr updateConnection;
     unsigned int _robot_number_of_joints;
 

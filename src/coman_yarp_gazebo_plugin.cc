@@ -9,7 +9,8 @@
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 #include <yarp/os/Network.h>
-#include <gazebo_pointer_wrapper.h>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 #include <coman.h>
 
 #define ms(X) (X * 1000.0)
@@ -62,16 +63,23 @@ public:
         //_dT = ms(this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod());
         //std::cout<<"Simulation Time Step: "<<_dT<<" [ms]"<<std::endl;
 
-        gazebo_pointer_wrapper::setModel(this->_robot);
+        //gazebo_pointer_wrapper::setModel(this->_robot);
 
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::coman>
                                           ("coman", "controlboard", "coman"));
         _parameters.put("device", "controlboard");
         _parameters.put("subdevice", "coman");
         _parameters.put("name", "/coman/test");//TODO what's this?
-        //_parameters.put("dT", _dT);
+	
+	//Now I love everything and every interface
+	std::ostringstream archive_stream;
+	boost::archive::text_oarchive archive(archive_stream);
+	uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
+	archive<<cast_boost_to_pointer;
+	_parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
 	
         _driver.open(_parameters);
+		
         if (!_driver.isValid())
             fprintf(stderr, "Device did not open\n");
 

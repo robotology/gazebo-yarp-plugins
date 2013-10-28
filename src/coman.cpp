@@ -10,6 +10,7 @@
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
+#include <boost/archive/text_iarchive.hpp>
 
 
 using namespace yarp::os;
@@ -20,14 +21,84 @@ using namespace yarp::dev;
 
 bool coman::open(yarp::os::Searchable& config) {
 
+  
+  //I love everything and every interface
+  uintptr_t temp;
+  std::istringstream iss(config.find("loving_gazebo_pointer").asString().c_str());
+  boost::archive::text_iarchive archive(iss);
+  try{
+    archive>>temp;
+  }
+  catch (const char *ex)
+  {
+    //TODO
+  }
+  _robot=reinterpret_cast<gazebo::physics::Model*>(temp);
     //int dT = (int)(config.find("dT").asDouble());
     //setRate(dT);
     //robot_refresh_period = dT;
 
    // return RateThread::start();
+  gazebo_init();
   return true;
 }
 
+void coman::gazebo_init()
+{
+  //_robot = gazebo_pointer_wrapper::getModel();
+  std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
+  assert(_robot);
+        this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
+                                     boost::bind(&coman::onUpdate, this, _1));
+        std::cout<<"Robot Name: "<<_robot->GetName()<<std::endl;
+        std::cout<<"# Joints: "<<_robot->GetJoints().size()<<std::endl;
+        std::cout<<"# Links: "<<_robot->GetLinks().size()<<std::endl;
+        this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
+        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
+        gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
+        jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
+                      (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
+
+
+        _robot_number_of_joints = _robot->GetJoints().size();
+        pos_lock.unlock();
+        pos.size(_robot_number_of_joints);
+        zero_pos.size(_robot_number_of_joints);
+        vel.size(_robot_number_of_joints);
+        speed.size(_robot_number_of_joints);
+        acc.size(_robot_number_of_joints);
+        amp.size(_robot_number_of_joints);
+        ref_speed.size(_robot_number_of_joints);
+        ref_pos.size(_robot_number_of_joints);
+        ref_acc.size(_robot_number_of_joints);
+        max_pos.resize(_robot_number_of_joints);
+        min_pos.size(_robot_number_of_joints);
+        joint_names.reserve(_robot_number_of_joints);
+        _p.reserve(_robot_number_of_joints);
+        _i.reserve(_robot_number_of_joints);
+        _d.reserve(_robot_number_of_joints);
+
+
+        setJointNames();
+        setMinMaxPos();
+        setPIDs();
+
+        pos = 0;
+        zero_pos=0;
+        vel = 0;
+        speed = 0;
+        ref_speed=0;
+        ref_pos=0;
+        ref_acc=0;
+        acc = 0;
+        amp = 1; // initially on - ok for simulator
+        started=false;
+        control_mode=new int[_robot_number_of_joints];
+        motion_done=new bool[_robot_number_of_joints];
+	_clock=0;
+        for(int j=0; j<_robot_number_of_joints; ++j)
+            control_mode[j]=VOCAB_CM_POSITION;
+}
 
 /*
 bool coman::threadInit()

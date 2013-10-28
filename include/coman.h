@@ -89,39 +89,41 @@ public:
         int j=0;
 	for (auto joint:joints)
         {
-            pos[j]=joint->GetAngle(0).Degree()-zero_pos[j];  //TODO: if zero_pos=0, it works, if zero_pos=pos[j], pos[j] return 0, if zero_pos=k, pos[j]return 0-k, but since it is an angle, you may get 2*pi
+            pos[j]=joint->GetAngle(0).Degree();  //TODO: if zero_pos=0, it works, if zero_pos=pos[j], pos[j] return 0, if zero_pos=k, pos[j]return 0-k, but since it is an angle, you may get 2*pi
             //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
             j++;
         }
         pos_lock.unlock();
         // send positions to the actuators
-
-        yarp::sig::Vector temp=ref_pos; //if VOCAB_CM_POSITION I will not do anything
-	if (_clock%100==0)
-	{
-	  _clock++;
+        _clock++;
         for(int j=0; j<_robot_number_of_joints; ++j)
-        {
-            // handle position mode
+	{
+	    if (control_mode[j]==VOCAB_CM_POSITION)
+	    {
+	      sendPositionToGazebo(j,ref_pos[j]);
+	    }
             if (control_mode[j]==VOCAB_CM_VELOCITY) //TODO check if VOCAB_CM_POSITION or VOCAB_CM_VELOCITY
             {
-                if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
+                if (_clock%100==0)
                 {
-                    temp[j]=pos[j]+ref_speed[j]*robot_refresh_period/10.0;
-                    motion_done[j]=false;
-                }
-                else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
-                {
-                    temp[j]=pos[j]-ref_speed[j]*robot_refresh_period/10.0;
-		    std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp[j]<<std::endl;
-                    motion_done[j]=false;
-                }
-                else
-                    motion_done[j]=true;
-            }
+		  double temp=pos[j];
+                    if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
+                    {
+                        temp=pos[j]+ref_speed[j]*robot_refresh_period/10.0;
+                        motion_done[j]=false;
+                    }
+                    else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
+                    {
+                        temp=pos[j]-ref_speed[j]*robot_refresh_period/10.0;
+                        motion_done[j]=false;
+                    }
+                    else
+                        motion_done[j]=true;
+                std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
+		sendPositionToGazebo(j,temp);
+		}
+	    }  
         }
-	}
-        sendPositionsToGazebo(temp);
     }
 
     // thread stuff
@@ -151,7 +153,7 @@ public:
         std::cout<<"get encoder chiamata"<<std::endl;
         //pos_lock.lock();
         if (j<_robot_number_of_joints) {
-            (*v) = pos[j];
+            (*v) = pos[j]-zero_pos[j];
         }
         //pos_lock.unlock();
         return true;
@@ -162,7 +164,7 @@ public:
     {
         //pos_lock.lock();
         for (int i=0; i<_robot_number_of_joints; ++i) {
-            encs[i] = pos[i]+yarp::os::Random::normal(0,0.01);  //should we just use memcopy here?
+            encs[i] = pos[i]-zero_pos[i];  //should we just use memcopy here?
         }
         return true;
         //pos_lock.unlock();

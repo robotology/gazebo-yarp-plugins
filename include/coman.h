@@ -59,8 +59,6 @@ public:
 
     ~coman()
     {
-        delete [] control_mode;
-        delete [] motion_done;
     }
 
     /**
@@ -84,15 +82,12 @@ public:
             }
         }
         pos_lock.lock();
-        // read sensors (for now only joints angle)
-        auto joints=_robot->GetJoints();
-        int j=0;
-	for (auto joint:joints)
-        {
-            pos[j]=joint->GetAngle(0).Degree();  //TODO: if zero_pos=0, it works, if zero_pos=pos[j], pos[j] return 0, if zero_pos=k, pos[j]return 0-k, but since it is an angle, you may get 2*pi
-            //std::cout<<"joint"<<j<<" pos"<<pos[j]<<std::endl;
-            j++;
+        
+        for(int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ ) {
+            /** \todo consider multi-dof joint ? */
+            pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
         }
+        
         pos_lock.unlock();
         // send positions to the actuators
         _clock++;
@@ -120,8 +115,9 @@ public:
                     else
                         motion_done[j]=true;
                 std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
-		sendPositionToGazebo(j,temp);
-		}
+                sendPositionToGazebo(j,temp);
+      
+                }
 	    }  
         }
     }
@@ -317,6 +313,8 @@ public:
 
     virtual bool close() //NOT IMPLEMENTED
     {
+        delete [] control_mode;
+        delete [] motion_done;
         return true;
     }
 
@@ -586,12 +584,10 @@ private:
     void setMinMaxPos()  //NOT TESTED
     {
         std::cout<<"Joint Limits"<<std::endl;
-        gazebo::physics::Joint_V joints = _robot->GetJoints();
         for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
         {
-            gazebo::physics::JointPtr j = joints[i];
-            max_pos[i] = j->GetUpperLimit(0).Degree();
-            min_pos[i] = j->GetLowerLimit(0).Degree();
+            max_pos[i] = this->_robot->GetJoint(joint_names[i])->GetUpperLimit(0).Degree();
+            min_pos[i] = this->_robot->GetJoint(joint_names[i])->GetLowerLimit(0).Degree();
             std::cout<<joint_names[i]<<" max_pos: "<<max_pos[i]<<" min_pos: "<<min_pos[i]<<std::endl;
         }
     }

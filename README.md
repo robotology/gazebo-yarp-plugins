@@ -126,6 +126,24 @@ Set the new position
 
 This is all you can do with coman inside gazebo at the moment.
 
+Testing and moving coman joints with the robotMotorGui
+------------------
+You can also use the robotMotorGui for controlling the coman simulation.
+
+You should start the coman simulation with 
+```
+gazebo coman_parts.world
+```
+To instantiate a coman simulating the 5 different control boards (torso,left_leg,right_leg,left_arm,right_arm).
+
+Please make sure you have the right configuration files for the control boards (they should be in your coman_urdf package in the conf/ subdirectory), if necessary
+download the latest coman_urdf.tar.gz.
+
+You can then execute the robotMotorGui:
+```
+robotMotorGui --name coman --parts "(torso left_arm right_arm left_leg right_leg)"
+```
+
 Troubleshooting
 =============
 - If gazebo complains about not finding the libyarp, check if you exported the GAZEBO_PLUGIN_PATH in the same shell where you are launching gazebo

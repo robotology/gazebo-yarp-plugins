@@ -18,6 +18,8 @@
 #define toRad(X) (X*M_PI/180.0)
 #define ROBOT_NAME "COMAN"
 
+#define GAZEBO_YARP_CONTROLBOARD_DEVICE_NAME "coman"
+
 namespace gazebo
 {
   
@@ -40,7 +42,7 @@ public:
 
     void Init()
     {
-        std::cout<<"*** COMAN GAZEBO YARP PLUGIN ***"<<std::endl;
+        std::cout<<"*** GazeboYarpControlBoard plugin started ***"<<std::endl;
         if (!_yarp.checkNetwork())
             std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
         else
@@ -66,8 +68,14 @@ public:
 
         //gazebo_pointer_wrapper::setModel(this->_robot);
         
+      //add the GazeboYarpControlBoard device only if is not already added 
+      if( yarp::dev::Drivers::factory().find(GAZEBO_YARP_CONTROLBOARD_DEVICE_NAME) == NULL ) 
+      {
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::coman>
-                                          ("coman", "controlboard", "coman"));
+                                          (GAZEBO_YARP_CONTROLBOARD_DEVICE_NAME, "controlboard", "coman"));
+      }
+        
+        
   
         //Getting .ini configuration file from sdf
         bool configuration_loaded = false;
@@ -95,16 +103,17 @@ public:
             _parameters.put("name", "/coman/test");//TODO what's this?
             std::cout << "File .ini not found, loading default parameters" << std::endl;
         }
-	
-	//Now I love everything and every interface
-	std::ostringstream archive_stream;
-	boost::archive::text_oarchive archive(archive_stream);
-	uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
-	archive<<cast_boost_to_pointer;
-	_parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
+        
+
+        //Now I love everything and every interface
+        std::ostringstream archive_stream;
+        boost::archive::text_oarchive archive(archive_stream);
+        uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
+        archive<<cast_boost_to_pointer;
+        _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
 
         _driver.open(_parameters);
-		
+
         if (!_driver.isValid())
             fprintf(stderr, "Device did not open\n");
 

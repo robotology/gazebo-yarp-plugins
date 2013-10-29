@@ -58,7 +58,7 @@ void coman::gazebo_init()
         this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod()*1000.0;
           setJointNames();
 
-	_robot_number_of_joints = _robot->GetJoints().size();
+	_robot_number_of_joints = joint_names.size();
         pos_lock.unlock();
         pos.size(_robot_number_of_joints);
         zero_pos.size(_robot_number_of_joints);
@@ -71,7 +71,6 @@ void coman::gazebo_init()
         ref_acc.size(_robot_number_of_joints);
         max_pos.resize(_robot_number_of_joints);
         min_pos.size(_robot_number_of_joints);
-        joint_names.reserve(_robot_number_of_joints);
         _p.reserve(_robot_number_of_joints);
         _i.reserve(_robot_number_of_joints);
         _d.reserve(_robot_number_of_joints);
@@ -97,13 +96,12 @@ void coman::gazebo_init()
 
 	this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
                                      boost::bind(&coman::onUpdate, this, _1));
-	gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
+        gazebo_node_ptr = gazebo::transport::NodePtr(new gazebo::transport::Node);
         gazebo_node_ptr->Init(this->_robot->GetWorld()->GetName());
         jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
                       (std::string("~/") + this->_robot->GetName() + "/joint_cmd");
-		      
-		      
-        
+      
+      
 
 
       

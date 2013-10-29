@@ -1,5 +1,8 @@
-coman_gazebo_yarp_plugins
+gazebo_yarp_plugins
 ===================
+[![Build Status](https://travis-ci.org/EnricoMingo/gazebo_yarp_plugins.png)](https://travis-ci.org/EnricoMingo/gazebo_yarp_plugins)
+
+
 
 Gazebo plugin to interface a Coman in GAZEBO with a YARP interface.
 

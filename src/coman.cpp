@@ -71,7 +71,6 @@ void coman::gazebo_init()
         ref_acc.size(_robot_number_of_joints);
         max_pos.resize(_robot_number_of_joints);
         min_pos.size(_robot_number_of_joints);
-        joint_names.reserve(_robot_number_of_joints);
         _p.reserve(_robot_number_of_joints);
         _i.reserve(_robot_number_of_joints);
         _d.reserve(_robot_number_of_joints);

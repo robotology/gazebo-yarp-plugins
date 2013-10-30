@@ -5,6 +5,8 @@
 using namespace gazebo;
 GZ_REGISTER_SENSOR_PLUGIN(fakebotIMUplugin)
 
+#define toDeg(X) (X*180.0/M_PI)
+
 fakebotIMUplugin::fakebotIMUplugin() : SensorPlugin(),
     _yarp(),
     _p(),
@@ -61,9 +63,9 @@ void fakebotIMUplugin::OnUpdate()
     msgs::IMU imu_data;
     imu_data = this->parentSensor->GetImuMessage();
 
-    _bot.addDouble(imu_data.mutable_orientation()->x());
-    _bot.addDouble(imu_data.mutable_orientation()->y());
-    _bot.addDouble(imu_data.mutable_orientation()->z());
+    _bot.addDouble( toDeg(imu_data.mutable_orientation()->x()) );
+    _bot.addDouble( toDeg(imu_data.mutable_orientation()->y()) );
+    _bot.addDouble( toDeg(imu_data.mutable_orientation()->z()) );
 //    std::cout<<"Orientation: [ "<<imu_data.mutable_orientation()->x()<<" "<<
 //               imu_data.mutable_orientation()->y()<<" "<<
 //               imu_data.mutable_orientation()->z()<<std::endl;
@@ -75,16 +77,16 @@ void fakebotIMUplugin::OnUpdate()
 //               imu_data.mutable_linear_acceleration()->y()<<" "<<
 //               imu_data.mutable_linear_acceleration()->z()<<std::endl;
 
-    _bot.addDouble(imu_data.mutable_angular_velocity()->x());
-    _bot.addDouble(imu_data.mutable_angular_velocity()->y());
-    _bot.addDouble(imu_data.mutable_angular_velocity()->z());
+    _bot.addDouble( toDeg(imu_data.mutable_angular_velocity()->x()) );
+    _bot.addDouble( toDeg(imu_data.mutable_angular_velocity()->y()) );
+    _bot.addDouble( toDeg(imu_data.mutable_angular_velocity()->z()) );
 //    std::cout<<"Angular Velocity: [ "<<imu_data.mutable_linear_acceleration()->x()<<" "<<
 //               imu_data.mutable_linear_acceleration()->y()<<" "<<
 //               imu_data.mutable_linear_acceleration()->z()<<std::endl;
 
-    _bot.addDouble(imu_data.mutable_orientation()->x());
-    _bot.addDouble(imu_data.mutable_orientation()->y());
-    _bot.addDouble(imu_data.mutable_orientation()->z());
+    _bot.addDouble( toDeg(imu_data.mutable_orientation()->x()) );
+    _bot.addDouble( toDeg(imu_data.mutable_orientation()->y()) );
+    _bot.addDouble( toDeg(imu_data.mutable_orientation()->z()) );
 
     yarp::os::Stamp ts;
     ts = yarp::os::Stamp(0, imu_data.mutable_stamp()->sec());

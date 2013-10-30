@@ -24,11 +24,13 @@ add_library(yarp_gazebo SHARED src/coman_yarp_gazebo_plugin.cc)
 add_library(fakebot SHARED src/coman.cpp )
 add_library(FakebotForceTorquePlugin SHARED src/FakebotForceTorquePlugin.cc src/analogServer.cpp)
 add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp)
+add_library(fakebotIMUplugin SHARED src/fakebotIMUplugin.cc )
+
 
 target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin ${Boost_LIBRARIES})
 target_link_libraries(fakebotFTsensor ${YARP_LIBRARIES} ${Boost_LIBRARIES})
-
+target_link_libraries(fakebotIMUplugin  ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 
 add_executable(testmotor src/test/test.cpp)
 target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})

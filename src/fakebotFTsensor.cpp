@@ -75,7 +75,7 @@ static inline bool validate(Bottle &input, Bottle &out, const std::string &key1,
 bool fakebotFTsensor::fromConfig(yarp::os::Searchable &_config)
 {
     return true;
-;
+}
 
 bool fakebotFTsensor::close()
 {
@@ -86,6 +86,7 @@ fakebotFTsensor::fakebotFTsensor()
 {
     _useCalibration=0;
     _channels=6;
+    data.resize(_channels);
 
     status=IAnalogSensor::AS_OK;
 }
@@ -123,26 +124,10 @@ int fakebotFTsensor::read(yarp::sig::Vector &out)
     mutex.wait();
     status = AS_OK;
 
-    // TODO
+    out.resize(data.size());
 
-    // Che TIPO di dato è (int, double...)??? Chi lo decide???
-    out.resize(data.size() * _channels);
-
-    std::map<unsigned int,std::string>::iterator iter;
-    int idx = 0;
-    for(iter = this->bMap.begin(); iter!=this->bMap.end(); iter++)
-    {
-        yarp::sig::Vector iterVec = data[iter->second];
-        out[idx*_channels + 0] = iterVec[0];
-        out[idx*_channels + 1] = iterVec[1];
-        out[idx*_channels + 2] = iterVec[2];
-        out[idx*_channels + 3] = iterVec[3];
-        out[idx*_channels + 4] = iterVec[4];
-        out[idx*_channels + 5] = iterVec[5];
-        idx++;
-    }
+    out = data;
     mutex.post();
-
     return status;
 }
 
@@ -154,14 +139,6 @@ int fakebotFTsensor::getState(int ch)
 
 int fakebotFTsensor::getChannels()
 {
-//     McBoard *joint_p = getFTpointer(j);  // TODO su quale sensore?
-//     int8_t channels;
-//     if( joint_p->getItem(GET_ANALOG_INPUTS,   NULL, 0, REPLY_ANALOG_INPUTS, &channels, sizeof(channels)) )
-//         yError() << "Error while getting number of channels";
-//     int ret = (int) channels;
-//     return ret;
-//    return 0;
-
      return _channels;
 }
 

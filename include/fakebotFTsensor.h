@@ -32,36 +32,6 @@ namespace yarp{
     }
 }
 
-// class AnalogData
-// {
-// private:
-//     double *_data;
-//     int _size;
-//     int _bufferSize;
-// public:
-//     AnalogData(int ch, int buffsize): _data(0), _size(ch), _bufferSize(buffsize)
-//     {
-//         _data=new double[_bufferSize];
-//         for(int k=0;k<_bufferSize;k++)
-//             _data[k]=0;
-//     }
-//     ~AnalogData()
-//     {
-//         delete [] _data;
-//     }
-// 
-//     inline double &operator[](int i)
-//     { return _data[i]; }
-// 
-//     inline int size() 
-//     { return _size; }
-// 
-//     inline double *getBuffer()
-//     {return _data;}
-// };
-
-
-
 typedef int AnalogDataFormat;
 /*! class yarp::dev::fakebotFTsensor
  *
@@ -76,7 +46,6 @@ private:
     int             _channels;
     short           _useCalibration;
 
-//     AnalogData *data;
     short status;
 
     double timeStamp;
@@ -108,8 +77,7 @@ public:
 
     virtual int calibrateChannel(int ch);
 
-    std::map<std::string, yarp::sig::Vector> data;
-    std::map<unsigned int, std::string> bMap;
+    yarp::sig::Vector data;
 
     void setDeviceId(std::string id)
     {

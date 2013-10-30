@@ -14,6 +14,7 @@ include (FindPkgConfig)
 if (PKG_CONFIG_FOUND)
   pkg_check_modules(GAZEBO gazebo)
 endif()
+
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
@@ -21,11 +22,12 @@ include_directories(${YARP_INCLUDE_DIRS} include)
 
 add_library(yarp_gazebo SHARED src/coman_yarp_gazebo_plugin.cc)
 add_library(fakebot SHARED src/coman.cpp )
-#add_library(FakebotForceTorquePlugin SHARED src/FakebotForceTorquePlugin.cc)
-#add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp)
+add_library(FakebotForceTorquePlugin SHARED src/FakebotForceTorquePlugin.cc src/analogServer.cpp)
+add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp)
 
 target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
-#target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(FakebotForceTorquePlugin  fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin ${Boost_LIBRARIES})
+target_link_libraries(fakebotFTsensor ${YARP_LIBRARIES} ${Boost_LIBRARIES})
 
 
 add_executable(testmotor src/test/test.cpp)

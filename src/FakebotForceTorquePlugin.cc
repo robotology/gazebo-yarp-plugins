@@ -19,11 +19,13 @@
 #include <algorithm>
 #include <stdlib.h>
 
+#include <yarp/os/Network.h>
 #include <gazebo/transport/Node.hh>
 #include <gazebo/common/Assert.hh>
 
 #include <FakebotForceTorquePlugin.hh>
 #include <fakebotFTsensor.h>
+#include <analogServer.h>
 
 using std::string;
 
@@ -31,38 +33,55 @@ namespace gazebo
 {
 GZ_REGISTER_SENSOR_PLUGIN(FakebotForceTorquePlugin)
 
-yarp::dev::fakebotFTsensor* FakebotForceTorquePlugin::yarpFTsensor = NULL;
+/*
+ * We have one yarpFTsensor (yarp::dev::IAnalogSensor) and one factory for all FT sensors;
+ * still we have one AnalogServer for each FT sensor that reads just one portion of
+ * the unique yarpFTsensor AnalogSensor, and publishes it.
+ */
 unsigned int FakebotForceTorquePlugin::iBoards = 0;
 
 /////////////////////////////////////////////////
-FakebotForceTorquePlugin::FakebotForceTorquePlugin()
+FakebotForceTorquePlugin::FakebotForceTorquePlugin() : _server(NULL), yarpFTsensor(NULL), _yarp()
 {
     this->iBoards++;
+
     if(this->yarpFTsensor == NULL) {
         yarp::dev::DriverCreator *fakebotFtsensor_factory =
                 new yarp::dev::DriverCreatorOf<yarp::dev::fakebotFTsensor>("fakebotFTsensor","FTsensor","fakebotFTsensor");
         yarp::dev::Drivers::factory().add(fakebotFtsensor_factory); // hand factory over to YARP
-        _parameters.put("device", "FTsensor");
+        yarp::os::Property _parameters;
+        _parameters.put("device", "fakebotFTsensor");
         _parameters.put("subdevice", "fakebotFTsensor");
-        _parameters.put("name", "/fakebotFTsensor");
+        _parameters.put("name", "/coman/FTsensor");
         this->_driver.open(_parameters);
-        this->_driver.view(this->yarpFTsensor);
+
         if (!this->_driver.isValid())
            fprintf(stderr, "Device did not open\n");
-
-        printf("Device initialized correctly, now sitting and waiting\n");
+        else {
+            this->_driver.view(this->yarpFTsensor);
+            printf("Device fakebotFTsensor initialized correctly\n");
+        }
     }
 }
 
 /////////////////////////////////////////////////
 FakebotForceTorquePlugin::~FakebotForceTorquePlugin()
 {
-  this->parentSensor->DisconnectUpdate(this->connection);
-  this->parentSensor.reset();
-  if(this->yarpFTsensor != NULL && this->_driver.isValid()) {
-    this->yarpFTsensor = NULL;
-    this->_driver.close();
-  }
+    if(this->_server!= NULL && this->_server->isRunning()) {
+        this->_server->stop();
+    }
+
+    if(this->parentSensor != NULL) {
+        printf("FakebotForceTorquePlugin: Disconnecting from sensor %s\n",
+               this->parentSensor->GetName().c_str());
+        this->parentSensor->DisconnectUpdate(this->connection);
+        this->parentSensor.reset();
+    }
+
+    if(this->yarpFTsensor != NULL && this->_driver.isValid()) {
+        this->yarpFTsensor = NULL;
+        this->_driver.close();
+    }
 }
 
 /////////////////////////////////////////////////
@@ -85,7 +104,42 @@ void FakebotForceTorquePlugin::Load(sensors::SensorPtr _parent,
   } else
     this->boardId = this->iBoards;
 
-  this->yarpFTsensor->bMap[this->boardId] = this->parentSensor->GetName();
+  if(this->yarpFTsensor!=NULL) {
+    if (!_yarp.checkNetwork())
+      std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
+    else {
+        yarp::os::Property prop;
+        prop.put("device", "analogServer");
+        prop.put("robotName", "coman");
+        prop.put("deviceId", this->parentSensor->GetName().c_str());
+        prop.put("rate", 1);
+
+        /* TODO: when analogServer will be included in YARP, this code needs to be used
+        yarp::dev::PolyDriver poly;
+
+
+        poly.open(prop);
+        if(!poly.isValid())
+          printf("error opening analogServer");
+
+        poly.view(this->_server);
+        */
+        this->_server = new yarp::dev::AnalogServer();
+        if(this->_server != NULL) {
+            if(!this->_server->open(prop))
+                printf("error opening analogServer");
+            else {
+                this->_server->attach(this->yarpFTsensor);
+                this->_server->start();
+            }
+        } else
+            printf("error creating analogServer");
+    }
+
+    printf("----- FakebotForceTorquePlugin:");
+    printf("Instantiated FT plugin with boardId %d ",this->boardId);
+    printf("for sensor %s\n",this->parentSensor->GetName().c_str());
+  }
 }
 
 /////////////////////////////////////////////////
@@ -99,9 +153,7 @@ void FakebotForceTorquePlugin::OnUpdate(msgs::WrenchStamped _msg)
         wrench[3] = _msg.wrench().torque().x();
         wrench[4] = _msg.wrench().torque().y();
         wrench[5] = _msg.wrench().torque().z();
-        this->yarpFTsensor->data[this->parentSensor->GetName()] = wrench;
+        this->yarpFTsensor->data = wrench;
     }
-  // TODO: do we need to write inside the fakebotFTsensor now?
-
 }
 }

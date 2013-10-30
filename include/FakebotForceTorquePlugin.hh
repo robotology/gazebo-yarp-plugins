@@ -26,6 +26,9 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <fakebotFTsensor.h>
+#include <yarp/os/Network.h>
+#include <analogServer.h>
+
 
 namespace gazebo
 {
@@ -54,9 +57,14 @@ namespace gazebo
     private: event::ConnectionPtr connection;
 
     /// \brief Pointer to the YARP FT sensor device driver
-    private: static yarp::dev::fakebotFTsensor* yarpFTsensor;
-    private: static yarp::dev::PolyDriver _driver;
-    private: static yarp::os::Property _parameters;
+    private: yarp::dev::fakebotFTsensor* yarpFTsensor;
+    private: yarp::dev::PolyDriver _driver;
+
+    /// \brief we have one analogserver for each ft sensor
+    private: yarp::dev::AnalogServer *_server;
+
+    private: yarp::os::Network _yarp;
+
 
     /// \brief static unsigned int kept fo always have a unique FT sensor id
     private: static unsigned int iBoards;

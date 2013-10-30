@@ -138,6 +138,13 @@ You can then execute the robotMotorGui:
 robotMotorGui --name coman --parts "(torso left_arm right_arm left_leg right_leg)"
 ```
 
+Plot IMU data:
+--------------
+Inside tools folder run
+```
+yarpscope --xml imu_yarp_scope.xml
+```
+
 Troubleshooting
 =============
 - If gazebo complains about not finding the libyarp, check if you exported the GAZEBO_PLUGIN_PATH in the same shell where you are launching gazebo

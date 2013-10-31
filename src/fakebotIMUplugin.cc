@@ -63,12 +63,15 @@ void fakebotIMUplugin::OnUpdate()
     msgs::IMU imu_data;
     imu_data = this->parentSensor->GetImuMessage();
 
-    _bot.addDouble( toDeg(imu_data.mutable_orientation()->x()) );
-    _bot.addDouble( toDeg(imu_data.mutable_orientation()->y()) );
-    _bot.addDouble( toDeg(imu_data.mutable_orientation()->z()) );
-//    std::cout<<"Orientation: [ "<<imu_data.mutable_orientation()->x()<<" "<<
-//               imu_data.mutable_orientation()->y()<<" "<<
-//               imu_data.mutable_orientation()->z()<<std::endl;
+    gazebo::msgs::Quaternion quaternion_msg = *(imu_data.mutable_orientation());
+    gazebo::math::Quaternion orient;
+    orient.Set(quaternion_msg.w(), quaternion_msg.x(), quaternion_msg.y(), quaternion_msg.z());
+
+    _bot.addDouble( toDeg(orient.GetRoll()));
+    _bot.addDouble( toDeg(orient.GetPitch()));
+    _bot.addDouble( toDeg(orient.GetYaw()));
+//    std::cout<<"Orientation: [ "<<orient.GetRoll()<<" "<<
+//               rient.GetPitch()<<" "<<toDeg(orient.GetYaw()<<std::endl;
 
     _bot.addDouble(imu_data.mutable_linear_acceleration()->x());
     _bot.addDouble(imu_data.mutable_linear_acceleration()->y());
@@ -84,9 +87,9 @@ void fakebotIMUplugin::OnUpdate()
 //               imu_data.mutable_linear_acceleration()->y()<<" "<<
 //               imu_data.mutable_linear_acceleration()->z()<<std::endl;
 
-    _bot.addDouble( toDeg(imu_data.mutable_orientation()->x()) );
-    _bot.addDouble( toDeg(imu_data.mutable_orientation()->y()) );
-    _bot.addDouble( toDeg(imu_data.mutable_orientation()->z()) );
+    _bot.addDouble( toDeg(orient.GetRoll()));
+    _bot.addDouble( toDeg(orient.GetPitch()));
+    _bot.addDouble( toDeg(orient.GetYaw()));
 
     yarp::os::Stamp ts;
     ts = yarp::os::Stamp(0, imu_data.mutable_stamp()->sec());

@@ -31,7 +31,7 @@ fakebotIMUplugin::~fakebotIMUplugin()
 
 void fakebotIMUplugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    std::cout<<"IMU Sensor ID:"<<_sensor->GetId()<<std::endl;
+    std::cout<<"Sensor Name:"<<_sensor->GetName()<<std::endl;
     this->parentSensor =
         boost::shared_dynamic_cast<sensors::ImuSensor>(_sensor);
 

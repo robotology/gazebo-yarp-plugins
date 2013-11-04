@@ -66,6 +66,7 @@ void coman::gazebo_init()
         speed.size(_robot_number_of_joints);
         acc.size(_robot_number_of_joints);
         amp.size(_robot_number_of_joints);
+        torque.size(_robot_number_of_joints);
         ref_speed.size(_robot_number_of_joints);
         ref_pos.size(_robot_number_of_joints);
         ref_acc.size(_robot_number_of_joints);

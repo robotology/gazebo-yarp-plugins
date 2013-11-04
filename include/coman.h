@@ -84,9 +84,12 @@ public:
         }
         pos_lock.lock();
         
+        // Sensing position & torque
         for(int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ ) {
             /** \todo consider multi-dof joint ? */
             pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
+
+            //this->_robot->GetJoint(joint_names[jnt_cnt])->
         }
         
         pos_lock.unlock();
@@ -140,11 +143,11 @@ public:
 	    
 	    if(control_mode[j]==VOCAB_CM_TORQUE)
 	    {
-	        if (_clock%100==0)
-		{
-		    sendTorqueToGazebo(j,ref_torque[j]);
-		    std::cout<<" torque "<<ref_torque[j]<<" to joint "<<j<<std::endl;
-		}
+            if (_clock%_T_controller==0)
+            {
+                sendTorqueToGazebo(j,ref_torque[j]);
+                //std::cout<<" torque "<<ref_torque[j]<<" to joint "<<j<<std::endl;
+            }
 	    }
 	}  
     }
@@ -263,9 +266,7 @@ public:
     virtual bool setRefTorques(const double *t) //NOT TESTED
     {
         for (int i=0; i<_robot_number_of_joints; ++i)
-	{
-            ref_torque[i] = t[i];
-        }
+            setRefTorque(i, t[i]);
         return true;
     }
 
@@ -598,14 +599,41 @@ public:
    
     /**/
     
+    virtual bool getRefTorque(int j, double *t)
+    {
+        if (j<_robot_number_of_joints) {
+            t[j] = ref_torque[j];
+        }
+        return true;
+    } //NOT TESTED
+
        
-    virtual bool getRefTorques(double *t){return false;} //NOT IMPLEMENTED
-    virtual bool getRefTorque(int j, double *t){return false;} //NOT IMPLEMENTED
+    virtual bool getRefTorques(double *t)
+    {
+        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+            getRefTorque(i, t);
+        return true;
+    } //NOT TESTED
+
     virtual bool getBemfParam(int j, double *bemf){return false;} //NOT IMPLEMENTED
     virtual bool setBemfParam(int j, double bemf){return false;} //NOT IMPLEMENTED
     virtual bool setTorquePid(int j, const Pid &pid){return false;} //NOT IMPLEMENTED
-    virtual bool getTorque(int j, double *t){return false;} //NOT IMPLEMENTED
-    virtual bool getTorques(double *t){return false;} //NOT IMPLEMENTED
+
+    virtual bool getTorque(int j, double *t)
+    {
+        if (j<_robot_number_of_joints) {
+            t[j] = torque[j];
+        }
+        return true;
+    } //NOT TESTED
+
+    virtual bool getTorques(double *t)
+    {
+        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+            getTorque(i, t);
+        return true;
+    } //NOT TESTED
+
     virtual bool getTorqueRange(int j, double *min, double *max){return false;} //NOT IMPLEMENTED
     virtual bool getTorqueRanges(double *min, double *max){return false;} //NOT IMPLEMENTED
     virtual bool setTorquePids(const Pid *pids){return false;} //NOT IMPLEMENTED
@@ -646,7 +674,7 @@ private:
      */
     yarp::sig::Vector zero_pos;
 
-    yarp::sig::Vector vel, speed, acc, amp;
+    yarp::sig::Vector vel, speed, acc, amp, torque;
     std::mutex pos_lock;
     yarp::sig::Vector ref_speed, ref_pos, ref_acc, ref_torque;
     yarp::sig::Vector max_pos, min_pos;
@@ -834,7 +862,7 @@ private:
     
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, int j, const double ref) //NOT TESTED
     {
-	j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+        j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
         j_cmd.set_force(ref);
     }
 

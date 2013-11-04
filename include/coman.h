@@ -48,7 +48,8 @@ class yarp::dev::coman : public DeviceDriver,
     public IControlCalibration2,
     public IControlLimits,
     public DeviceResponder,
-    public IControlMode
+    public IControlMode,
+    public ITorqueControl
     //,private yarp::os::RateThread
 {
 public:
@@ -90,37 +91,64 @@ public:
         
         pos_lock.unlock();
         // send positions to the actuators
+
         _clock++;
         for(int j=0; j<_robot_number_of_joints; ++j)
-	{
-	    if (control_mode[j]==VOCAB_CM_POSITION)
+        {
+	    /*if (control_mode[j]==VOCAB_CM_POSITION)
 	    {
-	      sendPositionToGazebo(j,ref_pos[j]);
-	    }
-            if (control_mode[j]==VOCAB_CM_VELOCITY) //TODO check if VOCAB_CM_POSITION or VOCAB_CM_VELOCITY
+		sendPositionToGazebo(j,ref_pos[j]);
+	    }*/
+	    
+	    if (control_mode[j]==VOCAB_CM_POSITION) //set pos joint value, set vel joint value
+	    {
+		
+            if (_clock%_T_controller==0)
             {
-                if (_clock%100==0)
+                double temp=ref_pos[j];
+                if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
                 {
-		  double temp=pos[j];
-                    if ( (pos[j]-ref_pos[j]) < -ROBOT_POSITION_TOLERANCE)
-                    {
-                        temp=pos[j]+ref_speed[j]*robot_refresh_period/10.0;
-                        motion_done[j]=false;
-                    }
-                    else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
-                    {
-                        temp=pos[j]-ref_speed[j]*robot_refresh_period/10.0;
-                        motion_done[j]=false;
-                    }
-                    else
-                        motion_done[j]=true;
-                std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
-                sendPositionToGazebo(j,temp);
-      
+                    if(ref_speed[j]!=0) temp=pos[j]+(ref_speed[j]/1000.0)*robot_refresh_period*(double)_T_controller;
+                    motion_done[j]=false;
                 }
-	    }  
+                else if ( (pos[j]-ref_pos[j]) >ROBOT_POSITION_TOLERANCE)
+                {
+                    if(ref_speed[j]!=0) temp=pos[j]-(ref_speed[j]/1000.0)*robot_refresh_period*(double)_T_controller;
+                    motion_done[j]=false;
+                }
+                else
+                    motion_done[j]=true;
+
+			
+		//std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
+            sendPositionToGazebo(j,temp);
+            }
         }
+
+	
+	    
+	    if(control_mode[j]==VOCAB_CM_VELOCITY) //set vmo joint value
+	    {
+		if (_clock%100==0)
+		{
+			//sendVelocityToGazebo(j,vel[j]);
+		        double temp=pos[j]+vel[j]*robot_refresh_period/10.0;
+			//std::cout<<" velocity "<<vel[j]<<'('<<toRad(vel[j])<<')'<<" to joint "<<j<<std::endl;
+			sendPositionToGazebo(j,temp);
+		}
+	    }
+	    
+	    if(control_mode[j]==VOCAB_CM_TORQUE)
+	    {
+	        if (_clock%100==0)
+		{
+		    sendTorqueToGazebo(j,ref_torque[j]);
+		    std::cout<<" torque "<<ref_torque[j]<<" to joint "<<j<<std::endl;
+		}
+	    }
+	}  
     }
+    
 
     // thread stuff
     /*virtual bool threadInit();
@@ -175,12 +203,6 @@ public:
         return true;
     }
 
-    virtual bool setPositionMode() //NOT IMPLEMENTED
-    {
-        return true;
-    }
-
-
 
     virtual bool positionMove(const double *refs) //WORKS
     {
@@ -227,7 +249,27 @@ public:
         return true;
     }
 
+    
+    virtual bool setRefTorque(int j, double t) //NOT TESTED
+    {
+	if (j<_robot_number_of_joints)
+	{
+            ref_torque[j] = t;
+	    std::cout<<std::endl<<"WE "<<t<<std::endl<<std::endl;
+        }
+        return true;
+    }
+    
+    virtual bool setRefTorques(const double *t) //NOT TESTED
+    {
+        for (int i=0; i<_robot_number_of_joints; ++i)
+	{
+            ref_torque[i] = t[i];
+        }
+        return true;
+    }
 
+    /// @arg sp [deg/sec]
     virtual bool setRefSpeed(int j, double sp) //WORKS
     {
         if (j<_robot_number_of_joints) {
@@ -236,6 +278,7 @@ public:
         return true;
     }
 
+    /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds) //NOT TESTED
     {
         for (int i=0; i<_robot_number_of_joints; ++i) {
@@ -386,15 +429,17 @@ public:
         return true;
     }
 
-    virtual bool velocityMove(int j, double sp) //NOT IMPLEMENTED
+    virtual bool velocityMove(int j, double sp) //NOT TESTED
     {
-        if (j<_robot_number_of_joints) {
+        if (j<_robot_number_of_joints) 
+	{
             vel[j] = sp;
+	    
         }
         return true;
     }
 
-    virtual bool velocityMove(const double *sp) //NOT IMPLEMENTED
+    virtual bool velocityMove(const double *sp) //NOT TESTED
     {
         for (int i=0; i<_robot_number_of_joints; ++i) {
             vel[i] = sp[i];
@@ -485,12 +530,22 @@ public:
     virtual bool setPositionMode(int j) //WORKS
     {
         control_mode[j]=VOCAB_CM_POSITION;
-        std::cout<<"control mode = position"<<j<<std::endl;
+        std::cout<<"control mode = position "<<j<<std::endl;
     }
+    
+    virtual bool setPositionMode() //NOT TESTED
+    {
+        for(int j=0; j<_robot_number_of_joints; j++)
+        {
+            control_mode[j]=VOCAB_CM_POSITION;
+            std::cout<<"control mode = position for all joints"<<std::endl;
+        }
+    }
+    
     virtual bool setVelocityMode(int j) //WORKS
     {
         control_mode[j]=VOCAB_CM_VELOCITY;
-        std::cout<<"control mode = speed"<<j<<std::endl;
+        std::cout<<"control mode = speed "<<j<<std::endl;
     }
 
     virtual bool setVelocityMode() //NOT TESTED
@@ -502,9 +557,19 @@ public:
         }
     }
 
-    virtual bool setTorqueMode(int j) //NOT IMPLEMENTED
+    virtual bool setTorqueMode(int j) //NOT TESTED
     {
-        return false;
+        control_mode[j]=VOCAB_CM_TORQUE;
+        std::cout<<"control mode = torque "<<j<<std::endl;
+    }
+ 
+    virtual bool setTorqueMode() //NOT TESTED
+    {
+        for(int j=0; j<_robot_number_of_joints; j++)
+        {
+            control_mode[j]=VOCAB_CM_TORQUE;
+            std::cout<<"control mode = torque for all joints"<<std::endl;
+        }
     }
     virtual bool setImpedancePositionMode(int j)//NOT IMPLEMENTED
     {
@@ -532,9 +597,32 @@ public:
     }
    
     /**/
-
-
-
+    
+       
+    virtual bool getRefTorques(double *t){return false;} //NOT IMPLEMENTED
+    virtual bool getRefTorque(int j, double *t){return false;} //NOT IMPLEMENTED
+    virtual bool getBemfParam(int j, double *bemf){return false;} //NOT IMPLEMENTED
+    virtual bool setBemfParam(int j, double bemf){return false;} //NOT IMPLEMENTED
+    virtual bool setTorquePid(int j, const Pid &pid){return false;} //NOT IMPLEMENTED
+    virtual bool getTorque(int j, double *t){return false;} //NOT IMPLEMENTED
+    virtual bool getTorques(double *t){return false;} //NOT IMPLEMENTED
+    virtual bool getTorqueRange(int j, double *min, double *max){return false;} //NOT IMPLEMENTED
+    virtual bool getTorqueRanges(double *min, double *max){return false;} //NOT IMPLEMENTED
+    virtual bool setTorquePids(const Pid *pids){return false;} //NOT IMPLEMENTED
+    virtual bool setTorqueErrorLimit(int j, double limit){return false;} //NOT IMPLEMENTED
+    virtual bool setTorqueErrorLimits(const double *limits){return false;} //NOT IMPLEMENTED
+    virtual bool getTorqueError(int j, double *err){return false;} //NOT IMPLEMENTED
+    virtual bool getTorqueErrors(double *errs){return false;} //NOT IMPLEMENTED
+    virtual bool getTorquePidOutput(int j, double *out){return false;} //NOT IMPLEMENTED
+    virtual bool getTorquePidOutputs(double *outs){return false;} //NOT IMPLEMENTED
+    virtual bool getTorquePid(int j, Pid *pid){return false;} //NOT IMPLEMENTED
+    virtual bool getTorquePids(Pid *pids){return false;} //NOT IMPLEMENTED
+    virtual bool getTorqueErrorLimit(int j, double *limit){return false;} //NOT IMPLEMENTED
+    virtual bool getTorqueErrorLimits(double *limits){return false;} //NOT IMPLEMENTED
+    virtual bool resetTorquePid(int j){return false;} //NOT IMPLEMENTED
+    virtual bool disableTorquePid(int j){return false;} //NOT IMPLEMENTED
+    virtual bool enableTorquePid(int j){return false;} //NOT IMPLEMENTED
+    virtual bool setTorqueOffset(int j, double v){return false;} //NOT IMPLEMENTED
 
 private:
     unsigned int robot_refresh_period; //ms
@@ -560,7 +648,7 @@ private:
 
     yarp::sig::Vector vel, speed, acc, amp;
     std::mutex pos_lock;
-    yarp::sig::Vector ref_speed, ref_pos, ref_acc;
+    yarp::sig::Vector ref_speed, ref_pos, ref_acc, ref_torque;
     yarp::sig::Vector max_pos, min_pos;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
@@ -576,6 +664,7 @@ private:
     bool command_changed;
     bool started;
     int _clock;
+    int _T_controller;
 
     /**
      * Private Gazebo stuff
@@ -699,6 +788,56 @@ private:
         j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
         j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
     }
+    
+    bool sendVelocitiesToGazebo(yarp::sig::Vector refs) //NOT TESTED
+    {
+        for (int j=0; j<_robot_number_of_joints; j++)
+        {
+            sendVelocityToGazebo(j,refs[j]);
+        }
+    }
+    
+    bool sendVelocityToGazebo(int j,double ref) //NOT TESTED
+    {
+        gazebo::msgs::JointCmd j_cmd;
+        prepareJointVelocityMsg(j_cmd,j,ref);
+        jointCmdPub->WaitForConnection();
+        jointCmdPub->Publish(j_cmd);
+    }
+    
+    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, int j, const double ref) //NOT TESTED
+    {
+	j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+	j_cmd.mutable_velocity()->set_target(toRad(ref));
+        j_cmd.mutable_velocity()->set_p_gain(500);
+        j_cmd.mutable_velocity()->set_i_gain(2);
+        j_cmd.mutable_velocity()->set_d_gain(0.1);
+    }
+    
+    
+    
+     bool sendTorquesToGazebo(yarp::sig::Vector refs) //NOT TESTED
+    {
+        for (int j=0; j<_robot_number_of_joints; j++)
+        {
+            sendTorqueToGazebo(j,refs[j]);
+        }
+    }
+    
+    bool sendTorqueToGazebo(int j,double ref) //NOT TESTED
+    {
+        gazebo::msgs::JointCmd j_cmd;
+        prepareJointTorqueMsg(j_cmd,j,ref);
+        jointCmdPub->WaitForConnection();
+        jointCmdPub->Publish(j_cmd);
+    }
+    
+    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, int j, const double ref) //NOT TESTED
+    {
+	j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+        j_cmd.set_force(ref);
+    }
+
 };
 
 #endif //COMAN_H

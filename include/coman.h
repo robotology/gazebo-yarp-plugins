@@ -89,7 +89,16 @@ public:
             /** \todo consider multi-dof joint ? */
             pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
 
-            //this->_robot->GetJoint(joint_names[jnt_cnt])->
+            gazebo::physics::JointWrench jnt_wrench = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForceTorque(0);
+            gazebo::math::Vector3 jnt_torque1 = jnt_wrench.body1Torque;
+            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque1: [ "<<jnt_torque1.x<<" "<<
+                       jnt_torque1.y<<" "<<jnt_torque1.z<<" ]"<<std::endl;
+            gazebo::math::Vector3 jnt_torque2 = jnt_wrench.body2Torque;
+            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque2: [ "<<jnt_torque2.x<<" "<<
+                       jnt_torque2.y<<" "<<jnt_torque2.z<<" ]"<<std::endl;
+//            gazebo::math::Vector3 jnt_torque = jnt_torque1 + jnt_torque2;
+//            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque: [ "<<jnt_torque.x<<" "<<
+//                                   jnt_torque.y<<" "<<jnt_torque.z<<" ]"<<std::endl;
         }
         
         pos_lock.unlock();

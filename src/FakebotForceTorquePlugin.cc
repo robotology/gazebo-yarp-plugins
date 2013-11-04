@@ -146,6 +146,7 @@ void FakebotForceTorquePlugin::Load(sensors::SensorPtr _parent,
 void FakebotForceTorquePlugin::OnUpdate(msgs::WrenchStamped _msg)
 {
     if(this->yarpFTsensor!=NULL) {
+        this->yarpFTsensor->mutex.wait();
         yarp::sig::Vector wrench; wrench.size(6);
         wrench[0] = _msg.wrench().force().x();
         wrench[1] = _msg.wrench().force().y();
@@ -154,6 +155,7 @@ void FakebotForceTorquePlugin::OnUpdate(msgs::WrenchStamped _msg)
         wrench[4] = _msg.wrench().torque().y();
         wrench[5] = _msg.wrench().torque().z();
         this->yarpFTsensor->data = wrench;
+        this->yarpFTsensor->mutex.post();
     }
 }
 }

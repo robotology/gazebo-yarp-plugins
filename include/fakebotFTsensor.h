@@ -32,6 +32,10 @@ namespace yarp{
     }
 }
 
+namespace gazebo {
+    class FakebotForceTorquePlugin;
+}
+
 typedef int AnalogDataFormat;
 /*! class yarp::dev::fakebotFTsensor
  *
@@ -39,6 +43,8 @@ typedef int AnalogDataFormat;
 class yarp::dev::fakebotFTsensor:     public yarp::dev::DeviceDriver,
                                       public yarp::dev::IAnalogSensor
 {
+    friend class gazebo::FakebotForceTorquePlugin;
+
 private:
 
 ////////////////////
@@ -50,6 +56,7 @@ private:
 
     double timeStamp;
     yarp::os::Semaphore mutex;
+    yarp::sig::Vector data;
 
     yarp::os::Bottle initMsg;
     yarp::os::Bottle speedMsg;
@@ -76,8 +83,6 @@ public:
     virtual int calibrateSensor(const yarp::sig::Vector& value);
 
     virtual int calibrateChannel(int ch);
-
-    yarp::sig::Vector data;
 
     void setDeviceId(std::string id)
     {

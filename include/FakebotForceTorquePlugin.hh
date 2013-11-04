@@ -25,9 +25,10 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
-#include <fakebotFTsensor.h>
 #include <yarp/os/Network.h>
 #include <analogServer.h>
+
+#include <fakebotFTsensor.h>
 
 
 namespace gazebo

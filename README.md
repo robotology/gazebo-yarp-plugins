@@ -142,6 +142,25 @@ e.g.
 -> set vmo 20 10
 ```
 
+Torque control
+------------------
+Start by changing  the robot control style
+```
+-> icmd set cmt joint
+```
+e.g.
+```
+-> icmd set cmt 0
+```
+set the desired torque (Nm)
+
+```
+-> torq set ref joint torque
+```
+e.g.
+```
+-> torq set ref 0 -0.7
+```
 
 
 This is all you can do with coman inside gazebo at the moment.

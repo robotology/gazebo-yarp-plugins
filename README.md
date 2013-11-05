@@ -183,12 +183,17 @@ You can then execute the robotMotorGui:
 robotMotorGui --name coman --parts "(torso left_arm right_arm left_leg right_leg)"
 ```
 
-Plot IMU data:
+Plot IMU & FT data:
 --------------
 Inside tools folder run
 ```
 yarpscope --xml imu_yarp_scope.xml
 ```
+or
+```
+yarpscope --xml FT_yarp_scope.xml
+```
+
 
 Troubleshooting
 =============

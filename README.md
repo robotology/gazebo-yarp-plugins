@@ -82,6 +82,9 @@ You should have something like this:
 ```
 
 Testing and moving coman joints
+==================
+
+Position control
 ------------------
 
 Run in another shell: 
@@ -95,6 +98,10 @@ To get help type:
 ```
 help
 ```
+To enable the position control (default)
+```
+-> icmd set cmp joint
+```
 To set the jth joint position to angle type:
 ```
 set pos j angle
@@ -105,10 +112,7 @@ get encs
 ```
 
 You can also set the reference speed:
-Start by changing  the robot control style
-```
--> icmd set cmv 20
-```
+
 Set the reference speed (should be degrees/second, need to check)
 ```
 -> set vel 20 10
@@ -117,6 +121,28 @@ Set the new position
 ```
 -> set pos 20 -40
 ```
+
+Velocity control
+------------------
+Start by changing  the robot control style
+```
+-> icmd set cmv joint
+```
+e.g.
+```
+-> icmd set cmv 20
+```
+set the desired velocity (degree/secods)
+
+```
+-> set vmo joint velocity
+```
+e.g.
+```
+-> set vmo 20 10
+```
+
+
 
 This is all you can do with coman inside gazebo at the moment.
 

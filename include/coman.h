@@ -89,13 +89,16 @@ public:
             /** \todo consider multi-dof joint ? */
             pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
 
-            gazebo::physics::JointWrench jnt_wrench = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForceTorque(0);
-            gazebo::math::Vector3 jnt_torque1 = jnt_wrench.body1Torque;
-            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque1: [ "<<jnt_torque1.x<<" "<<
-                       jnt_torque1.y<<" "<<jnt_torque1.z<<" ]"<<std::endl;
-            gazebo::math::Vector3 jnt_torque2 = jnt_wrench.body2Torque;
-            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque2: [ "<<jnt_torque2.x<<" "<<
-                       jnt_torque2.y<<" "<<jnt_torque2.z<<" ]"<<std::endl;
+//             gazebo::physics::JointWrench jnt_wrench = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForceTorque(0);
+	    
+//             gazebo::math::Vector3 jnt_torque1 = jnt_wrench.body1Torque;
+//             std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque1: [ "<<jnt_torque1.x<<" "<<
+//                        jnt_torque1.y<<" "<<jnt_torque1.z<<" ]"<<std::endl;
+	    
+//             gazebo::math::Vector3 jnt_torque2 = jnt_wrench.body2Torque;
+//             std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque2: [ "<<jnt_torque2.x<<" "<<
+//                        jnt_torque2.y<<" "<<jnt_torque2.z<<" ]"<<std::endl;
+		       
 //            gazebo::math::Vector3 jnt_torque = jnt_torque1 + jnt_torque2;
 //            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque: [ "<<jnt_torque.x<<" "<<
 //                                   jnt_torque.y<<" "<<jnt_torque.z<<" ]"<<std::endl;
@@ -143,10 +146,8 @@ public:
 	    {
 		if (_clock%100==0)
 		{
-			//sendVelocityToGazebo(j,vel[j]);
-		        double temp=pos[j]+vel[j]*robot_refresh_period/10.0;
-			//std::cout<<" velocity "<<vel[j]<<'('<<toRad(vel[j])<<')'<<" to joint "<<j<<std::endl;
-			sendPositionToGazebo(j,temp);
+			sendVelocityToGazebo(j,vel[j]);
+		  	//std::cout<<" velocity "<<vel[j]<<'('<<toRad(vel[j])<<')'<<" to joint "<<j<<std::endl;
 		}
 	    }
 	    
@@ -835,23 +836,13 @@ private:
     }
     
     bool sendVelocityToGazebo(int j,double ref) //NOT TESTED
-    {
-        gazebo::msgs::JointCmd j_cmd;
-        prepareJointVelocityMsg(j_cmd,j,ref);
-        jointCmdPub->WaitForConnection();
-        jointCmdPub->Publish(j_cmd);
+    {      
+           gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+ 	   joint->SetMaxForce(0, 200);
+// 	   std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
+	   joint->SetVelocity(0,toRad(ref));
     }
-    
-    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, int j, const double ref) //NOT TESTED
-    {
-	j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-	j_cmd.mutable_velocity()->set_target(toRad(ref));
-        j_cmd.mutable_velocity()->set_p_gain(500);
-        j_cmd.mutable_velocity()->set_i_gain(2);
-        j_cmd.mutable_velocity()->set_d_gain(0.1);
-    }
-    
-    
+   
     
      bool sendTorquesToGazebo(yarp::sig::Vector refs) //NOT TESTED
     {

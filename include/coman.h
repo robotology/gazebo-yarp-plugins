@@ -76,44 +76,50 @@ public:
         {
             started=true;
             double temp=0;//[_robot_number_of_joints];
-            for (int j=0; j<_robot_number_of_joints; j++)
-            {   //	  temp[j]=0;
-//	positionMove(temp);
+            for(unsigned int j=0; j<_robot_number_of_joints; j++)
                 sendPositionToGazebo(j,temp);
-            }
         }
+
         pos_lock.lock();
         
         // Sensing position & torque
-        for(int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ ) {
+        for(int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ )
+        {
             /** \todo consider multi-dof joint ? */
             pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
 
-//             gazebo::physics::JointWrench jnt_wrench = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForceTorque(0);
-	    
-//             gazebo::math::Vector3 jnt_torque1 = jnt_wrench.body1Torque;
-//             std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque1: [ "<<jnt_torque1.x<<" "<<
-//                        jnt_torque1.y<<" "<<jnt_torque1.z<<" ]"<<std::endl;
-	    
-//             gazebo::math::Vector3 jnt_torque2 = jnt_wrench.body2Torque;
-//             std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque2: [ "<<jnt_torque2.x<<" "<<
-//                        jnt_torque2.y<<" "<<jnt_torque2.z<<" ]"<<std::endl;
-		       
-//            gazebo::math::Vector3 jnt_torque = jnt_torque1 + jnt_torque2;
-//            std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque: [ "<<jnt_torque.x<<" "<<
-//                                   jnt_torque.y<<" "<<jnt_torque.z<<" ]"<<std::endl;
+//            if(_clock%(2*1000) == 0){
+//                //if(joint_names[jnt_cnt] == "COMAN::RShSag" )//||
+//                   //joint_names[jnt_cnt] == "COMAN::RShLat" ||
+//                   //joint_names[jnt_cnt] == "COMAN::RShYaw" ||
+//                   //joint_names[jnt_cnt] == "COMAN::RElbj")
+//                {
+//                gazebo::physics::JointWrench jnt_wrench = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForceTorque(0);
+//                gazebo::math::Vector3 jnt_torque1 = jnt_wrench.body1Torque;
+//                std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque1: [ "<<jnt_torque1.x<<" "<<
+//                           jnt_torque1.y<<" "<<jnt_torque1.z<<" ]"<<std::endl;
+//                gazebo::math::Vector3 jnt_torque2 = jnt_wrench.body2Torque;
+//                std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque2: [ "<<jnt_torque2.x<<" "<<
+//                           jnt_torque2.y<<" "<<jnt_torque2.z<<" ]"<<std::endl;
+//                gazebo::math::Vector3 jnt_local_axis = this->_robot->GetJoint(joint_names[jnt_cnt])->GetLocalAxis(0);
+//                std::cout<<"Joint "<<joint_names[jnt_cnt]<<" jnt_local_axis: [ "<<jnt_local_axis.x<<" "<<
+//                            jnt_local_axis.y<<" "<<jnt_local_axis.z<<" ]"<<std::endl;
+//                std::cout<<std::endl;
+//                std::cout<<std::endl;
+//                }
+//}
         }
         
         pos_lock.unlock();
-        // send positions to the actuators
 
         _clock++;
-        for(int j=0; j<_robot_number_of_joints; ++j)
+
+        for(unsigned int j=0; j<_robot_number_of_joints; ++j)
         {
-	    /*if (control_mode[j]==VOCAB_CM_POSITION)
-	    {
-		sendPositionToGazebo(j,ref_pos[j]);
-	    }*/
+            /*if (control_mode[j]==VOCAB_CM_POSITION)
+            {
+                sendPositionToGazebo(j,ref_pos[j]);
+            }*/
 	    
 	    if (control_mode[j]==VOCAB_CM_POSITION) //set pos joint value, set vel joint value
 	    {
@@ -133,25 +139,20 @@ public:
                 }
                 else
                     motion_done[j]=true;
-
 			
-		//std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
-            sendPositionToGazebo(j,temp);
+//            std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
+              sendPositionToGazebo(j,temp);
             }
         }
-
-	
-	    
-	    if(control_mode[j]==VOCAB_CM_VELOCITY) //set vmo joint value
+        else if(control_mode[j]==VOCAB_CM_VELOCITY) //set vmo joint value
 	    {
-		if (_clock%100==0)
-		{
-			sendVelocityToGazebo(j,vel[j]);
-		  	//std::cout<<" velocity "<<vel[j]<<'('<<toRad(vel[j])<<')'<<" to joint "<<j<<std::endl;
-		}
+            if (_clock%_T_controller==0)
+            {
+                sendVelocityToGazebo(j,vel[j]);
+                //std::cout<<" velocity "<<vel[j]<<'('<<toRad(vel[j])<<')'<<" to joint "<<j<<std::endl;
+            }
 	    }
-	    
-	    if(control_mode[j]==VOCAB_CM_TORQUE)
+        else if(control_mode[j]==VOCAB_CM_TORQUE)
 	    {
             if (_clock%_T_controller==0)
             {
@@ -162,12 +163,6 @@ public:
 	}  
     }
     
-
-    // thread stuff
-    /*virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void run();
-    */
     virtual bool open(yarp::os::Searchable& config);
 
     /**
@@ -265,17 +260,17 @@ public:
     
     virtual bool setRefTorque(int j, double t) //NOT TESTED
     {
-	if (j<_robot_number_of_joints)
-	{
+        std::cout<<std::endl<<"Joint"<<j<<" trq: "<<t<<std::endl<<std::endl;
+        if (j<_robot_number_of_joints)
+        {
             ref_torque[j] = t;
-	    std::cout<<std::endl<<"WE "<<t<<std::endl<<std::endl;
         }
         return true;
     }
     
     virtual bool setRefTorques(const double *t) //NOT TESTED
     {
-        for (int i=0; i<_robot_number_of_joints; ++i)
+        for (unsigned int i=0; i<_robot_number_of_joints; ++i)
             setRefTorque(i, t[i]);
         return true;
     }
@@ -818,7 +813,7 @@ private:
 
     }
     
-    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, int joint_index, const double ref)  //WORKS
+    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
     {
         j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
         j_cmd.mutable_position()->set_target(toRad(ref));
@@ -827,7 +822,7 @@ private:
         j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
     }
     
-    bool sendVelocitiesToGazebo(yarp::sig::Vector refs) //NOT TESTED
+    bool sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
     {
         for (int j=0; j<_robot_number_of_joints; j++)
         {
@@ -841,10 +836,26 @@ private:
  	   joint->SetMaxForce(0, 200);
 // 	   std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
 	   joint->SetVelocity(0,toRad(ref));
+
+//       gazebo::msgs::JointCmd j_cmd;
+//       prepareJointVelocityMsg(j_cmd,j,ref);
+//       jointCmdPub->WaitForConnection();
+//       jointCmdPub->Publish(j_cmd);
     }
-   
     
-     bool sendTorquesToGazebo(yarp::sig::Vector refs) //NOT TESTED
+    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
+    {
+        j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+        j_cmd.mutable_velocity()->set_target(toRad(ref));
+        j_cmd.mutable_position()->set_p_gain(0.0);
+        j_cmd.mutable_position()->set_i_gain(0.0);
+        j_cmd.mutable_position()->set_d_gain(0.0);
+        j_cmd.mutable_velocity()->set_p_gain(500);
+        j_cmd.mutable_velocity()->set_i_gain(2);
+        j_cmd.mutable_velocity()->set_d_gain(0.1);
+    }
+    
+     bool sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
     {
         for (int j=0; j<_robot_number_of_joints; j++)
         {
@@ -852,7 +863,7 @@ private:
         }
     }
     
-    bool sendTorqueToGazebo(int j,double ref) //NOT TESTED
+    bool sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
     {
         gazebo::msgs::JointCmd j_cmd;
         prepareJointTorqueMsg(j_cmd,j,ref);
@@ -860,9 +871,15 @@ private:
         jointCmdPub->Publish(j_cmd);
     }
     
-    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, int j, const double ref) //NOT TESTED
+    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
     {
         j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
+        j_cmd.mutable_position()->set_p_gain(0.0);
+        j_cmd.mutable_position()->set_i_gain(0.0);
+        j_cmd.mutable_position()->set_d_gain(0.0);
+        j_cmd.mutable_velocity()->set_p_gain(0.0);
+        j_cmd.mutable_velocity()->set_i_gain(0.0);
+        j_cmd.mutable_velocity()->set_d_gain(0.0);
         j_cmd.set_force(ref);
     }
 

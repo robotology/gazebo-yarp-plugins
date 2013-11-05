@@ -832,10 +832,10 @@ private:
     
     bool sendVelocityToGazebo(int j,double ref) //NOT TESTED
     {      
-           gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
- 	   joint->SetMaxForce(0, 200);
-// 	   std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
-	   joint->SetVelocity(0,toRad(ref));
+        gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+        joint->SetMaxForce(0, joint->GetEffortLimit(0)*1.1); //<-- MAGIC NUMBER!!!!
+//      std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
+        joint->SetVelocity(0,toRad(ref));
 
 //       gazebo::msgs::JointCmd j_cmd;
 //       prepareJointVelocityMsg(j_cmd,j,ref);
@@ -846,13 +846,13 @@ private:
     void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
     {
         j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-        j_cmd.mutable_velocity()->set_target(toRad(ref));
         j_cmd.mutable_position()->set_p_gain(0.0);
         j_cmd.mutable_position()->set_i_gain(0.0);
         j_cmd.mutable_position()->set_d_gain(0.0);
-        j_cmd.mutable_velocity()->set_p_gain(500);
-        j_cmd.mutable_velocity()->set_i_gain(2);
-        j_cmd.mutable_velocity()->set_d_gain(0.1);
+        j_cmd.mutable_velocity()->set_p_gain(5000);
+        j_cmd.mutable_velocity()->set_i_gain(0.0);
+        j_cmd.mutable_velocity()->set_d_gain(10);
+        j_cmd.mutable_velocity()->set_target(toRad(ref));
     }
     
      bool sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED

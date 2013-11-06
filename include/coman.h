@@ -87,27 +87,7 @@ public:
         {
             /** \todo consider multi-dof joint ? */
             pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
-
-//            if(_clock%(2*1000) == 0){
-//                //if(joint_names[jnt_cnt] == "COMAN::RShSag" )//||
-//                   //joint_names[jnt_cnt] == "COMAN::RShLat" ||
-//                   //joint_names[jnt_cnt] == "COMAN::RShYaw" ||
-//                   //joint_names[jnt_cnt] == "COMAN::RElbj")
-//                {
-//                gazebo::physics::JointWrench jnt_wrench = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForceTorque(0);
-//                gazebo::math::Vector3 jnt_torque1 = jnt_wrench.body1Torque;
-//                std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque1: [ "<<jnt_torque1.x<<" "<<
-//                           jnt_torque1.y<<" "<<jnt_torque1.z<<" ]"<<std::endl;
-//                gazebo::math::Vector3 jnt_torque2 = jnt_wrench.body2Torque;
-//                std::cout<<"Joint "<<joint_names[jnt_cnt]<<" torque2: [ "<<jnt_torque2.x<<" "<<
-//                           jnt_torque2.y<<" "<<jnt_torque2.z<<" ]"<<std::endl;
-//                gazebo::math::Vector3 jnt_local_axis = this->_robot->GetJoint(joint_names[jnt_cnt])->GetLocalAxis(0);
-//                std::cout<<"Joint "<<joint_names[jnt_cnt]<<" jnt_local_axis: [ "<<jnt_local_axis.x<<" "<<
-//                            jnt_local_axis.y<<" "<<jnt_local_axis.z<<" ]"<<std::endl;
-//                std::cout<<std::endl;
-//                std::cout<<std::endl;
-//                }
-//}
+            torque[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForce(0);
         }
         
         pos_lock.unlock();

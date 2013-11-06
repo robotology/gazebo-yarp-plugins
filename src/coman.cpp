@@ -87,13 +87,13 @@ void coman::gazebo_init()
         ref_speed=0;
         ref_pos=0;
         ref_acc=0;
-	ref_torque=0;
+        ref_torque=0;
         acc = 0;
         amp = 1; // initially on - ok for simulator
         started=false;
         control_mode=new int[_robot_number_of_joints];
         motion_done=new bool[_robot_number_of_joints];
-	_clock=0;
+        _clock=0;
         for(int j=0; j<_robot_number_of_joints; ++j)
             control_mode[j]=VOCAB_CM_POSITION;
 

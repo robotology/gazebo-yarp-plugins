@@ -31,13 +31,12 @@
 #define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
 
-
 static const std::string pid_config_abs_path = "../config/pid.ini";
 
 namespace yarp {
-namespace dev {
-class coman;
-}
+    namespace dev {
+        class coman;
+    }
 }
 
 class yarp::dev::coman : public DeviceDriver,
@@ -50,24 +49,18 @@ class yarp::dev::coman : public DeviceDriver,
     public DeviceResponder,
     public IControlMode,
     public ITorqueControl
-    //,private yarp::os::RateThread
 {
 public:
-    coman()//:RateThread(0)
-    {
-        //almost everything is done in the open() method
-    }
+    coman(){}
 
-    ~coman()
-    {
-    }
+    ~coman(){}
 
     /**
      * Gazebo stuff
      * 
      */
     
-     void gazebo_init();
+    void gazebo_init();
      
     
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
@@ -87,6 +80,7 @@ public:
         {
             /** \todo consider multi-dof joint ? */
             pos[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetAngle(0).Degree();
+            speed[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetVelocity(0);
             torque[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForce(0);
         }
         
@@ -383,18 +377,18 @@ public:
     }
 
 
-    virtual bool getEncoderSpeed(int j, double *sp) //NOT IMPLEMENTED
+    virtual bool getEncoderSpeed(int j, double *sp) //NOT TESTED
     {
-        if (j<_robot_number_of_joints) {
-            (*sp) = 0;
+        if ( j < _robot_number_of_joints) {
+            (*sp) = speed[j];
         }
         return true;
     }
 
-    virtual bool getEncoderSpeeds(double *spds) //NOT IMPLEMENTED
+    virtual bool getEncoderSpeeds(double *spds) //NOT TESTED
     {
-        for (int i=0; i<_robot_number_of_joints; ++i) {
-            spds[i] = 0;
+        for (unsigned int i = 0; i < _robot_number_of_joints; ++i) {
+            getEncoderSpeed(i, spds);
         }
         return true;
     }

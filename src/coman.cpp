@@ -119,30 +119,38 @@ bool coman::threadInit()
     yarp::os::Bottle& name = plugin_parameters.findGroup(gazebo_group_name.c_str()).findGroup(property_name.str().c_str());
 
 
-    std::stringstream port_name;
-    port_name<<"/wholeBodyDynamics"<<name.get(1).asString().c_str()<<"/Torques:o";
-    _joint_torq_port.open(port_name.str().c_str());
+    std::stringstream port_name_torque;
+    port_name_torque<<"/wholeBodyDynamics"<<name.get(1).asString().c_str()<<"/Torques:o";
+    _joint_torq_port.open(port_name_torque.str().c_str());
+    std::stringstream port_name_speed;
+    port_name_speed<<"/wholeBodyDynamics"<<name.get(1).asString().c_str()<<"/Speeds:o";
+    _joint_speed_port.open(port_name_speed.str().c_str());
     return true;
 }
 
 void coman::afterStart(bool s)
 {
     if(s)
-        printf("TorquePublisher started successfully\n");
+        printf("TorqueAndSpeedPublisher started successfully\n");
     else
-        printf("TorquePublisher did not start\n");
+        printf("TorqueAndSpeedPublisher did not start\n");
 }
 
 void coman::run()
 {
-    yarp::os::Bottle bot;
-    for(unsigned int j = 0; j < _robot_number_of_joints; ++j)
-        bot.addDouble(torque[j]);
-    _joint_torq_port.write(bot);
-    bot.clear();
+    yarp::os::Bottle bot1;
+    yarp::os::Bottle bot2;
+    for(unsigned int j = 0; j < _robot_number_of_joints; ++j){
+        bot1.addDouble(torque[j]);
+        bot2.addDouble(speed[j]);
+    }
+    _joint_torq_port.write(bot1);
+    _joint_speed_port.write(bot2);
+    bot1.clear();
+    bot2.clear();
 }
 
 void coman::threadRelease()
 {
-    printf("Goodbye from TorquePublisher\n");
+    printf("Goodbye from TorqueAndSpeedPublisher\n");
 }

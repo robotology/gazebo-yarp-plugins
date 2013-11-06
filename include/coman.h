@@ -681,6 +681,7 @@ private:
     int _T_controller;
 
     yarp::os::Port _joint_torq_port;
+    yarp::os::Port _joint_speed_port;
 
     /**
      * Private Gazebo stuff

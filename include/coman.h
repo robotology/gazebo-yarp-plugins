@@ -48,10 +48,12 @@ class yarp::dev::coman : public DeviceDriver,
     public IControlLimits,
     public DeviceResponder,
     public IControlMode,
-    public ITorqueControl
+    public ITorqueControl,
+    public yarp::os::RateThread
 {
 public:
-    coman(){}
+    coman() : RateThread(robot_refresh_period)
+    {}
 
     ~coman(){}
 
@@ -631,6 +633,11 @@ public:
     virtual bool enableTorquePid(int j){return false;} //NOT IMPLEMENTED
     virtual bool setTorqueOffset(int j, double v){return false;} //NOT IMPLEMENTED
 
+    virtual void run();
+    virtual bool threadInit();
+    virtual void afterStart(bool s);
+    virtual void threadRelease();
+
 private:
     unsigned int robot_refresh_period; //ms
     gazebo::physics::Model* _robot;
@@ -672,6 +679,8 @@ private:
     bool started;
     int _clock;
     int _T_controller;
+
+    yarp::os::Port _joint_torq_port;
 
     /**
      * Private Gazebo stuff

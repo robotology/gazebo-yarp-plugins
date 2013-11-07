@@ -22,6 +22,7 @@
 #include "gazebo/plugins/ForceTorquePlugin.hh"
 #include "gazebo/common/Plugin.hh"
 #include "gazebo/common/Events.hh"
+#include "gazebo/math/Pose.hh"
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -56,6 +57,12 @@ namespace gazebo
 
     /// \brief Pointer to the update event connection
     private: event::ConnectionPtr connection;
+
+    /// \brief pointer to current world
+    private: gazebo::physics::WorldPtr world;
+
+    /// \brief joint providing the force/torque measurements
+    private: physics::LinkPtr ftLink;
 
     /// \brief Pointer to the YARP FT sensor device driver
     private: yarp::dev::fakebotFTsensor* yarpFTsensor;

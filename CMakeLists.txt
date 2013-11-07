@@ -1,5 +1,5 @@
-# Copyright: (C) iCub Facility 2013 Istituto Italiano di Tenologia
-# Author: Lorenzo Natale
+# Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
+# Authors: Mingo Enrico, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)

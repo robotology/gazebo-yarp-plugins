@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
+ * Authors: Mingo Enrico, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+
 #include "fakebotIMUplugin.hh"
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>

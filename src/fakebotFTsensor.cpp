@@ -1,21 +1,9 @@
-
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
-/* Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
- * Author: Alberto Cardellino
- * email: alberto.cardellino@iit.it
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
- *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
+/*
+ * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
+ * Authors: Mingo Enrico, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+
 
 /// general purpose stuff.
 

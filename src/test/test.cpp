@@ -1,21 +1,9 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2000 RobotCub Consortium, European Commission FP6 Project IST-0
- * Author: Giorgio Metta and Lorenzo Natale
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
- *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
-*/
+ * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
+ * Authors: Mingo Enrico, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>

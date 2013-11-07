@@ -511,6 +511,16 @@ public:
     // IControlMode
     virtual bool setPositionMode(int j) //WORKS
     {
+        /* WARNING: disabling velocity mode. This is needed as long as we use
+                    the SetVelocity method for velocity control*/
+        if(control_mode[j]==VOCAB_CM_VELOCITY) {
+            gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+            joint->SetMaxForce(0, 0);
+            joint->SetVelocity(0,0);
+        }
+
+        // resetting controller PIDs
+        this->_robot->GetJointController()->AddJoint(this->_robot->GetJoint(joint_names[j]));
         control_mode[j]=VOCAB_CM_POSITION;
         std::cout<<"control mode = position "<<j<<std::endl;
     }
@@ -519,13 +529,16 @@ public:
     {
         for(int j=0; j<_robot_number_of_joints; j++)
         {
-            control_mode[j]=VOCAB_CM_POSITION;
-            std::cout<<"control mode = position for all joints"<<std::endl;
+            this->setPositionMode(j);
         }
     }
     
     virtual bool setVelocityMode(int j) //WORKS
     {
+        /* TODO: this is needed if we want to control velocities using JointController
+        // resetting controller PIDs
+        this->_robot->GetJointController()->AddJoint(this->_robot->GetJoint(joint_names[j]));
+        */
         control_mode[j]=VOCAB_CM_VELOCITY;
         std::cout<<"control mode = speed "<<j<<std::endl;
     }
@@ -534,13 +547,20 @@ public:
     {
         for(int j=0; j<_robot_number_of_joints; j++)
         {
-            control_mode[j]=VOCAB_CM_VELOCITY;
-            std::cout<<"control mode = speed for all joints"<<std::endl;
+            this->setVelocityMode(j);
         }
     }
 
     virtual bool setTorqueMode(int j) //NOT TESTED
     {
+        /* WARNING: disabling velocity mode. This is needed as long as we use
+                    the SetVelocity method for velocity control*/
+        if(control_mode[j]==VOCAB_CM_VELOCITY) {
+            gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+            joint->SetMaxForce(0, 0);
+            joint->SetVelocity(0,0);
+        }
+
         control_mode[j]=VOCAB_CM_TORQUE;
         std::cout<<"control mode = torque "<<j<<std::endl;
     }
@@ -549,8 +569,7 @@ public:
     {
         for(int j=0; j<_robot_number_of_joints; j++)
         {
-            control_mode[j]=VOCAB_CM_TORQUE;
-            std::cout<<"control mode = torque for all joints"<<std::endl;
+            this->setTorqueMode(j);
         }
     }
     virtual bool setImpedancePositionMode(int j)//NOT IMPLEMENTED
@@ -816,11 +835,18 @@ private:
     
     bool sendVelocityToGazebo(int j,double ref) //NOT TESTED
     {      
+        /* SetVelocity method */
         gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
         joint->SetMaxForce(0, joint->GetEffortLimit(0)*1.1); //<-- MAGIC NUMBER!!!!
 //      std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
         joint->SetVelocity(0,toRad(ref));
 
+        /* JointController method. If you pick this control method for control
+           of joint velocities, you should also take care of the switching logic
+           in setVelocityMode, setTorqueMode and setPositionMode:
+           that is, the SetMarxForce(0,0) and SetVelocity(0,0) are no longer
+           needed, but the JointController::AddJoint() method needs to be called
+           when you switch to velocity mode, to make sure the PIDs get reset */
 //       gazebo::msgs::JointCmd j_cmd;
 //       prepareJointVelocityMsg(j_cmd,j,ref);
 //       jointCmdPub->WaitForConnection();

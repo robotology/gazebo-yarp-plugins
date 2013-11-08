@@ -1,6 +1,6 @@
 gazebo_yarp_plugins
 ===================
-[![Build Status](https://travis-ci.org/EnricoMingo/gazebo_yarp_plugins.png)](https://travis-ci.org/EnricoMingo/gazebo_yarp_plugins)
+[![Build Status](https://travis-ci.org/robotology/gazebo_yarp_plugins.png)](https://travis-ci.org/robotology/gazebo_yarp_plugins)
 
 
 

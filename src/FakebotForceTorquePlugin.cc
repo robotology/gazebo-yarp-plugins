@@ -158,6 +158,16 @@ void FakebotForceTorquePlugin::OnUpdate(msgs::WrenchStamped _msg)
                               _msg.wrench().torque().y(),
                               _msg.wrench().torque().z());
 
+/*  
+ * see https://github.com/EnricoMingo/iit-coman-ros-pkg/issues/13
+ * This code is used to refer FT readings to a different pose from the joint one.
+ * Since this is a YARP plugin, but our YARP controller allows us to have underactuated systems,
+ * we now switched to a solution where we have a fake joint with 0 limits to place the FT sensor.
+ * This allows also to easily take into account sensor biases. If this feature will become useful again
+ * in a future version, it can be uncommented and extended. It could also be useful to do simple transformations
+ * of the frame of reference (i.e., offsets in rotations of the sensor pose)
+ */
+/*
     // ft force and torque measurements in world frame
     math::Vector3 w_ftForce;
     math::Vector3 w_ftTorque;
@@ -201,6 +211,9 @@ void FakebotForceTorquePlugin::OnUpdate(msgs::WrenchStamped _msg)
 //        std::cout << "ft t " << ftTorque[0] << " " << ftTorque[1] << " " << ftTorque[2] << std::endl;
 //    }
 //    _clock++;
+*/
+    math::Vector3 ftForce = l_ftForce;
+    math::Vector3 ftTorque = l_ftTorque;
 
     if(this->yarpFTsensor!=NULL) {
         this->yarpFTsensor->mutex.wait();

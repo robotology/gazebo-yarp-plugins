@@ -12,7 +12,6 @@ bool coman::getEncoder(int j, double *v) //WORKS
     }
     //pos_lock.unlock();
     return true;
-    
 }
 
 bool coman::getEncoders(double *encs) //WORKS
@@ -24,8 +23,6 @@ bool coman::getEncoders(double *encs) //WORKS
     return true;
     //pos_lock.unlock();
 }
-
-
 
 /**
  * Since we don't know how to reset gazebo encoders, we will simply add the actual value to the future encoders readings
@@ -63,6 +60,9 @@ bool coman::setEncoders(const double *vals) //WORKS
 }
 
 
+
+
+
 bool coman::getEncoderSpeed(int j, double *sp) //NOT TESTED
 {
     if ( j < _robot_number_of_joints) {
@@ -78,6 +78,9 @@ bool coman::getEncoderSpeeds(double *spds) //NOT TESTED
     }
     return true;
 }
+
+
+
 
 bool coman::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 {

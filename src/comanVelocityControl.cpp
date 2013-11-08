@@ -11,7 +11,6 @@ bool coman::setVelocityMode() //NOT TESTED
     }
 }
 
-
 bool coman::velocityMove(int j, double sp) //NOT TESTED
 {
     if (j<_robot_number_of_joints) 

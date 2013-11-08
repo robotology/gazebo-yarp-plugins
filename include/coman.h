@@ -38,7 +38,8 @@ namespace yarp {
     }
 }
 
-class yarp::dev::coman : public DeviceDriver,
+class yarp::dev::coman : 
+    public DeviceDriver,
     public IPositionControl,
     public IVelocityControl,
     public IAmplifierControl,
@@ -69,28 +70,11 @@ public:
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);    
     virtual bool close(); //NOT IMPLEMENTED
-    //THREAD inside comanDeviceDriver.cpp
+    //THREAD (inside comanDeviceDriver.cpp)
     virtual void run();
     virtual bool threadInit();
     virtual void afterStart(bool s);
     virtual void threadRelease();
-    
-    //AMPLIFIER CONTROL (inside comanOthers.cpp)
-    virtual bool enableAmp(int j); //NOT IMPLEMENTED
-    virtual bool disableAmp(int j); //NOT IMPLEMENTED
-    virtual bool getCurrent(int j, double *val); //NOT IMPLEMENTED
-    virtual bool getCurrents(double *vals); //NOT IMPLEMENTED
-    virtual bool setMaxCurrent(int j, double v); //NOT IMPLEMENTED
-    virtual bool getAmpStatus(int *st); //NOT IMPLEMENTED
-    virtual bool getAmpStatus(int k, int *v); //NOT IMPLEMENTED
-    
-    //CONTROL CALIBRATION (inside comanOthers.cpp)
-    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
-    virtual bool done(int j); // NOT IMPLEMENTED
-    
-    // CONTROL LIMITS (inside comanOthers.cpp)
-    virtual bool getLimits(int axis, double *min, double *max); //NOT TESTED
-    virtual bool setLimits(int axis, double min, double max); //NOT TESTED
     
     //ENCODERS
     virtual bool getEncoder(int j, double *v); //WORKS
@@ -99,8 +83,10 @@ public:
     virtual bool resetEncoders(); //WORKS
     virtual bool setEncoder(int j, double val); //WORKS
     virtual bool setEncoders(const double *vals); //WORKS 
+    
     virtual bool getEncoderSpeed(int j, double *sp); //NOT TESTED
     virtual bool getEncoderSpeeds(double *spds); //NOT TESTED 
+    
     virtual bool getEncoderAcceleration(int j, double *spds); //NOT IMPLEMENTED
     virtual bool getEncoderAccelerations(double *accs); //NOT IMPLEMENTED
 
@@ -110,19 +96,21 @@ public:
     virtual bool positionMove(int j, double ref); //WORKS
     virtual bool getAxes(int *ax); // WORKS
     virtual bool positionMove(const double *refs); //WORKS
+    /// @arg sp [deg/sec]
+    virtual bool setRefSpeed(int j, double sp); //WORKS
+    virtual bool getRefSpeed(int j, double *ref); //WORKS
+    virtual bool getRefSpeeds(double *spds); //WORKS
+    
     virtual bool relativeMove(int j, double delta); //NOT TESTED
     virtual bool relativeMove(const double *deltas); //NOT TESTED
     virtual bool checkMotionDone(int j, bool *flag); //NOT TESTED
     virtual bool checkMotionDone(bool *flag); //NOT TESTED
     virtual bool setPositionMode(); //NOT TESTED
-    /// @arg sp [deg/sec]
-    virtual bool setRefSpeed(int j, double sp); //WORKS
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
+    
     virtual bool setRefAcceleration(int j, double acc); //NOT IMPLEMENTED
     virtual bool setRefAccelerations(const double *accs); //NOT IMPLEMENTED
-    virtual bool getRefSpeed(int j, double *ref); //WORKS
-    virtual bool getRefSpeeds(double *spds); //WORKS
     virtual bool getRefAcceleration(int j, double *acc); //NOT IMPLEMENTED
     virtual bool getRefAccelerations(double *accs); //NOT IMPLEMENTED
     
@@ -134,12 +122,14 @@ public:
     //CONTROL MODE
     virtual bool setPositionMode(int j); //WORKS    
     virtual bool setVelocityMode(int j); //WORKS
+    virtual bool getControlMode(int j, int *mode); //WORKS
+    
     virtual bool setTorqueMode(int j); //NOT TESTED 
+    virtual bool getControlModes(int *modes); //NOT TESTED
+    
     virtual bool setImpedancePositionMode(int j);//NOT IMPLEMENTED
     virtual bool setImpedanceVelocityMode(int j); //NOT IMPLEMENTED
     virtual bool setOpenLoopMode(int j); //NOT IMPLEMENTED
-    virtual bool getControlMode(int j, int *mode); //WORKS
-    virtual bool getControlModes(int *modes);
     
     //TORQUE CONTROL
     virtual bool setRefTorque(int j, double t); //NOT TESTED
@@ -149,6 +139,7 @@ public:
     virtual bool getRefTorques(double *t);//NOT TESTED
     virtual bool getTorque(int j, double *t); //NOT TESTED
     virtual bool getTorques(double *t); //NOT TESTED
+    
     virtual bool getBemfParam(int j, double *bemf); //NOT IMPLEMENTED
     virtual bool setBemfParam(int j, double bemf); //NOT IMPLEMENTED
     virtual bool setTorquePid(int j, const Pid &pid); //NOT IMPLEMENTED
@@ -169,7 +160,31 @@ public:
     virtual bool disableTorquePid(int j); //NOT IMPLEMENTED
     virtual bool enableTorquePid(int j); //NOT IMPLEMENTED
     virtual bool setTorqueOffset(int j, double v); //NOT IMPLEMENTED
-
+    
+    /*
+     * Probably useless stuff here
+     */
+    //AMPLIFIER CONTROL (inside comanOthers.cpp)
+    virtual bool enableAmp(int j); //NOT IMPLEMENTED
+    virtual bool disableAmp(int j); //NOT IMPLEMENTED
+    virtual bool getCurrent(int j, double *val); //NOT IMPLEMENTED
+    virtual bool getCurrents(double *vals); //NOT IMPLEMENTED
+    virtual bool setMaxCurrent(int j, double v); //NOT IMPLEMENTED
+    virtual bool getAmpStatus(int *st); //NOT IMPLEMENTED
+    virtual bool getAmpStatus(int k, int *v); //NOT IMPLEMENTED
+    
+    //CONTROL CALIBRATION (inside comanOthers.cpp)
+    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
+    virtual bool done(int j); // NOT IMPLEMENTED
+    
+    // CONTROL LIMITS (inside comanOthers.cpp)
+    virtual bool getLimits(int axis, double *min, double *max); //NOT TESTED
+    virtual bool setLimits(int axis, double min, double max); //NOT TESTED
+    /*
+     * End of useless stuff
+     */
+    
+    
 private:
     unsigned int robot_refresh_period; //ms
     gazebo::physics::Model* _robot;

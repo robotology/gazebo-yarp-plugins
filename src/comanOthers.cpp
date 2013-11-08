@@ -2,6 +2,22 @@
 
 using namespace yarp::dev;
 
+// IControlLimits
+bool coman::getLimits(int axis, double *min, double *max) //NOT TESTED
+{
+    *min=min_pos[axis];
+    *max=max_pos[axis];
+    return true;
+}
+
+bool coman::setLimits(int axis, double min, double max) //NOT TESTED
+{
+    max_pos[axis]=max;
+    min_pos[axis]=min;
+    return true;
+}
+
+//Amplifiers
 bool coman::enableAmp(int j) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
@@ -65,17 +81,3 @@ bool coman::done(int j) // NOT IMPLEMENTED
     return true;
 }
 
-// IControlLimits
-bool coman::getLimits(int axis, double *min, double *max) //NOT TESTED
-{
-    *min=min_pos[axis];
-    *max=max_pos[axis];
-    return true;
-}
-
-bool coman::setLimits(int axis, double min, double max) //NOT TESTED
-{
-    max_pos[axis]=max;
-    min_pos[axis]=min;
-    return true;
-}

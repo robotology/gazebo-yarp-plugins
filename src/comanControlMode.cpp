@@ -29,7 +29,19 @@ bool coman::setVelocityMode(int j) //WORKS
      std::cout<<"control mode = speed "<<j<<std::endl;
  }
  
+ bool coman::getControlMode(int j, int *mode) //WORKS
+ {
+     mode[j]=control_mode[j];
+ }
  
+ bool coman::getControlModes(int *modes) //NOT TESTED
+ {
+     for(int j=0; j<_robot_number_of_joints; ++j)
+     {
+         modes[j]=control_mode[j];
+     }
+     return true;
+ }
  
  bool coman::setTorqueMode(int j) //NOT TESTED
  {
@@ -45,7 +57,7 @@ bool coman::setVelocityMode(int j) //WORKS
      std::cout<<"control mode = torque "<<j<<std::endl;
  }
  
- 
+
  bool coman::setImpedancePositionMode(int j)//NOT IMPLEMENTED
  {
      return false;
@@ -58,15 +70,4 @@ bool coman::setVelocityMode(int j) //WORKS
  {
      return false;
  }
- bool coman::getControlMode(int j, int *mode) //WORKS
- {
-     mode[j]=control_mode[j];
- }
- bool coman::getControlModes(int *modes)
- {
-     for(int j=0; j<_robot_number_of_joints; ++j)
-     {
-         modes[j]=control_mode[j];
-     }
-     return true;
- }
+

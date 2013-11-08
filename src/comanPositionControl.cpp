@@ -21,7 +21,6 @@ bool coman::stop(int j) //WORKS
     return true;
 }
 
-
 bool coman::stop() //WORKS
 {
     ref_pos=pos;
@@ -36,6 +35,38 @@ bool coman::positionMove(const double *refs) //WORKS
     return true;
 }
 
+bool coman::getAxes(int *ax) // WORKS
+{
+    *ax = _robot_number_of_joints;
+    return true;
+}
+
+bool coman::setRefSpeed(int j, double sp) //WORKS
+{
+    if (j<_robot_number_of_joints) {
+        ref_speed[j] = sp;
+    }
+    return true;
+}
+
+bool coman::getRefSpeed(int j, double *ref) //WORKS
+{
+    if (j<_robot_number_of_joints) {
+        (*ref) = ref_speed[j];
+    }
+    return true;
+}
+
+bool coman::getRefSpeeds(double *spds) //WORKS
+{
+    for (int i=0; i<_robot_number_of_joints; ++i) {
+        spds[i] = ref_speed[i];
+    }
+    return true;
+}
+
+
+
 bool coman::relativeMove(int j, double delta) //NOT TESTED
 {
     if (j<_robot_number_of_joints) {
@@ -43,7 +74,6 @@ bool coman::relativeMove(int j, double delta) //NOT TESTED
     }
     return true;
 }
-
 
 bool coman::relativeMove(const double *deltas) //NOT TESTED
 {
@@ -59,7 +89,6 @@ bool coman::checkMotionDone(int j, bool *flag) //NOT TESTED
     return true;
 }
 
-
 bool coman::checkMotionDone(bool *flag) //NOT TESTED
 {
     bool temp_flag=true;
@@ -73,46 +102,12 @@ bool coman::checkMotionDone(bool *flag) //NOT TESTED
     return true;
 }
 
-
-bool coman::getAxes(int *ax) // WORKS
-{
-    *ax = _robot_number_of_joints;
-    return true;
-}
-
-
 bool coman::setPositionMode() //NOT TESTED
 {
     for(int j=0; j<_robot_number_of_joints; j++)
     {
         this->setPositionMode(j);
     }
-}
-
-
-bool coman::setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
-{
-    if (j<_robot_number_of_joints) {
-        ref_acc[j] = acc;
-    }
-    return true;
-}
-
-
-bool coman::setRefAccelerations(const double *accs) //NOT IMPLEMENTED
-{
-    for (int i=0; i<_robot_number_of_joints; ++i) {
-        ref_acc[i] = accs[i];
-    }
-    return true;
-}
-
-bool coman::setRefSpeed(int j, double sp) //WORKS
-{
-    if (j<_robot_number_of_joints) {
-        ref_speed[j] = sp;
-    }
-    return true;
 }
 
 bool coman::setRefSpeeds(const double *spds) //NOT TESTED
@@ -123,23 +118,24 @@ bool coman::setRefSpeeds(const double *spds) //NOT TESTED
     return true;
 }
 
-bool coman::getRefSpeed(int j, double *ref) //WORKS
+
+
+
+bool coman::setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
-        (*ref) = ref_speed[j];
+        ref_acc[j] = acc;
     }
     return true;
 }
 
-
-bool coman::getRefSpeeds(double *spds) //WORKS
+bool coman::setRefAccelerations(const double *accs) //NOT IMPLEMENTED
 {
     for (int i=0; i<_robot_number_of_joints; ++i) {
-        spds[i] = ref_speed[i];
+        ref_acc[i] = accs[i];
     }
     return true;
 }
-
 
 bool coman::getRefAcceleration(int j, double *acc) //NOT IMPLEMENTED
 {

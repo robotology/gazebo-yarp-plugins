@@ -66,7 +66,6 @@ public:
      * Yarp interfaces start here
      */
     
-    
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);    
     virtual bool close(); //NOT IMPLEMENTED
@@ -75,7 +74,6 @@ public:
     virtual bool threadInit();
     virtual void afterStart(bool s);
     virtual void threadRelease();
-    
     
     //AMPLIFIER CONTROL (inside comanOthers.cpp)
     virtual bool enableAmp(int j); //NOT IMPLEMENTED
@@ -127,8 +125,7 @@ public:
     virtual bool getRefSpeeds(double *spds); //WORKS
     virtual bool getRefAcceleration(int j, double *acc); //NOT IMPLEMENTED
     virtual bool getRefAccelerations(double *accs); //NOT IMPLEMENTED
-
-
+    
     //VELOCITY CONTROL
     virtual bool setVelocityMode(); //NOT TESTED
     virtual bool velocityMove(int j, double sp); //NOT TESTED    
@@ -182,8 +179,6 @@ private:
     //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
     yarp::os::Property plugin_parameters;
     
-    
-
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
      */
@@ -219,195 +214,20 @@ private:
     yarp::os::Port _joint_speed_port;
 
     /**
-     * Private Gazebo stuff
+     * Private Gazebo methods
      */
-    
-    void setMinMaxPos()  //NOT TESTED
-    {
-        std::cout<<"Joint Limits"<<std::endl;
-        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
-        {
-            max_pos[i] = this->_robot->GetJoint(joint_names[i])->GetUpperLimit(0).Degree();
-            min_pos[i] = this->_robot->GetJoint(joint_names[i])->GetLowerLimit(0).Degree();
-            std::cout<<joint_names[i]<<" max_pos: "<<max_pos[i]<<" min_pos: "<<min_pos[i]<<std::endl;
-        }
-    }
-
-    void setJointNames()  //WORKS
-    {
-        if( plugin_parameters.check("GAZEBO") ) { 
-            std::cout << ".ini file found, using joint names in ini file" << std::endl;
-            yarp::os::Bottle joint_names_bottle =plugin_parameters.findGroup("GAZEBO").findGroup("jointNames");
-            
-            int nr_of_joints = joint_names_bottle.size()-1;
-            
-            joint_names.resize(nr_of_joints);
-            for(int i=0; i < joint_names.size(); i++ ) {
-                std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
-                joint_names[i] = _robot->GetName()+"::"+joint_name;
-            }
-            
-        } else {
-            std::cout << ".ini file not found, using all the joint names of the robot" << std::endl;
-            joint_names.resize(0);
-            gazebo::physics::Joint_V joints = _robot->GetJoints();
-            int nr_of_joints = _robot->GetJoints().size();
-            for(unsigned int i = 0; i < nr_of_joints; ++i)
-            {
-                gazebo::physics::JointPtr j = joints[i];
-                joint_names.push_back(j->GetName());
-            }
-        }
-    }
-
-    void setPIDs() //WORKS
-    {        
-      yarp::os::Property prop;
-       //now try to load the pid from the plugin configuration file, if that fails fallback to the old methods
-       std::string gazebo_pids_group_name = "GAZEBO_PIDS";
-       
-      
-        if(plugin_parameters.check(gazebo_pids_group_name.c_str())) 
-        {
-            std::cout<<"Found PID information in plugin parameters "<<std::endl;
-
-            for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
-            {
-                std::stringstream property_name;
-                property_name<<"Pid";
-                property_name<<i;
-
-                yarp::os::Bottle& pid = plugin_parameters.findGroup(gazebo_pids_group_name.c_str()).findGroup(property_name.str().c_str());
-                _p.push_back(pid.get(1).asDouble());
-                _i.push_back(pid.get(3).asDouble());
-                _d.push_back(pid.get(2).asDouble());
-                std::cout<<"  P: "<<_p[i]<<" I: "<<_i[i]<<" D: "<<_d[i]<<std::endl;
-            }
-            std::cout<<"OK!"<<std::endl;
-        } else if(prop.fromConfigFile(pid_config_abs_path.c_str()))
-        {
-            std::cout<<"pid.ini FOUND!"<<std::endl;
-            std::string group_name = "PIDS";
-
-            for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
-            {
-                std::stringstream property_name;
-                property_name<<"Pid";
-                property_name<<i;
-
-                yarp::os::Bottle& pid = prop.findGroup(group_name.c_str()).findGroup(property_name.str().c_str());
-                _p.push_back(pid.get(1).asDouble());
-                _i.push_back(pid.get(3).asDouble());
-                _d.push_back(pid.get(2).asDouble());
-                std::cout<<"  P: "<<_p[i]<<" I: "<<_i[i]<<" D: "<<_d[i]<<std::endl;
-            }
-            std::cout<<"OK!"<<std::endl;
-        }
-        else
-        {
-            std::cout<<"CAN NOT FIND pid.ini!"<<std::endl;
-            for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
-            {
-                _p.push_back(500.0);
-                _i.push_back(0.1);
-                _d.push_back(1.0);
-            }
-        }
-    }
-
-     bool sendPositionsToGazebo(yarp::sig::Vector refs)
-    {
-        for (int j=0; j<_robot_number_of_joints; j++)
-        {
-            sendPositionToGazebo(j,refs[j]);
-        }
-    }
-
-    bool sendPositionToGazebo(int j,double ref)
-    {
-        gazebo::msgs::JointCmd j_cmd;
-        prepareJointMsg(j_cmd,j,ref);
-        jointCmdPub->WaitForConnection();
-        jointCmdPub->Publish(j_cmd);
-
-    }
-    
-    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
-    {
-        j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
-        j_cmd.mutable_position()->set_target(toRad(ref));
-        j_cmd.mutable_position()->set_p_gain(_p[joint_index]);
-        j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
-        j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
-    }
-    
-    bool sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
-    {
-        for (int j=0; j<_robot_number_of_joints; j++)
-        {
-            sendVelocityToGazebo(j,refs[j]);
-        }
-    }
-    
-    bool sendVelocityToGazebo(int j,double ref) //NOT TESTED
-    {      
-        /* SetVelocity method */
-        gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
-        joint->SetMaxForce(0, joint->GetEffortLimit(0)*1.1); //<-- MAGIC NUMBER!!!!
-//      std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
-        joint->SetVelocity(0,toRad(ref));
-
-        /* JointController method. If you pick this control method for control
-           of joint velocities, you should also take care of the switching logic
-           in setVelocityMode, setTorqueMode and setPositionMode:
-           that is, the SetMarxForce(0,0) and SetVelocity(0,0) are no longer
-           needed, but the JointController::AddJoint() method needs to be called
-           when you switch to velocity mode, to make sure the PIDs get reset */
-//       gazebo::msgs::JointCmd j_cmd;
-//       prepareJointVelocityMsg(j_cmd,j,ref);
-//       jointCmdPub->WaitForConnection();
-//       jointCmdPub->Publish(j_cmd);
-    }
-    
-    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
-    {
-        j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-        j_cmd.mutable_position()->set_p_gain(0.0);
-        j_cmd.mutable_position()->set_i_gain(0.0);
-        j_cmd.mutable_position()->set_d_gain(0.0);
-        j_cmd.mutable_velocity()->set_p_gain(5000);
-        j_cmd.mutable_velocity()->set_i_gain(0.0);
-        j_cmd.mutable_velocity()->set_d_gain(10);
-        j_cmd.mutable_velocity()->set_target(toRad(ref));
-    }
-    
-     bool sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
-    {
-        for (int j=0; j<_robot_number_of_joints; j++)
-        {
-            sendTorqueToGazebo(j,refs[j]);
-        }
-    }
-    
-    bool sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
-    {
-        gazebo::msgs::JointCmd j_cmd;
-        prepareJointTorqueMsg(j_cmd,j,ref);
-        jointCmdPub->WaitForConnection();
-        jointCmdPub->Publish(j_cmd);
-    }
-    
-    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
-    {
-        j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-        j_cmd.mutable_position()->set_p_gain(0.0);
-        j_cmd.mutable_position()->set_i_gain(0.0);
-        j_cmd.mutable_position()->set_d_gain(0.0);
-        j_cmd.mutable_velocity()->set_p_gain(0.0);
-        j_cmd.mutable_velocity()->set_i_gain(0.0);
-        j_cmd.mutable_velocity()->set_d_gain(0.0);
-        j_cmd.set_force(ref);
-    }
+    void setMinMaxPos();  //NOT TESTED
+    void setJointNames();  //WORKS
+    void setPIDs(); //WORKS
+    bool sendPositionsToGazebo(yarp::sig::Vector refs);
+    bool sendPositionToGazebo(int j,double ref);
+    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref);  //WORKS
+    bool sendVelocitiesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
+    bool sendVelocityToGazebo(int j,double ref); //NOT TESTED
+    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
+    bool sendTorquesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
+    bool sendTorqueToGazebo(const int j,const double ref); //NOT TESTED
+    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
 
 };
 

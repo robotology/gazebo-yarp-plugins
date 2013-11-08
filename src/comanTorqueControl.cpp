@@ -21,10 +21,11 @@ bool coman::setRefTorques(const double *t) //NOT TESTED
 
 bool coman::setTorqueMode() //NOT TESTED
 {
-    for(int j=0; j<_robot_number_of_joints; j++)
+    for(unsigned int j=0; j<_robot_number_of_joints; j++)
     {
         this->setTorqueMode(j);
     }
+    return true;
 }
 
 bool coman::getRefTorque(int j, double *t) //NOT TESTED
@@ -59,7 +60,8 @@ bool coman::getTorques(double *t) //NOT TESTED
 
 
 
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 bool coman::getTorqueRange(int j, double *min, double *max){return false;} //NOT IMPLEMENTED
 bool coman::getTorqueRanges(double *min, double *max){return false;} //NOT IMPLEMENTED
 bool coman::setTorquePids(const Pid *pids){return false;} //NOT IMPLEMENTED
@@ -80,5 +82,5 @@ bool coman::setTorqueOffset(int j, double v){return false;} //NOT IMPLEMENTED
 bool coman::getBemfParam(int j, double *bemf){return false;} //NOT IMPLEMENTED
 bool coman::setBemfParam(int j, double bemf){return false;} //NOT IMPLEMENTED
 bool coman::setTorquePid(int j, const Pid &pid){return false;} //NOT IMPLEMENTED
-
+#pragma GCC diagnostic pop
 

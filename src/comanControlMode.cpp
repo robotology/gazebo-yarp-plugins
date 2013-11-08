@@ -17,6 +17,7 @@ bool coman::setPositionMode(int j) //WORKS
     this->_robot->GetJointController()->AddJoint(this->_robot->GetJoint(joint_names[j]));
     control_mode[j]=VOCAB_CM_POSITION;
     std::cout<<"control mode = position "<<j<<std::endl;
+    return true;
 }
 
 bool coman::setVelocityMode(int j) //WORKS
@@ -27,16 +28,18 @@ bool coman::setVelocityMode(int j) //WORKS
       */
      control_mode[j]=VOCAB_CM_VELOCITY;
      std::cout<<"control mode = speed "<<j<<std::endl;
+     return true;
  }
  
  bool coman::getControlMode(int j, int *mode) //WORKS
  {
      mode[j]=control_mode[j];
+     return true;
  }
  
  bool coman::getControlModes(int *modes) //NOT TESTED
  {
-     for(int j=0; j<_robot_number_of_joints; ++j)
+     for(unsigned int j=0; j<_robot_number_of_joints; ++j)
      {
          modes[j]=control_mode[j];
      }
@@ -55,18 +58,19 @@ bool coman::setVelocityMode(int j) //WORKS
      
      control_mode[j]=VOCAB_CM_TORQUE;
      std::cout<<"control mode = torque "<<j<<std::endl;
+     return true;
  }
  
 
- bool coman::setImpedancePositionMode(int j)//NOT IMPLEMENTED
+ bool coman::setImpedancePositionMode(int)//NOT IMPLEMENTED
  {
      return false;
  }
- bool coman::setImpedanceVelocityMode(int j) //NOT IMPLEMENTED
+ bool coman::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
  {
      return false;
  }
- bool coman::setOpenLoopMode(int j) //NOT IMPLEMENTED
+ bool coman::setOpenLoopMode(int) //NOT IMPLEMENTED
  {
      return false;
  }

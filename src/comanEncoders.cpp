@@ -17,7 +17,7 @@ bool coman::getEncoder(int j, double *v) //WORKS
 bool coman::getEncoders(double *encs) //WORKS
 {
     //pos_lock.lock();
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         encs[i] = pos[i]-zero_pos[i];  //should we just use memcopy here?
     }
     return true;
@@ -37,7 +37,7 @@ bool coman::resetEncoder(int j) //WORKS
 
 bool coman::resetEncoders() //WORKS
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         zero_pos[i] = pos[i];
     }
     return true;
@@ -53,7 +53,7 @@ bool coman::setEncoder(int j, double val) //WORKS
 
 bool coman::setEncoders(const double *vals) //WORKS
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         zero_pos[i] = pos[i]-vals[i];
     }
     return true;
@@ -92,7 +92,7 @@ bool coman::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 
 bool coman::getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         accs[i] = 0;
     }
     return true;

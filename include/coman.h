@@ -22,9 +22,14 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/RateThread.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
+#pragma GCC diagnostic pop
+
 #include <mutex>
 
 #define toRad(X) (X*M_PI/180.0)

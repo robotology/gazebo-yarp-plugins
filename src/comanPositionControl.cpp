@@ -29,7 +29,7 @@ bool coman::stop() //WORKS
 
 bool coman::positionMove(const double *refs) //WORKS
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         ref_pos[i] = refs[i];
     }
     return true;
@@ -59,7 +59,7 @@ bool coman::getRefSpeed(int j, double *ref) //WORKS
 
 bool coman::getRefSpeeds(double *spds) //WORKS
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         spds[i] = ref_speed[i];
     }
     return true;
@@ -77,7 +77,7 @@ bool coman::relativeMove(int j, double delta) //NOT TESTED
 
 bool coman::relativeMove(const double *deltas) //NOT TESTED
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         ref_pos[i] = pos[i]+ deltas[i]; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
     }
     return true;
@@ -93,7 +93,7 @@ bool coman::checkMotionDone(bool *flag) //NOT TESTED
 {
     bool temp_flag=true;
     //*flag=true;
-    for(int j=0; j<_robot_number_of_joints; ++j)
+    for(unsigned int j=0; j<_robot_number_of_joints; ++j)
     {
         //*flag&&motion_done[j]; //It's compiler job to make code unreadable and optimized, not programmer's
         temp_flag=temp_flag && motion_done[j];
@@ -104,15 +104,16 @@ bool coman::checkMotionDone(bool *flag) //NOT TESTED
 
 bool coman::setPositionMode() //NOT TESTED
 {
-    for(int j=0; j<_robot_number_of_joints; j++)
+    for(unsigned int j=0; j<_robot_number_of_joints; j++)
     {
         this->setPositionMode(j);
     }
+    return true;
 }
 
 bool coman::setRefSpeeds(const double *spds) //NOT TESTED
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         ref_speed[i] = spds[i];
     }
     return true;
@@ -131,7 +132,7 @@ bool coman::setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
 
 bool coman::setRefAccelerations(const double *accs) //NOT IMPLEMENTED
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         ref_acc[i] = accs[i];
     }
     return true;
@@ -147,7 +148,7 @@ bool coman::getRefAcceleration(int j, double *acc) //NOT IMPLEMENTED
 
 bool coman::getRefAccelerations(double *accs) //NOT IMPLEMENTED
 {
-    for (int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         accs[i] = ref_acc[i];
     }
     return true;

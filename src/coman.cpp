@@ -70,7 +70,7 @@ void coman::gazebo_init()
     control_mode=new int[_robot_number_of_joints];
     motion_done=new bool[_robot_number_of_joints];
     _clock=0;
-    for ( int j=0; j<_robot_number_of_joints; ++j )
+    for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
         control_mode[j]=VOCAB_CM_POSITION;
 
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
@@ -87,7 +87,9 @@ void coman::gazebo_init()
 
 void coman::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
-    if ( !started )
+    _clock++;
+    
+    if ( !started ) //This is a simple way to start with a coman in standing position
     {
         started=true;
         double temp=0;//[_robot_number_of_joints];
@@ -96,19 +98,15 @@ void coman::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
     }
 
     pos_lock.lock();
-
     // Sensing position & torque
-    for ( int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ )
+    for ( unsigned int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ )
     {
         /** \todo consider multi-dof joint ? */
         pos[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetAngle ( 0 ).Degree();
         speed[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 );
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
-
     pos_lock.unlock();
-
-    _clock++;
 
     for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
     {
@@ -175,7 +173,7 @@ void coman::setJointNames()  //WORKS
         int nr_of_joints = joint_names_bottle.size()-1;
         
         joint_names.resize(nr_of_joints);
-        for(int i=0; i < joint_names.size(); i++ ) {
+        for(unsigned int i=0; i < joint_names.size(); i++ ) {
             std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
             joint_names[i] = _robot->GetName()+"::"+joint_name;
         }        
@@ -185,7 +183,7 @@ void coman::setJointNames()  //WORKS
         std::cout << ".ini file not found, using all the joint names of the robot" << std::endl;
         joint_names.resize(0);
         gazebo::physics::Joint_V joints = _robot->GetJoints();
-        int nr_of_joints = _robot->GetJoints().size();
+        unsigned int nr_of_joints = _robot->GetJoints().size();
         for(unsigned int i = 0; i < nr_of_joints; ++i)
         {
             gazebo::physics::JointPtr j = joints[i];
@@ -251,10 +249,11 @@ void coman::setPIDs() //WORKS
 
 bool coman::sendPositionsToGazebo(yarp::sig::Vector refs)
 {
-    for (int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_robot_number_of_joints; j++)
     {
         sendPositionToGazebo(j,refs[j]);
     }
+    return true;
 }
 
 bool coman::sendPositionToGazebo(int j,double ref)
@@ -263,6 +262,7 @@ bool coman::sendPositionToGazebo(int j,double ref)
     prepareJointMsg(j_cmd,j,ref);
     jointCmdPub->WaitForConnection();
     jointCmdPub->Publish(j_cmd);
+    return true;
 }
 
 void coman::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
@@ -276,10 +276,11 @@ void coman::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index
 
 bool coman::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 {
-    for (int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_robot_number_of_joints; j++)
     {
         sendVelocityToGazebo(j,refs[j]);
     }
+    return true;
 }
 
 bool coman::sendVelocityToGazebo(int j,double ref) //NOT TESTED
@@ -301,6 +302,7 @@ bool coman::sendVelocityToGazebo(int j,double ref) //NOT TESTED
     //       jointCmdPub->WaitForConnection();
     //       jointCmdPub->Publish(j_cmd);
     */
+    return true;
 }
 
 void coman::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
@@ -317,10 +319,11 @@ void coman::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, 
 
 bool coman::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 {
-    for (int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_robot_number_of_joints; j++)
     {
         sendTorqueToGazebo(j,refs[j]);
     }
+    return true;
 }
 
 bool coman::sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
@@ -329,6 +332,7 @@ bool coman::sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
     prepareJointTorqueMsg(j_cmd,j,ref);
     jointCmdPub->WaitForConnection();
     jointCmdPub->Publish(j_cmd);
+    return true;
 }
 
 void coman::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED

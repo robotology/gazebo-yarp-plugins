@@ -46,13 +46,13 @@ bool coman::getCurrent(int j, double *val) //NOT IMPLEMENTED
 
 bool coman::getCurrents(double *vals) //NOT IMPLEMENTED
 {
-    for (int i=0; i<_robot_number_of_joints; i++) {
+    for (unsigned int i=0; i<_robot_number_of_joints; i++) {
         vals[i] = amp[i];
     }
     return true;
 }
 
-bool coman::setMaxCurrent(int j, double v) //NOT IMPLEMENTED
+bool coman::setMaxCurrent(int, double) //NOT IMPLEMENTED
 {
     return true;
 }
@@ -63,7 +63,7 @@ bool coman::getAmpStatus(int *st) //NOT IMPLEMENTED
     return true;
 }
 
-bool coman::getAmpStatus(int k, int *v) //NOT IMPLEMENTED
+bool coman::getAmpStatus(int, int *v) //NOT IMPLEMENTED
 {
     *v=0;
     return true;
@@ -71,7 +71,7 @@ bool coman::getAmpStatus(int k, int *v) //NOT IMPLEMENTED
 
 bool coman::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
 {
-    fprintf(stderr, "fakebot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
+    fprintf(stderr, "fakebot: calibrating joint %d with parameters %u %f %f %f\n", j, iv, v1, v2, v3);
     return true;
 }
 

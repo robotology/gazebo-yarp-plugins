@@ -21,7 +21,7 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 include_directories(${YARP_INCLUDE_DIRS} include)
 
 add_library(yarp_gazebo SHARED src/coman_yarp_gazebo_plugin.cc)
-add_library(fakebot SHARED src/coman.cpp )
+add_library(fakebot SHARED src/coman.cpp src/comanControlMode.cpp src/comanDeviceDriver.cpp src/comanEncoders.cpp src/comanOthers.cpp src/comanPositionControl.cpp src/comanTorqueControl.cpp src/comanVelocityControl.cpp)
 add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp src/FakebotForceTorquePlugin.cc src/analogServer.cpp)
 add_library(fakebotIMUplugin SHARED src/fakebotIMUplugin.cc )
 

@@ -24,7 +24,7 @@ GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(),
 
 void GazeboYarpIMU::Init()
 {
-    std::cout<<"*** fakebotIMUplugin started ***"<<std::endl;
+    std::cout<<"*** GazeboYarpIMU plugin started ***"<<std::endl;
     if (!_yarp.checkNetwork())
         std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
     else
@@ -33,7 +33,7 @@ void GazeboYarpIMU::Init()
 
 GazeboYarpIMU::~GazeboYarpIMU()
 {
-    std::cout<<"IMU says: Goodbye!"<<std::endl;
+    std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
 }
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
@@ -44,7 +44,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 
     if (!this->parentSensor)
     {
-        gzerr << "fakebotPlugin requires a IMUSensor.\n";
+        gzerr << "GazeboYarpIMU plugin requires a IMUSensor.\n";
         return;
     }
 

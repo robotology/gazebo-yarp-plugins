@@ -20,15 +20,15 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 include_directories(${YARP_INCLUDE_DIRS} include)
 
-add_library(yarp_gazebo SHARED src/coman_yarp_gazebo_plugin.cc)
-add_library(fakebot SHARED src/coman.cpp src/comanControlMode.cpp src/comanDeviceDriver.cpp src/comanEncoders.cpp src/comanOthers.cpp src/comanPositionControl.cpp src/comanTorqueControl.cpp src/comanVelocityControl.cpp)
-add_library(fakebotFTsensor SHARED src/fakebotFTsensor.cpp src/FakebotForceTorquePlugin.cc src/analogServer.cpp)
-add_library(fakebotIMUplugin SHARED src/fakebotIMUplugin.cc )
+add_library(gazebo_yarp_controlboard SHARED src/coman_yarp_gazebo_plugin.cc)
+add_library(gazebo_yarp_controlboard_driver SHARED src/coman.cpp src/comanControlMode.cpp src/comanDeviceDriver.cpp src/comanEncoders.cpp src/comanOthers.cpp src/comanPositionControl.cpp src/comanTorqueControl.cpp src/comanVelocityControl.cpp)
+add_library(gazebo_yarp_forcetorque SHARED src/fakebotFTsensor.cpp src/FakebotForceTorquePlugin.cc src/analogServer.cpp)
+add_library(gazebo_yarp_imu SHARED src/fakebotIMUplugin.cc )
 
 
-target_link_libraries(yarp_gazebo  fakebot ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
-target_link_libraries(fakebotFTsensor ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
-target_link_libraries(fakebotIMUplugin  ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_controlboard gazebo_yarp_controlboard_driver ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_forcetorque ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_imu  ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 
 add_executable(testmotor src/test/test.cpp)
 target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})

@@ -21,7 +21,7 @@
 
 
 /// specific to this device driver.
-#include <fakebotFTsensor.h>
+#include <GazeboYarpForceTorqueDriver.h>
 
 
 #ifdef WIN32

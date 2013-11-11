@@ -5,7 +5,7 @@
  */
 
 
-#include "fakebotIMUplugin.hh"
+#include "GazeboYarpIMU.hh"
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
 

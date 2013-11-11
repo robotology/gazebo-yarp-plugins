@@ -13,8 +13,8 @@
 #include <gazebo/transport/Node.hh>
 #include <gazebo/common/Assert.hh>
 
-#include <FakebotForceTorquePlugin.hh>
-#include <fakebotFTsensor.h>
+#include <GazeboYarpForceTorque.hh>
+#include <GazeboYarpForceTorqueDriver.h>
 #include <analogServer.h>
 
 using std::string;

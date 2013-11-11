@@ -18,7 +18,7 @@
 #include <yarp/os/Network.h>
 #include <analogServer.h>
 
-#include <fakebotFTsensor.h>
+#include <GazeboYarpForceTorqueDriver.h>
 
 
 namespace gazebo

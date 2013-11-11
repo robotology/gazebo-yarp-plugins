@@ -1,13 +1,16 @@
 /*
  * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
- * Authors: Mingo Enrico, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #include <gazebo/gazebo.hh>
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
+#pragma GCC diagnostic pop
+
 #include <yarp/os/Network.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>

@@ -14,7 +14,8 @@
 #include <yarp/os/Network.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-#include <coman.h>
+#include <GazeboYarpControlBoardDriver.h>
+
 
 #define ms(X) (X * 1000.0)
 #define toRad(X) (X*M_PI/180.0)

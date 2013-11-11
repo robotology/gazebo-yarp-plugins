@@ -5,7 +5,8 @@
  */
 
 
-#include "coman.h"
+
+#include <GazeboYarpControlBoardDriver.h>
 
 
 using namespace yarp::dev;

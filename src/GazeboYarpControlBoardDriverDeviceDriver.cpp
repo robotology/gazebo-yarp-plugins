@@ -5,7 +5,8 @@
  */
 
 
-#include "coman.h"
+#include <GazeboYarpControlBoardDriver.h>
+
 #include <boost/archive/text_iarchive.hpp>
 
 

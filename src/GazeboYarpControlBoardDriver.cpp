@@ -5,7 +5,8 @@
  */
 
 
-#include <coman.h>
+#include <GazeboYarpControlBoardDriver.h>
+
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>

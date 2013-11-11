@@ -60,17 +60,17 @@ static inline bool validate(Bottle &input, Bottle &out, const std::string &key1,
     return true;
 }
 
-bool fakebotFTsensor::fromConfig(yarp::os::Searchable &_config)
+bool GazeboYarpForceTorqueDriver::fromConfig(yarp::os::Searchable &_config)
 {
     return true;
 }
 
-bool fakebotFTsensor::close()
+bool GazeboYarpForceTorqueDriver::close()
 {
     return true;
 }
 
-fakebotFTsensor::fakebotFTsensor()
+GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver()
 {
     _useCalibration=0;
     _channels=6;
@@ -79,12 +79,12 @@ fakebotFTsensor::fakebotFTsensor()
     status=IAnalogSensor::AS_OK;
 }
 
-fakebotFTsensor::~fakebotFTsensor()
+GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
 {
 
 }
 
-bool fakebotFTsensor::open(yarp::os::Searchable &config)
+bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable &config)
 {
     Property prop;
     std::string str=config.toString().c_str();
@@ -105,7 +105,7 @@ bool fakebotFTsensor::open(yarp::os::Searchable &config)
  * @param out a vector containing the sensor's last readings.
  * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
  **/
-int fakebotFTsensor::read(yarp::sig::Vector &out)
+int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector &out)
 {
     // This method gives data to the analogServer
 
@@ -119,33 +119,33 @@ int fakebotFTsensor::read(yarp::sig::Vector &out)
     return status;
 }
 
-int fakebotFTsensor::getState(int ch)
+int GazeboYarpForceTorqueDriver::getState(int ch)
 {
     printf("getstate\n");
     return AS_OK;
 }
 
-int fakebotFTsensor::getChannels()
+int GazeboYarpForceTorqueDriver::getChannels()
 {
      return _channels;
 }
 
-int fakebotFTsensor::calibrateSensor()
+int GazeboYarpForceTorqueDriver::calibrateSensor()
 {
     return AS_OK;
 }
 
-int fakebotFTsensor::calibrateSensor(const yarp::sig::Vector& value)
+int GazeboYarpForceTorqueDriver::calibrateSensor(const yarp::sig::Vector& value)
 {
     return AS_OK;
 }
 
-int fakebotFTsensor::calibrateChannel(int ch)
+int GazeboYarpForceTorqueDriver::calibrateChannel(int ch)
 {
     return AS_OK;
 }
 
-int fakebotFTsensor::calibrateChannel(int ch, double v)
+int GazeboYarpForceTorqueDriver::calibrateChannel(int ch, double v)
 {
     return AS_OK;
 }

@@ -21,7 +21,7 @@ using namespace yarp::dev;
 
 
 
-void coman::gazebo_init()
+void GazeboYarpControlBoardDriver::gazebo_init()
 {
     //_robot = gazebo_pointer_wrapper::getModel();
     std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
@@ -74,7 +74,7 @@ void coman::gazebo_init()
         control_mode[j]=VOCAB_CM_POSITION;
 
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
-                                 boost::bind ( &coman::onUpdate, this, _1 ) );
+                                 boost::bind ( &GazeboYarpControlBoardDriver::onUpdate, this, _1 ) );
     gazebo_node_ptr = gazebo::transport::NodePtr ( new gazebo::transport::Node );
     gazebo_node_ptr->Init ( this->_robot->GetWorld()->GetName() );
     jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
@@ -85,7 +85,7 @@ void coman::gazebo_init()
 }
 
 
-void coman::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
+void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
     _clock++;
     
@@ -152,7 +152,7 @@ void coman::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
     }
 }
 
-void coman::setMinMaxPos()  //NOT TESTED
+void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
 {
     std::cout<<"Joint Limits"<<std::endl;
     for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
@@ -163,7 +163,7 @@ void coman::setMinMaxPos()  //NOT TESTED
     }
 }
 
-void coman::setJointNames()  //WORKS
+void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
     if( plugin_parameters.check("GAZEBO") ) 
     { 
@@ -192,7 +192,7 @@ void coman::setJointNames()  //WORKS
     }
 }
 
-void coman::setPIDs() //WORKS
+void GazeboYarpControlBoardDriver::setPIDs() //WORKS
 {        
     yarp::os::Property prop;
     //now try to load the pid from the plugin configuration file, if that fails fallback to the old methods
@@ -247,7 +247,7 @@ void coman::setPIDs() //WORKS
     }
 }
 
-bool coman::sendPositionsToGazebo(yarp::sig::Vector refs)
+bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)
 {
     for (unsigned int j=0; j<_robot_number_of_joints; j++)
     {
@@ -256,7 +256,7 @@ bool coman::sendPositionsToGazebo(yarp::sig::Vector refs)
     return true;
 }
 
-bool coman::sendPositionToGazebo(int j,double ref)
+bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 {
     gazebo::msgs::JointCmd j_cmd;
     prepareJointMsg(j_cmd,j,ref);
@@ -265,7 +265,7 @@ bool coman::sendPositionToGazebo(int j,double ref)
     return true;
 }
 
-void coman::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
+void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
 {
     j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
     j_cmd.mutable_position()->set_target(toRad(ref));
@@ -274,7 +274,7 @@ void coman::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index
     j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
 }
 
-bool coman::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
+bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 {
     for (unsigned int j=0; j<_robot_number_of_joints; j++)
     {
@@ -283,7 +283,7 @@ bool coman::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
     return true;
 }
 
-bool coman::sendVelocityToGazebo(int j,double ref) //NOT TESTED
+bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref) //NOT TESTED
 {      
     /* SetVelocity method */
     gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
@@ -305,7 +305,7 @@ bool coman::sendVelocityToGazebo(int j,double ref) //NOT TESTED
     return true;
 }
 
-void coman::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
+void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
     j_cmd.mutable_position()->set_p_gain(0.0);
@@ -317,7 +317,7 @@ void coman::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, 
     j_cmd.mutable_velocity()->set_target(toRad(ref));
 }
 
-bool coman::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
+bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 {
     for (unsigned int j=0; j<_robot_number_of_joints; j++)
     {
@@ -326,7 +326,7 @@ bool coman::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
     return true;
 }
 
-bool coman::sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
+bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
 {
     gazebo::msgs::JointCmd j_cmd;
     prepareJointTorqueMsg(j_cmd,j,ref);
@@ -335,7 +335,7 @@ bool coman::sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
     return true;
 }
 
-void coman::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
+void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
     j_cmd.mutable_position()->set_p_gain(0.0);

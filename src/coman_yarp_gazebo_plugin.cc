@@ -68,7 +68,7 @@ public:
 
         //gazebo_pointer_wrapper::setModel(this->_robot);
         
-        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::coman>
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>
                                           ("coman", "controlboard", "coman"));
   
         //Getting .ini configuration file from sdf

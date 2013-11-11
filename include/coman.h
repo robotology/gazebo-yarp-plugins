@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef COMAN_H
-#define COMAN_H
+#ifndef __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
+#define __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
@@ -39,11 +39,11 @@ static const std::string pid_config_abs_path = "../config/pid.ini";
 
 namespace yarp {
     namespace dev {
-        class coman;
+        class GazeboYarpControlBoardDriver;
     }
 }
 
-class yarp::dev::coman : 
+class yarp::dev::GazeboYarpControlBoardDriver : 
     public DeviceDriver,
     public IPositionControl,
     public IVelocityControl,
@@ -57,10 +57,10 @@ class yarp::dev::coman :
     public yarp::os::RateThread
 {
 public:
-    coman() : RateThread(robot_refresh_period)
+    GazeboYarpControlBoardDriver() : RateThread(robot_refresh_period)
     {}
 
-    ~coman(){}
+    ~GazeboYarpControlBoardDriver(){}
 
     /**
      * Gazebo stuff

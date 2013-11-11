@@ -10,7 +10,7 @@
 using namespace yarp::dev;
 
 
-bool coman::setVelocityMode() //NOT TESTED
+bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 {
     for(unsigned int j=0; j<_robot_number_of_joints; j++)
     {
@@ -19,7 +19,7 @@ bool coman::setVelocityMode() //NOT TESTED
     return true;
 }
 
-bool coman::velocityMove(int j, double sp) //NOT TESTED
+bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
     if (j<_robot_number_of_joints) 
     {
@@ -28,7 +28,7 @@ bool coman::velocityMove(int j, double sp) //NOT TESTED
     return true;
 }
 
-bool coman::velocityMove(const double *sp) //NOT TESTED
+bool GazeboYarpControlBoardDriver::velocityMove(const double *sp) //NOT TESTED
 {
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         vel[i] = sp[i];

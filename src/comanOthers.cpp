@@ -10,14 +10,14 @@
 using namespace yarp::dev;
 
 // IControlLimits
-bool coman::getLimits(int axis, double *min, double *max) //NOT TESTED
+bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max) //NOT TESTED
 {
     *min=min_pos[axis];
     *max=max_pos[axis];
     return true;
 }
 
-bool coman::setLimits(int axis, double min, double max) //NOT TESTED
+bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //NOT TESTED
 {
     max_pos[axis]=max;
     min_pos[axis]=min;
@@ -25,7 +25,7 @@ bool coman::setLimits(int axis, double min, double max) //NOT TESTED
 }
 
 //Amplifiers
-bool coman::enableAmp(int j) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::enableAmp(int j) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
         amp[j] = 1;
@@ -34,7 +34,7 @@ bool coman::enableAmp(int j) //NOT IMPLEMENTED
     return true;
 }
 
-bool coman::disableAmp(int j) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::disableAmp(int j) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
         amp[j] = 0;
@@ -43,7 +43,7 @@ bool coman::disableAmp(int j) //NOT IMPLEMENTED
     return true;
 }
 
-bool coman::getCurrent(int j, double *val) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getCurrent(int j, double *val) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
         val[j] = amp[j];
@@ -51,7 +51,7 @@ bool coman::getCurrent(int j, double *val) //NOT IMPLEMENTED
     return true;
 }
 
-bool coman::getCurrents(double *vals) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getCurrents(double *vals) //NOT IMPLEMENTED
 {
     for (unsigned int i=0; i<_robot_number_of_joints; i++) {
         vals[i] = amp[i];
@@ -59,30 +59,30 @@ bool coman::getCurrents(double *vals) //NOT IMPLEMENTED
     return true;
 }
 
-bool coman::setMaxCurrent(int, double) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::setMaxCurrent(int, double) //NOT IMPLEMENTED
 {
     return true;
 }
 
-bool coman::getAmpStatus(int *st) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getAmpStatus(int *st) //NOT IMPLEMENTED
 {
     *st = 0;
     return true;
 }
 
-bool coman::getAmpStatus(int, int *v) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getAmpStatus(int, int *v) //NOT IMPLEMENTED
 {
     *v=0;
     return true;
 }
 
-bool coman::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
 {
     fprintf(stderr, "fakebot: calibrating joint %d with parameters %u %f %f %f\n", j, iv, v1, v2, v3);
     return true;
 }
 
-bool coman::done(int j) // NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::done(int j) // NOT IMPLEMENTED
 {
     fprintf(stderr , "fakebot: calibration done on joint %d.\n", j);
     return true;

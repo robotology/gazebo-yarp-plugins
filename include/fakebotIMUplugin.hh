@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _FAKEBOT_IMU_PLUGIN_HH_
-#define _FAKEBOT_IMU_PLUGIN_HH_
+#ifndef _GAZEBO_YARP_IMU_PLUGIN_HH_
+#define _GAZEBO_YARP_IMU_PLUGIN_HH_
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/sensors/ImuSensor.hh>
@@ -15,11 +15,11 @@
 
 namespace gazebo
 {
-    class fakebotIMUplugin : public SensorPlugin
+    class GazeboYarpIMU : public SensorPlugin
     {
     public:
-        fakebotIMUplugin();
-        virtual ~fakebotIMUplugin();
+        GazeboYarpIMU();
+        virtual ~GazeboYarpIMU();
 
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 

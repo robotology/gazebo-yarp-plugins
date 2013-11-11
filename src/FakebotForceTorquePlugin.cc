@@ -21,23 +21,23 @@ using std::string;
 
 namespace gazebo
 {
-GZ_REGISTER_SENSOR_PLUGIN(FakebotForceTorquePlugin)
+GZ_REGISTER_SENSOR_PLUGIN(GazeboYarpForceTorque)
 
 /*
  * We have one yarpFTsensor (yarp::dev::IAnalogSensor) and one factory for all FT sensors;
  * still we have one AnalogServer for each FT sensor that reads just one portion of
  * the unique yarpFTsensor AnalogSensor, and publishes it.
  */
-unsigned int FakebotForceTorquePlugin::iBoards = 0;
+unsigned int GazeboYarpForceTorque::iBoards = 0;
 
 /////////////////////////////////////////////////
-FakebotForceTorquePlugin::FakebotForceTorquePlugin() : _server(NULL), yarpFTsensor(NULL), _yarp()
+GazeboYarpForceTorque::GazeboYarpForceTorque() : _server(NULL), yarpFTsensor(NULL), _yarp()
 {
     this->iBoards++;
 
     if(this->yarpFTsensor == NULL) {
         yarp::dev::DriverCreator *fakebotFtsensor_factory =
-                new yarp::dev::DriverCreatorOf<yarp::dev::fakebotFTsensor>("fakebotFTsensor","FTsensor","fakebotFTsensor");
+                new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>("fakebotFTsensor","FTsensor","fakebotFTsensor");
         yarp::dev::Drivers::factory().add(fakebotFtsensor_factory); // hand factory over to YARP
         yarp::os::Property _parameters;
         _parameters.put("device", "fakebotFTsensor");
@@ -55,7 +55,7 @@ FakebotForceTorquePlugin::FakebotForceTorquePlugin() : _server(NULL), yarpFTsens
 }
 
 /////////////////////////////////////////////////
-FakebotForceTorquePlugin::~FakebotForceTorquePlugin()
+GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     if(this->_server!= NULL && this->_server->isRunning()) {
         this->_server->stop();
@@ -75,7 +75,7 @@ FakebotForceTorquePlugin::~FakebotForceTorquePlugin()
 }
 
 /////////////////////////////////////////////////
-void FakebotForceTorquePlugin::Load(sensors::SensorPtr _parent,
+void GazeboYarpForceTorque::Load(sensors::SensorPtr _parent,
     sdf::ElementPtr _sdf)
 {
   this->parentSensor =
@@ -85,7 +85,7 @@ void FakebotForceTorquePlugin::Load(sensors::SensorPtr _parent,
     gzthrow("ForceTorquePlugin requires a force_torque sensor as its parent.");
 
   this->connection = this->parentSensor->ConnectUpdate(
-        boost::bind(&FakebotForceTorquePlugin::OnUpdate, this, _1));
+        boost::bind(&GazeboYarpForceTorque::OnUpdate, this, _1));
 
   this->world = gazebo::physics::get_world(this->parentSensor->GetWorldName());
 
@@ -147,7 +147,7 @@ void FakebotForceTorquePlugin::Load(sensors::SensorPtr _parent,
 }
 
 /////////////////////////////////////////////////
-void FakebotForceTorquePlugin::OnUpdate(msgs::WrenchStamped _msg)
+void GazeboYarpForceTorque::OnUpdate(msgs::WrenchStamped _msg)
 {
 
     // ft force and torque measurements in joint (child link) frame

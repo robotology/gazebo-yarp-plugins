@@ -38,13 +38,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
       this->_robot = _parent;
 
-        //_dT = ms(this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod());
-        //std::cout<<"Simulation Time Step: "<<_dT<<" [ms]"<<std::endl;
-
-        //gazebo_pointer_wrapper::setModel(this->_robot);
-        
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>
-                                          ("coman", "controlboard", "coman"));
+                                          ("gazebo_controlboard", "controlboard", "GazeboYarpControlBoardDriver"));
   
         //Getting .ini configuration file from sdf
         bool configuration_loaded = false;
@@ -68,7 +63,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
         if( !configuration_loaded ) {
             _parameters.put("device", "controlboard");
-            _parameters.put("subdevice", "coman");
+            _parameters.put("subdevice", "gazebo_controlboard");
             _parameters.put("name", "/coman/test");//TODO what's this?
             std::cout << "File .ini not found, loading default parameters" << std::endl;
         }
@@ -87,7 +82,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         printf("Device initialized correctly, now sitting and waiting cause I am just the main of the yarp device, and the coman is linked to the onUpdate event of gazebo\n");
 
-        std::cout<<"LOADED GAZEBO 2 YARP PLUGIN!"<<std::endl;
+        std::cout<<"Loaded GazeboYarpControlBoard Plugin"<<std::endl;
     }
 
 

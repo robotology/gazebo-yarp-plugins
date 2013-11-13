@@ -49,7 +49,7 @@ GazeboYarpForceTorque::GazeboYarpForceTorque() : _server(NULL), yarpFTsensor(NUL
            fprintf(stderr, "Device did not open\n");
         else {
             this->_driver.view(this->yarpFTsensor);
-            printf("Device fakebotFTsensor initialized correctly\n");
+            printf("Device gazebo_forcetorque initialized correctly\n");
         }
     }
 }

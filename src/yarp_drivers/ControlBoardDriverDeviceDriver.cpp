@@ -5,7 +5,7 @@
  */
 
 
-#include <GazeboYarpControlBoardDriver.h>
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 #include <boost/archive/text_iarchive.hpp>
 

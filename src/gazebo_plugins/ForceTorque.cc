@@ -13,9 +13,9 @@
 #include <gazebo/transport/Node.hh>
 #include <gazebo/common/Assert.hh>
 
-#include <GazeboYarpForceTorque.hh>
-#include <GazeboYarpForceTorqueDriver.h>
-#include <analogServer.h>
+#include <gazebo_yarp_plugins/ForceTorque.hh>
+#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
+#include <gazebo_yarp_plugins/analogServer.h>
 
 using std::string;
 

@@ -20,13 +20,12 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 include_directories(${YARP_INCLUDE_DIRS} include)
 
-add_library(gazebo_yarp_controlboard SHARED src/GazeboYarpControlBoard.cc)
-add_library(gazebo_yarp_controlboard_driver SHARED src/GazeboYarpControlBoardDriver.cpp src/GazeboYarpControlBoardDriverControlMode.cpp src/GazeboYarpControlBoardDriverDeviceDriver.cpp src/GazeboYarpControlBoardDriverEncoders.cpp src/GazeboYarpControlBoardDriverOthers.cpp src/GazeboYarpControlBoardDriverPositionControl.cpp src/GazeboYarpControlBoardTorqueDriverControl.cpp src/GazeboYarpControlBoardDriverVelocityControl.cpp)
-add_library(gazebo_yarp_forcetorque SHARED src/GazeboYarpForceTorqueDriver.cpp src/GazeboYarpForceTorque.cc src/analogServer.cpp)
-add_library(gazebo_yarp_imu SHARED src/GazeboYarpIMU.cc )
+add_library(gazebo_yarp_controlboard SHARED src/gazebo_plugins/ControlBoard.cc src/yarp_drivers/ControlBoardDriver.cpp src/yarp_drivers/ControlBoardDriverControlMode.cpp src/yarp_drivers/ControlBoardDriverDeviceDriver.cpp src/yarp_drivers/ControlBoardDriverEncoders.cpp src/yarp_drivers/ControlBoardDriverOthers.cpp src/yarp_drivers/ControlBoardDriverPositionControl.cpp src/yarp_drivers/ControlBoardTorqueDriverControl.cpp src/yarp_drivers/ControlBoardDriverVelocityControl.cpp)
+add_library(gazebo_yarp_forcetorque SHARED src/gazebo_plugins/ForceTorque.cc src/yarp_drivers/ForceTorqueDriver.cpp src/yarp_drivers/analogServer.cpp)
+add_library(gazebo_yarp_imu SHARED src/gazebo_plugins/IMU.cc )
 
 
-target_link_libraries(gazebo_yarp_controlboard gazebo_yarp_controlboard_driver ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_controlboard ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_forcetorque ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_imu  ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 

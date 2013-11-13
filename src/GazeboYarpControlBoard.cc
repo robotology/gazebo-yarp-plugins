@@ -3,45 +3,19 @@
  * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
-#include <gazebo/gazebo.hh>
-#include <gazebo/common/common.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
-#pragma GCC diagnostic pop
-
-#include <yarp/os/Network.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <GazeboYarpControlBoardDriver.h>
-
-
-#define ms(X) (X * 1000.0)
-#define toRad(X) (X*M_PI/180.0)
-#define ROBOT_NAME "COMAN"
+#include <GazeboYarpControlBoard.hh>
 
 namespace gazebo
 {
-  
-  
-  /**
-   * The gazebo plugin is the "main" of the yarp device,
-   * so what it should is to initialize the device, copy the 
-   * gazebo pointer, and return
-   * 
-   * The device will receive the gazebo pointer, parse the model, 
-   * and wait for yarp connections and the gazebo wait event.
-   */
-class coman_yarp_gazebo_plugin : public ModelPlugin
-{
-public:
-    coman_yarp_gazebo_plugin() : _yarp()
+    
+GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
+
+    GazeboYarpControlBoard::GazeboYarpControlBoard() : _yarp()
     {
 
     }
 
-    void Init()
+    void GazeboYarpControlBoard::Init()
     {
         std::cout<<"*** COMAN GAZEBO YARP PLUGIN ***"<<std::endl;
         if (!_yarp.checkNetwork())
@@ -50,7 +24,7 @@ public:
             std::cout<<"YARP Server found!"<<std::endl;
     }
 
-    ~coman_yarp_gazebo_plugin()
+    GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
         _driver.close();
         std::cout<<"Goodbye!"<<std::endl;
@@ -59,7 +33,7 @@ public:
     /**
      * Saves the gazebo pointer, creates the device driver
      */
-    void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
+    void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
 
       this->_robot = _parent;
@@ -98,16 +72,16 @@ public:
             _parameters.put("name", "/coman/test");//TODO what's this?
             std::cout << "File .ini not found, loading default parameters" << std::endl;
         }
-	
-	//Now I love everything and every interface
-	std::ostringstream archive_stream;
-	boost::archive::text_oarchive archive(archive_stream);
-	uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
-	archive<<cast_boost_to_pointer;
-	_parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
+
+        //Now I love everything and every interface
+        std::ostringstream archive_stream;
+        boost::archive::text_oarchive archive(archive_stream);
+        uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
+        archive<<cast_boost_to_pointer;
+        _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
 
         _driver.open(_parameters);
-		
+    
         if (!_driver.isValid())
             fprintf(stderr, "Device did not open\n");
 
@@ -116,17 +90,5 @@ public:
         std::cout<<"LOADED GAZEBO 2 YARP PLUGIN!"<<std::endl;
     }
 
-private:
-    /**
-      * Simulation Time Step in ms
-      */
-    //double _dT;
-    physics::ModelPtr _robot;
-    yarp::os::Network _yarp;
-    yarp::dev::PolyDriver _driver;
-    yarp::os::Property _parameters;
-   // event::ConnectionPtr updateConnection; // Pointer to the update event connection
-};
 
-GZ_REGISTER_MODEL_PLUGIN(coman_yarp_gazebo_plugin)
 }

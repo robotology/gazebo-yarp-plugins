@@ -6,11 +6,13 @@
 
 
 #include <coman.h>
+#include "test/jointlogger.hpp"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
 #include <boost/archive/text_iarchive.hpp>
+#include <stdio.h>
 
 
 using namespace yarp::os;
@@ -55,7 +57,6 @@ void coman::gazebo_init()
 
     setMinMaxPos();
     setPIDs();
-
     pos = 0;
     zero_pos=0;
     vel = 0;
@@ -82,6 +83,7 @@ void coman::gazebo_init()
 
     _T_controller = 10;
 
+//     logger.initialize(joint_names[2],"speed");
 }
 
 
@@ -107,7 +109,9 @@ void coman::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
     pos_lock.unlock();
-
+    
+//     logger.log(speed[2]);
+    
     for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
     {
         if ( control_mode[j]==VOCAB_CM_POSITION ) //set pos joint value, set vel joint value

@@ -272,6 +272,9 @@ void coman::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index
     j_cmd.mutable_position()->set_p_gain(_p[joint_index]);
     j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
     j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
+    j_cmd.mutable_velocity()->set_p_gain(0.0);
+    j_cmd.mutable_velocity()->set_i_gain(0);
+    j_cmd.mutable_velocity()->set_d_gain(0);
 }
 
 bool coman::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
@@ -286,22 +289,22 @@ bool coman::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 bool coman::sendVelocityToGazebo(int j,double ref) //NOT TESTED
 {      
     /* SetVelocity method */
-    gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+    /*gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
     joint->SetMaxForce(0, joint->GetEffortLimit(0)*1.1); //<-- MAGIC NUMBER!!!!
     //      std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
     joint->SetVelocity(0,toRad(ref));
-    
+    */
     /* JointController method. If you pick this control method for control
      *      of joint velocities, you should also take care of the switching logic
      *      in setVelocityMode, setTorqueMode and setPositionMode:
      *      that is, the SetMarxForce(0,0) and SetVelocity(0,0) are no longer
      *      needed, but the JointController::AddJoint() method needs to be called
-     *      when you switch to velocity mode, to make sure the PIDs get reset 
-    //       gazebo::msgs::JointCmd j_cmd;
-    //       prepareJointVelocityMsg(j_cmd,j,ref);
-    //       jointCmdPub->WaitForConnection();
-    //       jointCmdPub->Publish(j_cmd);
-    */
+     *      when you switch to velocity mode, to make sure the PIDs get reset */
+           gazebo::msgs::JointCmd j_cmd;
+           prepareJointVelocityMsg(j_cmd,j,ref);
+           jointCmdPub->WaitForConnection();
+           jointCmdPub->Publish(j_cmd);
+    /**/
     return true;
 }
 
@@ -311,9 +314,9 @@ void coman::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, 
     j_cmd.mutable_position()->set_p_gain(0.0);
     j_cmd.mutable_position()->set_i_gain(0.0);
     j_cmd.mutable_position()->set_d_gain(0.0);
-    j_cmd.mutable_velocity()->set_p_gain(5000);
-    j_cmd.mutable_velocity()->set_i_gain(0.0);
-    j_cmd.mutable_velocity()->set_d_gain(10);
+    j_cmd.mutable_velocity()->set_p_gain(0.200);
+    j_cmd.mutable_velocity()->set_i_gain(0.02);
+    j_cmd.mutable_velocity()->set_d_gain(0);
     j_cmd.mutable_velocity()->set_target(toRad(ref));
 }
 

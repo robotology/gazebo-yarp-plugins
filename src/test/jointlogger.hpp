@@ -9,7 +9,8 @@ class jointLogger{
     
 public:
 jointLogger(){
-
+    joint_name="";
+    logger=0;
 }    
 
 void log(double d)
@@ -29,8 +30,8 @@ bool initialize(std::string joint_name,const char* filename)
 }
 
 private:
-std::string joint_name="";    
-FILE* logger=0;    
+std::string joint_name;    
+FILE* logger;    
 };
 
 

@@ -6,12 +6,13 @@
 
 
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
-
+#include "test/jointlogger.hpp"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
 #include <boost/archive/text_iarchive.hpp>
+#include <stdio.h>
 
 
 using namespace yarp::os;
@@ -56,7 +57,6 @@ void GazeboYarpControlBoardDriver::gazebo_init()
 
     setMinMaxPos();
     setPIDs();
-
     pos = 0;
     zero_pos=0;
     vel = 0;
@@ -83,6 +83,7 @@ void GazeboYarpControlBoardDriver::gazebo_init()
 
     _T_controller = 10;
 
+//     logger.initialize(joint_names[2],"speed");
 }
 
 
@@ -108,7 +109,9 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
     pos_lock.unlock();
-
+    
+//     logger.log(speed[2]);
+    
     for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
     {
         if ( control_mode[j]==VOCAB_CM_POSITION ) //set pos joint value, set vel joint value
@@ -273,6 +276,9 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     j_cmd.mutable_position()->set_p_gain(_p[joint_index]);
     j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
     j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
+    j_cmd.mutable_velocity()->set_p_gain(0.0);
+    j_cmd.mutable_velocity()->set_i_gain(0);
+    j_cmd.mutable_velocity()->set_d_gain(0);
 }
 
 bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
@@ -287,22 +293,22 @@ bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& ref
 bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref) //NOT TESTED
 {      
     /* SetVelocity method */
-    gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+    /*gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
     joint->SetMaxForce(0, joint->GetEffortLimit(0)*1.1); //<-- MAGIC NUMBER!!!!
     //      std::cout<<"MaxForce:" <<joint->GetMaxForce(0)<<std::endl;
     joint->SetVelocity(0,toRad(ref));
-    
+    */
     /* JointController method. If you pick this control method for control
      *      of joint velocities, you should also take care of the switching logic
      *      in setVelocityMode, setTorqueMode and setPositionMode:
      *      that is, the SetMarxForce(0,0) and SetVelocity(0,0) are no longer
      *      needed, but the JointController::AddJoint() method needs to be called
-     *      when you switch to velocity mode, to make sure the PIDs get reset 
-    //       gazebo::msgs::JointCmd j_cmd;
-    //       prepareJointVelocityMsg(j_cmd,j,ref);
-    //       jointCmdPub->WaitForConnection();
-    //       jointCmdPub->Publish(j_cmd);
-    */
+     *      when you switch to velocity mode, to make sure the PIDs get reset */
+           gazebo::msgs::JointCmd j_cmd;
+           prepareJointVelocityMsg(j_cmd,j,ref);
+           jointCmdPub->WaitForConnection();
+           jointCmdPub->Publish(j_cmd);
+    /**/
     return true;
 }
 
@@ -312,9 +318,9 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     j_cmd.mutable_position()->set_p_gain(0.0);
     j_cmd.mutable_position()->set_i_gain(0.0);
     j_cmd.mutable_position()->set_d_gain(0.0);
-    j_cmd.mutable_velocity()->set_p_gain(5000);
-    j_cmd.mutable_velocity()->set_i_gain(0.0);
-    j_cmd.mutable_velocity()->set_d_gain(10);
+    j_cmd.mutable_velocity()->set_p_gain(0.200);
+    j_cmd.mutable_velocity()->set_i_gain(0.02);
+    j_cmd.mutable_velocity()->set_d_gain(0);
     j_cmd.mutable_velocity()->set_target(toRad(ref));
 }
 

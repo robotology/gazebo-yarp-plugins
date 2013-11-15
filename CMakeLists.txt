@@ -20,10 +20,27 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 include_directories(${YARP_INCLUDE_DIRS} include)
 
-add_library(gazebo_yarp_controlboard SHARED src/GazeboYarpControlBoard.cc)
-add_library(gazebo_yarp_controlboard_driver SHARED src/GazeboYarpControlBoardDriver.cpp src/GazeboYarpControlBoardDriverControlMode.cpp src/GazeboYarpControlBoardDriverDeviceDriver.cpp src/GazeboYarpControlBoardDriverEncoders.cpp src/GazeboYarpControlBoardDriverOthers.cpp src/GazeboYarpControlBoardDriverPositionControl.cpp src/GazeboYarpControlBoardTorqueDriverControl.cpp src/GazeboYarpControlBoardDriverVelocityControl.cpp)
-add_library(gazebo_yarp_forcetorque SHARED src/GazeboYarpForceTorqueDriver.cpp src/GazeboYarpForceTorque.cc src/analogServer.cpp)
-add_library(gazebo_yarp_imu SHARED src/GazeboYarpIMU.cc )
+
+add_library(gazebo_yarp_controlboard SHARED src/GazeboYarpControlBoard.cc include/GazeboYarpControlBoard.hh)
+add_library(gazebo_yarp_controlboard_driver SHARED
+                            include/GazeboYarpControlBoardDriver.h
+                            src/GazeboYarpControlBoardDriver.cpp
+                            src/GazeboYarpControlBoardDriverControlMode.cpp
+                            src/GazeboYarpControlBoardDriverDeviceDriver.cpp
+                            src/GazeboYarpControlBoardDriverEncoders.cpp
+                            src/GazeboYarpControlBoardDriverOthers.cpp
+                            src/GazeboYarpControlBoardDriverPositionControl.cpp
+                            src/GazeboYarpControlBoardTorqueDriverControl.cpp
+                            src/GazeboYarpControlBoardDriverVelocityControl.cpp)
+
+add_library(gazebo_yarp_forcetorque SHARED  include/analogServer.h
+                                            include/GazeboYarpForceTorque.hh
+                                            include/GazeboYarpForceTorqueDriver.h
+                                            src/GazeboYarpForceTorqueDriver.cpp
+                                            src/GazeboYarpForceTorque.cc
+                                            src/analogServer.cpp)
+
+add_library(gazebo_yarp_imu SHARED include/GazeboYarpIMU.hh src/GazeboYarpIMU.cc )
 
 
 target_link_libraries(gazebo_yarp_controlboard gazebo_yarp_controlboard_driver ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})

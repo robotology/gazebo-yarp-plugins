@@ -12,6 +12,8 @@
 #pragma GCC diagnostic pop
 
 #include <yarp/os/Network.h>
+#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/PolyDriverList.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <GazeboYarpControlBoardDriver.h>
@@ -52,15 +54,18 @@ public:
      * Saves the gazebo pointer, creates the device driver
      */
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
+    //static gazebo::physics::Model* getRobot() {return _robot.get();}
     
 private:
     /**
       * Simulation Time Step in ms
       */
     //double _dT;
-    physics::ModelPtr _robot;
+    /*static*/ physics::ModelPtr _robot;
     yarp::os::Network _yarp;
-    yarp::dev::PolyDriver _driver;
+    yarp::dev::PolyDriver _wrapper;
+    yarp::dev::IMultipleWrapper *_iWrap;
+    yarp::dev::PolyDriver _controlBoard;
     yarp::os::Property _parameters;
    // event::ConnectionPtr updateConnection; // Pointer to the update event connection
 };

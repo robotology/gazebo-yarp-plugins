@@ -29,6 +29,7 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const double *t) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setTorqueMode() //NOT TESTED
 {
+    std::cout<<std::endl<<" set torque mode "<< std::endl;
     for(unsigned int j=0; j<_robot_number_of_joints; j++)
     {
         this->setTorqueMode(j);

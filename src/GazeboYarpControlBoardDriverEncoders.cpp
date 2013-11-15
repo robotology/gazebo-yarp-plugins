@@ -32,6 +32,35 @@ bool GazeboYarpControlBoardDriver::getEncoders(double *encs) //WORKS
     //pos_lock.unlock();
 }
 
+bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
+{
+    double my_time = yarp::os::Time::now();
+    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
+            encs[i] = pos[i]-zero_pos[i];  //should we just use memcopy here?
+            time[i] = my_time;
+    }
+
+    return true;
+}
+
+/**
+* Read the instantaneous acceleration of all axes.
+* @j axis index
+* @enc encoder value (pointer to)
+* @stamp corresponding timestamp (pointer to)
+* @return true if all goes well, false if anything bad happens.
+*/
+bool GazeboYarpControlBoardDriver::getEncoderTimed(int j, double *encs, double *time)
+{
+    if (j<_robot_number_of_joints) {
+        (*encs) = pos[j]-zero_pos[j];
+        *time = yarp::os::Time::now();
+    }
+
+    return true;
+}
+
+
 /**
  * Since we don't know how to reset gazebo encoders, we will simply add the actual value to the future encoders readings
  */

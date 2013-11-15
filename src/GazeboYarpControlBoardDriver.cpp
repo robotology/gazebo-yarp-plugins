@@ -43,7 +43,7 @@ void GazeboYarpControlBoardDriver::gazebo_init()
     speed.size ( _robot_number_of_joints );
     acc.size ( _robot_number_of_joints );
     amp.size ( _robot_number_of_joints );
-    torque.size ( _robot_number_of_joints );
+    torque.size ( _robot_number_of_joints ); torque.zero();
     ref_speed.size ( _robot_number_of_joints );
     ref_pos.size ( _robot_number_of_joints );
     ref_acc.size ( _robot_number_of_joints );
@@ -74,6 +74,8 @@ void GazeboYarpControlBoardDriver::gazebo_init()
     for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
         control_mode[j]=VOCAB_CM_POSITION;
 
+    std::cout << "gazebo_init set pid done!" << std::endl;
+
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
                                  boost::bind ( &GazeboYarpControlBoardDriver::onUpdate, this, _1 ) );
     gazebo_node_ptr = gazebo::transport::NodePtr ( new gazebo::transport::Node );
@@ -82,14 +84,14 @@ void GazeboYarpControlBoardDriver::gazebo_init()
                   ( std::string ( "~/" ) + this->_robot->GetName() + "/joint_cmd" );
 
     _T_controller = 10;
-
+    std::cout << "gazebo_init ended!!" << std::endl;
 }
 
 
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
     _clock++;
-    
+
     if ( !started ) //This is a simple way to start with a coman in standing position
     {
         started=true;
@@ -166,11 +168,18 @@ void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
 
 void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
-    if( plugin_parameters.check("GAZEBO") ) 
+    if( plugin_parameters.check("GAZEBO") )
     { 
         std::cout << ".ini file found, using joint names in ini file" << std::endl;
-        yarp::os::Bottle joint_names_bottle =plugin_parameters.findGroup("GAZEBO").findGroup("jointNames");
-        
+        std::cout << "\n\nGazeboYarpControlBoardDriver params \n " << plugin_parameters.toString() << "\n\n";
+        yarp::os::Bottle joint_names_bottle = plugin_parameters.findGroup("GAZEBO").findGroup("jointNames");
+        yarp::os::Bottle &gazeboGroup = plugin_parameters.findGroup("GAZEBO");
+
+        if(joint_names_bottle.isNull())
+        {
+            std::cout << "Error!!";
+            return;
+        }
         int nr_of_joints = joint_names_bottle.size()-1;
         
         joint_names.resize(nr_of_joints);

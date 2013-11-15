@@ -28,6 +28,7 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
+
 #pragma GCC diagnostic pop
 
 #include <mutex>
@@ -45,10 +46,10 @@ namespace yarp {
 
 class yarp::dev::GazeboYarpControlBoardDriver : 
     public DeviceDriver,
-    public IPositionControl,
+    public IPositionControl2,
     public IVelocityControl,
     public IAmplifierControl,
-    public IEncoders,
+    public IEncodersTimed,
     public IControlCalibration2,
     public IControlLimits,
     public DeviceResponder,
@@ -57,7 +58,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public yarp::os::RateThread
 {
 public:
-    GazeboYarpControlBoardDriver() : RateThread(robot_refresh_period)
+    GazeboYarpControlBoardDriver() : RateThread(20)
     {}
 
     ~GazeboYarpControlBoardDriver(){}
@@ -95,6 +96,10 @@ public:
     virtual bool getEncoderAcceleration(int j, double *spds); //NOT IMPLEMENTED
     virtual bool getEncoderAccelerations(double *accs); //NOT IMPLEMENTED
 
+    // ENCODERS TIMED
+    virtual bool getEncodersTimed(double *encs, double *time);
+    virtual bool getEncoderTimed(int j, double *encs, double *time);
+
     //POSITION CONTROL
     virtual bool stop(int j); //WORKS
     virtual bool stop(); //WORKS
@@ -111,6 +116,17 @@ public:
     virtual bool checkMotionDone(int j, bool *flag); //NOT TESTED
     virtual bool checkMotionDone(bool *flag); //NOT TESTED
     virtual bool setPositionMode(); //NOT TESTED
+
+    // POS 2
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas);
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags);
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds);
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds);
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
+    virtual bool stop(const int n_joint, const int *joints);
+
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
     

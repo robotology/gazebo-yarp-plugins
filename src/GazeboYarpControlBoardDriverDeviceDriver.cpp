@@ -6,6 +6,7 @@
 
 
 #include <GazeboYarpControlBoardDriver.h>
+#include "GazeboYarpControlBoard.hh"
 
 #include <boost/archive/text_iarchive.hpp>
 
@@ -16,11 +17,8 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config) 
 {
-    //if there is a .ini file, directly load it avoiding copyng all the data from config
-    if( config.check("gazebo_ini_file_path") ) {
-        plugin_parameters.fromConfigFile(config.find("gazebo_ini_file_path").asString().c_str());
-    }
-    
+    plugin_parameters.fromString(config.toString().c_str());
+
     //I love everything and every interface
     uintptr_t temp;
     std::istringstream iss(config.find("loving_gazebo_pointer").asString().c_str());
@@ -32,6 +30,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     {
         //TODO
     }
+//    _robot = gazebo::GazeboYarpControlBoard::getRobot();
     _robot=reinterpret_cast<gazebo::physics::Model*>(temp);
     
     gazebo_init();
@@ -51,17 +50,18 @@ bool GazeboYarpControlBoardDriver::close() //NOT IMPLEMENTED
 //We need a thread to publish some extra information like joint torques and velocities.
 bool GazeboYarpControlBoardDriver::threadInit()
 {
-    std::string gazebo_group_name = "GAZEBO";
-    std::stringstream property_name;
-    property_name<<"name";
-    yarp::os::Bottle& name = plugin_parameters.findGroup(gazebo_group_name.c_str()).findGroup(property_name.str().c_str());
+    yarp::os::Value &name = plugin_parameters.find("name");
     
+    if(name.isNull())
+    {
+        printf("\n\nerror name not found\n %s\n\n", plugin_parameters.toString().c_str());
+    }
     
     std::stringstream port_name_torque;
-    port_name_torque<<"/wholeBodyDynamics"<<name.get(1).asString().c_str()<<"/Torques:o";
+    port_name_torque<<"/coman/"<< name.toString().c_str()<<"/analog/torques:o";
     _joint_torq_port.open(port_name_torque.str().c_str());
     std::stringstream port_name_speed;
-    port_name_speed<<"/wholeBodyDynamics"<<name.get(1).asString().c_str()<<"/Speeds:o";
+    port_name_speed<<"/coman/"<< name.toString().c_str()<<"/analog/speeds:o";
     _joint_speed_port.open(port_name_speed.str().c_str());
     return true;
 }

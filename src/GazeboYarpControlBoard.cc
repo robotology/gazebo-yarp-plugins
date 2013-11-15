@@ -26,7 +26,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
-        _driver.close();
+        _wrapper.close();
         std::cout<<"Goodbye!"<<std::endl;
     }
 
@@ -38,34 +38,41 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
       this->_robot = _parent;
 
+        // Add my gazebo device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>
-                                          ("gazebo_controlboard", "controlboard", "GazeboYarpControlBoardDriver"));
+                                          ("gazebo_controlboard", "controlboardwrapper2", "GazeboYarpControlBoardDriver"));
   
+        std::cout<<"\n Initting Wrapper\n"<<std::endl;
         //Getting .ini configuration file from sdf
         bool configuration_loaded = false;
-        if(_sdf->HasElement("yarpConfigurationFile") ) {
+
+        yarp::os::Bottle wrapper_group;
+        yarp::os::Bottle driver_group;
+        if(_sdf->HasElement("yarpConfigurationFile") )
+        {
             std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
             std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-            yarp::os::Property plugin_parameters;
-            if( ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str()) ) {
+
+            if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
+            {
                 std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
                 _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
             
-                std::string gazebo_group = "GAZEBO";
-            
-                _parameters.put("device", plugin_parameters.findGroup(gazebo_group.c_str()).find("device").asString().c_str());
-                _parameters.put("subdevice", plugin_parameters.findGroup(gazebo_group.c_str()).find("subdevice").asString().c_str());
-                _parameters.put("name", plugin_parameters.findGroup(gazebo_group.c_str()).find("name").asString().c_str());
+                wrapper_group = _parameters.findGroup("WRAPPER");
+                if(wrapper_group.isNull())
+                {
+                    printf("GazeboYarpControlBoard::Load  Error: [WRAPPER] group not found in config file\n");
+                    return;
+                }
 
                 configuration_loaded = true;
             }
             
         }
-        if( !configuration_loaded ) {
-            _parameters.put("device", "controlboard");
-            _parameters.put("subdevice", "gazebo_controlboard");
-            _parameters.put("name", "/coman/test");//TODO what's this?
-            std::cout << "File .ini not found, loading default parameters" << std::endl;
+        if( !configuration_loaded )
+        {
+            std::cout << "File .ini not found, quitting\n" << std::endl;
+            return;
         }
 
         //Now I love everything and every interface
@@ -75,13 +82,65 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         archive<<cast_boost_to_pointer;
         _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
 
-        _driver.open(_parameters);
+        _wrapper.open(wrapper_group);
     
-        if (!_driver.isValid())
-            fprintf(stderr, "Device did not open\n");
+        if (!_wrapper.isValid())
+            fprintf(stderr, "wrapper did not open\n");
+        else
+            fprintf(stderr, "wrapper opened correctly\n");
+
+        if( !_wrapper.view(_iWrap) )
+        {
+            printf("Wrapper interface not found\n");
+        }
+
+        yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
+        if(netList->isNull())
+        {
+            printf("ERROR, net list to attach to was not found, exiting\n");
+            _wrapper.close();
+            _controlBoard.close();
+            return;
+        }
+
+        yarp::dev::PolyDriverList p;
+
+        for(int n=0; n<netList->size(); n++)
+        {
+            yarp::os::ConstString driverName( netList->get(n).asString().c_str());
+
+
+            driver_group = _parameters.findGroup(driverName.c_str());
+            if(driver_group.isNull())
+            {
+                printf("GazeboYarpControlBoard::Load  Error: [%s] group not found in config file\n", driverName.c_str());
+                return;
+            }
+
+            yarp::os::Property driver_property(driver_group.toString().c_str());
+            driver_property.put("loving_gazebo_pointer",archive_stream.str().c_str());
+            driver_property.put("name", driverName.c_str());
+            std::cout << "before open: params are " << driver_property.toString() << std::endl;
+            _controlBoard.open(driver_property);
+
+            if (!_controlBoard.isValid())
+                fprintf(stderr, "controlBoard did not open\n");
+            else
+                printf("controlBoard opened correctly\n");
+
+            p.push(&_controlBoard, netList->get(n).asString().c_str());
+        }
+
+
+        if(!_iWrap->attachAll(p))
+        {
+            printf("Error while attaching wrapper to device\n");
+            _wrapper.close();
+            _controlBoard.close();
+            return;
+        }
 
         printf("Device initialized correctly, now sitting and waiting cause I am just the main of the yarp device, and the coman is linked to the onUpdate event of gazebo\n");
-
         std::cout<<"Loaded GazeboYarpControlBoard Plugin"<<std::endl;
     }
 

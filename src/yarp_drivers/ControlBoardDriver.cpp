@@ -6,7 +6,7 @@
 
 
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
-#include "test/jointlogger.hpp"
+#include "../test/jointlogger.hpp"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>

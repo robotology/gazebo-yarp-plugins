@@ -5,7 +5,8 @@
  */
 
 
-#include "coman.h"
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
+
 #include <boost/archive/text_iarchive.hpp>
 
 
@@ -13,7 +14,7 @@ using namespace yarp::dev;
 
 
 
-bool coman::open(yarp::os::Searchable& config) 
+bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config) 
 {
     //if there is a .ini file, directly load it avoiding copyng all the data from config
     if( config.check("gazebo_ini_file_path") ) {
@@ -39,7 +40,7 @@ bool coman::open(yarp::os::Searchable& config)
 
 
 
-bool coman::close() //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::close() //NOT IMPLEMENTED
 {
     delete [] control_mode;
     delete [] motion_done;
@@ -48,7 +49,7 @@ bool coman::close() //NOT IMPLEMENTED
 
 
 //We need a thread to publish some extra information like joint torques and velocities.
-bool coman::threadInit()
+bool GazeboYarpControlBoardDriver::threadInit()
 {
     std::string gazebo_group_name = "GAZEBO";
     std::stringstream property_name;
@@ -65,7 +66,7 @@ bool coman::threadInit()
     return true;
 }
 
-void coman::afterStart(bool s)
+void GazeboYarpControlBoardDriver::afterStart(bool s)
 {
     if(s)
         printf("TorqueAndSpeedPublisher started successfully\n");
@@ -73,7 +74,7 @@ void coman::afterStart(bool s)
         printf("TorqueAndSpeedPublisher did not start\n");
 }
 
-void coman::run()
+void GazeboYarpControlBoardDriver::run()
 {
     yarp::os::Bottle bot1;
     yarp::os::Bottle bot2;
@@ -87,7 +88,7 @@ void coman::run()
     bot2.clear();
 }
 
-void coman::threadRelease()
+void GazeboYarpControlBoardDriver::threadRelease()
 {
     printf("Goodbye from TorqueAndSpeedPublisher\n");
 }

@@ -5,16 +5,16 @@
  */
 
 
-#include "fakebotIMUplugin.hh"
+#include <gazebo_yarp_plugins/IMU.hh>
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
 
 using namespace gazebo;
-GZ_REGISTER_SENSOR_PLUGIN(fakebotIMUplugin)
+GZ_REGISTER_SENSOR_PLUGIN(GazeboYarpIMU)
 
 #define toDeg(X) (X*180.0/M_PI)
 
-fakebotIMUplugin::fakebotIMUplugin() : SensorPlugin(),
+GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(),
     _yarp(),
     _p(),
     _bot()
@@ -22,21 +22,21 @@ fakebotIMUplugin::fakebotIMUplugin() : SensorPlugin(),
     _p.open("/coman/inertial:o");
 }
 
-void fakebotIMUplugin::Init()
+void GazeboYarpIMU::Init()
 {
-    std::cout<<"*** fakebotIMUplugin started ***"<<std::endl;
+    std::cout<<"*** GazeboYarpIMU plugin started ***"<<std::endl;
     if (!_yarp.checkNetwork())
         std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
     else
         std::cout<<"YARP Server found!"<<std::endl;
 }
 
-fakebotIMUplugin::~fakebotIMUplugin()
+GazeboYarpIMU::~GazeboYarpIMU()
 {
-    std::cout<<"IMU says: Goodbye!"<<std::endl;
+    std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
 }
 
-void fakebotIMUplugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
+void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
     std::cout<<"Sensor Name:"<<_sensor->GetName()<<std::endl;
     this->parentSensor =
@@ -44,12 +44,12 @@ void fakebotIMUplugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 
     if (!this->parentSensor)
     {
-        gzerr << "fakebotPlugin requires a IMUSensor.\n";
+        gzerr << "GazeboYarpIMU plugin requires a IMUSensor.\n";
         return;
     }
 
     this->updateConnection = this->parentSensor->ConnectUpdated(
-          boost::bind(&fakebotIMUplugin::OnUpdate, this));
+          boost::bind(&GazeboYarpIMU::OnUpdate, this));
 
     this->parentSensor->SetActive(true);
 }
@@ -65,7 +65,7 @@ void fakebotIMUplugin::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
  * 9 10 11   = Calibrated 3-axis (X, Y, Z) magnetometer data
  *
  */
-void fakebotIMUplugin::OnUpdate()
+void GazeboYarpIMU::OnUpdate()
 {
     msgs::IMU imu_data;
     imu_data = this->parentSensor->GetImuMessage();

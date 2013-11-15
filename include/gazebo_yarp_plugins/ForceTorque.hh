@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef GAZEBO_FAKEBOT_FT_PLUGIN_HH
-#define GAZEBO_FAKEBOT_FT_PLUGIN_HH
+#ifndef __GAZEBO_YARP_FORCETORQUE_PLUGIN_HH__
+#define __GAZEBO_YARP_FORCETORQUE_PLUGIN_HH__
 
 #include "gazebo/sensors/sensors.hh"
 #include "gazebo/plugins/ForceTorquePlugin.hh"
@@ -16,21 +16,21 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Network.h>
-#include <analogServer.h>
+#include <gazebo_yarp_plugins/analogServer.h>
 
-#include <fakebotFTsensor.h>
+#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
 
 
 namespace gazebo
 {
   /// \brief An base class plugin for custom force torque sensor processing.
-  class FakebotForceTorquePlugin : public ForceTorquePlugin
+  class GazeboYarpForceTorque : public ForceTorquePlugin
   {
     /// \brief Constructor
-    public: FakebotForceTorquePlugin();
+    public: GazeboYarpForceTorque();
 
     /// \brief Destructor
-    public: virtual ~FakebotForceTorquePlugin();
+    public: virtual ~GazeboYarpForceTorque();
 
     /// \brief Load the plugin.
     /// \param[in] _parent Pointer to the parent sensor.
@@ -54,7 +54,7 @@ namespace gazebo
     private: physics::LinkPtr ftLink;
 
     /// \brief Pointer to the YARP FT sensor device driver
-    private: yarp::dev::fakebotFTsensor* yarpFTsensor;
+    private: yarp::dev::GazeboYarpForceTorqueDriver* yarpFTsensor;
     private: yarp::dev::PolyDriver _driver;
 
     /// \brief we have one analogserver for each ft sensor

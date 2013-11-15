@@ -5,13 +5,13 @@
  */
 
 
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
-#include "coman.h"
 
 
 using namespace yarp::dev;
 
-bool coman::setPositionMode(int j) //WORKS
+bool GazeboYarpControlBoardDriver::setPositionMode(int j) //WORKS
 {
     /* WARNING: disabling velocity mode. This is needed as long as we use
      *               the SetVelocity method for velocity control
@@ -28,7 +28,7 @@ bool coman::setPositionMode(int j) //WORKS
     return true;
 }
 
-bool coman::setVelocityMode(int j) //WORKS
+bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  {
      /* TODO: this is needed if we want to control velocities using JointController
       *   // resetting controller PIDs
@@ -39,13 +39,13 @@ bool coman::setVelocityMode(int j) //WORKS
      return true;
  }
  
- bool coman::getControlMode(int j, int *mode) //WORKS
+ bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
  {
      mode[j]=control_mode[j];
      return true;
  }
  
- bool coman::getControlModes(int *modes) //NOT TESTED
+ bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
  {
      for(unsigned int j=0; j<_robot_number_of_joints; ++j)
      {
@@ -54,7 +54,7 @@ bool coman::setVelocityMode(int j) //WORKS
      return true;
  }
  
- bool coman::setTorqueMode(int j) //NOT TESTED
+ bool GazeboYarpControlBoardDriver::setTorqueMode(int j) //NOT TESTED
  {
      /* WARNING: disabling velocity mode. This is needed as long as we use
       *               the SetVelocity method for velocity control*/
@@ -70,15 +70,15 @@ bool coman::setVelocityMode(int j) //WORKS
  }
  
 
- bool coman::setImpedancePositionMode(int)//NOT IMPLEMENTED
+ bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int)//NOT IMPLEMENTED
  {
      return false;
  }
- bool coman::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
+ bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
  {
      return false;
  }
- bool coman::setOpenLoopMode(int) //NOT IMPLEMENTED
+ bool GazeboYarpControlBoardDriver::setOpenLoopMode(int) //NOT IMPLEMENTED
  {
      return false;
  }

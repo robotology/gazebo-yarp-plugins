@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef __fakebotFTsensor_h__
-#define __fakebotFTsensor_h__
+#ifndef __gazebo_yarp_force_torque_driver_h__
+#define __gazebo_yarp_force_torque_driver_h__
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
@@ -32,22 +32,22 @@
 
 namespace yarp{
     namespace dev{
-        class fakebotFTsensor;
+        class GazeboYarpForceTorqueDriver;
     }
 }
 
 namespace gazebo {
-    class FakebotForceTorquePlugin;
+    class GazeboYarpForceTorque;
 }
 
 typedef int AnalogDataFormat;
 /*! class yarp::dev::fakebotFTsensor
  *
  */
-class yarp::dev::fakebotFTsensor:     public yarp::dev::DeviceDriver,
+class yarp::dev::GazeboYarpForceTorqueDriver:     public yarp::dev::DeviceDriver,
                                       public yarp::dev::IAnalogSensor
 {
-    friend class gazebo::FakebotForceTorquePlugin;
+    friend class gazebo::GazeboYarpForceTorque;
 
 private:
 
@@ -72,8 +72,8 @@ private:
 
 public:
 
-    fakebotFTsensor();
-    ~fakebotFTsensor();
+    GazeboYarpForceTorqueDriver();
+    ~GazeboYarpForceTorqueDriver();
 
     bool open(yarp::os::Searchable &config);
     bool close();
@@ -100,6 +100,6 @@ public:
 };
 
 
-#endif   // __fakebotFTsensor_h__
+#endif  
 
 

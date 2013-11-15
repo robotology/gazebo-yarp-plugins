@@ -5,13 +5,14 @@
  */
 
 
-#include "coman.h"
+
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 
 using namespace yarp::dev;
 
 
-bool coman::getEncoder(int j, double *v) //WORKS
+bool GazeboYarpControlBoardDriver::getEncoder(int j, double *v) //WORKS
 {
     //pos_lock.lock();
     if (j<_robot_number_of_joints) {
@@ -21,7 +22,7 @@ bool coman::getEncoder(int j, double *v) //WORKS
     return true;
 }
 
-bool coman::getEncoders(double *encs) //WORKS
+bool GazeboYarpControlBoardDriver::getEncoders(double *encs) //WORKS
 {
     //pos_lock.lock();
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
@@ -34,7 +35,7 @@ bool coman::getEncoders(double *encs) //WORKS
 /**
  * Since we don't know how to reset gazebo encoders, we will simply add the actual value to the future encoders readings
  */
-bool coman::resetEncoder(int j) //WORKS
+bool GazeboYarpControlBoardDriver::resetEncoder(int j) //WORKS
 {
     if (j<_robot_number_of_joints) {
         zero_pos[j] = pos[j];
@@ -42,7 +43,7 @@ bool coman::resetEncoder(int j) //WORKS
     return true;
 }
 
-bool coman::resetEncoders() //WORKS
+bool GazeboYarpControlBoardDriver::resetEncoders() //WORKS
 {
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         zero_pos[i] = pos[i];
@@ -50,7 +51,7 @@ bool coman::resetEncoders() //WORKS
     return true;
 }
 
-bool coman::setEncoder(int j, double val) //WORKS
+bool GazeboYarpControlBoardDriver::setEncoder(int j, double val) //WORKS
 {
     if (j<_robot_number_of_joints) {
         zero_pos[j] = pos[j]-val;
@@ -58,7 +59,7 @@ bool coman::setEncoder(int j, double val) //WORKS
     return true;
 }
 
-bool coman::setEncoders(const double *vals) //WORKS
+bool GazeboYarpControlBoardDriver::setEncoders(const double *vals) //WORKS
 {
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         zero_pos[i] = pos[i]-vals[i];
@@ -70,7 +71,7 @@ bool coman::setEncoders(const double *vals) //WORKS
 
 
 
-bool coman::getEncoderSpeed(int j, double *sp) //NOT TESTED
+bool GazeboYarpControlBoardDriver::getEncoderSpeed(int j, double *sp) //NOT TESTED
 {
     if ( j < _robot_number_of_joints) {
         (*sp) = speed[j];
@@ -78,7 +79,7 @@ bool coman::getEncoderSpeed(int j, double *sp) //NOT TESTED
     return true;
 }
 
-bool coman::getEncoderSpeeds(double *spds) //NOT TESTED
+bool GazeboYarpControlBoardDriver::getEncoderSpeeds(double *spds) //NOT TESTED
 {
     for (unsigned int i = 0; i < _robot_number_of_joints; ++i) {
         getEncoderSpeed(i, spds);
@@ -89,7 +90,7 @@ bool coman::getEncoderSpeeds(double *spds) //NOT TESTED
 
 
 
-bool coman::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
         (*spds) = 0;
@@ -97,7 +98,7 @@ bool coman::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
     return true;
 }
 
-bool coman::getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
 {
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         accs[i] = 0;

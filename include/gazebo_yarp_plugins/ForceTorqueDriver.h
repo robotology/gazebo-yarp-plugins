@@ -18,7 +18,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 
-#include <iCub/DebugInterfaces.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
 #include <string>
@@ -27,8 +26,7 @@
 
 #include <boost/concept_check.hpp>
 
-#include <iCub/FactoryInterface.h>
-#include <iCub/LoggerInterfaces.h>
+
 
 namespace yarp{
     namespace dev{

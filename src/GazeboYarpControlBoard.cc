@@ -58,6 +58,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
                 _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
             
+//                std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
                 wrapper_group = _parameters.findGroup("WRAPPER");
                 if(wrapper_group.isNull())
                 {
@@ -120,8 +121,15 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             yarp::os::Property driver_property(driver_group.toString().c_str());
             driver_property.put("loving_gazebo_pointer",archive_stream.str().c_str());
             driver_property.put("name", driverName.c_str());
-            std::cout << "before open: params are " << driver_property.toString() << std::endl;
-            _controlBoard.open(driver_property);
+//            std::cout << "before open: params are " << driver_property.toString() << std::endl;
+
+            _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
+            _parameters.put("name", driverName.c_str());
+            _parameters.fromString(driver_group.toString(), false);
+//            std::cout << "before open: params are " << _parameters.toString() << std::endl;
+
+//            _controlBoard.open(driver_property);
+            _controlBoard.open(_parameters);
 
             if (!_controlBoard.isValid())
                 fprintf(stderr, "controlBoard did not open\n");

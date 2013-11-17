@@ -39,6 +39,10 @@ So you should have something like this:
 
 Done.
 
+Get iCub sdf model
+------------------
+Follow the instruction provided in this repo: https://github.com/traversaro/icub_gazebo
+
 
 Get and compile the custom yarp branch
 -------------------------

@@ -41,7 +41,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  
  bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
  {
-     mode[j]=control_mode[j];
+     *mode=control_mode[j];
      return true;
  }
  

@@ -78,14 +78,15 @@ void GazeboYarpControlBoardDriver::run()
 {
     yarp::os::Bottle bot1;
     yarp::os::Bottle bot2;
-    for(unsigned int j = 0; j < _robot_number_of_joints; ++j){
+    bot1.clear();
+    bot2.clear();
+    for(unsigned int j = 0; j < _robot_number_of_joints; ++j)
+    {
         bot1.addDouble(torque[j]);
         bot2.addDouble(speed[j]);
     }
     _joint_torq_port.write(bot1);
     _joint_speed_port.write(bot2);
-    bot1.clear();
-    bot2.clear();
 }
 
 void GazeboYarpControlBoardDriver::threadRelease()

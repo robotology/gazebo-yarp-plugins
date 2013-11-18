@@ -56,7 +56,7 @@ cmake ..
 ccmake ..
 ```
 
-Now enable the option "Shared library". Press c to configure. Press g to confirm.
+Now enable the options CREATE_SHARED_LIBRARY and NEW_WRAPPERS_WIP . Press c to configure. Press g to confirm.
 
 ```
 make

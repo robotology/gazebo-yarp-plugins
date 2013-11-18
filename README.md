@@ -235,6 +235,11 @@ yarpscope --xml FT_yarp_scope.xml
 ```
 
 
+Install iDynTree to do inverse dynamics and kinematics
+---------------
+https://github.com/robotology/gazebo_yarp_plugins/wiki/Setup-iDynTree
+
+
 Troubleshooting
 =============
 - If the plugin does not compile complaning about an -fPIC option missing, check that you compiled yarp with shared library option enabled

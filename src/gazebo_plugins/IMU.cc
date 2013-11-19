@@ -5,7 +5,7 @@
  */
 
 
-#include "GazeboYarpIMU.hh"
+#include <gazebo_yarp_plugins/IMU.hh>
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -94,9 +94,9 @@ void GazeboYarpIMU::OnUpdate()
 //               imu_data.mutable_linear_acceleration()->y()<<" "<<
 //               imu_data.mutable_linear_acceleration()->z()<<std::endl;
 
-    _bot.addDouble( toDeg(orient.GetRoll()));
-    _bot.addDouble( toDeg(orient.GetPitch()));
-    _bot.addDouble( toDeg(orient.GetYaw()));
+    _bot.addDouble( toDeg(0.0));
+    _bot.addDouble( toDeg(0.0));
+    _bot.addDouble( toDeg(0.0));
 
     yarp::os::Stamp ts;
     ts = yarp::os::Stamp(0, imu_data.mutable_stamp()->sec());

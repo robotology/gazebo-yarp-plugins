@@ -16,9 +16,9 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Network.h>
-#include <analogServer.h>
+#include <gazebo_yarp_plugins/analogServer.h>
 
-#include <GazeboYarpForceTorqueDriver.h>
+#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
 
 
 namespace gazebo

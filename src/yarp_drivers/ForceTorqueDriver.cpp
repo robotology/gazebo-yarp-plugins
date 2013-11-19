@@ -21,7 +21,7 @@
 
 
 /// specific to this device driver.
-#include <GazeboYarpForceTorqueDriver.h>
+#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
 
 
 #ifdef WIN32

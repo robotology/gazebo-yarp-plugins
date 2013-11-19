@@ -32,6 +32,7 @@
 #pragma GCC diagnostic pop
 
 #include <mutex>
+#include "../src/test/jointlogger.hpp"
 
 #define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
@@ -245,6 +246,8 @@ private:
     bool started;
     int _clock;
     int _T_controller;
+    
+    jointLogger logger;
 
     yarp::os::Port _joint_torq_port;
     yarp::os::Port _joint_speed_port;

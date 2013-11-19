@@ -10,10 +10,10 @@ Gazebo plugin to interface a Coman in GAZEBO with a YARP interface.
 
 Ubuntu 13.04 system with gazebo 1.9 and Ros hydro
 
-Another way to get coman sdf from the URDF sources
+Get coman sdf from the URDF sources
 ------------------------
 
-clone the repository iit-coman-ros-pkg
+Clone the repository iit-coman-ros-pkg
 
 Inside the cloned folder do the following:
 ```
@@ -23,9 +23,49 @@ source /usr/share/ros-xxx/setup.sh
 ```
 Note: we need to fix the use of ROS to get the sdf file
 
+Another way to get coman sdf without having to use ROS
+-----------------------
+
+Clone the repository github.com/EnricoMingo/iit-coman-ros-pkg
+
+Inside the cloned folder search for coman_gazebo/sdf folder.
+Copy all the folder contents to ~/.gazebo/models/coman_urdf/
+
+So you should have something like this:
+~/.gazebo/models/coman_urdf/coman.sdf
+~/.gazebo/models/coman_urdf/conf/...
+~/.gazebo/models/coman_urdf/meshes/...
+...
+
+Done.
+
+Get iCub sdf model
+------------------
+Follow the instruction provided in this repo: https://github.com/traversaro/icub_gazebo
+
+
+Get and compile the custom yarp branch
+-------------------------
+
+Clone the repository github.com/barbalberto/yarp/tree/wrappers
+Inside the cloned folder do:
+```
+mkdir build
+cd build
+cmake ..
+ccmake ..
+```
+
+Now enable the options CREATE_SHARED_LIBRARY and NEW_WRAPPERS_WIP . Press c to configure. Press g to confirm.
+
+```
+make
+sudo make install
+```
+
 # Compile the libyarp_gazebo
 
-clone the repository
+Finally clone this repository
 ```
 mkdir build
 cd build
@@ -195,8 +235,15 @@ yarpscope --xml FT_yarp_scope.xml
 ```
 
 
+Install iDynTree to do inverse dynamics and kinematics
+---------------
+https://github.com/robotology/gazebo_yarp_plugins/wiki/Setup-iDynTree
+
+
 Troubleshooting
 =============
+- If the plugin does not compile complaning about an -fPIC option missing, check that you compiled yarp with shared library option enabled
+
 - If gazebo complains about not finding the libyarp, check if you exported the GAZEBO_PLUGIN_PATH in the same shell where you are launching gazebo
 
 - If gazebo complains about not finding coman model, maybe you forgot to compile the URDF and run the script provided in the URDF git repository (or to extract the files from the coman.tar.gz)
@@ -211,3 +258,4 @@ and check what is the startup configuration. The starting position can be change
   At the moment it is not so easy to change PID gains, we will implement this and other control modes soon.
 
 - Remember to start yarpserver in another shell, otherwise gazebo will run without a working coman interface (we will make gazebo crash in the next versions)
+

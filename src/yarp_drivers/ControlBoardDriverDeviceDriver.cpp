@@ -5,8 +5,7 @@
  */
 
 
-#include <GazeboYarpControlBoardDriver.h>
-#include "GazeboYarpControlBoard.hh"
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 #include <boost/archive/text_iarchive.hpp>
 
@@ -30,7 +29,6 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     {
         //TODO
     }
-//    _robot = gazebo::GazeboYarpControlBoard::getRobot();
     _robot=reinterpret_cast<gazebo::physics::Model*>(temp);
     
     gazebo_init();

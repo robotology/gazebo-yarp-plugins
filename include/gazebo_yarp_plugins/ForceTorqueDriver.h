@@ -19,6 +19,13 @@
 #include <yarp/dev/IAnalogSensor.h>
 
 #include <yarp/os/Semaphore.h>
+#include <string>
+#include <list>
+#include <map>
+
+#include <boost/concept_check.hpp>
+
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
 #include <string>
 #include <list>

@@ -5,7 +5,7 @@
  */
 
 
-#include <GazeboYarpControlBoardDriver.h>
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 
 
@@ -14,12 +14,12 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::setPositionMode(int j) //WORKS
 {
     /* WARNING: disabling velocity mode. This is needed as long as we use
-     *               the SetVelocity method for velocity control*/
+     *               the SetVelocity method for velocity control
     if(control_mode[j]==VOCAB_CM_VELOCITY) {
         gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
         joint->SetMaxForce(0, 0);
         joint->SetVelocity(0,0);
-    }
+    }*/
     
     // resetting controller PIDs
     this->_robot->GetJointController()->AddJoint(this->_robot->GetJoint(joint_names[j]));
@@ -32,8 +32,8 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  {
      /* TODO: this is needed if we want to control velocities using JointController
       *   // resetting controller PIDs
-      *   this->_robot->GetJointController()->AddJoint(this->_robot->GetJoint(joint_names[j]));
-      */
+      */   this->_robot->GetJointController()->AddJoint(this->_robot->GetJoint(joint_names[j]));
+      /**/
      control_mode[j]=VOCAB_CM_VELOCITY;
      std::cout<<"control mode = speed "<<j<<std::endl;
      return true;

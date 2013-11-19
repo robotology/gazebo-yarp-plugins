@@ -1,7 +1,7 @@
 
 
 
-#include "analogServer.h"
+#include <gazebo_yarp_plugins/analogServer.h>
 #define yTrace();
 
 using namespace yarp::sig;

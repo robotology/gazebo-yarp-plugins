@@ -16,7 +16,7 @@
 #include <yarp/dev/PolyDriverList.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-#include <GazeboYarpControlBoardDriver.h>
+#include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 
 #define ms(X) (X * 1000.0)

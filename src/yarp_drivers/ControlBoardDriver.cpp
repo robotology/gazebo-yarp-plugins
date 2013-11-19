@@ -84,12 +84,6 @@ void GazeboYarpControlBoardDriver::gazebo_init()
                   ( std::string ( "~/" ) + this->_robot->GetName() + "/joint_cmd" );
 
     _T_controller = 10;
-<<<<<<< HEAD:src/GazeboYarpControlBoardDriver.cpp
-    std::cout << "gazebo_init ended!!" << std::endl;
-=======
-
-//     logger.initialize(joint_names[2],"speed");
->>>>>>> master:src/yarp_drivers/ControlBoardDriver.cpp
 }
 
 

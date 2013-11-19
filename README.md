@@ -44,10 +44,10 @@ Get iCub sdf model
 Follow the instruction provided in this repo: https://github.com/traversaro/icub_gazebo
 
 
-Get and compile the custom yarp branch
+Get and compile yarp
 -------------------------
 
-Clone the repository github.com/barbalberto/yarp/tree/wrappers
+Clone the repository github.com/robotology/yarp
 Inside the cloned folder do:
 ```
 mkdir build
@@ -56,14 +56,14 @@ cmake ..
 ccmake ..
 ```
 
-Now enable the options CREATE_SHARED_LIBRARY and NEW_WRAPPERS_WIP . Press c to configure. Press g to confirm.
+Now enable the options CREATE_SHARED_LIBRARY and YARP_COMPILE_EXPERIMENTAL_WRAP . Press c to configure. Press g to confirm.
 
 ```
 make
 sudo make install
 ```
 
-# Compile the libyarp_gazebo
+# Compile yarp_gazebo_plugins
 
 Finally clone this repository
 ```

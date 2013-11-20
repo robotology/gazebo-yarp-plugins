@@ -8,10 +8,11 @@ Gazebo plugin to interface a Coman in GAZEBO with a YARP interface.
 
 # Setup OS
 
-Ubuntu 13.04 system with gazebo 1.9 and Ros hydro
+Ubuntu 13.04 system with gazebo 1.9 
 
 Get coman sdf from the URDF sources
 ------------------------
+To get the coman sdf file from URDF, you need ROS Hydro.
 
 Clone the repository iit-coman-ros-pkg
 

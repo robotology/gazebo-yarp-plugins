@@ -21,13 +21,11 @@ endif()
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
-include_directories(${YARP_INCLUDE_DIRS} include)
-
 set(singleton_source        src/gazebo_plugins/Handler.cc)
-set(singleton_headers        include/gazebo_yarp_plugins/Handler.hh)
+set(singleton_header        include/gazebo_yarp_plugins/Handler.hh)
 # for visual studio
 SOURCE_GROUP("Source Files" FILES ${singleton_source})
-SOURCE_GROUP("Header Files" FILES ${singleton_headers})
+SOURCE_GROUP("Header Files" FILES ${singleton_header})
 
 set(controlBoard_source     src/gazebo_plugins/ControlBoard.cc
                             src/yarp_drivers/ControlBoardDriver.cpp
@@ -71,7 +69,7 @@ add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoar
 add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
 add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
 
-
+target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})

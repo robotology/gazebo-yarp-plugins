@@ -31,7 +31,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
         //TODO
     }
 
-    std::string robotName = plugin_parameters.find("robot").asString();
+    std::string robotName (plugin_parameters.find("robot").asString().c_str());
     std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
         gazebo::physics::ModelPtr tmp;
 

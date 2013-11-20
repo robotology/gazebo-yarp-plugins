@@ -6,21 +6,33 @@
 
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
+using namespace std;
 using namespace yarp::dev;
 
 // IControlLimits
-bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max) //NOT TESTED
+bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max) //WORKS
 {
     *min=min_pos[axis];
     *max=max_pos[axis];
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //NOT TESTED
+bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //WORKS
 {
     max_pos[axis]=max;
     min_pos[axis]=min;
     return true;
+}
+
+// IControlLimits2
+bool GazeboYarpControlBoardDriver::getVelLimits(int axis, double *min, double *max) //NOT TESTED
+{
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::setVelLimits(int axis, double min, double max) //NOT TESTED
+{
+    return false;
 }
 
 //Amplifiers

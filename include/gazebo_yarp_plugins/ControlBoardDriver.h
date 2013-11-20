@@ -8,18 +8,14 @@
 #define __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
 
 #include <yarp/sig/all.h>
-#include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
-#include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IControlMode.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/RateThread.h>
 
@@ -52,7 +48,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public IAmplifierControl,
     public IEncodersTimed,
     public IControlCalibration2,
-    public IControlLimits,
+    public IControlLimits2,
     public DeviceResponder,
     public IControlMode,
     public ITorqueControl,
@@ -199,9 +195,11 @@ public:
     virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
     virtual bool done(int j); // NOT IMPLEMENTED
     
-    // CONTROL LIMITS (inside comanOthers.cpp)
-    virtual bool getLimits(int axis, double *min, double *max); //NOT TESTED
-    virtual bool setLimits(int axis, double min, double max); //NOT TESTED
+    // CONTROL LIMITS2 (inside comanOthers.cpp)
+    bool getLimits(int axis, double *min, double *max); //WORKS
+    bool setLimits(int axis, double min, double max); //WORKS
+    bool getVelLimits(int axis, double *min, double *max); //NOT IMPLEMENTED
+    bool setVelLimits(int axis, double min, double max); //NOT IMPLEMENTED
     /*
      * End of useless stuff
      */

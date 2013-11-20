@@ -169,12 +169,8 @@ void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
 
 void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
-//    if( plugin_parameters.check("GAZEBO") )
-//    {
         std::cout << ".ini file found, using joint names in ini file" << std::endl;
-        std::cout << "\n\nGazeboYarpControlBoardDriver params \n " << plugin_parameters.toString() << "\n\n";
         yarp::os::Bottle joint_names_bottle = plugin_parameters.findGroup("jointNames");
-//        yarp::os::Bottle &gazeboGroup = plugin_parameters.findGroup("GAZEBO");
 
         if(joint_names_bottle.isNull())
         {
@@ -188,19 +184,6 @@ void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
             std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
             joint_names[i] = _robot->GetName()+"::"+joint_name;
         }        
-//    }
-//    else
-//    {
-//        std::cout << ".ini file not found, using all the joint names of the robot" << std::endl;
-//        joint_names.resize(0);
-//        gazebo::physics::Joint_V joints = _robot->GetJoints();
-//        unsigned int nr_of_joints = _robot->GetJoints().size();
-//        for(unsigned int i = 0; i < nr_of_joints; ++i)
-//        {
-//            gazebo::physics::JointPtr j = joints[i];
-//            joint_names.push_back(j->GetName());
-//        }
-//    }
 }
 
 void GazeboYarpControlBoardDriver::setPIDs() //WORKS

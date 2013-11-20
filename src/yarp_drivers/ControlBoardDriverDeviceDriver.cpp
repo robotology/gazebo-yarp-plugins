@@ -8,10 +8,11 @@
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 #include <boost/archive/text_iarchive.hpp>
+#include "gazebo_yarp_plugins/Handler.hh"
 
 
 using namespace yarp::dev;
-
+using namespace gazebo;
 
 
 bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config) 
@@ -29,7 +30,18 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     {
         //TODO
     }
-    _robot=reinterpret_cast<gazebo::physics::Model*>(temp);
+
+    std::string robotName = plugin_parameters.find("robot").asString();
+    std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
+        gazebo::physics::ModelPtr tmp;
+
+    _robot = GazeboYarpPluginHandler::getHandler()->getRobot(robotName);
+    if(NULL == _robot)
+    {
+        std::cout << "Error, robot was not found\n";
+        return false;
+    }
+    //_robot=reinterpret_cast<gazebo::physics::Model*>(temp);
     
     gazebo_init();
     return RateThread::start();

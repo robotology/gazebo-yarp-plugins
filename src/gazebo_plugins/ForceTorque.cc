@@ -35,10 +35,13 @@ GazeboYarpForceTorque::GazeboYarpForceTorque() : _server(NULL), yarpFTsensor(NUL
 {
     this->iBoards++;
 
-    if(this->yarpFTsensor == NULL) {
-        yarp::dev::DriverCreator *fakebotFtsensor_factory =
-                new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>("fakebotFTsensor","FTsensor","fakebotFTsensor");
-        yarp::dev::Drivers::factory().add(fakebotFtsensor_factory); // hand factory over to YARP
+    if(this->yarpFTsensor == NULL)
+    {
+        // add a device to the yarp factory
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
+                                          // deviceName     wrapper to use  name of the class
+                                          ("fakebotFTsensor","FTsensor",    "fakebotFTsensor") );
+
         yarp::os::Property _parameters;
         _parameters.put("device", "fakebotFTsensor");
         _parameters.put("subdevice", "fakebotFTsensor");

@@ -4,7 +4,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 #include <gazebo_yarp_plugins/ControlBoard.hh>
+#include "gazebo_yarp_plugins/Handler.hh"
 
+using namespace std;
 namespace gazebo
 {
     
@@ -35,16 +37,19 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
+        GazeboYarpPluginHandler::getHandler()->setRobot(get_pointer(_parent), _sdf);
 
-      this->_robot = _parent;
+        this->_robot = _parent;
 
         // Add my gazebo device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>
                                           ("gazebo_controlboard", "controlboardwrapper2", "GazeboYarpControlBoardDriver"));
-  
+
         std::cout<<"\n Initting Wrapper\n"<<std::endl;
         //Getting .ini configuration file from sdf
         bool configuration_loaded = false;
+
+
 
         yarp::os::Bottle wrapper_group;
         yarp::os::Bottle driver_group;

@@ -24,10 +24,10 @@ link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBR
 include_directories(${YARP_INCLUDE_DIRS} include)
 
 set(singleton_source        src/gazebo_plugins/Handler.cc)
-set(singleton_header        include/gazebo_yarp_plugins/Handler.hh)
+set(singleton_headers        include/gazebo_yarp_plugins/Handler.hh)
 # for visual studio
 SOURCE_GROUP("Source Files" FILES ${singleton_source})
-SOURCE_GROUP("Header Files" FILES ${singleton_header})
+SOURCE_GROUP("Header Files" FILES ${singleton_headers})
 
 set(controlBoard_source     src/gazebo_plugins/ControlBoard.cc
                             src/yarp_drivers/ControlBoardDriver.cpp

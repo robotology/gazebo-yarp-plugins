@@ -2,261 +2,69 @@ gazebo_yarp_plugins
 ===================
 [![Build Status](https://travis-ci.org/robotology/gazebo_yarp_plugins.png)](https://travis-ci.org/robotology/gazebo_yarp_plugins)
 
+Plugins for exposing [Yarp](http://yarp.it/) interfaces on [Gazebo simulator](http://gazebosim.org/) models. 
 
+Installation
+------------
+### Depencencies 
+For using Yarp with the Gazebo simulator, you should install:
+  * Yarp and iCub software (at least version 2.3.22 for Yarp and 1.1.13 for iCub), following the [instructions on the official iCub website](http://wiki.icub.org/wiki/ICub_Software_Installation)
+  * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install)
 
-Gazebo plugin to interface a Coman in GAZEBO with a YARP interface.
+#### Operating systems 
+As the Gazebo simulator support is for now limited to Linux, you cannot use gazebo_yarp_plugins on Windows, even if Yarp supports Windows,OS X and Linux. 
+Preliminary support in Gazebo for OS X exists, but is still experimental. 
 
-# Setup OS
+#### Yarp 
+If you are compiling Yarp from source, please make sure you compile it as a shared library, by setting the CREATE_SHARED_LIBRARY CMake option.  
+If you are compiling the last version of Yarp from the master branch of the [Yarp git repository](https://github.com/robotology/yarp), you can
+avoid the installation of the iCub software by compiling the needed files setting YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option.
 
-Ubuntu 13.04 system with gazebo 1.9 
-
-Get coman sdf from the URDF sources
-------------------------
-To get the coman sdf file from URDF, you need ROS Hydro.
-
-Clone the repository iit-coman-ros-pkg
-
-Inside the cloned folder do the following:
+### Compilation 
+You get the gazebo_yarp_plugins source code from this git repository repository (if you do not have git on your computer, [follow this guide to install it](http://git-scm.com/downloads))
 ```
-cd coman_urdf/script
-source /usr/share/ros-xxx/setup.sh
-./create_bla_bla_bla coman_robot_plain.urdf.xacro
+git https://github.com/robotology/gazebo_yarp_plugins.git
 ```
-Note: we need to fix the use of ROS to get the sdf file
-
-Another way to get coman sdf without having to use ROS
------------------------
-
-Clone the repository github.com/EnricoMingo/iit-coman-ros-pkg
-
-Inside the cloned folder search for coman_gazebo/sdf folder.
-Copy all the folder contents to ~/.gazebo/models/coman_urdf/
-
-So you should have something like this:
-~/.gazebo/models/coman_urdf/coman.sdf
-~/.gazebo/models/coman_urdf/conf/...
-~/.gazebo/models/coman_urdf/meshes/...
-...
-
-Done.
-
-Get iCub sdf model
-------------------
-Follow the instruction provided in this repo: https://github.com/traversaro/icub_gazebo
-
-
-Get and compile yarp
--------------------------
-
-Clone the repository github.com/robotology/yarp
-Inside the cloned folder do:
+This will create a gazebo_yarp_plugins directory with all the source code.
+You can enter this directory:
+```
+cd gazebo_yarp_plugins
+```
+You can then create a build directory inside it to hold all the compiled files:
 ```
 mkdir build
+```
+You can use CMake to generate the necessary file for the compilation, and compile gazebo_yarp_plugins using make:
+```
 cd build
-cmake ..
-ccmake ..
-```
-
-Now enable the options CREATE_SHARED_LIBRARY and YARP_COMPILE_EXPERIMENTAL_WRAP . Press c to configure. Press g to confirm.
-
-```
-make
-sudo make install
-```
-
-# Compile yarp_gazebo_plugins
-
-Finally clone this repository
-```
-mkdir build
-cd build
-cmake ..
+cmake ../
 make
 ```
-Please change the following line to reflect your folder structure, do NOT simply copy and paste:
-```
-export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:~/gazebo_yarp_plugins/build
-```
 
-Run in a shell (don't forget this one!):
+To notify Gazebo of the new plugins compiled, it is necessary to modify the GAZEBO_PLUGIN_PATH enviroment variable: 
 ```
-yarpserver
+export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/gazebo_yarp_plugins/build
 ```
+Where "/path/to/gazebo_yarp_plugins/build" is the path on your computer where you located the build directory.
+To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your directory.
 
-In the same shell where you exported the GAZEBO_PLUGIN_PATH start gazebo like this:
-```
-gazebo yarp_gazebo.world
-```
+Usage
+-----
+To use the gazebo_yarp_plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently two robot support gazebo_yarp_plugins: Coman and iCub.
 
-You should have something like this:
+### Coman
+To use Coman in Gazebo, please follow [the instructions on gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Using-Coman-model-with-gazebo_yarp_plugins)
 
-```
->Robot Name: COMAN
->#Joints: 23
->#Links: 24
->ControlBoard subdevice is coman/test
->Joint Limits
->COMAN::LHipSag max_pos: 45.0001 min_pos: -110.002
->COMAN::LHipLat max_pos: 60.0001 min_pos: -24.9981
->COMAN::LHipYaw max_pos: 50.002 min_pos: -50.002
->COMAN::LKneeSag max_pos: 110.002 min_pos: -9.99811
->COMAN::LAnkLat max_pos: 35.002 min_pos: -35.002
->COMAN::LAnkSag max_pos: 69.9983 min_pos: -69.9983
->COMAN::RHipSag max_pos: 45.0001 min_pos: -110.002
->COMAN::RHipLat max_pos: 24.9981 min_pos: -60.0001
->COMAN::RHipYaw max_pos: 50.002 min_pos: -50.002
->COMAN::RKneeSag max_pos: 110.002 min_pos: -9.99811
->COMAN::RAnkLat max_pos: 35.002 min_pos: -35.002
->COMAN::RAnkSag max_pos: 69.9983 min_pos: -69.9983
->COMAN::WaistSag max_pos: 29.9943 min_pos: -30.0001
->COMAN::WaistLat max_pos: 50.002 min_pos: -20.002
->COMAN::WaistYaw max_pos: 79.9964 min_pos: -80.0021
->COMAN::LShSag max_pos: 95.0021 min_pos: -195
->COMAN::LShLat max_pos: 119.977 min_pos: -17.9995
->COMAN::LShYaw max_pos: 90.0002 min_pos: -90.0002
->COMAN::LElbj max_pos: 0 min_pos: -135
->COMAN::RShSag max_pos: 95.0021 min_pos: -195
->COMAN::RShLat max_pos: 17.9995 min_pos: -119.977
->COMAN::RShYaw max_pos: 90.0002 min_pos: -90.0002
->COMAN::RElbj max_pos: 0 min_pos: -135
->yarp: created device <controlboard>. See C++ class controlboard for documentation.
-```
+### iCub 
+To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/traversaro/icub_gazebo)
 
-Testing and moving coman joints
-==================
+Design
+------
+More information on the internal structure of gazebo_yarp_plugins is [available in this wiki page](https://github.com/robotology/gazebo_yarp_plugins/wiki/Design).
 
-Position control
-------------------
-
-Run in another shell: 
-```
-./testmotor --robot coman --part test
-```
-This is a simple_control interface taken from 
-http://wiki.icub.org/iCub_documentation/main_2src_2tools_2simpleClient_2main_8cpp_source.html
-
-To get help type:
-```
-help
-```
-To enable the position control (default)
-```
--> icmd set cmp joint
-```
-To set the jth joint position to angle type:
-```
-set pos j angle
-```
-To get the angles of the joints type:
-```
-get encs
-```
-
-You can also set the reference speed:
-
-Set the reference speed (should be degrees/second, need to check)
-```
--> set vel 20 10
-```
-Set the new position
-```
--> set pos 20 -40
-```
-
-Velocity control
-------------------
-Start by changing  the robot control style
-```
--> icmd set cmv joint
-```
-e.g.
-```
--> icmd set cmv 20
-```
-set the desired velocity (degree/secods)
-
-```
--> set vmo joint velocity
-```
-e.g.
-```
--> set vmo 20 10
-```
-
-Torque control
-------------------
-Start by changing  the robot control style
-```
--> icmd set cmt joint
-```
-e.g.
-```
--> icmd set cmt 0
-```
-set the desired torque (Nm)
-
-```
--> torq set ref joint torque
-```
-e.g.
-```
--> torq set ref 0 -0.7
-```
+Contributing
+------------
+If you would like to contribute to the development of gazebo_yarp_plugins, please get in contact with the development team using GitHub issues. 
 
 
-This is all you can do with coman inside gazebo at the moment.
-
-Testing and moving coman joints with the robotMotorGui
-------------------
-You can also use the robotMotorGui for controlling the coman simulation.
-
-You should start the coman simulation with 
-```
-gazebo coman_parts.world
-```
-To instantiate a coman simulating the 5 different control boards (torso,left_leg,right_leg,left_arm,right_arm).
-
-Please make sure you have the right configuration files for the control boards (they should be in your coman_urdf package in the conf/ subdirectory), if necessary
-download the latest coman_urdf.tar.gz.
-
-You can then execute the robotMotorGui:
-```
-robotMotorGui --name coman --parts "(torso left_arm right_arm left_leg right_leg)"
-```
-
-Plot IMU & FT data:
---------------
-Inside tools folder run
-```
-yarpscope --xml imu_yarp_scope.xml
-```
-or
-```
-yarpscope --xml FT_yarp_scope.xml
-```
-
-
-Install iDynTree to do inverse dynamics and kinematics
----------------
-https://github.com/robotology/gazebo_yarp_plugins/wiki/Setup-iDynTree
-
-
-Troubleshooting
-=============
-- If the plugin does not compile complaning about an -fPIC option missing, check that you compiled yarp with shared library option enabled
-
-- If gazebo complains about not finding the libyarp, check if you exported the GAZEBO_PLUGIN_PATH in the same shell where you are launching gazebo
-
-- If gazebo complains about not finding coman model, maybe you forgot to compile the URDF and run the script provided in the URDF git repository (or to extract the files from the coman.tar.gz)
-
-- If you have problems with the Coman inside gazebo starting in strange positions, try
-```
-gazebo --pause yarp_gazebo.world
-```
-and check what is the startup configuration. The starting position can be changed inside the *.world file.
-
-- The coman starts with all the joints enabled and controlled by a PID to 0.
-  At the moment it is not so easy to change PID gains, we will implement this and other control modes soon.
-
-- Remember to start yarpserver in another shell, otherwise gazebo will run without a working coman interface (we will make gazebo crash in the next versions)
 

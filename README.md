@@ -6,7 +6,7 @@ Plugins for exposing [Yarp](http://yarp.it/) interfaces on [Gazebo simulator](ht
 
 Installation
 ------------
-### Depencencies 
+### Dependencies 
 For using Yarp with the Gazebo simulator, you should install:
   * Yarp and iCub software (at least version 2.3.22 for Yarp and 1.1.13 for iCub), following the [instructions on the official iCub website](http://wiki.icub.org/wiki/ICub_Software_Installation)
   * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install)
@@ -15,16 +15,15 @@ For using Yarp with the Gazebo simulator, you should install:
 As the Gazebo simulator support is for now limited to Linux, you cannot use gazebo_yarp_plugins on Windows, even if Yarp supports Windows,OS X and Linux. 
 Preliminary support in Gazebo for OS X exists, but is still experimental. 
 
-#### Yarp 
-
-At the moment (26/11/13) yarp package does not work with this plugin. You need to install it from source.
-If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
-[have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
+#### Alternative: Yarp from sources
+Instead of installing both Yarp and iCub, you can also compile only Yarp from sources. In this case, to avoid the dependency on iCub, you have to:
+ * compile the last version of Yarp from the master branch of the [Yarp git repository](https://github.com/robotology/yarp)
+ * compile it as a shared library, by setting the CREATE_SHARED_LIBRARY CMake option. 
+ * enable YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option.  
+ 
+At the moment (26/11/13) you can have issues in running yarp compiled from source. If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
+[Have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
 The solution is to manually add /usr/local/lib/x86_64-linux-gnu in the config file /etc/ld.so.conf.d/x86_64-linux-gnu.conf and do ```sudo ldconfig```.
-
-If you are compiling Yarp from source, please make sure you compile it as a shared library, by setting the CREATE_SHARED_LIBRARY CMake option.  
-If you are compiling the last version of Yarp from the master branch of the [Yarp git repository](https://github.com/robotology/yarp), you can
-avoid the installation of the iCub software by compiling the needed files setting YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option.
 
 ### Compilation 
 You get the gazebo_yarp_plugins source code from this git repository repository (if you do not have git on your computer, [follow this guide to install it](http://git-scm.com/downloads))

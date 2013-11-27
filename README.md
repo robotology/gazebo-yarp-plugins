@@ -16,6 +16,12 @@ As the Gazebo simulator support is for now limited to Linux, you cannot use gaze
 Preliminary support in Gazebo for OS X exists, but is still experimental. 
 
 #### Yarp 
+
+At the moment (26/11/13) yarp package does not work with this plugin. You need to install it from source.
+If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
+[have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
+The solution is to manually add /usr/local/lib/x86_64-linux-gnu in the config file /etc/ld.so.conf.d/x86_64-linux-gnu.conf and do ```sudo ldconfig```.
+
 If you are compiling Yarp from source, please make sure you compile it as a shared library, by setting the CREATE_SHARED_LIBRARY CMake option.  
 If you are compiling the last version of Yarp from the master branch of the [Yarp git repository](https://github.com/robotology/yarp), you can
 avoid the installation of the iCub software by compiling the needed files setting YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option.

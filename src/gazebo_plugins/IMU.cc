@@ -40,7 +40,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
     std::cout<<"Sensor Name:"<<_sensor->GetName()<<std::endl;
     this->parentSensor =
-        boost::shared_dynamic_cast<sensors::ImuSensor>(_sensor);
+        boost::dynamic_pointer_cast<sensors::ImuSensor>(_sensor);
 
     if (!this->parentSensor)
     {

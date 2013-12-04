@@ -18,7 +18,6 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/RateThread.h>
-#include <yarp/os/Mutex.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
@@ -226,7 +225,7 @@ private:
     yarp::sig::Vector zero_pos;
 
     yarp::sig::Vector vel, speed, acc, amp, torque;
-    yarp::os::Mutex pos_lock;
+    yarp::os::Semaphore pos_lock;
     yarp::sig::Vector ref_speed, ref_pos, ref_acc, ref_torque;
     yarp::sig::Vector max_pos, min_pos;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;

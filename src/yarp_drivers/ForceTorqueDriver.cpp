@@ -11,8 +11,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <yarp/dev/PolyDriver.h>
-#include <ace/config.h>
-#include <ace/Log_Msg.h>
 
 #include <string>
 #include <iostream>

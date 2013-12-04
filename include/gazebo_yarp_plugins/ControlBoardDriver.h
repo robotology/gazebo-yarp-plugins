@@ -27,7 +27,6 @@
 
 #pragma GCC diagnostic pop
 
-#include <mutex>
 #include "../src/test/jointlogger.hpp"
 
 #define toRad(X) (X*M_PI/180.0)
@@ -226,7 +225,7 @@ private:
     yarp::sig::Vector zero_pos;
 
     yarp::sig::Vector vel, speed, acc, amp, torque;
-    std::mutex pos_lock;
+    yarp::os::Semaphore pos_lock;
     yarp::sig::Vector ref_speed, ref_pos, ref_acc, ref_torque;
     yarp::sig::Vector max_pos, min_pos;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;

@@ -2,15 +2,19 @@ language: cpp
 
 compiler:
   - gcc
+  
+env:
+  - GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
+  - GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
 
 before_script:
   - sudo sh -c 'echo "deb http://www.icub.org/ubuntu precise contrib/science" > /etc/apt/sources.list.d/icub.list'
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu precise main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update 
-  - sudo apt-get --force-yes install icub libtinyxml-dev gazebo
+  - sudo apt-get --force-yes install icub libtinyxml-dev gazebo libboost-system-dev
   - mkdir build
   - cd build
-  - cmake ./..
+  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ./..
 
 script: make 

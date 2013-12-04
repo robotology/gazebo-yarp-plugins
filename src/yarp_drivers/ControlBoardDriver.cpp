@@ -37,7 +37,7 @@ void GazeboYarpControlBoardDriver::gazebo_init()
     setJointNames();
 
     _robot_number_of_joints = joint_names.size();
-    pos_lock.unlock();
+    //pos_lock.unlock();
     pos.size ( _robot_number_of_joints );
     zero_pos.size ( _robot_number_of_joints );
     vel.size ( _robot_number_of_joints );
@@ -99,7 +99,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
             sendPositionToGazebo ( j,temp );
     }
 
-    pos_lock.lock();
+    pos_lock.wait();
     // Sensing position & torque
     for ( unsigned int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++ )
     {
@@ -108,7 +108,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
         speed[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 );
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
-    pos_lock.unlock();
+    pos_lock.post();
     
 //     logger.log(speed[2]);
     

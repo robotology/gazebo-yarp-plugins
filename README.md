@@ -11,6 +11,20 @@ For using Yarp with the Gazebo simulator, you should install:
   * Yarp and iCub software (at least version 2.3.22 for Yarp and 1.1.13 for iCub), following the [instructions on the official iCub website](http://wiki.icub.org/wiki/ICub_Software_Installation)
   * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install)
 
+####Compile time dependencies
+For compiling gazebo_yarp_plugins you need the headers for the following libraries:
+  * [tinyxml](http://www.grinninglizard.com/tinyxml/)
+  * [Boost System](www.boost.org/doc/libs/release/libs/system/)
+
+For example on Ubuntu you can install them with the following command:
+```
+sudo apt-get install libtinyxml-dev libboost-system-dev
+```
+On OS X you can instead use brew:
+```
+brew install tinyxml boost
+```
+
 #### Operating systems 
 Linux and OS X are currently supported by Gazebo. 
 OS X support in Gazebo is still experimental, and there could be problens, for example in models that assume that plugins files have the .so extention. Modifying manually the sdf models substituting ".so" with ".dylib" should solve at least this kind of issues. 

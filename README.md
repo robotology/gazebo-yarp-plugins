@@ -12,8 +12,9 @@ For using Yarp with the Gazebo simulator, you should install:
   * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install)
 
 #### Operating systems 
-As the Gazebo simulator support is for now limited to Linux, you cannot use gazebo_yarp_plugins on Windows, even if Yarp supports Windows,OS X and Linux. 
-Preliminary support in Gazebo for OS X exists, but is still experimental. 
+Linux and OS X are currently supported by Gazebo. 
+OS X support in Gazebo is still experimental, and there could be problens, for example in models that assume that plugins files have the .so extention. Modifying manually the sdf models substituting ".so" with ".dylib" should solve at least this kind of issues. 
+
 
 #### Alternative: Yarp from sources
 Instead of installing both Yarp and iCub, you can also compile only Yarp from sources. In this case, to avoid the dependency on iCub, you have to:

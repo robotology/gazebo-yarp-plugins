@@ -8,10 +8,21 @@ Installation
 ------------
 ### Dependencies 
 For using Yarp with the Gazebo simulator, you should install:
-  * Yarp and iCub software (at least version 2.3.22 for Yarp and 1.1.13 for iCub), following the [instructions on the official iCub website](http://wiki.icub.org/wiki/ICub_Software_Installation)
-  * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install)
+ * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install)
+ * Yarp (in the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling some more CMake flags as explained in the following section.
+    
+    
+#### Yarp compilation from sources
+Instead of installing both Yarp and iCub, you can also compile only Yarp from sources. In this case, to avoid the dependency on iCub, you have to:
+ * compile the last version of Yarp from the master branch of the [Yarp git repository](https://github.com/robotology/yarp)
+ * compile it as a shared library, by setting the CREATE_SHARED_LIBRARY CMake option. 
+ * enable YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option.  
+ 
+At the moment (26/11/13) you can have issues in running yarp compiled from source. If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
+[Have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
+The solution is to manually add /usr/local/lib/x86_64-linux-gnu in the config file /etc/ld.so.conf.d/x86_64-linux-gnu.conf and do ```sudo ldconfig```.
 
-####Compile time dependencies
+###Compile time dependencies
 For compiling gazebo_yarp_plugins you need the headers for the following libraries:
   * [tinyxml](http://www.grinninglizard.com/tinyxml/)
   * [Boost System](www.boost.org/doc/libs/release/libs/system/)
@@ -25,20 +36,11 @@ On OS X you can instead use brew:
 brew install tinyxml boost
 ```
 
-#### Operating systems 
+
+
+### Operating systems support 
 Linux and OS X are currently supported by Gazebo. 
 OS X support in Gazebo is still experimental, and there could be problens, for example in models that assume that plugins files have the .so extention. Modifying manually the sdf models substituting ".so" with ".dylib" should solve at least this kind of issues. 
-
-
-#### Alternative: Yarp from sources
-Instead of installing both Yarp and iCub, you can also compile only Yarp from sources. In this case, to avoid the dependency on iCub, you have to:
- * compile the last version of Yarp from the master branch of the [Yarp git repository](https://github.com/robotology/yarp)
- * compile it as a shared library, by setting the CREATE_SHARED_LIBRARY CMake option. 
- * enable YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option.  
- 
-At the moment (26/11/13) you can have issues in running yarp compiled from source. If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
-[Have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
-The solution is to manually add /usr/local/lib/x86_64-linux-gnu in the config file /etc/ld.so.conf.d/x86_64-linux-gnu.conf and do ```sudo ldconfig```.
 
 ### Compilation 
 You get the gazebo_yarp_plugins source code from this git repository repository (if you do not have git on your computer, [follow this guide to install it](http://git-scm.com/downloads))

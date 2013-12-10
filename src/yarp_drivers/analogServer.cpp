@@ -303,12 +303,12 @@ bool AnalogServer::open(yarp::os::Searchable &config)
 
     Property params;
     params.fromString(config.toString().c_str());
-    bool correct=true;
+//    bool correct=true;
 
     // Verify minimum set of parameters required
     if(!params.check("robotName") )   // ?? qui dentro, da dove lo pesco ??
     {
-        correct=false;
+//        correct=false;
         //yError() << "AnalogServer missing robot Name, check your configuration file!! Quitting\n";
         return false;
     }

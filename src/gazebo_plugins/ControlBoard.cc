@@ -140,7 +140,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
 
 
-        if(!_iWrap->attachAll(p))
+        if(!_iWrap || !_iWrap->attachAll(p))
         {
             printf("Error while attaching wrapper to device\n");
             _wrapper.close();
@@ -148,7 +148,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
 
-        printf("Device initialized correctly, now sitting and waiting cause I am just the main of the yarp device, and the coman is linked to the onUpdate event of gazebo\n");
+        printf("Device initialized correctly, now sitting and waiting cause I am just the main of the yarp device, and the robot is linked to the onUpdate event of gazebo\n");
         std::cout<<"Loaded GazeboYarpControlBoard Plugin"<<std::endl;
     }
 

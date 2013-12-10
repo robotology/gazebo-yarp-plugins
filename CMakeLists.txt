@@ -20,9 +20,9 @@ endif()
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
-add_library(gazebo_yarp_controlboard SHARED src/gazebo_plugins/ControlBoard.cc src/yarp_drivers/ControlBoardDriver.cpp src/yarp_drivers/ControlBoardDriverControlMode.cpp src/yarp_drivers/ControlBoardDriverDeviceDriver.cpp src/yarp_drivers/ControlBoardDriverEncoders.cpp src/yarp_drivers/ControlBoardDriverOthers.cpp src/yarp_drivers/ControlBoardDriverPositionControl.cpp src/yarp_drivers/ControlBoardTorqueDriverControl.cpp src/yarp_drivers/ControlBoardDriverVelocityControl.cpp)
-add_library(gazebo_yarp_forcetorque SHARED src/gazebo_plugins/ForceTorque.cc src/yarp_drivers/ForceTorqueDriver.cpp src/yarp_drivers/analogServer.cpp)
-add_library(gazebo_yarp_imu SHARED src/gazebo_plugins/IMU.cc )
+add_library(gazebo_yarp_controlboard MODULE src/gazebo_plugins/ControlBoard.cc src/yarp_drivers/ControlBoardDriver.cpp src/yarp_drivers/ControlBoardDriverControlMode.cpp src/yarp_drivers/ControlBoardDriverDeviceDriver.cpp src/yarp_drivers/ControlBoardDriverEncoders.cpp src/yarp_drivers/ControlBoardDriverOthers.cpp src/yarp_drivers/ControlBoardDriverPositionControl.cpp src/yarp_drivers/ControlBoardTorqueDriverControl.cpp src/yarp_drivers/ControlBoardDriverVelocityControl.cpp)
+add_library(gazebo_yarp_forcetorque MODULE src/gazebo_plugins/ForceTorque.cc src/yarp_drivers/ForceTorqueDriver.cpp src/yarp_drivers/analogServer.cpp)
+add_library(gazebo_yarp_imu MODULE src/gazebo_plugins/IMU.cc )
 
 
 target_link_libraries(gazebo_yarp_controlboard ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${SDFORMAT_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})

@@ -14,50 +14,48 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getEncoder(int j, double *v) //WORKS
 {
-    //pos_lock.lock();
-    if (j<_robot_number_of_joints) {
-        (*v) = pos[j]-zero_pos[j];
+    if (v && j >= 0 && j < (int)_robot_number_of_joints) {
+        *v = pos[j]-zero_pos[j];
+        return true;
     }
-    //pos_lock.unlock();
-    return true;
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::getEncoders(double *encs) //WORKS
 {
-    //pos_lock.lock();
-    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
+    if (!encs) return false;
+    for (unsigned int i = 0; i < _robot_number_of_joints; ++i) {
         encs[i] = pos[i]-zero_pos[i];  //should we just use memcopy here?
     }
     return true;
-    //pos_lock.unlock();
 }
 
 bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
 {
     double my_time = yarp::os::Time::now();
-    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
-            encs[i] = pos[i]-zero_pos[i];  //should we just use memcopy here?
-            time[i] = my_time;
+    for (unsigned int i = 0; i <_robot_number_of_joints; ++i) {
+        encs[i] = pos[i]-zero_pos[i];  //should we just use memcopy here?
+        time[i] = my_time;
     }
-
+    
     return true;
 }
 
 /**
-* Read the instantaneous acceleration of all axes.
-* @j axis index
-* @enc encoder value (pointer to)
-* @stamp corresponding timestamp (pointer to)
-* @return true if all goes well, false if anything bad happens.
-*/
+ * Read the instantaneous acceleration of all axes.
+ * @j axis index
+ * @enc encoder value (pointer to)
+ * @stamp corresponding timestamp (pointer to)
+ * @return true if all goes well, false if anything bad happens.
+ */
 bool GazeboYarpControlBoardDriver::getEncoderTimed(int j, double *encs, double *time)
 {
-    if (j<_robot_number_of_joints) {
-        (*encs) = pos[j]-zero_pos[j];
+    if (time && encs && j >= 0 && j < (int)_robot_number_of_joints) {
+        *encs = pos[j]-zero_pos[j];
         *time = yarp::os::Time::now();
+        return true;
     }
-
-    return true;
+    return false;
 }
 
 
@@ -66,10 +64,11 @@ bool GazeboYarpControlBoardDriver::getEncoderTimed(int j, double *encs, double *
  */
 bool GazeboYarpControlBoardDriver::resetEncoder(int j) //WORKS
 {
-    if (j<_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_robot_number_of_joints) {
         zero_pos[j] = pos[j];
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::resetEncoders() //WORKS
@@ -82,10 +81,11 @@ bool GazeboYarpControlBoardDriver::resetEncoders() //WORKS
 
 bool GazeboYarpControlBoardDriver::setEncoder(int j, double val) //WORKS
 {
-    if (j<_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_robot_number_of_joints) {
         zero_pos[j] = pos[j]-val;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::setEncoders(const double *vals) //WORKS
@@ -97,41 +97,38 @@ bool GazeboYarpControlBoardDriver::setEncoders(const double *vals) //WORKS
 }
 
 
-
-
-
 bool GazeboYarpControlBoardDriver::getEncoderSpeed(int j, double *sp) //NOT TESTED
 {
-    if ( j < _robot_number_of_joints) {
-        (*sp) = speed[j];
+    if (sp && j >= 0 && j < (int)_robot_number_of_joints) {
+        *sp = speed[j];
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::getEncoderSpeeds(double *spds) //NOT TESTED
 {
+    if (!spds) return false;
     for (unsigned int i = 0; i < _robot_number_of_joints; ++i) {
-        getEncoderSpeed(i, spds);
+        getEncoderSpeed(i, &spds[i]);
     }
     return true;
 }
 
-
-
-
 bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 {
-    if (j<_robot_number_of_joints) {
-        (*spds) = 0;
+    if (spds && j >= 0 && j < (int)_robot_number_of_joints) {
+        *spds = 0;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
 {
+    if (!accs) return false;
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
         accs[i] = 0;
     }
     return true;
 }
-

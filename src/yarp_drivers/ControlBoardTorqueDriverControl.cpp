@@ -12,19 +12,21 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t) //NOT TESTED
 {
-    std::cout << std::endl << "Joint" << j << " trq: " << t << std::endl;
-    if (j<_robot_number_of_joints)
+//    std::cout << std::endl << "Joint" << j << " trq: " << t << std::endl;
+    if (j >= 0 && j < (int)_robot_number_of_joints)
     {
         ref_torque[j] = t;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::setRefTorques(const double *t) //NOT TESTED
 {
-    for (unsigned int j=0; j<_robot_number_of_joints; ++j)
+    if (!t) return false;
+    for (unsigned int j = 0; j < _robot_number_of_joints; ++j)
     {
-        std::cout << std::endl << "Joint" << j << " trq: " << t[j] << std::endl;
+//        std::cout << std::endl << "Joint" << j << " trq: " << t[j] << std::endl;
         ref_torque[j] = t[j];
     }
     return true;
@@ -32,8 +34,8 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const double *t) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setTorqueMode() //NOT TESTED
 {
-    std::cout<<std::endl<<" set torque mode "<< std::endl;
-    for(unsigned int j=0; j<_robot_number_of_joints; j++)
+//    std::cout<<std::endl<<" set torque mode "<< std::endl;
+    for(unsigned int j = 0; j < _robot_number_of_joints; j++)
     {
         this->setTorqueMode(j);
     }
@@ -42,31 +44,37 @@ bool GazeboYarpControlBoardDriver::setTorqueMode() //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::getRefTorque(int j, double *t) //NOT TESTED
 {
-    if (j<_robot_number_of_joints) {
+    if (t && j >= 0 && j < (int)_robot_number_of_joints) {
         *t = ref_torque[j];
+        return true;
     }
-    return true;
+    return false;
 } 
 
 bool GazeboYarpControlBoardDriver::getRefTorques(double *t) //NOT TESTED
 {
-    for(unsigned int j = 0; j < _robot_number_of_joints; ++j)
+    if (!t) return false;
+    for(unsigned int j = 0; j < _robot_number_of_joints; ++j) {
         t[j] = ref_torque[j];
+    }
     return true;
 } 
 
 bool GazeboYarpControlBoardDriver::getTorque(int j, double *t) //NOT TESTED
 {
-    if (j<_robot_number_of_joints) {
+    if (t && j >= 0 && j < (int)_robot_number_of_joints) {
         *t = torque[j];
+        return true;
     }
-    return true;
+    return false;
 } 
 
 bool GazeboYarpControlBoardDriver::getTorques(double *t) //NOT TESTED
 {
-    for(unsigned int j = 0; j < _robot_number_of_joints; ++j)
+    if (!t) return false;
+    for(unsigned int j = 0; j < _robot_number_of_joints; ++j) {
         t[j] = torque[j];
+    }
     return true;
 }
 

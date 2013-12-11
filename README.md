@@ -35,7 +35,7 @@ brew install tinyxml boost
 
 ### Operating systems support 
 Linux and OS X are currently supported by Gazebo. 
-OS X support in Gazebo is still experimental, and there could be problens, for example in models that assume that plugins files have the .so extention. Modifying manually the sdf models substituting ".so" with ".dylib" should solve at least this kind of issues. 
+OS X support in Gazebo is still experimental, and there could be problems.
 
 ### Compilation 
 You get the gazebo_yarp_plugins source code from this git repository repository (if you do not have git on your computer, [follow this guide to install it](http://git-scm.com/downloads))

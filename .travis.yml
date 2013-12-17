@@ -2,6 +2,7 @@ language: cpp
 
 compiler:
   - gcc
+  - clang
   
 env:
   - GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug

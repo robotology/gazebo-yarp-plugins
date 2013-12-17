@@ -208,7 +208,7 @@ private:
     unsigned int robot_refresh_period; //ms
     gazebo::physics::Model* _robot;
     gazebo::event::ConnectionPtr updateConnection;
-    unsigned int _robot_number_of_joints;
+    unsigned int _controlboard_number_of_joints;
 
     //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
     yarp::os::Property plugin_parameters;

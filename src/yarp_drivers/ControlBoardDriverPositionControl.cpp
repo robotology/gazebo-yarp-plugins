@@ -18,7 +18,7 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 {
 //    std::cout << " positionMove" << j << ref;
-    if (j >= 0 && j < (int)_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
         ref_pos[j] = ref; //we will use this ref_pos in the next simulation onUpdate call to ask gazebo to set PIDs ref_pos to this value
         return true;
     }
@@ -27,7 +27,7 @@ bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 
 bool GazeboYarpControlBoardDriver::stop(int j) //WORKS
 {
-    if (j >= 0 && j < (int)_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
         ref_pos[j] = pos[j];
         return true;
     }
@@ -42,7 +42,7 @@ bool GazeboYarpControlBoardDriver::stop() //WORKS
 
 bool GazeboYarpControlBoardDriver::positionMove(const double *refs) //WORKS
 {
-    for (unsigned int i = 0; i < _robot_number_of_joints; ++i) {
+    for (unsigned int i = 0; i < _controlboard_number_of_joints; ++i) {
         ref_pos[i] = refs[i];
     }
     return true;
@@ -51,13 +51,13 @@ bool GazeboYarpControlBoardDriver::positionMove(const double *refs) //WORKS
 bool GazeboYarpControlBoardDriver::getAxes(int *ax) // WORKS
 {
     if (!ax) return false;
-    *ax = _robot_number_of_joints;
+    *ax = _controlboard_number_of_joints;
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setRefSpeed(int j, double sp) //WORKS
 {
-    if (j >= 0 && j < (int)_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
         ref_speed[j] = sp;
         return true;
     }
@@ -66,7 +66,7 @@ bool GazeboYarpControlBoardDriver::setRefSpeed(int j, double sp) //WORKS
 
 bool GazeboYarpControlBoardDriver::getRefSpeed(int j, double *ref) //WORKS
 {
-    if (ref && j >= 0 && j < (int)_robot_number_of_joints) {
+    if (ref && j >= 0 && j < (int)_controlboard_number_of_joints) {
         *ref = ref_speed[j];
         return true;
     }
@@ -76,7 +76,7 @@ bool GazeboYarpControlBoardDriver::getRefSpeed(int j, double *ref) //WORKS
 bool GazeboYarpControlBoardDriver::getRefSpeeds(double *spds) //WORKS
 {
     if (!spds) return false;
-    for (unsigned int i = 0; i < _robot_number_of_joints; ++i) {
+    for (unsigned int i = 0; i < _controlboard_number_of_joints; ++i) {
         spds[i] = ref_speed[i];
     }
     return true;
@@ -86,7 +86,7 @@ bool GazeboYarpControlBoardDriver::getRefSpeeds(double *spds) //WORKS
 
 bool GazeboYarpControlBoardDriver::relativeMove(int j, double delta) //NOT TESTED
 {
-    if (j >= 0 && j < (int)_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
         ref_pos[j] = pos[j] + delta; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
         return true;
     }
@@ -95,7 +95,7 @@ bool GazeboYarpControlBoardDriver::relativeMove(int j, double delta) //NOT TESTE
 
 bool GazeboYarpControlBoardDriver::relativeMove(const double *deltas) //NOT TESTED
 {
-    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
         ref_pos[i] = pos[i]+ deltas[i]; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
     }
     return true;
@@ -103,7 +103,7 @@ bool GazeboYarpControlBoardDriver::relativeMove(const double *deltas) //NOT TEST
 
 bool GazeboYarpControlBoardDriver::checkMotionDone(int j, bool *flag) //NOT TESTED
 {
-    if (flag && j >= 0 && j < (int)_robot_number_of_joints) {
+    if (flag && j >= 0 && j < (int)_controlboard_number_of_joints) {
         *flag = motion_done[j];
         return true;
     }
@@ -115,7 +115,7 @@ bool GazeboYarpControlBoardDriver::checkMotionDone(bool *flag) //NOT TESTED
     if (!flag) return false;
     bool temp_flag = true;
     //*flag=true;
-    for(unsigned int j = 0; j < _robot_number_of_joints; ++j)
+    for(unsigned int j = 0; j < _controlboard_number_of_joints; ++j)
     {
         temp_flag = temp_flag && motion_done[j];
     }
@@ -125,7 +125,7 @@ bool GazeboYarpControlBoardDriver::checkMotionDone(bool *flag) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setPositionMode() //NOT TESTED
 {
-    for (unsigned int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
     {
         this->setPositionMode(j);
     }
@@ -134,7 +134,7 @@ bool GazeboYarpControlBoardDriver::setPositionMode() //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 {
-    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
         ref_speed[i] = spds[i];
     }
     return true;
@@ -143,7 +143,7 @@ bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
 {
-    if (j >= 0 && j < (int)_robot_number_of_joints) {
+    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
         ref_acc[j] = acc;
         return true;
     }
@@ -152,7 +152,7 @@ bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) //NOT I
 
 bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs) //NOT IMPLEMENTED
 {
-    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
         ref_acc[i] = accs[i];
     }
     return true;
@@ -160,7 +160,7 @@ bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs) //NOT
 
 bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) //NOT IMPLEMENTED
 {
-    if (acc && j >= 0 && j < (int)_robot_number_of_joints) {
+    if (acc && j >= 0 && j < (int)_controlboard_number_of_joints) {
         *acc = ref_acc[j];
         return true;
     }
@@ -170,7 +170,7 @@ bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) //NOT 
 bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) //NOT IMPLEMENTED
 {
     if (!accs) return false;
-    for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
+    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
         accs[i] = ref_acc[i];
     }
     return true;

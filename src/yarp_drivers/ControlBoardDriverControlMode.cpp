@@ -47,7 +47,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  
  bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
  {
-     for(unsigned int j=0; j<_robot_number_of_joints; ++j)
+     for(unsigned int j=0; j<_controlboard_number_of_joints; ++j)
      {
          modes[j]=control_mode[j];
      }

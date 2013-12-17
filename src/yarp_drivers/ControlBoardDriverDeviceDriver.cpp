@@ -90,7 +90,7 @@ void GazeboYarpControlBoardDriver::run()
     yarp::os::Bottle bot2;
     bot1.clear();
     bot2.clear();
-    for(unsigned int j = 0; j < _robot_number_of_joints; ++j)
+    for(unsigned int j = 0; j < _controlboard_number_of_joints; ++j)
     {
         bot1.addDouble(torque[j]);
         bot2.addDouble(speed[j]);

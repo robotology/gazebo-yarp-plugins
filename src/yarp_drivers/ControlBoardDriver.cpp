@@ -36,24 +36,24 @@ void GazeboYarpControlBoardDriver::gazebo_init()
     this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() *1000.0;
     setJointNames();
 
-    _robot_number_of_joints = joint_names.size();
+    _controlboard_number_of_joints = joint_names.size();
     //pos_lock.unlock();
-    pos.size ( _robot_number_of_joints );
-    zero_pos.size ( _robot_number_of_joints );
-    vel.size ( _robot_number_of_joints );
-    speed.size ( _robot_number_of_joints );
-    acc.size ( _robot_number_of_joints );
-    amp.size ( _robot_number_of_joints );
-    torque.size ( _robot_number_of_joints ); torque.zero();
-    ref_speed.size ( _robot_number_of_joints );
-    ref_pos.size ( _robot_number_of_joints );
-    ref_acc.size ( _robot_number_of_joints );
-    ref_torque.size ( _robot_number_of_joints );
-    max_pos.resize ( _robot_number_of_joints );
-    min_pos.size ( _robot_number_of_joints );
-    _p.reserve ( _robot_number_of_joints );
-    _i.reserve ( _robot_number_of_joints );
-    _d.reserve ( _robot_number_of_joints );
+    pos.size ( _controlboard_number_of_joints );
+    zero_pos.size ( _controlboard_number_of_joints );
+    vel.size ( _controlboard_number_of_joints );
+    speed.size ( _controlboard_number_of_joints );
+    acc.size ( _controlboard_number_of_joints );
+    amp.size ( _controlboard_number_of_joints );
+    torque.size ( _controlboard_number_of_joints ); torque.zero();
+    ref_speed.size ( _controlboard_number_of_joints );
+    ref_pos.size ( _controlboard_number_of_joints );
+    ref_acc.size ( _controlboard_number_of_joints );
+    ref_torque.size ( _controlboard_number_of_joints );
+    max_pos.resize ( _controlboard_number_of_joints );
+    min_pos.size ( _controlboard_number_of_joints );
+    _p.reserve ( _controlboard_number_of_joints );
+    _i.reserve ( _controlboard_number_of_joints );
+    _d.reserve ( _controlboard_number_of_joints );
 
     setMinMaxPos();
     setPIDs();
@@ -68,10 +68,10 @@ void GazeboYarpControlBoardDriver::gazebo_init()
     acc = 0;
     amp = 1; // initially on - ok for simulator
     started=false;
-    control_mode=new int[_robot_number_of_joints];
-    motion_done=new bool[_robot_number_of_joints];
+    control_mode=new int[_controlboard_number_of_joints];
+    motion_done=new bool[_controlboard_number_of_joints];
     _clock=0;
-    for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
+    for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
         control_mode[j]=VOCAB_CM_POSITION;
 
     std::cout << "gazebo_init set pid done!" << std::endl;
@@ -94,8 +94,8 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     if ( !started ) //This is a simple way to start with a coman in standing position
     {
         started=true;
-        double temp=0;//[_robot_number_of_joints];
-        for ( unsigned int j=0; j<_robot_number_of_joints; j++ )
+        double temp=0;//[_controlboard_number_of_joints];
+        for ( unsigned int j=0; j<_controlboard_number_of_joints; j++ )
             sendPositionToGazebo ( j,temp );
     }
 
@@ -112,7 +112,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     
 //     logger.log(speed[2]);
     
-    for ( unsigned int j=0; j<_robot_number_of_joints; ++j )
+    for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
     {
         if ( control_mode[j]==VOCAB_CM_POSITION ) //set pos joint value, set vel joint value
         {
@@ -159,7 +159,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
 void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
 {
     std::cout<<"Joint Limits"<<std::endl;
-    for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+    for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
     {
         max_pos[i] = this->_robot->GetJoint(joint_names[i])->GetUpperLimit(0).Degree();
         min_pos[i] = this->_robot->GetJoint(joint_names[i])->GetLowerLimit(0).Degree();
@@ -196,7 +196,7 @@ void GazeboYarpControlBoardDriver::setPIDs() //WORKS
     {
         std::cout<<"Found PID information in plugin parameters "<<std::endl;
         
-        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+        for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
         {
             std::stringstream property_name;
             property_name<<"Pid";
@@ -210,40 +210,25 @@ void GazeboYarpControlBoardDriver::setPIDs() //WORKS
         }
         std::cout<<"OK!"<<std::endl;
     } 
-    else if(prop.fromConfigFile(pid_config_abs_path.c_str()))
-    {
-        std::cout<<"pid.ini FOUND!"<<std::endl;
-        std::string group_name = "PIDS";
-        
-        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
-        {
-            std::stringstream property_name;
-            property_name<<"Pid";
-            property_name<<i;
-            
-            yarp::os::Bottle& pid = prop.findGroup(group_name.c_str()).findGroup(property_name.str().c_str());
-            _p.push_back(pid.get(1).asDouble());
-            _i.push_back(pid.get(3).asDouble());
-            _d.push_back(pid.get(2).asDouble());
-            std::cout<<"  P: "<<_p[i]<<" I: "<<_i[i]<<" D: "<<_d[i]<<std::endl;
-        }
-        std::cout<<"OK!"<<std::endl;
-    }
     else
     {
-        std::cout<<"CAN NOT FIND pid.ini!"<<std::endl;
-        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+        double default_p = 500.0;
+        double default_i = 0.1;
+        double default_d = 1.0;
+        std::cout<<"PID gain information not found in plugin parameters, using default gains ( " 
+                 <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
+        for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
         {
-            _p.push_back(500.0);
-            _i.push_back(0.1);
-            _d.push_back(1.0);
+            _p.push_back(default_p);
+            _i.push_back(default_i);
+            _d.push_back(default_d);
         }
     }
 }
 
 bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)
 {
-    for (unsigned int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
     {
         sendPositionToGazebo(j,refs[j]);
     }
@@ -273,7 +258,7 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
 
 bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 {
-    for (unsigned int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
     {
         sendVelocityToGazebo(j,refs[j]);
     }
@@ -316,7 +301,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
 
 bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
 {
-    for (unsigned int j=0; j<_robot_number_of_joints; j++)
+    for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
     {
         sendTorqueToGazebo(j,refs[j]);
     }

@@ -20,3 +20,6 @@ before_script:
 
 script: make 
 
+notifications:
+  email:
+    - pegua1@gmail.com

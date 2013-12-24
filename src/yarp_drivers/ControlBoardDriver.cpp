@@ -91,7 +91,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
 {
     _clock++;
 
-    if ( !started ) //This is a simple way to start with a coman in standing position
+    if ( !started ) //This is a simple way to start with the robot in standing position
     {
         started=true;
         double temp=0;//[_controlboard_number_of_joints];

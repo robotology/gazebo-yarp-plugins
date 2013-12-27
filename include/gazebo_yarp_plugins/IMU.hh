@@ -24,15 +24,12 @@ namespace gazebo
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        sensors::ImuSensorPtr parentSensor;
-        event::ConnectionPtr updateConnection;
+        sensors::ImuSensor* parentSensor;
         yarp::os::Network _yarp;
-        yarp::os::Port _p;
-        yarp::os::Bottle _bot;
-
+        yarp::os::Property _parameters; 
+        yarp::dev::PolyDriver _imu_driver;
+        
         virtual void Init();
-        virtual void OnUpdate();
-
     };
 }
 

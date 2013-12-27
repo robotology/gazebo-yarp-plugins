@@ -10,6 +10,7 @@
 #include <map>
 #include <yarp/os/Semaphore.h>
 #include <gazebo/physics/Entity.hh>
+#include <gazebo/sensors/sensors.hh>
 
 namespace gazebo
 {
@@ -17,6 +18,7 @@ namespace gazebo
 }
 
 typedef std::map<std::string, gazebo::physics::Model*> RobotsMap;
+typedef std::map<std::string, gazebo::sensors::Sensor*> SensorsMap;
 
 class gazebo::GazeboYarpPluginHandler
 {
@@ -24,16 +26,20 @@ public:
     // static method for using the handler
     static GazeboYarpPluginHandler* getHandler();
 
-    // set the model pointer given the sdf xml descriptor (to get the robot name from)
-    //bool setRobot(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf);
+    // add a new modelPointer to the "database", if it already exists and the pointer are the same return success,
+    // if pointers doesn't match returns error.
     bool setRobot(gazebo::physics::Model*   parent, sdf::ElementPtr sdf);
 
     // return the model pointer given the robot name
     gazebo::physics::Model* getRobot(std::string robotName);
 
-    // add a new modelPointer to the "database", if it already exists and the pointer are the same return success,
+    // add a new sensorPointer to the "database", if the sensor already exists and the pointer are the same return success,
     // if pointers doesn't match returns error.
-    bool setRobot(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf);
+    // the key used in the "database" is the scoped name of the sensor
+    bool setSensor(gazebo::sensors::Sensor* _sensor, sdf::ElementPtr _sdf);
+    
+    // return the sensor pointer given the sensor scoped namespac
+    gazebo::sensors::Sensor* getSensor(const std::string sensorScopedName);
 
     ~GazeboYarpPluginHandler();
 
@@ -44,6 +50,7 @@ private:
 
     GazeboYarpPluginHandler();
     RobotsMap                           _robotMap;      // map of known robots
+    SensorsMap                          _sensorsMap;    // map of known sensors
 
     bool findRobotName(sdf::ElementPtr sdf, std::string *robotName);
 

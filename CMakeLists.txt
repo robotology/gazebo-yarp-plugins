@@ -55,8 +55,10 @@ set(forceTorque_headers     include/gazebo_yarp_plugins/ForceTorque.hh
 SOURCE_GROUP("Source Files" FILES ${forceTorque_source})
 SOURCE_GROUP("Header Files" FILES ${forceTorque_headers})
 
-set(imu_headers             include/gazebo_yarp_plugins/IMU.hh)
-set(imu_source              src/gazebo_plugins/IMU.cc )
+set(imu_headers             include/gazebo_yarp_plugins/IMU.hh
+                            include/gazebo_yarp_plugins/IMUDriver.h)
+set(imu_source              src/gazebo_plugins/IMU.cc 
+                            src/yarp_drivers/IMUDriver.cpp)
 
 # for visual studio
 SOURCE_GROUP("Source Files" FILES ${imu_source})

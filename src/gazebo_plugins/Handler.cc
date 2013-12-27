@@ -35,11 +35,6 @@ GazeboYarpPluginHandler * GazeboYarpPluginHandler::getHandler()
     return _handle;
 }
 
-//bool GazeboYarpPluginHandler::setRobot(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf)
-//{
-//    return setRobot(get_pointer(parent), sdf);
-//}
-
 bool GazeboYarpPluginHandler::setRobot(gazebo::physics::Model* parent, sdf::ElementPtr sdf)
 {
     bool ret = false;
@@ -113,4 +108,53 @@ bool GazeboYarpPluginHandler::findRobotName(sdf::ElementPtr sdf, std::string *ro
     *robotName =  model_p->GetAttribute("name")->GetAsString();
     cout << "found model name " << *robotName << endl;
     return true;
+}
+
+bool GazeboYarpPluginHandler::setSensor(gazebo::sensors::Sensor* _sensor, sdf::ElementPtr _sdf)
+{
+    bool ret = false;
+    std::string scoped_sensor_name = _sensor->GetScopedName();
+    cout << "GazeboYarpPluginHandler: Inserting Sensor : " << scoped_sensor_name << endl;
+
+    if( ! _sensorsMap.insert(std::pair<std::string, gazebo::sensors::Sensor*>(scoped_sensor_name, _sensor) ).second)
+    {
+        // the element could be already present, check it out just to be sure!
+        if(_sensor != _sensorsMap.at(scoped_sensor_name) )
+        {
+            cout << "Error in GazeboYarpPluginHandler while inserting a new sensor pointer!\n";
+            cout << " The name of the sensor is already present but the pointer does not match with the one already registered!!\n";
+            cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << endl;
+            ret = false;
+        }
+        else
+        {
+            cout << "Sensor already registered, pointers match. This however should not happen. This is a debug msg and can be removed." << endl;
+            ret = true;
+        }
+    }
+    else
+    {
+        ret = true;
+        cout << "Singleton: Added a new sensor " << scoped_sensor_name << ".\n";
+    }
+    return ret;
+}
+    
+// return the sensor pointer given the sensor scoped namespac
+gazebo::sensors::Sensor* GazeboYarpPluginHandler::getSensor(const std::string sensorScopedName)
+{
+    gazebo::sensors::Sensor* tmp = NULL;
+    cout << "Looking for sensor : " << sensorScopedName << endl;
+    try
+    {
+        tmp = _sensorsMap.at(sensorScopedName);
+    }
+    catch (...)
+    {
+         cout << "Sensor was not found: " << sensorScopedName << endl;
+         tmp = NULL;
+    }
+    if(NULL != tmp)
+        cout << "Sensor " << sensorScopedName << " was happily found!\n";
+    return tmp;
 }

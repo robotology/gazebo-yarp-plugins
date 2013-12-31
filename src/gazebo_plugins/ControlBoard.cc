@@ -133,6 +133,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             _parameters.fromString(driver_group.toString(), false);
 //            std::cout << "before open: params are " << _parameters.toString() << std::endl;
 
+            if(_sdf->HasElement("initialConfiguration") )
+            {
+                std::cout<<"Found initial Configuration: "<<std::endl;
+                std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
+                _parameters.put("initialConfiguration", configuration_s.c_str());
+                std::cout<<configuration_s<<std::endl;
+            }
+
 //            _controlBoard.open(driver_property);
             _controlBoard.open(_parameters);
 

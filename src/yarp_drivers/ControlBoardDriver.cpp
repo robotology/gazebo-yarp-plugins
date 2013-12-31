@@ -14,14 +14,13 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <stdio.h>
 
+#define toDeg(X) (X*180.0/M_PI)
 
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
-
-
 
 void GazeboYarpControlBoardDriver::gazebo_init()
 {
@@ -84,8 +83,36 @@ void GazeboYarpControlBoardDriver::gazebo_init()
                   ( std::string ( "~/" ) + this->_robot->GetName() + "/joint_cmd" );
 
     _T_controller = 10;
-}
 
+    std::stringstream ss(plugin_parameters.find("initialConfiguration").toString());
+    if(!(plugin_parameters.find("initialConfiguration") == ""))
+    {
+        double tmp = 0.0;
+        yarp::sig::Vector initial_config(_robot_number_of_joints);
+        unsigned int counter = 1;
+        while(ss>>tmp)
+        {
+            if(counter > _robot_number_of_joints)
+            {
+                std::cout<<"To many element in initial configuration, stopping at element "<<counter<<std::endl;
+                break;
+            }
+            initial_config[counter-1] = tmp;
+            ref_pos[counter-1] = toDeg(tmp);
+            pos[counter-1] = toDeg(tmp);
+            counter++;
+        }
+        std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
+
+        for(unsigned int i = 0; i < _robot_number_of_joints; ++i)
+        {
+            gazebo::math::Angle a;
+            a.SetFromRadian(initial_config[i]);
+            std::string joint_name = joint_names[i];
+            _robot->GetJoint(joint_name)->SetAngle(0,a);
+        }
+    }
+}
 
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
@@ -94,9 +121,8 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     if ( !started ) //This is a simple way to start with a coman in standing position
     {
         started=true;
-        double temp=0;//[_robot_number_of_joints];
-        for ( unsigned int j=0; j<_robot_number_of_joints; j++ )
-            sendPositionToGazebo ( j,temp );
+        for ( unsigned int j = 0; j < _robot_number_of_joints; ++j )
+            sendPositionToGazebo ( j, pos[j] );
     }
 
     pos_lock.lock();
@@ -267,8 +293,8 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
     j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
     j_cmd.mutable_velocity()->set_p_gain(0.0);
-    j_cmd.mutable_velocity()->set_i_gain(0);
-    j_cmd.mutable_velocity()->set_d_gain(0);
+    j_cmd.mutable_velocity()->set_i_gain(0.0);
+    j_cmd.mutable_velocity()->set_d_gain(0.0);
 }
 
 bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
@@ -310,7 +336,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     j_cmd.mutable_position()->set_d_gain(0.0);
     j_cmd.mutable_velocity()->set_p_gain(0.200);
     j_cmd.mutable_velocity()->set_i_gain(0.02);
-    j_cmd.mutable_velocity()->set_d_gain(0);
+    j_cmd.mutable_velocity()->set_d_gain(0.0);
     j_cmd.mutable_velocity()->set_target(toRad(ref));
 }
 

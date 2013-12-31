@@ -122,7 +122,7 @@ bool GazeboYarpControlBoardDriver::getEncoderSpeeds(double *spds) //NOT TESTED
 bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 {
     if (j<_robot_number_of_joints) {
-        (*spds) = 0;
+        (*spds) = 0.0;
     }
     return true;
 }
@@ -130,7 +130,7 @@ bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) /
 bool GazeboYarpControlBoardDriver::getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
 {
     for (unsigned int i=0; i<_robot_number_of_joints; ++i) {
-        accs[i] = 0;
+        accs[i] = 0.0;
     }
     return true;
 }

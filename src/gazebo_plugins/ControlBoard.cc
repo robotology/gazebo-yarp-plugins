@@ -133,6 +133,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             _parameters.fromString(driver_group.toString(), false);
 //            std::cout << "before open: params are " << _parameters.toString() << std::endl;
 
+            if(_sdf->HasElement("initialConfiguration") )
+            {
+                std::cout<<"Found initial Configuration: "<<std::endl;
+                std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
+                _parameters.put("initialConfiguration", configuration_s.c_str());
+                std::cout<<configuration_s<<std::endl;
+            }
+
 //            _controlBoard.open(driver_property);
             _controlBoard.open(_parameters);
 
@@ -151,40 +159,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             _wrapper.close();
             _controlBoard.close();
             return;
-        }
-
-        if(_sdf->HasElement("initialConfiguration") )
-        {
-            std::stringstream configuration_ss(_sdf->Get<std::string>("initialConfiguration"));
-
-            double number_of_dofs = _parameters.findGroup("WRAPPER").find("joints").asDouble();
-            yarp::os::Bottle *chain_name = _parameters.findGroup("WRAPPER").find("networks").asList();
-            yarp::os::Bottle joint_names = _parameters.findGroup(chain_name->toString()).tail();
-
-            double tmp = 0.0;
-            yarp::sig::Vector initial_config(number_of_dofs);
-            unsigned int counter = 1;
-            while(configuration_ss>>tmp)
-            {
-                if(counter > number_of_dofs)
-                {
-                    std::cout<<"To many element in initial configuration, stopping at element "<<counter<<std::endl;
-                    break;
-                }
-                initial_config[counter-1] = tmp;
-                counter++;
-            }
-            std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
-
-            for(unsigned int i = 0; i < number_of_dofs; ++i)
-            {
-                gazebo::math::Angle a;
-                a.SetFromRadian(initial_config[i]);
-                std::string joint_name = "COMAN::"+joint_names.findGroup("jointNames").get(i+1).toString();
-                _robot->GetJoint(joint_name)->SetAngle(0,a);
-            }
-            sleep(3);
-            printf("Device initialized correctly,...........");
         }
 
         printf("Device initialized correctly, now sitting and waiting cause I am just the main of the yarp device, and the coman is linked to the onUpdate event of gazebo\n");

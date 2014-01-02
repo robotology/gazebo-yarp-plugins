@@ -9,7 +9,14 @@ env:
   - GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
 
 before_script:
-  - sudo sh -c 'echo "deb http://www.icub.org/ubuntu precise contrib/science" > /etc/apt/sources.list.d/icub.list'
+  - git clone https://github.com/robotology/yarp
+  - cd yarp
+  - mkdir build
+  - cd build
+  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_INSTALL_PREFIX="./local_install" -DCMAKE_BUILD_TYPE=${CODYCO_TRAVIS_BUILD_TYPE} ..
+  - make 
+  - make install
+  - cd ../..
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu precise main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update 

@@ -1,234 +1,89 @@
 /*
-* Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
-* Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
+ * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-
-#include <string>
-#include <algorithm>
-#include <stdlib.h>
-
-#include <yarp/os/Network.h>
-#include <gazebo/transport/Node.hh>
-#include <gazebo/common/Assert.hh>
 
 #include <gazebo_yarp_plugins/ForceTorque.hh>
 #include <gazebo_yarp_plugins/ForceTorqueDriver.h>
-#include <gazebo_yarp_plugins/analogServer.h>
 
-using std::string;
+#include <yarp/dev/PolyDriver.h>
 
-namespace gazebo
-{
+#include "gazebo_yarp_plugins/Handler.hh"
+
+
+using namespace gazebo;
+
 GZ_REGISTER_SENSOR_PLUGIN(GazeboYarpForceTorque)
 
-/*
- * We have one yarpFTsensor (yarp::dev::IAnalogSensor) and one factory for all FT sensors;
- * still we have one AnalogServer for each FT sensor that reads just one portion of
- * the unique yarpFTsensor AnalogSensor, and publishes it.
- */
-unsigned int GazeboYarpForceTorque::iBoards = 0;
+#define toDeg(X) (X*180.0/M_PI)
 
-/////////////////////////////////////////////////
-GazeboYarpForceTorque::GazeboYarpForceTorque() : _server(NULL), yarpFTsensor(NULL), _yarp()
+GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp()
 {
-    this->iBoards++;
-
-    if(this->yarpFTsensor == NULL)
-    {
-        // add a device to the yarp factory
-        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
-                                          // deviceName     wrapper to use  name of the class
-                                          ("fakebotFTsensor","FTsensor",    "fakebotFTsensor") );
-
-        yarp::os::Property _parameters;
-        _parameters.put("device", "fakebotFTsensor");
-        _parameters.put("subdevice", "fakebotFTsensor");
-        _parameters.put("name", "/coman/FTsensor");
-        this->_driver.open(_parameters);
-
-        if (!this->_driver.isValid())
-           fprintf(stderr, "Device did not open\n");
-        else {
-            this->_driver.view(this->yarpFTsensor);
-            printf("Device gazebo_forcetorque initialized correctly\n");
-        }
-    }
 }
 
-/////////////////////////////////////////////////
+void GazeboYarpForceTorque::Init()
+{
+    std::cout<<"*** GazeboYarpForceTorque plugin started ***"<<std::endl;
+    if (!_yarp.checkNetwork())
+        std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
+    else
+        std::cout<<"YARP Server found!"<<std::endl;
+}
+
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
-    if(this->_server!= NULL && this->_server->isRunning()) {
-        this->_server->stop();
-    }
-
-    if(this->parentSensor != NULL) {
-        printf("FakebotForceTorquePlugin: Disconnecting from sensor %s\n",
-               this->parentSensor->GetName().c_str());
-        this->parentSensor->DisconnectUpdate(this->connection);
-        this->parentSensor.reset();
-    }
-
-    if(this->yarpFTsensor != NULL && this->_driver.isValid()) {
-        this->yarpFTsensor = NULL;
-        this->_driver.close();
-    }
+    std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
 }
 
-/////////////////////////////////////////////////
-void GazeboYarpForceTorque::Load(sensors::SensorPtr _parent,
-    sdf::ElementPtr _sdf)
+void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-  this->parentSensor =
-    boost::dynamic_pointer_cast<sensors::ForceTorqueSensor>(_parent);
-
-  if (!this->parentSensor)
-    gzthrow("ForceTorquePlugin requires a force_torque sensor as its parent.");
-
-  this->connection = this->parentSensor->ConnectUpdate(
-        boost::bind(&GazeboYarpForceTorque::OnUpdate, this, _1));
-
-  this->world = gazebo::physics::get_world(this->parentSensor->GetWorldName());
-
-  std::string jointName = this->parentSensor->GetParentName();
-  physics::BasePtr parentEntity = world->GetByName(jointName);
-  if(!parentEntity)
-      gzthrow("Could not get parent joint.");
-
-  physics::JointPtr parentJoint;
-  parentJoint = boost::dynamic_pointer_cast<physics::Joint>(parentEntity);
-  // link where the ft sensor is physically located
-  this->ftLink = parentJoint->GetChild();
-  if(!this->ftLink)
-      gzthrow("Could not get child link of parent joint.");
-
-  if (_sdf->HasElement("boardId")) {
-    this->boardId = _sdf->GetElement("boardId")->GetValueUInt();
-      if(this->boardId > this->iBoards)
-        this->iBoards = this->boardId;
-  } else
-    this->boardId = this->iBoards;
-
-  if(this->yarpFTsensor!=NULL) {
-    if (!_yarp.checkNetwork())
-      std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
-    else {
-        yarp::os::Property prop;
-        prop.put("device", "analogServer");
-        prop.put("robotName", "coman");
-        prop.put("deviceId", this->parentSensor->GetName().c_str());
-        prop.put("rate", 1);
-
-        /* TODO: when analogServer will be included in YARP, this code needs to be used
-        yarp::dev::PolyDriver poly;
-
-
-        poly.open(prop);
-        if(!poly.isValid())
-          printf("error opening analogServer");
-
-        poly.view(this->_server);
-        */
-        this->_server = new yarp::dev::AnalogServer();
-        if(this->_server != NULL) {
-            if(!this->_server->open(prop))
-                printf("error opening analogServer");
-            else {
-                this->_server->attach(this->yarpFTsensor);
-                this->_server->start();
-            }
-        } else
-            printf("error creating analogServer");
+    
+    if (!_sensor)
+    {
+        gzerr << "GazeboYarpForceTorque plugin requires a ForceTorqueSensor.\n";
+        return;
     }
 
-    printf("----- FakebotForceTorquePlugin:");
-    printf("Instantiated FT plugin with boardId %d ",this->boardId);
-    printf("for sensor %s\n",this->parentSensor->GetName().c_str());
-  }
-}
+    _sensor->SetActive(true);
+    
+  
 
-/////////////////////////////////////////////////
-void GazeboYarpForceTorque::OnUpdate(msgs::WrenchStamped _msg)
-{
+    // Add my gazebo device driver to the factory.
+    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
+                                      ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
 
-    // ft force and torque measurements in joint (child link) frame
-    math::Vector3 l_ftForce( _msg.wrench().force().x(),
-                             _msg.wrench().force().y(),
-                             _msg.wrench().force().z());
-    math::Vector3 l_ftTorque( _msg.wrench().torque().x(),
-                              _msg.wrench().torque().y(),
-                              _msg.wrench().torque().z());
+        
+    //Getting .ini configuration file from sdf
+    bool configuration_loaded = false;
+        
+    if(_sdf->HasElement("yarpConfigurationFile") )
+    {
+        std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
+        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
 
-/*  
- * see https://github.com/EnricoMingo/iit-coman-ros-pkg/issues/13
- * This code is used to refer FT readings to a different pose from the joint one.
- * Since this is a YARP plugin, but our YARP controller allows us to have underactuated systems,
- * we now switched to a solution where we have a fake joint with 0 limits to place the FT sensor.
- * This allows also to easily take into account sensor biases. If this feature will become useful again
- * in a future version, it can be uncommented and extended. It could also be useful to do simple transformations
- * of the frame of reference (i.e., offsets in rotations of the sensor pose)
- */
-/*
-    // ft force and torque measurements in world frame
-    math::Vector3 w_ftForce;
-    math::Vector3 w_ftTorque;
-
-    // ft force and torque measurements in ft frame
-    math::Vector3 ftForce;
-    math::Vector3 ftTorque;
-
-    // frame of reference for the ft readings, expressed in world coords
-    math::Pose w_LinkPose = this->ftLink->GetWorldPose();
-
-    // ft pose, expressed in link coords
-    math::Pose l_ftPose = this->parentSensor->GetPose();
-
-    // ft pose, expressed in world coords
-    math::Pose w_ftPose = l_ftPose+w_LinkPose;
-
-    // from link reference frame to ft reference frame, expressed in world coords
-    math::Vector3 w_lft = w_LinkPose.rot.RotateVector(l_ftPose.pos);
-
-    // rotate ft force from link to world coords
-    w_ftForce = w_LinkPose.rot.RotateVector(l_ftForce);
-    // translate ft torque pivot to ft frame, express it in world frame coords
-    w_ftTorque = w_LinkPose.rot.RotateVector(l_ftTorque);
-    w_ftTorque += w_ftForce.Cross(w_lft);
-
-    // rotate ft force from world to ft coords
-    ftForce = w_ftPose.rot.RotateVectorReverse(w_ftForce);
-
-    // rotate ft torque from world to ft coords
-    ftTorque = w_ftPose.rot.RotateVectorReverse(w_ftTorque);
-
-//    static unsigned long int _clock = 0;
-//    if(_clock%10000 == 0) {
-//        std::cout << "----------------------" << std::endl;
-//        std::cout << "l2ft " << w_lft[0] << " " << w_lft[1] << " " << w_lft[2] << std::endl;
-//        std::cout << "l  f " << l_ftForce[0] << " " << l_ftForce[1] << " " << l_ftForce[2] << std::endl;
-//        std::cout << "l  t " << l_ftTorque[0] << " " << l_ftTorque[1] << " " << l_ftTorque[2] << std::endl;
-
-//        std::cout << "ft f " << ftForce[0] << " " << ftForce[1] << " " << ftForce[2] << std::endl;
-//        std::cout << "ft t " << ftTorque[0] << " " << ftTorque[1] << " " << ftTorque[2] << std::endl;
-//    }
-//    _clock++;
-*/
-    math::Vector3 ftForce = l_ftForce;
-    math::Vector3 ftTorque = l_ftTorque;
-
-    if(this->yarpFTsensor!=NULL) {
-        this->yarpFTsensor->mutex.wait();
-        yarp::sig::Vector wrench; wrench.size(6);
-        wrench[0] = ftForce[0];
-        wrench[1] = ftForce[1];
-        wrench[2] = ftForce[2];
-        wrench[3] = ftTorque[0];
-        wrench[4] = ftTorque[1];
-        wrench[5] = ftTorque[2];
-        this->yarpFTsensor->data = wrench;
-        this->yarpFTsensor->mutex.post();
+        if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
+        {
+            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+            configuration_loaded = true;
+        }
+        
     }
-}
+        
+    if( !configuration_loaded )
+    {
+        std::cout << "File .ini not found, quitting\n" << std::endl;
+        return;
+    }
+    
+    //Insert the pointer in the singleton handler for retriving it in the yarp driver
+    GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor), _sdf);
+    
+    _parameters.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
+   
+    //Open the driver
+    _forcetorque_driver.open(_parameters);
+
+    std::cout<<"Loaded GazeboYarpForceTorque Plugin correctly"<<std::endl;
 }

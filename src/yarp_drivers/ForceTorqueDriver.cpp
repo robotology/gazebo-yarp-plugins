@@ -5,127 +5,114 @@
  */
 
 
-/// general purpose stuff.
-
-#include <yarp/os/Time.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <yarp/dev/PolyDriver.h>
-
-#include <string>
-#include <iostream>
-#include <iterator>
-#include <string.h>
-
-
-/// specific to this device driver.
 #include <gazebo_yarp_plugins/ForceTorqueDriver.h>
+#include <gazebo_yarp_plugins/Handler.hh>
 
-
-#ifdef WIN32
-#pragma warning(once:4355)
-#endif
-
-using namespace yarp;
-using namespace yarp::os;
 using namespace yarp::dev;
 
-inline bool NOT_YET_IMPLEMENTED(const char *txt)
+
+GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver()
 {
-    return false;
+    return;
 }
 
-//generic function that check is key1 is present in input bottle and that the result has size elements
-// return true/false
-static inline bool validate(Bottle &input, Bottle &out, const std::string &key1, const std::string &txt, int size)
+
+GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
 {
-    size++;  // size includes also the name of the parameter
-    Bottle &tmp=input.findGroup(key1.c_str(), txt.c_str());
-    if (tmp.isNull())
-    {
-        fprintf(stderr, "%s not found\n", key1.c_str());
-        return false;
-    }
-
-    if( tmp.size() != size)
-    {
-        fprintf(stderr, "%s incorrect number of entries\n", key1.c_str());
-        return false;
-    }
-
-    out=tmp;
-
-    return true;
+    return;
 }
 
-bool GazeboYarpForceTorqueDriver::fromConfig(yarp::os::Searchable &_config)
+
+/**
+ *
+ * Export a force/torque sensor.
+ * 
+ * \todo check forcetorque data
+ */
+void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
 {
-    return true;
+    gazebo::math::Vector3 force;
+    gazebo::math::Vector3 torque;
+    
+    force = this->parentSensor->GetForce();
+    torque = this->parentSensor->GetTorque();
+    
+    /** \todo ensure that the timestamp is the right one */
+    last_timestamp.update(this->parentSensor->GetLastUpdateTime().Double());
+    
+    int i=0;
+    
+    data_mutex.wait();
+    
+    for(i = 0; i < 2; i++ ) {
+        forcetorque_data[0+i] = force[i];
+    }
+    
+    for(i = 0; i < 2; i++ ) {
+        forcetorque_data[3+i] = torque[i];
+    }
+    
+    data_mutex.post();
+    
+    return;
+}
+    
+//DEVICE DRIVER
+bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
+{
+    data_mutex.wait();
+    forcetorque_data.resize(yarp_forcetorque_nr_of_channels,0.0);
+    data_mutex.post();
+    
+    //Get gazebo pointers
+    std::string sensorScopedName (config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
+    std::cout << "DeviceDriver is looking for sensor " << sensorScopedName << "...\n";
+    
+    parentSensor = (gazebo::sensors::ForceTorqueSensor*) gazebo::GazeboYarpPluginHandler::getHandler()->getSensor(sensorScopedName);
+    
+    if(NULL == parentSensor)
+    {
+        std::cout << "Error, ForceTorque sensor was not found\n";
+        return AS_ERROR;
+    }
+    
+    //Connect the driver to the gazebo simulation
+    this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
+                                 boost::bind ( &GazeboYarpForceTorqueDriver::onUpdate, this, _1 ) );
+  
+
+    return AS_OK;
 }
 
 bool GazeboYarpForceTorqueDriver::close()
 {
     return true;
 }
-
-GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver()
-{
-    _useCalibration=0;
-    _channels=6;
-    data.resize(_channels);
-
-    status=IAnalogSensor::AS_OK;
-}
-
-GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
-{
-
-}
-
-bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable &config)
-{
-    Property prop;
-    std::string str=config.toString().c_str();
-
-    if(!fromConfig(config))
-        return false;
-
-    prop.fromString(str.c_str());
-
-
-    // TODO fix this!
-#warning "<><> TODO: This is a copy of the mcs map. Verify that things will never change after this copy or use a pointer (better) <><>"
-    return true;
-}
-
-
-/*! Read a vector from the sensor.
- * @param out a vector containing the sensor's last readings.
- * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
- **/
+    
+//ANALOG SENSOR
 int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector &out)
 {
-    // This method gives data to the analogServer
+    if( (int)forcetorque_data.size() != yarp_forcetorque_nr_of_channels ||
+        (int)out.size() != yarp_forcetorque_nr_of_channels ) {
+        return AS_ERROR;
+    }
+    
+    data_mutex.wait();
+    out = forcetorque_data;
+    data_mutex.post();
+    
+    return AS_OK;
+}
 
-    mutex.wait();
-    status = AS_OK;
-
-    out.resize(data.size());
-
-    out = data;
-    mutex.post();
-    return status;
+int GazeboYarpForceTorqueDriver::getChannels()
+{
+    return yarp_forcetorque_nr_of_channels;
 }
 
 int GazeboYarpForceTorqueDriver::getState(int ch)
 {
     printf("getstate\n");
     return AS_OK;
-}
-
-int GazeboYarpForceTorqueDriver::getChannels()
-{
-     return _channels;
 }
 
 int GazeboYarpForceTorqueDriver::calibrateSensor()
@@ -146,4 +133,10 @@ int GazeboYarpForceTorqueDriver::calibrateChannel(int ch)
 int GazeboYarpForceTorqueDriver::calibrateChannel(int ch, double v)
 {
     return AS_OK;
+}
+
+//PRECISELY TIMED
+yarp::os::Stamp GazeboYarpForceTorqueDriver::getLastInputStamp()
+{
+    return last_timestamp;
 }

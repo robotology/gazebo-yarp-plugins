@@ -4,106 +4,74 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-/**
- * @ingroup icub_hardware_modules 
- * \defgroup analogSensorEth
- *
- * To Do: add description
- *
- */
-
-#ifndef __gazebo_yarp_force_torque_driver_h__
-#define __gazebo_yarp_force_torque_driver_h__
+#ifndef __GAZEBO_YARP_FORCETORQUE_DRIVER_H__
+#define __GAZEBO_YARP_FORCETORQUE_DRIVER_H__
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
-
+#include <yarp/os/Stamp.h>
+#include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
-#include <string>
-#include <list>
-#include <map>
 
-#include <boost/concept_check.hpp>
-
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
-#include <string>
-#include <list>
-#include <map>
-
-#include <boost/concept_check.hpp>
+#include <gazebo/gazebo.hh>
+#include <gazebo/sensors/ForceTorqueSensor.hh>
 
 
-namespace yarp{
-    namespace dev{
+namespace yarp {
+    namespace dev {
         class GazeboYarpForceTorqueDriver;
     }
 }
 
-namespace gazebo {
-    class GazeboYarpForceTorque;
-}
+const int yarp_forcetorque_nr_of_channels = 6; //The IMU has 6 fixed channels
 
-typedef int AnalogDataFormat;
-/*! class yarp::dev::fakebotFTsensor
- *
- */
-class yarp::dev::GazeboYarpForceTorqueDriver:     public yarp::dev::DeviceDriver,
-                                      public yarp::dev::IAnalogSensor
+const std::string yarp_scopedname_parameter = "sensorScopedName";
+
+class yarp::dev::GazeboYarpForceTorqueDriver: 
+    public yarp::dev::IAnalogSensor,
+    public yarp::dev::IPreciselyTimed,
+    public yarp::dev::DeviceDriver
 {
-    friend class gazebo::GazeboYarpForceTorque;
-
-private:
-
-////////////////////
-    // parameters
-    int             _channels;
-    short           _useCalibration;
-
-    short status;
-
-    double timeStamp;
-    yarp::os::Semaphore mutex;
-    yarp::sig::Vector data;
-
-    yarp::os::Bottle initMsg;
-    yarp::os::Bottle speedMsg;
-    yarp::os::Bottle closeMsg;
-    std::string deviceIdentifier;
-
-    // Read useful data from config and check fir correctness
-    bool fromConfig(yarp::os::Searchable &config);
-
 public:
-
     GazeboYarpForceTorqueDriver();
+
     ~GazeboYarpForceTorqueDriver();
+    
+    void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
-    bool open(yarp::os::Searchable &config);
-    bool close();
-
-    //IAnalogSensor interface
+    /**
+     * Yarp interfaces start here
+     */
+    
+    //DEVICE DRIVER
+    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool close();
+    
+    //ANALOG SENSOR
     virtual int read(yarp::sig::Vector &out);
     virtual int getState(int ch);
     virtual int getChannels();
     virtual int calibrateChannel(int ch, double v);
     virtual int calibrateSensor();
     virtual int calibrateSensor(const yarp::sig::Vector& value);
-
     virtual int calibrateChannel(int ch);
+    
+    //PRECISELY TIMED
+    virtual yarp::os::Stamp getLastInputStamp();
 
-    void setDeviceId(std::string id)
-    {
-        deviceIdentifier=id;
-    }
 
-    std::string getDeviceId()
-    {
-        return deviceIdentifier;
-    }
+private:
+    yarp::sig::Vector forcetorque_data; //buffer for imu data
+    
+    yarp::os::Stamp last_timestamp; //buffer for last timestamp data
+    
+    yarp::os::Semaphore data_mutex; //mutex for accessing the data
+    
+    gazebo::sensors::ForceTorqueSensor* parentSensor;
+    
+    gazebo::event::ConnectionPtr updateConnection;
+
+
 };
 
-
-#endif  
-
-
+#endif // __GAZEBO_YARP_FORCETORQUE_DRIVER_H__

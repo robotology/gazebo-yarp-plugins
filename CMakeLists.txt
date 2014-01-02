@@ -78,3 +78,4 @@ target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GA
 
 add_executable(testmotor src/test/test.cpp)
 target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})

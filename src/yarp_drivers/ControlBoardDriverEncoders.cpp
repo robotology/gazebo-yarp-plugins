@@ -118,7 +118,7 @@ bool GazeboYarpControlBoardDriver::getEncoderSpeeds(double *spds) //NOT TESTED
 bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 {
     if (spds && j >= 0 && j < (int)_controlboard_number_of_joints) {
-        *spds = 0;
+        *spds = 0.0;
         return true;
     }
     return false;
@@ -128,7 +128,7 @@ bool GazeboYarpControlBoardDriver::getEncoderAccelerations(double *accs) //NOT I
 {
     if (!accs) return false;
     for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
-        accs[i] = 0;
+        accs[i] = 0.0;
     }
     return true;
 }

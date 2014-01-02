@@ -9,9 +9,7 @@ Installation
 ### Dependencies 
 For using Yarp with the Gazebo simulator, you should install:
  * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install).
- * Yarp (in the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling some more CMake flags:
-    * enable CREATE_SHARED_LIBRARY CMake option to compile Yarp as a shared library,
-    * enable YARP_COMPILE_EXPERIMENTAL_WRAPPERS CMake option to compile the new device drivers needed by gazebo_yarp_plugins.
+ * Yarp (in the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling the CREATE_SHARED_LIBRARY CMake option to compile Yarp as a shared library.
  
 At the moment (26/11/13) you can have issues in running yarp compiled from source. If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
 [Have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
@@ -64,6 +62,22 @@ export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/gazebo_yarp_plugins/bui
 ```
 Where "/path/to/gazebo_yarp_plugins/build" is the path on your computer where you located the build directory.
 To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your directory.
+
+Setting Initial Configuration for a Kinematic Chain:
+----------------------------------------------------
+One of the tags of the plugin is:
+```
+<initialConfiguration></initialConfiguration>
+```
+that can be used to set an initial configuration for a particular kinematic chain. 
+Suppose that you want to set the initial configuration for the left_arm of COMAN, if it has 5 DOFs so you will write something like:
+```
+<plugin name="coman_yarp_gazebo_plugin_left_arm" filename="libgazebo_yarp_controlboard.so">
+	 <yarpConfigurationFile>model://coman_urdf/conf/coman/coman_gazebo_left_arm.ini</yarpConfigurationFile>
+	 <initialConfiguration>0.0 0.17 0.0 0.0 0.0</initialConfiguration>
+</plugin>
+```
+inside your world file. Notice that the configuration is specified in RADIANTS.
 
 Usage
 -----

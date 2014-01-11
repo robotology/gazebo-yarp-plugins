@@ -61,7 +61,7 @@ To notify Gazebo of the new plugins compiled, it is necessary to modify the GAZE
 export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/gazebo_yarp_plugins/build
 ```
 Where "/path/to/gazebo_yarp_plugins/build" is the path on your computer where you located the build directory.
-To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your directory.
+To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your home directory.
 
 Setting Initial Configuration for a Kinematic Chain:
 ----------------------------------------------------

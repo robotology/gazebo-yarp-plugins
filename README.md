@@ -38,7 +38,7 @@ OS X support in Gazebo is still experimental, and there could be problems.
 ### Compilation 
 You get the gazebo_yarp_plugins source code from this git repository repository (if you do not have git on your computer, [follow this guide to install it](http://git-scm.com/downloads))
 ```
-git https://github.com/robotology/gazebo_yarp_plugins.git
+git clone https://github.com/robotology/gazebo_yarp_plugins.git
 ```
 This will create a gazebo_yarp_plugins directory with all the source code.
 You can enter this directory:

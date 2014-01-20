@@ -29,6 +29,8 @@ else()
     message(STATUS "found compatible YARP version")
 endif()
 
+find_package(GAZEBO REQUIRED)
+
 find_package(Boost REQUIRED serialization system)
 
 include (FindPkgConfig)

@@ -8,7 +8,27 @@ PROJECT(yarp_gazebo)
 list ( APPEND CMAKE_CXX_FLAGS "-Wall -pedantic -Wmissing-field-initializers -W -Wunused -Wuninitialized -Wformat=2 -Wctor-dtor-privacy -Wnon-virtual-dtor -Wwrite-strings -Wno-char-subscripts -Wreturn-type -Wcast-qual -Wcast-align -Wsign-promo -Woverloaded-virtual -fno-strict-aliasing  -Werror=address -Werror=parentheses  ${CMAKE_CXX_FLAGS}" )
 
 
-find_package(YARP REQUIRED)
+#### Find YARP, require that YARP version is at least GYP_REQYARP_VERSION
+SET(GYP_REQYARP_VERSION_MAJOR "2")
+SET(GYP_REQYARP_VERSION_MINOR "3")
+SET(GYP_REQYARP_VERSION_PATCH "60")
+set(GYP_REQYARP_VERSION_TWEAK "0")
+
+if(GYP_REQYARP_VERSION_TWEAK)
+    set(GYP_REQYARP_VERSION ${GYP_REQYARP_VERSION_MAJOR}.${GYP_REQYARP_VERSION_MINOR}.${GYP_REQYARP_VERSION_PATCH}.${GYP_REQYARP_VERSION_TWEAK})
+else()
+    set(GYP_REQYARP_VERSION ${GYP_REQYARP_VERSION_MAJOR}.${GYP_REQYARP_VERSION_MINOR}.${GYP_REQYARP_VERSION_PATCH})
+endif()
+
+find_package(YARP ${GYP_REQYARP_VERSION} REQUIRED)
+message(STATUS "YARP is version: ${YARP_VERSION}")
+
+if(YARP_VERSION VERSION_LESS GYP_REQYARP_VERSION)
+    message(FATAL_ERROR "YARP version is not compatible, please update YARP (using VERSION_LESS)")
+else()
+    message(STATUS "found compatible YARP version")
+endif()
+
 find_package(Boost REQUIRED serialization system)
 
 include (FindPkgConfig)

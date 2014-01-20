@@ -29,7 +29,7 @@ else()
     message(STATUS "found compatible YARP version")
 endif()
 
-find_package(GAZEBO REQUIRED)
+find_package(Gazebo REQUIRED)
 
 find_package(Boost REQUIRED serialization system)
 
@@ -94,7 +94,7 @@ add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque
 add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
 
 target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${Gazebo_libraries} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 

@@ -6,7 +6,8 @@
 
 
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
-#include "../test/jointlogger.hpp"
+
+//#include "../test/jointlogger.hpp"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
@@ -136,7 +137,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     }
     pos_lock.post();
     
-//     logger.log(speed[2]);
+    //logger.log(speed[2]);
     
     for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
     {

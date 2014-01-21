@@ -19,7 +19,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     void GazeboYarpControlBoard::Init()
     {
-        std::cout<<"*** COMAN GAZEBO YARP PLUGIN ***"<<std::endl;
+        std::cout<<"GazeboYarpControlBoard::Init() called"<<std::endl;
         if (!_yarp.checkNetwork())
             std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
         else

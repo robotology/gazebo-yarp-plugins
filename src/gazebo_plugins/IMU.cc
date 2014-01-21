@@ -84,7 +84,14 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     _parameters.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
    
     //Open the driver
-    _imu_driver.open(_parameters);
-
-    std::cout<<"Loaded GazeboYarpIMU Plugin correctly"<<std::endl;
+    if( _imu_driver.open(_parameters) ) {
+        std::cout<<"Loaded GazeboYarpIMU Plugin correctly"<<std::endl;
+    } else {
+        std::cout<<"GazeboYarpIMU Plugin Load failed: error in opening yarp driver"<<std::endl;
+    }
+    
+    std::cout << "GazeboYarpIMU original parameters" << std::endl;
+    std::cout << _parameters.toString() << std::endl;
+    std::cout << "GazeboYarpIMU getOptions" << std::endl;
+    std::cout << _imu_driver.getOptions().toString() << std::endl;
 }

@@ -61,7 +61,7 @@ public:
 
 
 private:
-    yarp::sig::Vector forcetorque_data; //buffer for imu data
+    yarp::sig::Vector forcetorque_data; //buffer for forcetorque sensor data
     
     yarp::os::Stamp last_timestamp; //buffer for last timestamp data
     

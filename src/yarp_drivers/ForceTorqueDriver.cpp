@@ -60,13 +60,15 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo & /*
 //DEVICE DRIVER
 bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 {
+    std::cout << "GazeboYarpForceTorqueDriver::open() called" << std::endl;
+  
     data_mutex.wait();
     forcetorque_data.resize(yarp_forcetorque_nr_of_channels,0.0);
     data_mutex.post();
     
     //Get gazebo pointers
     std::string sensorScopedName (config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
-    std::cout << "DeviceDriver is looking for sensor " << sensorScopedName << "...\n";
+    std::cout << "GazeboYarpForceTorqueDriver::open( is looking for sensor " << sensorScopedName << "...\n";
     
     parentSensor = (gazebo::sensors::ForceTorqueSensor*) gazebo::GazeboYarpPluginHandler::getHandler()->getSensor(sensorScopedName);
     
@@ -80,8 +82,8 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
                                  boost::bind ( &GazeboYarpForceTorqueDriver::onUpdate, this, _1 ) );
   
-
-    return AS_OK;
+    std::cout << "GazeboYarpForceTorqueDriver::open() returning true" << std::endl;
+    return true;
 }
 
 bool GazeboYarpForceTorqueDriver::close()

@@ -53,7 +53,6 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     // Add my gazebo device driver to the factory.
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
                                       ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
-
         
     //Getting .ini configuration file from sdf
     bool configuration_loaded = false;
@@ -65,7 +64,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
         if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
         {
-            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+            //std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
             configuration_loaded = true;
         }
         
@@ -83,7 +82,16 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     _parameters.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
    
     //Open the driver
-    _forcetorque_driver.open(_parameters);
-
-    std::cout<<"Loaded GazeboYarpForceTorque Plugin correctly"<<std::endl;
+    bool ret = _forcetorque_driver.open(_parameters);
+    if( ret ) {
+        std::cout<<"GazeboYarpForceTorque Plugin: correcly opened GazeboYarpForceTorqueDriver"<<std::endl;
+    } else {
+        std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver"<<std::endl;
+    }
+    
+    std::cout << "GazeboYarpForceTorqueDriver original parameters" << std::endl;
+    std::cout << _parameters.toString() << std::endl;
+    std::cout << "GazeboYarpForceTorqueDriver getOptions" << std::endl;
+    std::cout << _forcetorque_driver.getOptions().toString() << std::endl;
+    
 }

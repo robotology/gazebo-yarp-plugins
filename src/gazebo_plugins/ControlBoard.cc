@@ -60,7 +60,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
             if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
             {
-                std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+                std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
                 _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
             
 //                std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
@@ -77,7 +77,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
         if( !configuration_loaded )
         {
-            std::cout << "File .ini not found, quitting\n" << std::endl;
+            std::cout << "GazeboYarpControlBoard: File .ini not found, quitting\n" << std::endl;
             return;
         }
 
@@ -91,9 +91,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         _wrapper.open(wrapper_group);
     
         if (!_wrapper.isValid())
-            fprintf(stderr, "wrapper did not open\n");
+            fprintf(stderr, "GazeboYarpControlBoard: wrapper did not open\n");
         else
-            fprintf(stderr, "wrapper opened correctly\n");
+            fprintf(stderr, "GazeboYarpControlBoard: wrapper opened correctly\n");
 
         if( !_wrapper.view(_iWrap) )
         {
@@ -103,7 +103,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
         if(netList->isNull())
         {
-            printf("ERROR, net list to attach to was not found, exiting\n");
+            printf("GazeboYarpControlBoard ERROR, net list to attach to was not found, exiting\n");
             _wrapper.close();
             _controlBoard.close();
             return;
@@ -135,10 +135,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
             if(_sdf->HasElement("initialConfiguration") )
             {
-                std::cout<<"Found initial Configuration: "<<std::endl;
+                //std::cout<<"Found initial Configuration: "<<std::endl;
                 std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
                 _parameters.put("initialConfiguration", configuration_s.c_str());
-                std::cout<<configuration_s<<std::endl;
+                //std::cout<<configuration_s<<std::endl;
             }
 
 //            _controlBoard.open(driver_property);
@@ -155,7 +155,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         if(!_iWrap || !_iWrap->attachAll(p))
         {
-            printf("Error while attaching wrapper to device\n");
+            printf("GazeboYarpControlBoard: Error while attaching wrapper to device\n");
             _wrapper.close();
             _controlBoard.close();
             return;

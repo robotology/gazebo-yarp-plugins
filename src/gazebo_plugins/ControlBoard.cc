@@ -123,11 +123,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 return;
             }
 
-            yarp::os::Property driver_property(driver_group.toString().c_str());
-            driver_property.put("loving_gazebo_pointer",archive_stream.str().c_str());
-            driver_property.put("name", driverName.c_str());
-//            std::cout << "before open: params are " << driver_property.toString() << std::endl;
-
             _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
             _parameters.put("name", driverName.c_str());
             _parameters.fromString(driver_group.toString(), false);

@@ -94,10 +94,22 @@ bool GazeboYarpForceTorqueDriver::close()
 //ANALOG SENSOR
 int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector &out)
 {
+    ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
+    /*
     if( (int)forcetorque_data.size() != yarp_forcetorque_nr_of_channels ||
         (int)out.size() != yarp_forcetorque_nr_of_channels ) {
         return AS_ERROR;
     }
+    */
+    
+   if( (int)forcetorque_data.size() != yarp_forcetorque_nr_of_channels ) {
+        return AS_ERROR;
+   }
+   
+   if( (int)out.size() != yarp_forcetorque_nr_of_channels ) {
+       out.resize(yarp_forcetorque_nr_of_channels);
+   }
+    
     
     data_mutex.wait();
     out = forcetorque_data;

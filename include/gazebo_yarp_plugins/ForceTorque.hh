@@ -26,7 +26,7 @@ namespace gazebo
     private:
         sensors::ForceTorqueSensor* parentSensor;
         yarp::os::Network _yarp;
-        yarp::os::Property _parameters; 
+        yarp::dev::PolyDriver _forcetorque_wrapper;
         yarp::dev::PolyDriver _forcetorque_driver;
         
         virtual void Init();

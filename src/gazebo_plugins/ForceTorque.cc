@@ -9,6 +9,7 @@
 #include <gazebo_yarp_plugins/ForceTorqueDriver.h>
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
 
 #include "gazebo_yarp_plugins/Handler.hh"
 
@@ -47,14 +48,15 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
 
     _sensor->SetActive(true);
-    
-  
 
     // Add my gazebo device driver to the factory.
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
                                       ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
         
     //Getting .ini configuration file from sdf
+    
+    yarp::os::Property wrapper_properties;
+    yarp::os::Property driver_properties;
     bool configuration_loaded = false;
         
     if(_sdf->HasElement("yarpConfigurationFile") )
@@ -62,13 +64,16 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
         std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
 
-        if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
+        if( ini_file_path != "" && driver_properties.fromConfigFile(ini_file_path.c_str()) )
         {
             //std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
             configuration_loaded = true;
         }
         
     }
+    
+    ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver
+    wrapper_properties = driver_properties;
         
     if( !configuration_loaded )
     {
@@ -79,19 +84,47 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor), _sdf);
     
-    _parameters.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
+    driver_properties.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
+    
+    //Open the wrapper
+    //Force the wrapper to be of type "analogServer" (it make sense? probably no)
+    wrapper_properties.put("device","analogServer");
+    if( _forcetorque_wrapper.open(wrapper_properties) ) {
+        std::cout<<"GazeboYarpForceTorque Plugin: correcly opened GazeboYarpForceTorqueDriver wrapper"<<std::endl;
+    } else {
+        std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper"<<std::endl;
+        return;
+    }
    
     //Open the driver
-    bool ret = _forcetorque_driver.open(_parameters);
-    if( ret ) {
+    //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
+    driver_properties.put("device","gazebo_forcetorque");
+    if( _forcetorque_driver.open(driver_properties) ) {
         std::cout<<"GazeboYarpForceTorque Plugin: correcly opened GazeboYarpForceTorqueDriver"<<std::endl;
     } else {
         std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver"<<std::endl;
+        return;
     }
     
-    std::cout << "GazeboYarpForceTorqueDriver original parameters" << std::endl;
-    std::cout << _parameters.toString() << std::endl;
-    std::cout << "GazeboYarpForceTorqueDriver getOptions" << std::endl;
-    std::cout << _forcetorque_driver.getOptions().toString() << std::endl;
+    //Attach the driver to the wrapper
+    yarp::dev::IMultipleWrapper * iWrap;
+    yarp::dev::PolyDriverList driver_list;
+    
+    if( !_forcetorque_wrapper.view(iWrap) ) {
+        std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
+        return;
+    }
+    
+    driver_list.push(&_forcetorque_driver,"dummy");
+    
+    if( iWrap->attachAll(driver_list) ) {
+        std::cerr << "GazeboYarpForceTorque : wrapper was connected with driver " << std::endl;
+    } else {
+        std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
+    }
+    
+    
+    
+ 
     
 }

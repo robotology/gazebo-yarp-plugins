@@ -14,8 +14,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriverList.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
 

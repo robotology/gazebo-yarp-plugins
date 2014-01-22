@@ -63,7 +63,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
                 _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
             
-//                std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
+                //std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
                 wrapper_group = _parameters.findGroup("WRAPPER");
                 if(wrapper_group.isNull())
                 {

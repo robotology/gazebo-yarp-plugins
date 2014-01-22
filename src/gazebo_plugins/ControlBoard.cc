@@ -81,13 +81,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
 
-        //Now I love everything and every interface
-        std::ostringstream archive_stream;
-        boost::archive::text_oarchive archive(archive_stream);
-        uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
-        archive<<cast_boost_to_pointer;
-        _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
-
         _wrapper.open(wrapper_group);
     
         if (!_wrapper.isValid())
@@ -123,10 +116,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 return;
             }
 
-            _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
             _parameters.put("name", driverName.c_str());
             _parameters.fromString(driver_group.toString(), false);
-//            std::cout << "before open: params are " << _parameters.toString() << std::endl;
+             //std::cout << "before open: params are " << _parameters.toString() << std::endl;
 
             if(_sdf->HasElement("initialConfiguration") )
             {
@@ -136,7 +128,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 //std::cout<<configuration_s<<std::endl;
             }
 
-//            _controlBoard.open(driver_property);
             _controlBoard.open(_parameters);
 
             if (!_controlBoard.isValid())

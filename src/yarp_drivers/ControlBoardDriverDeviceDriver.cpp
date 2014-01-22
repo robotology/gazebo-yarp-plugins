@@ -7,7 +7,6 @@
 
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
 
-#include <boost/archive/text_iarchive.hpp>
 #include "gazebo_yarp_plugins/Handler.hh"
 
 
@@ -19,21 +18,8 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 {
     plugin_parameters.fromString(config.toString().c_str());
 
-    //I love everything and every interface
-    uintptr_t temp;
-    std::istringstream iss(config.find("loving_gazebo_pointer").asString().c_str());
-    boost::archive::text_iarchive archive(iss);
-    try{
-        archive>>temp;
-    }
-    catch (const char *ex)
-    {
-        //TODO
-    }
-
     std::string robotName (plugin_parameters.find("robot").asString().c_str());
     std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
-        gazebo::physics::ModelPtr tmp;
 
     _robot = GazeboYarpPluginHandler::getHandler()->getRobot(robotName);
     if(NULL == _robot)
@@ -41,7 +27,6 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
         std::cout << "Error, robot was not found\n";
         return false;
     }
-    //_robot=reinterpret_cast<gazebo::physics::Model*>(temp);
     
     gazebo_init();
     return RateThread::start();

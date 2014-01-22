@@ -12,7 +12,6 @@
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
-#include <boost/archive/text_iarchive.hpp>
 #include <stdio.h>
 
 #define toDeg(X) (X*180.0/M_PI)

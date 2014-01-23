@@ -180,7 +180,12 @@ bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) //NOT IMPLE
 
 bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs) //NOT IMPLEMENTED
 {
-    return false;
+    bool ret = true;
+    for(int i=0; i<n_joint; i++)
+    {
+        ret = ret && positionMove(joints[i], refs[i]);
+    }
+    return ret;
 }
 
 bool GazeboYarpControlBoardDriver::relativeMove(const int n_joint, const int *joints, const double *deltas) //NOT IMPLEMENTED
@@ -221,4 +226,22 @@ bool GazeboYarpControlBoardDriver::getRefAccelerations(const int n_joint, const 
 bool GazeboYarpControlBoardDriver::stop(const int n_joint, const int *joints) //NOT IMPLEMENTED
 {
     return false;
+}
+
+
+// IPOSITION DIRECT
+bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
+{
+    return positionMove(j, ref);
+}
+
+bool GazeboYarpControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs)
+{
+    return positionMove(n_joint, joints, refs);
+
+}
+
+bool GazeboYarpControlBoardDriver::setPositions(const double *refs)
+{
+    return positionMove(refs);
 }

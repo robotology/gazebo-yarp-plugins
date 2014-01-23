@@ -118,7 +118,9 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _parent,
         yarp::os::Property prop;
         prop.put("device", "analogServer");
         prop.put("robotName", "coman");
+        prop.put("sensorType", "forceTorque");
         prop.put("deviceId", this->parentSensor->GetName().c_str());
+
         prop.put("rate", 1);
 
         /* TODO: when analogServer will be included in YARP, this code needs to be used

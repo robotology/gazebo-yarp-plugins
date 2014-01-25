@@ -63,22 +63,6 @@ export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/gazebo_yarp_plugins/bui
 Where "/path/to/gazebo_yarp_plugins/build" is the path on your computer where you located the build directory.
 To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your home directory.
 
-Setting Initial Configuration for a Kinematic Chain:
-----------------------------------------------------
-One of the tags of the plugin is:
-```
-<initialConfiguration></initialConfiguration>
-```
-that can be used to set an initial configuration for a particular kinematic chain. 
-Suppose that you want to set the initial configuration for the left_arm of COMAN, if it has 5 DOFs so you will write something like:
-```
-<plugin name="coman_yarp_gazebo_plugin_left_arm" filename="libgazebo_yarp_controlboard.so">
-	 <yarpConfigurationFile>model://coman_urdf/conf/coman/coman_gazebo_left_arm.ini</yarpConfigurationFile>
-	 <initialConfiguration>0.0 0.17 0.0 0.0 0.0</initialConfiguration>
-</plugin>
-```
-inside your world file. Notice that the configuration is specified in RADIANTS.
-
 Usage
 -----
 To use the gazebo_yarp_plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently two robot support gazebo_yarp_plugins: Coman and iCub.
@@ -88,6 +72,10 @@ To use Coman in Gazebo, please follow [the instructions on gazebo_yarp_plugins w
 
 ### iCub 
 To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/traversaro/icub_gazebo)
+
+### Arbitrary robot
+To add gazebo_yarp_plugins to another robot, please follow the instructions on [gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Embed-gazebo_yarp_plugins-in-a-SDF-model)
+
 
 Design
 ------

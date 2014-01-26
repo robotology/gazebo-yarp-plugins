@@ -30,8 +30,6 @@
 #define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
 
-static const std::string pid_config_abs_path = "../config/pid.ini";
-
 namespace yarp {
     namespace dev {
         class GazeboYarpControlBoardDriver;

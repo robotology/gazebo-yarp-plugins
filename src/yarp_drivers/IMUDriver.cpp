@@ -47,7 +47,7 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     
     /** \todo ensure that the timestamp is the right one */
     last_timestamp.update(this->parentSensor->GetLastUpdateTime().Double());
-    
+        
     int i=0;
     
     data_mutex.wait();
@@ -103,10 +103,14 @@ bool GazeboYarpIMUDriver::close()
     
 //GENERIC SENSOR
 bool GazeboYarpIMUDriver::read(yarp::sig::Vector &out)
-{
-    if( (int)imu_data.size() != yarp_imu_nr_of_channels ||
-        (int)out.size() != yarp_imu_nr_of_channels ) {
+{    
+    if( (int)imu_data.size() != yarp_imu_nr_of_channels  ) {
         return false;
+    }
+    
+    //< \todo TODO this should be avoided by properly modifyng the wrapper
+    if( out.size() != imu_data.size() ) {
+        out.resize(imu_data.size());
     }
     
     data_mutex.wait();

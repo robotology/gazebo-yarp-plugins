@@ -47,20 +47,21 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     
     /** \todo ensure that the timestamp is the right one */
     last_timestamp.update(this->parentSensor->GetLastUpdateTime().Double());
+    
         
     int i=0;
     
     data_mutex.wait();
     
-    for(i = 0; i < 2; i++ ) {
+    for(i = 0; i < 3; i++ ) {
         imu_data[0+i] = euler_orientation[i];
     }
     
-    for(i = 0; i < 2; i++ ) {
+    for(i = 0; i < 3; i++ ) {
         imu_data[3+i] = linear_acceleration[i];
     }
     
-    for(i = 0; i < 2; i++ ) {
+    for(i = 0; i < 3; i++ ) {
         imu_data[6+i] = angular_velocity[i];
     }
     

@@ -44,11 +44,11 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo & /*
     
     data_mutex.wait();
     
-    for(i = 0; i < 2; i++ ) {
+    for(i = 0; i < 3; i++ ) {
         forcetorque_data[0+i] = force[i];
     }
     
-    for(i = 0; i < 2; i++ ) {
+    for(i = 0; i < 3; i++ ) {
         forcetorque_data[3+i] = torque[i];
     }
     

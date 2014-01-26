@@ -47,6 +47,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public DeviceResponder,
     public IControlMode,
     public ITorqueControl,
+    public IPositionDirect,
     public yarp::os::RateThread
 {
 public:
@@ -199,6 +200,10 @@ public:
      * End of useless stuff
      */
     
+    // IPOSITION DIRECT
+    bool setPosition(int j, double ref);
+    bool setPositions(const int n_joint, const int *joints, double *refs);
+    bool setPositions(const double *refs);
     
 private:
     unsigned int robot_refresh_period; //ms

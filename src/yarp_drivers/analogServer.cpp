@@ -193,6 +193,12 @@ void AnalogServer::setHandlers()
   for(unsigned int i=0;i<analogPorts.size(); i++)
   {
 	std::string rpcPortName = analogPorts[i].port_name;
+    if(rpcPortName.size()>2) {
+        std::string rpcSubString = rpcPortName.substr(rpcPortName.size()-2,2);
+        if(rpcSubString.compare(":o")==0) { // if the port ends in :o
+            rpcPortName = rpcPortName.substr(0,rpcPortName.size()-2);
+        }
+    }
 	rpcPortName += "/rpc:i";
     AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());
     handlers.push_back(ash);
@@ -336,7 +342,17 @@ bool AnalogServer::open(yarp::os::Searchable &config)
     std::string root_name;
     root_name+="/";
     root_name+=robotName;
-    root_name+= "/" + this->id + "/analog";
+    if(params.check("sensorType"))
+    {
+        std::string sensor_type = params.find("sensorType").asString().c_str();
+        root_name+="/" + sensor_type;
+        root_name+= "/analog/" + this->id;
+    }
+    else
+    {
+        root_name+= "/" + this->id + "/analog";
+    }
+
 
     // port names are optional, do not check for correctness.
     if(!params.check("ports"))

@@ -45,7 +45,7 @@ include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
 set(singleton_source        src/gazebo_plugins/Handler.cc)
-set(singleton_headers        include/gazebo_yarp_plugins/Handler.hh)
+set(singleton_headers       include/gazebo_yarp_plugins/Handler.hh)
 # for visual studio
 SOURCE_GROUP("Source Files" FILES ${singleton_source})
 SOURCE_GROUP("Header Files" FILES ${singleton_headers})
@@ -88,17 +88,18 @@ SOURCE_GROUP("Source Files" FILES ${imu_source})
 SOURCE_GROUP("Header Files" FILES ${imu_headers})
 
 
-
 add_library(singleton                SHARED ${singleton_source}    ${singleton_headers})
-add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})
-add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
-add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
+add_library(gazebo_yarp_controlboard MODULE ${controlBoard_source} ${controlBoard_headers})
+add_library(gazebo_yarp_forcetorque  MODULE ${forceTorque_source}  ${forceTorque_headers})
+add_library(gazebo_yarp_imu          MODULE ${imu_source}          ${imu_headers})
+
 
 target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${Gazebo_libraries} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 
+
 add_executable(testmotor src/test/test.cpp)
-target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
-target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

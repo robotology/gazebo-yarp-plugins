@@ -68,8 +68,7 @@ SOURCE_GROUP("Header Files" FILES ${controlBoard_headers})
 
 
 set(forceTorque_source      src/gazebo_plugins/ForceTorque.cc
-                            src/yarp_drivers/ForceTorqueDriver.cpp
-                            src/yarp_drivers/analogServer.cpp)
+                            src/yarp_drivers/ForceTorqueDriver.cpp)
 
 set(forceTorque_headers     include/gazebo_yarp_plugins/ForceTorque.hh
                             include/gazebo_yarp_plugins/ForceTorqueDriver.h)

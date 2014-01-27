@@ -79,7 +79,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     }
     
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
-    GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor), _sdf);
+    GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor));
     
     _parameters.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
    

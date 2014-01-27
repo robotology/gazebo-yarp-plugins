@@ -28,7 +28,7 @@ public:
 
     // add a new modelPointer to the "database", if it already exists and the pointer are the same return success,
     // if pointers doesn't match returns error.
-    bool setRobot(gazebo::physics::Model*   parent, sdf::ElementPtr sdf);
+    bool setRobot(gazebo::physics::Model* _model);
 
     // return the model pointer given the robot name
     gazebo::physics::Model* getRobot(std::string robotName);
@@ -36,7 +36,7 @@ public:
     // add a new sensorPointer to the "database", if the sensor already exists and the pointer are the same return success,
     // if pointers doesn't match returns error.
     // the key used in the "database" is the scoped name of the sensor
-    bool setSensor(gazebo::sensors::Sensor* _sensor, sdf::ElementPtr _sdf);
+    bool setSensor(gazebo::sensors::Sensor* _sensor);
     
     // return the sensor pointer given the sensor scoped namespac
     gazebo::sensors::Sensor* getSensor(const std::string sensorScopedName);

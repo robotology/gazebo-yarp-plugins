@@ -35,39 +35,32 @@ GazeboYarpPluginHandler * GazeboYarpPluginHandler::getHandler()
     return _handle;
 }
 
-bool GazeboYarpPluginHandler::setRobot(gazebo::physics::Model* parent, sdf::ElementPtr sdf)
+bool GazeboYarpPluginHandler::setRobot(gazebo::physics::Model* _model)
 {
     bool ret = false;
-    std::string rName;
+    std::string scoped_robot_name = _model->GetScopedName();
+    cout << "GazeboYarpPluginHandler: Inserting Robot : " << scoped_robot_name << endl;
 
-    if(!findRobotName(sdf, &rName) )
-    {
-        cout << "Error, not able to find 'model' tag in the xml file" << endl;
-        return false;
-    }
-
-    cout << "Inserting robot : " << rName << endl;
-
-    if( ! _robotMap.insert(std::pair<std::string, gazebo::physics::Model*>(rName, parent) ).second)
+    if( ! _robotMap.insert(std::pair<std::string, gazebo::physics::Model*>(scoped_robot_name, _model) ).second)
     {
         // the element could be already present, check it out just to be sure!
-        if(parent != _robotMap.at(rName) )
+        if(_model != _robotMap.at(scoped_robot_name) )
         {
-            cout << "Error in GazeboYarpPluginHandler while inserting a new robot pointer!\n";
-            cout << " The name of the robot is already present but the pointer does not match with the one already registered!!\n";
-            cout << " Check config file, maybe 2 different robot was instatiated with the same name?" << endl;
+            cout << "Error in GazeboYarpPluginHandler while inserting a new sensor pointer!\n";
+            cout << " The name of the sensor is already present but the pointer does not match with the one already registered!!\n";
+            cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << endl;
             ret = false;
         }
         else
         {
-            cout << "Robot already registered, pointers match. All good. This is a debug msg and can be removed." << endl;
+            cout << "Robot already registered, pointers match." << endl;
             ret = true;
         }
     }
     else
     {
         ret = true;
-        cout << "Singleton: Added a new " << rName << " robot.\n";
+        cout << "Singleton: Added a new robot " << scoped_robot_name << ".\n";
     }
     return ret;
 }
@@ -91,26 +84,7 @@ gazebo::physics::Model* GazeboYarpPluginHandler::getRobot(std::string robotName)
 }
 
 
-bool GazeboYarpPluginHandler::findRobotName(sdf::ElementPtr sdf, std::string *robotName)
-{
-    std::cout << "()()()()()\n";
-    sdf::ElementPtr model_p = sdf;
-
-    while(model_p->GetName() != "model")
-    {
-        if(( model_p = model_p->GetParent() ) == NULL)
-        {
-            cout << "Error! model tag not found";
-            return false;
-        }
-        sleep(1);
-    }
-    *robotName =  model_p->GetAttribute("name")->GetAsString();
-    cout << "found model name " << *robotName << endl;
-    return true;
-}
-
-bool GazeboYarpPluginHandler::setSensor(gazebo::sensors::Sensor* _sensor, sdf::ElementPtr _sdf)
+bool GazeboYarpPluginHandler::setSensor(gazebo::sensors::Sensor* _sensor)
 {
     bool ret = false;
     std::string scoped_sensor_name = _sensor->GetScopedName();

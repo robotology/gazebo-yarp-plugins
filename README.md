@@ -10,10 +10,7 @@ Installation
 For using Yarp with Gazebo, you shall install:
  * Gazebo simulator (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install).
  * Yarp (in the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling the CREATE_SHARED_LIBRARY CMake option to compile Yarp as a shared library.
- 
-At the moment (26/11/13) you can have issues in running yarp compiled from source. If you are using Ubuntu 13.04 you will have to face some problems due to the new multiarch support.
-[Have a look here why ld will not find yarp in /usr/local/lib/x86_64-linux-gnu](https://help.ubuntu.com/community/MultiArch)
-The solution is to manually add /usr/local/lib/x86_64-linux-gnu in the config file /etc/ld.so.conf.d/x86_64-linux-gnu.conf and do ```sudo ldconfig```.
+
 
 ###Compile time dependencies
 For compiling gazebo_yarp_plugins you need the headers for the following libraries:

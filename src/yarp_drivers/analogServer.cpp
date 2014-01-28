@@ -195,9 +195,9 @@ void AnalogServer::setHandlers()
 	std::string rpcPortName = analogPorts[i].port_name;
     if(rpcPortName.size()>2) {
         std::string rpcSubString = rpcPortName.substr(rpcPortName.size()-2,2);
-        if(rpcSubString.compare(":o")==0) { // if the port ends in :o
+        /*if(rpcSubString.compare(":o")==0) { // if the port ends in :o
             rpcPortName = rpcPortName.substr(0,rpcPortName.size()-2);
-        }
+        }*/
     }
 	rpcPortName += "/rpc:i";
     AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());

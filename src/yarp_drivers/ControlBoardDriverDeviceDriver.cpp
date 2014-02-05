@@ -48,16 +48,23 @@ bool GazeboYarpControlBoardDriver::threadInit()
     //Find robot prefix used in wrapper
     yarp::os::Value &wrapper_port_name = plugin_parameters.findGroup("WRAPPER").find("name");
     if(wrapper_port_name.isNull())
-    {
         printf("\n\nerror WRAPPER name not found\n %s\n\n", plugin_parameters.toString().c_str());
-    }
     
     std::stringstream port_name_torque;
-    port_name_torque<<"/"<<wrapper_port_name.toString().c_str()<<"/analog/torques:o";
+    std::stringstream port_name_torque_rpc;
+
+    port_name_torque<<"/"<<wrapper_port_name.toString().c_str()<<"/analog:o/torques";
+    port_name_torque_rpc << port_name_torque.str().c_str() << "/rpc:i";
     _joint_torq_port.open(port_name_torque.str().c_str());
+    _joint_torq_port_rpc.open(port_name_torque_rpc.str().c_str());
+
     std::stringstream port_name_speed;
-    port_name_speed<<"/"<<wrapper_port_name.toString().c_str()<<"/analog/speeds:o";
+    std::stringstream port_name_speed_rpc;
+    port_name_speed<<"/"<<wrapper_port_name.toString().c_str()<<"/analog:o/speed";
+    port_name_speed_rpc << port_name_speed.str().c_str() << "/rpc:i";
     _joint_speed_port.open(port_name_speed.str().c_str());
+    _joint_speed_port_rpc.open(port_name_speed_rpc.str().c_str());
+
     return true;
 }
 

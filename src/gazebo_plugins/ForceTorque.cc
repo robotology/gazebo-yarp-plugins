@@ -66,10 +66,9 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
         if( ini_file_path != "" && driver_properties.fromConfigFile(ini_file_path.c_str()) )
         {
-            //std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
             configuration_loaded = true;
         }
-        
     }
     
     ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver

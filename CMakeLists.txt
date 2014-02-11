@@ -86,18 +86,29 @@ set(imu_source              src/gazebo_plugins/IMU.cc
 SOURCE_GROUP("Source Files" FILES ${imu_source})
 SOURCE_GROUP("Header Files" FILES ${imu_headers})
 
+set(clock_headers           include/gazebo_yarp_plugins/Clock.hh)
+set(clock_source            src/gazebo_plugins/Clock.cc)
+
+# for visual studio
+SOURCE_GROUP("Source Files" FILES ${clock_source})
+SOURCE_GROUP("Header Files" FILES ${clock_headers})
+
 
 add_library(singleton                SHARED ${singleton_source}    ${singleton_headers})
 add_library(gazebo_yarp_controlboard MODULE ${controlBoard_source} ${controlBoard_headers})
 add_library(gazebo_yarp_forcetorque  MODULE ${forceTorque_source}  ${forceTorque_headers})
 add_library(gazebo_yarp_imu          MODULE ${imu_source}          ${imu_headers})
+add_library(gazebo_yarp_clock        MODULE ${clock_source}        ${clock_headers})
 
 
 target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${Gazebo_libraries} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
 
 
-#add_executable(testmotor src/test/test.cpp)
-#target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(testmotor src/test/test.cpp)
+target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

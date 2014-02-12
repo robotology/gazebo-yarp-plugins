@@ -109,6 +109,5 @@ target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GA
 
 
 
-add_executable(testmotor src/test/test.cpp)
-target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+#add_executable(testmotor src/test/test.cpp)
+#target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

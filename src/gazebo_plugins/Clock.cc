@@ -54,6 +54,7 @@ namespace gazebo
     {
          gazebo::common::Time currentTime = world_->GetSimTime();
          yarp::os::Bottle& b = port.prepare();
+         b.clear();
          b.addInt(currentTime.sec);
          b.addInt(currentTime.nsec);
          port.write();

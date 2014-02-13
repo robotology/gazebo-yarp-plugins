@@ -14,13 +14,12 @@ using namespace yarp::dev;
 
 GazeboYarpIMUDriver::GazeboYarpIMUDriver()
 {
-    return;
 }
 
 
 GazeboYarpIMUDriver::~GazeboYarpIMUDriver()
 {
-    return;
+
 }
 
 
@@ -100,6 +99,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpIMUDriver::close()
 {
+    gazebo::event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
     return true;
 }
     

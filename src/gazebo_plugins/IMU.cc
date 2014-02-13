@@ -36,6 +36,7 @@ void GazeboYarpIMU::Init()
 GazeboYarpIMU::~GazeboYarpIMU()
 {
     std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
+    _imu_driver.close();
 }
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
@@ -49,8 +50,6 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 
     _sensor->SetActive(true);
     
-  
-
     // Add my gazebo device driver to the factory.
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpIMUDriver>
                                       ("gazebo_imu", "inertial", "GazeboYarpIMUDriver"));

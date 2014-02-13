@@ -24,7 +24,6 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
-
 #pragma GCC diagnostic pop
 
 #define toRad(X) (X*M_PI/180.0)
@@ -51,15 +50,14 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public yarp::os::RateThread
 {
 public:
-    GazeboYarpControlBoardDriver() : RateThread(20)
-    {}
+    GazeboYarpControlBoardDriver();
 
-    ~GazeboYarpControlBoardDriver(){}
+    ~GazeboYarpControlBoardDriver();
 
     /**
      * Gazebo stuff
      */
-    void gazebo_init();
+    bool gazebo_init();
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
     /**
@@ -68,7 +66,7 @@ public:
     
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);    
-    virtual bool close(); //NOT IMPLEMENTED
+    virtual bool close();
     //THREAD (inside comanDeviceDriver.cpp)
     virtual void run();
     virtual bool threadInit();

@@ -28,6 +28,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
+        _controlBoard.close();
         _wrapper.close();
         std::cout<<"Goodbye!"<<std::endl;
     }
@@ -98,7 +99,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         {
             printf("GazeboYarpControlBoard ERROR, net list to attach to was not found, exiting\n");
             _wrapper.close();
-            _controlBoard.close();
+            // _controlBoard.close();
             return;
         }
 

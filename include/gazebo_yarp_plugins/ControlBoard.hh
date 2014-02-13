@@ -22,9 +22,6 @@
 
 namespace gazebo
 {
-  
-  
-
 /// \class GazeboYarpControlBoard
 /// Gazebo Plugin emulating the yarp controlBoard device in Gazebo.
 ///.

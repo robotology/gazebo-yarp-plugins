@@ -28,14 +28,16 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
         return false;
     }
     
-    gazebo_init();
-    return RateThread::start();
+    return gazebo_init() && RateThread::start();
 }
 
 
 
-bool GazeboYarpControlBoardDriver::close() //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::close()
 {
+    //unbinding events
+    gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
+    
     delete [] control_mode;
     delete [] motion_done;
     return true;

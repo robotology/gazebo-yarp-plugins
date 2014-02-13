@@ -36,6 +36,7 @@ void GazeboYarpForceTorque::Init()
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
+    _forcetorque_driver.close();
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)

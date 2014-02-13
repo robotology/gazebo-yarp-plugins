@@ -22,11 +22,18 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-void GazeboYarpControlBoardDriver::gazebo_init()
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver(): RateThread(20)
+{}
+    
+GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
+
+bool GazeboYarpControlBoardDriver::gazebo_init()
 {
     //_robot = gazebo_pointer_wrapper::getModel();
-    std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
+    // std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
+    //assert is a NOP in release mode. We should change the error handling either with an exception or something else
     assert ( _robot );
+    if (!_robot) return false;
 
     std::cout<<"Robot Name: "<<_robot->GetName() <<std::endl;
     std::cout<<"# Joints: "<<_robot->GetJoints().size() <<std::endl;
@@ -77,6 +84,7 @@ void GazeboYarpControlBoardDriver::gazebo_init()
 
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
                                  boost::bind ( &GazeboYarpControlBoardDriver::onUpdate, this, _1 ) );
+    
     gazebo_node_ptr = gazebo::transport::NodePtr ( new gazebo::transport::Node );
     gazebo_node_ptr->Init ( this->_robot->GetWorld()->GetName() );
     jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
@@ -112,6 +120,7 @@ void GazeboYarpControlBoardDriver::gazebo_init()
             _robot->GetJoint(joint_name)->SetAngle(0,a);
         }
     }
+    return true;
 }
 
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )

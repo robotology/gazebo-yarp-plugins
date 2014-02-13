@@ -13,13 +13,13 @@ using namespace yarp::dev;
 
 GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver()
 {
-    return;
+
 }
 
 
 GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
 {
-    return;
+
 }
 
 
@@ -88,6 +88,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpForceTorqueDriver::close()
 {
+    gazebo::event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
     return true;
 }
     

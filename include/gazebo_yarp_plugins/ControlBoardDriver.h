@@ -33,7 +33,9 @@ namespace yarp {
     namespace dev {
         class GazeboYarpControlBoardDriver;
     }
+    
 }
+
 
 class yarp::dev::GazeboYarpControlBoardDriver : 
     public DeviceDriver,
@@ -204,6 +206,13 @@ public:
     bool setPositions(const double *refs);
     
 private:
+	
+    struct PID {
+        double p;
+        double i;
+        double d;
+    };
+
     unsigned int robot_refresh_period; //ms
     gazebo::physics::Model* _robot;
     gazebo::event::ConnectionPtr updateConnection;
@@ -232,9 +241,8 @@ private:
     std::vector<std::string> joint_names;
     gazebo::transport::NodePtr gazebo_node_ptr;
     gazebo::transport::PublisherPtr jointCmdPub;
-    std::vector<double> _p;
-    std::vector<double> _i;
-    std::vector<double> _d;
+    std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
 
     bool *motion_done;
     int  *control_mode;
@@ -256,6 +264,7 @@ private:
      */
     void setMinMaxPos();  //NOT TESTED
     void setJointNames();  //WORKS
+    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&);
     void setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector refs);
     bool sendPositionToGazebo(int j,double ref);
@@ -269,4 +278,5 @@ private:
 
 };
 
-#endif //COMAN_H
+#endif //__GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
+

@@ -11,6 +11,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
+#include <gazebo/sensors/ForceTorqueSensor.hh>
 #include "gazebo_yarp_plugins/Handler.hh"
 
 
@@ -37,6 +38,7 @@ GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
     _forcetorque_driver.close();
+    GazeboYarpPluginHandler::getHandler()->removeSensor(_sensorName);
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
@@ -81,10 +83,11 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
     
+    _sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor));
     
-    driver_properties.put(yarp_scopedname_parameter.c_str(),_sensor->GetScopedName().c_str());
+    driver_properties.put(yarp_scopedname_parameter.c_str(), _sensorName.c_str());
     
     //Open the wrapper
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
@@ -122,9 +125,5 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     } else {
         std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
     }
-    
-    
-    
- 
     
 }

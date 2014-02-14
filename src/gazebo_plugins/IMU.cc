@@ -38,8 +38,8 @@ void GazeboYarpIMU::Init()
 GazeboYarpIMU::~GazeboYarpIMU()
 {
     std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
-    GazeboYarpPluginHandler::getHandler()->removeSensor(_sensorName);
     _imu_driver.close();
+    GazeboYarpPluginHandler::getHandler()->removeSensor(_sensorName);
 }
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)

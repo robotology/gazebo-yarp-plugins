@@ -62,12 +62,12 @@ private:
     template <class T>
     class ReferenceCountingObject
     {
-        T& _object;
+        T _object;
         unsigned short _count;
     public:
-        ReferenceCountingObject(T& object):_object(object), _count(1) {}
+        ReferenceCountingObject(T object):_object(object), _count(1) {}
         
-        T& object() { return _object; }
+        T object() { return _object; }
         unsigned short count() { return _count; }
         void incrementCount() { _count++; }
         void decrementCount() { _count--; }

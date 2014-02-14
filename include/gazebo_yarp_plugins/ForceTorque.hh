@@ -9,12 +9,16 @@
 #define _GAZEBO_YARP_FORCETORQUE_PLUGIN_HH_
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
+#include <string>
 
 namespace gazebo
 {
+    namespace sensors {
+        class ForceTorqueSensor;
+    }
+    
     class GazeboYarpForceTorque : public SensorPlugin
     {
     public:
@@ -28,6 +32,8 @@ namespace gazebo
         yarp::os::Network _yarp;
         yarp::dev::PolyDriver _forcetorque_wrapper;
         yarp::dev::PolyDriver _forcetorque_driver;
+        
+        std::string _sensorName;
         
         virtual void Init();
     };

@@ -258,7 +258,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName, std
 
 void GazeboYarpControlBoardDriver::setPIDs()
 {
-    setPIDsForGroup("GAZEBO_POSITION_PIDS", _positionPIDs);
+    setPIDsForGroup("GAZEBO_PIDS", _positionPIDs);
     setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs);
 }
 

@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
-#define __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
+#ifndef GAZEBOYARP_CONTROLBOARDDRIVER_HH
+#define GAZEBOYARP_CONTROLBOARDDRIVER_HH
 
 #include <yarp/sig/all.h>
 #include <yarp/os/all.h>
@@ -19,12 +19,10 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/RateThread.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
-#pragma GCC diagnostic pop
+
 
 #define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
@@ -54,7 +52,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
 public:
     GazeboYarpControlBoardDriver();
 
-    ~GazeboYarpControlBoardDriver();
+    virtual ~GazeboYarpControlBoardDriver();
 
     /**
      * Gazebo stuff
@@ -278,5 +276,5 @@ private:
 
 };
 
-#endif //__GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
+#endif //GAZEBOYARP_CONTROLBOARDDRIVER_HH
 

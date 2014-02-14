@@ -3,13 +3,12 @@
  * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
+#ifndef GAZEBOYARP_CONTROLBOARD_HH
+#define GAZEBOYARP_CONTROLBOARD_HH
+
 #include <gazebo/gazebo.hh>
-#include <gazebo/common/common.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
-#pragma GCC diagnostic pop
+#include <string>
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/Wrapper.h>
@@ -43,26 +42,25 @@ public:
 
     void Init();
 
-    ~GazeboYarpControlBoard();
+    virtual ~GazeboYarpControlBoard();
 
     /**
      * Saves the gazebo pointer, creates the device driver
      */
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-    //static gazebo::physics::Model* getRobot() {return _robot.get();}
     
 private:
-    /**
-      * Simulation Time Step in ms
-      */
-    //double _dT;
-    /*static*/ physics::ModelPtr _robot;
+    
     yarp::os::Network _yarp;
     yarp::dev::PolyDriver _wrapper;
     yarp::dev::IMultipleWrapper *_iWrap;
     yarp::dev::PolyDriver _controlBoard;
     yarp::os::Property _parameters;
-   // event::ConnectionPtr updateConnection; // Pointer to the update event connection
+    
+    std::string _robotName;
+
 };
 
 }
+
+#endif

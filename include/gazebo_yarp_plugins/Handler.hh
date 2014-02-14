@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_PLUGIN_HANDLER_HH__
-#define __GAZEBO_YARP_PLUGIN_HANDLER_HH__
+#ifndef GAZEBOYARP_HANDLER_HH
+#define GAZEBOYARP_HANDLER_HH
 
 #include <map>
 #include <yarp/os/Semaphore.h>
@@ -15,10 +15,14 @@
 namespace gazebo
 {
     class GazeboYarpPluginHandler;
-}
 
-typedef std::map<std::string, gazebo::physics::Model*> RobotsMap;
-typedef std::map<std::string, gazebo::sensors::Sensor*> SensorsMap;
+//    namespace sensors {
+//        class Sensor;
+//    }
+//    namespace physics {
+//        class Model;
+//    }
+}
 
 class gazebo::GazeboYarpPluginHandler
 {
@@ -32,6 +36,11 @@ public:
 
     // return the model pointer given the robot name
     gazebo::physics::Model* getRobot(std::string robotName);
+    
+    /** \brief Removes a robot from the internal database
+     *  \param robotName the name of the robot to be removed
+     */
+    void removeRobot(std::string robotName);
 
     // add a new sensorPointer to the "database", if the sensor already exists and the pointer are the same return success,
     // if pointers doesn't match returns error.
@@ -40,10 +49,36 @@ public:
     
     // return the sensor pointer given the sensor scoped namespac
     gazebo::sensors::Sensor* getSensor(const std::string sensorScopedName);
+    
+    /** \brief Removes a sensor from the internal database
+     *  \param sensorScopedName the name of the sensor to be removed
+     */
+    void removeSensor(const std::string sensorName);
 
     ~GazeboYarpPluginHandler();
 
 private:
+    
+    template <class T>
+    class ReferenceCountingObject
+    {
+        T _object;
+        unsigned short _count;
+    public:
+        ReferenceCountingObject(T object):_object(object), _count(1) {}
+        
+        T object() { return _object; }
+        unsigned short count() { return _count; }
+        void incrementCount() { _count++; }
+        void decrementCount() { _count--; }
+    };
+    
+    typedef ReferenceCountingObject<gazebo::physics::Model*> ReferenceCountingModel;
+    typedef ReferenceCountingObject<gazebo::sensors::Sensor*> ReferenceCountingSensor;
+    
+    typedef std::map<std::string, ReferenceCountingModel> RobotsMap;
+    typedef std::map<std::string, ReferenceCountingSensor> SensorsMap;
+    
     // singleton stuff
     static yarp::os::Semaphore          _mutex;
     static GazeboYarpPluginHandler*     _handle;
@@ -53,8 +88,8 @@ private:
     SensorsMap                          _sensorsMap;    // map of known sensors
 
     bool findRobotName(sdf::ElementPtr sdf, std::string *robotName);
-
+    
 };
 
 
-#endif  // __GAZEBO_YARP_PLUGIN_HANDLER_HH__
+#endif  // GAZEBOYARP_HANDLER_HH

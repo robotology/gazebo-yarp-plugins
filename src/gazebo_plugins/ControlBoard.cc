@@ -30,6 +30,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
     {
         _controlBoard.close();
         _wrapper.close();
+        GazeboYarpPluginHandler::getHandler()->removeRobot(_robotName);
         std::cout<<"Goodbye!"<<std::endl;
     }
 
@@ -38,9 +39,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
+     
+        _robotName = _parent->GetScopedName();
         GazeboYarpPluginHandler::getHandler()->setRobot(get_pointer(_parent));
-
-        this->_robot = _parent;
 
         // Add the gazebo_controlboard device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>
@@ -119,8 +120,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
             _parameters.put("name", driverName.c_str());
             _parameters.fromString(driver_group.toString(), false);
-            _parameters.put("robotScopedName", _parent->GetScopedName());
-            std::cout << "GazeboYarpControlBoard: setting robotScopedName " << _parent->GetScopedName() << std::endl;
+            _parameters.put("robotScopedName", _robotName);
+            std::cout << "GazeboYarpControlBoard: setting robotScopedName " << _robotName << std::endl;
              //std::cout << "before open: params are " << _parameters.toString() << std::endl;
 
             if(_sdf->HasElement("initialConfiguration") )

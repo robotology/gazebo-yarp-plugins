@@ -81,7 +81,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName (config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
     std::cout << "GazeboYarpIMUDriver is looking for sensor " << sensorScopedName << "...\n";
     
-    parentSensor = (gazebo::sensors::ImuSensor*) gazebo::GazeboYarpPluginHandler::getHandler()->getSensor(sensorScopedName);
+    parentSensor = (gazebo::sensors::ImuSensor*)gazebo::GazeboYarpPluginHandler::getHandler()->getSensor(sensorScopedName);
     
     if(NULL == parentSensor)
     {
@@ -90,10 +90,8 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     }
     
     //Connect the driver to the gazebo simulation
-    this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
-                                 boost::bind ( &GazeboYarpIMUDriver::onUpdate, this, _1 ) );
+    this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpIMUDriver::onUpdate, this, _1));
   
-
     return true;
 }
 

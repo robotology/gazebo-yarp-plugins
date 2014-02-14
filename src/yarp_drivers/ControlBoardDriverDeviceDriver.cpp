@@ -31,8 +31,6 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     return gazebo_init() && RateThread::start();
 }
 
-
-
 bool GazeboYarpControlBoardDriver::close()
 {
     //unbinding events

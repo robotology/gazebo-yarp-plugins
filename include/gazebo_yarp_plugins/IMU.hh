@@ -9,12 +9,16 @@
 #define _GAZEBO_YARP_IMU_PLUGIN_HH_
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/sensors/ImuSensor.hh>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
+#include <string>
 
 namespace gazebo
 {
+    namespace sensors {
+        class ImuSensor;
+    }
+    
     class GazeboYarpIMU : public SensorPlugin
     {
     public:
@@ -28,6 +32,7 @@ namespace gazebo
         yarp::os::Network _yarp;
         yarp::os::Property _parameters; 
         yarp::dev::PolyDriver _imu_driver;
+        std::string _sensorName;
         
         virtual void Init();
     };

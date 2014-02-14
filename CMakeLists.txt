@@ -41,6 +41,14 @@ if (PKG_CONFIG_FOUND)
   pkg_check_modules(PROTOBUF protobuf)
 endif()
 
+if(CMAKE_BUILD_TYPE MATCHES DEBUG) 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -pedantic -Wextra")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic ")
+endif()
+endif(CMAKE_BUILD_TYPE MATCHES DEBUG) 
+
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 

@@ -4,6 +4,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#ifndef GAZEBOYARP_CONTROLBOARD_HH
+#define GAZEBOYARP_CONTROLBOARD_HH
+
 #include <gazebo/gazebo.hh>
 #include <string>
 
@@ -39,7 +42,7 @@ public:
 
     void Init();
 
-    ~GazeboYarpControlBoard();
+    virtual ~GazeboYarpControlBoard();
 
     /**
      * Saves the gazebo pointer, creates the device driver
@@ -59,3 +62,5 @@ private:
 };
 
 }
+
+#endif

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GAZEBO_YARP_FORCETORQUE_PLUGIN_HH_
-#define _GAZEBO_YARP_FORCETORQUE_PLUGIN_HH_
+#ifndef GAZEBOYARP_FORCETORQUE_HH
+#define GAZEBOYARP_FORCETORQUE_HH
 
 #include <gazebo/gazebo.hh>
 #include <yarp/os/Network.h>

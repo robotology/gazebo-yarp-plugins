@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_FORCETORQUE_DRIVER_H__
-#define __GAZEBO_YARP_FORCETORQUE_DRIVER_H__
+#ifndef GAZEBOYARP_FORCETORQUEDRIVER_H
+#define GAZEBOYARP_FORCETORQUEDRIVER_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
@@ -35,7 +35,7 @@ class yarp::dev::GazeboYarpForceTorqueDriver:
 public:
     GazeboYarpForceTorqueDriver();
 
-    ~GazeboYarpForceTorqueDriver();
+    virtual ~GazeboYarpForceTorqueDriver();
     
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 

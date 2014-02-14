@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GAZEBO_YARP_IMU_PLUGIN_HH_
-#define _GAZEBO_YARP_IMU_PLUGIN_HH_
+#ifndef GAZEBOYARP_IMU_HH
+#define GAZEBOYARP_IMU_HH
 
 #include <gazebo/gazebo.hh>
 #include <yarp/os/Network.h>

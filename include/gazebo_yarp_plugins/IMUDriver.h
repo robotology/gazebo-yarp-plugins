@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_IMU_DRIVER_H__
-#define __GAZEBO_YARP_IMU_DRIVER_H__
+#ifndef GAZEBOYARP_IMUDRIVER_H
+#define GAZEBOYARP_IMUDRIVER_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
@@ -35,7 +35,7 @@ class yarp::dev::GazeboYarpIMUDriver:
 public:
     GazeboYarpIMUDriver();
 
-    ~GazeboYarpIMUDriver();
+    virtual ~GazeboYarpIMUDriver();
     
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // __GAZEBO_YARP_IMU_DRIVER_H__
+#endif // GAZEBOYARP_IMUDRIVER_H

@@ -11,10 +11,6 @@
 
 using namespace yarp::dev;
 
-
-/**
- * This is asyncronous, but do we care?
- */
 bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 {
 //    std::cout << " positionMove" << j << ref;

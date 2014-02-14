@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_PLUGIN_HANDLER_HH__
-#define __GAZEBO_YARP_PLUGIN_HANDLER_HH__
+#ifndef GAZEBOYARP_HANDLER_HH
+#define GAZEBOYARP_HANDLER_HH
 
 #include <map>
 #include <yarp/os/Semaphore.h>
@@ -92,4 +92,4 @@ private:
 };
 
 
-#endif  // __GAZEBO_YARP_PLUGIN_HANDLER_HH__
+#endif  // GAZEBOYARP_HANDLER_HH

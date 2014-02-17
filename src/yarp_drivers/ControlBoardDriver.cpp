@@ -268,7 +268,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
 void GazeboYarpControlBoardDriver::setPIDs()
 {
     setPIDsForGroup("GAZEBO_PIDS", _positionPIDs, PIDFeedbackTermAllTerms);
-    setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs, PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm);
+    setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
 }
 
 bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)

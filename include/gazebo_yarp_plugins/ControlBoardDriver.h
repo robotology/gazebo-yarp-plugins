@@ -50,6 +50,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public yarp::os::RateThread
 {
 public:
+    
     GazeboYarpControlBoardDriver();
 
     virtual ~GazeboYarpControlBoardDriver();
@@ -205,10 +206,18 @@ public:
     
 private:
 	
+    /* PID structures */
     struct PID {
         double p;
         double i;
         double d;
+    };
+    
+    enum PIDFeedbackTerm {
+        PIDFeedbackTermProportionalTerm = 1,
+        PIDFeedbackTermIntegrativeTerm = 1 << 1,
+        PIDFeedbackTermDerivativeTerm = 1 << 2,
+        PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
 
     unsigned int robot_refresh_period; //ms
@@ -262,7 +271,7 @@ private:
      */
     void setMinMaxPos();  //NOT TESTED
     void setJointNames();  //WORKS
-    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&);
+    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
     void setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector refs);
     bool sendPositionToGazebo(int j,double ref);

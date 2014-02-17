@@ -220,7 +220,9 @@ void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
         }        
 }
 
-void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName, std::vector<GazeboYarpControlBoardDriver::PID> &pids)
+void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
+                                                   std::vector<GazeboYarpControlBoardDriver::PID> &pids,
+                                                   enum PIDFeedbackTerm pidTerms)
 {
     yarp::os::Property prop;
     if(plugin_parameters.check(pidGroupName.c_str()))
@@ -235,7 +237,14 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName, std
             
             yarp::os::Bottle& pid = plugin_parameters.findGroup(pidGroupName.c_str()).findGroup(property_name.str().c_str());
             
-            GazeboYarpControlBoardDriver::PID pidValue = {pid.get(1).asDouble(), pid.get(3).asDouble(), pid.get(2).asDouble()};
+            GazeboYarpControlBoardDriver::PID pidValue;
+            if (pidTerms & PIDFeedbackTermProportionalTerm)
+                pidValue.p = pid.get(1).asDouble();
+            if (pidTerms & PIDFeedbackTermIntegrativeTerm)
+                pidValue.i = pid.get(3).asDouble();
+            if (pidTerms & PIDFeedbackTermDerivativeTerm)
+                pidValue.d = pid.get(2).asDouble();
+            
             pids.push_back(pidValue);
             std::cout<<"  P: "<<pidValue.p<<" I: "<<pidValue.i<<" D: "<<pidValue.d<<std::endl;
         }
@@ -243,9 +252,9 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName, std
     }
     else
     {
-        double default_p = 500.0;
-        double default_i = 0.1;
-        double default_d = 1.0;
+        double default_p = pidTerms & PIDFeedbackTermProportionalTerm ? 500.0 : 0;
+        double default_i = pidTerms & PIDFeedbackTermIntegrativeTerm ? 0.1 : 0;
+        double default_d = pidTerms & PIDFeedbackTermDerivativeTerm ? 1.0 : 0;
         std::cout<<"PID gain information not found in plugin parameters, using default gains ( "
         <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
         for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
@@ -258,8 +267,8 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName, std
 
 void GazeboYarpControlBoardDriver::setPIDs()
 {
-    setPIDsForGroup("GAZEBO_PIDS", _positionPIDs);
-    setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs);
+    setPIDsForGroup("GAZEBO_PIDS", _positionPIDs, PIDFeedbackTermAllTerms);
+    setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs, PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm);
 }
 
 bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)

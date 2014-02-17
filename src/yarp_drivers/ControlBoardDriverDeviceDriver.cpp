@@ -33,6 +33,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpControlBoardDriver::close()
 {
+    this->askToStop(); //stop thread.
     //unbinding events
     gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
     

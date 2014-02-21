@@ -4,38 +4,38 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef GAZEBOYARP_FORCETORQUEDRIVER_H
-#define GAZEBOYARP_FORCETORQUEDRIVER_H
+#ifndef GAZEBOYARP_IMUDRIVER_H
+#define GAZEBOYARP_IMUDRIVER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/sensors/ForceTorqueSensor.hh>
+#include <gazebo/sensors/ImuSensor.hh>
 
 
 namespace yarp {
     namespace dev {
-        class GazeboYarpForceTorqueDriver;
+        class GazeboYarpIMUDriver;
     }
 }
 
-const int yarp_forcetorque_nr_of_channels = 6; //The IMU has 6 fixed channels
+const int yarp_imu_nr_of_channels = 12; //The IMU has 12 fixed channels
 
 const std::string yarp_scopedname_parameter = "sensorScopedName";
 
-class yarp::dev::GazeboYarpForceTorqueDriver: 
-    public yarp::dev::IAnalogSensor,
+class yarp::dev::GazeboYarpIMUDriver: 
+    public yarp::dev::IGenericSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
 {
 public:
-    GazeboYarpForceTorqueDriver();
+    GazeboYarpIMUDriver();
 
-    virtual ~GazeboYarpForceTorqueDriver();
+    virtual ~GazeboYarpIMUDriver();
     
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
@@ -47,31 +47,27 @@ public:
     virtual bool open(yarp::os::Searchable& config);    
     virtual bool close();
     
-    //ANALOG SENSOR
-    virtual int read(yarp::sig::Vector &out);
-    virtual int getState(int ch);
-    virtual int getChannels();
-    virtual int calibrateChannel(int ch, double v);
-    virtual int calibrateSensor();
-    virtual int calibrateSensor(const yarp::sig::Vector& value);
-    virtual int calibrateChannel(int ch);
+    //GENERIC SENSOR
+    virtual bool read(yarp::sig::Vector &out);
+    virtual bool getChannels(int *nc);
+    virtual bool calibrate(int ch, double v);
     
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
 
 private:
-    yarp::sig::Vector forcetorque_data; //buffer for forcetorque sensor data
+    yarp::sig::Vector imu_data; //buffer for imu data
     
     yarp::os::Stamp last_timestamp; //buffer for last timestamp data
     
     yarp::os::Semaphore data_mutex; //mutex for accessing the data
     
-    gazebo::sensors::ForceTorqueSensor* parentSensor;
+    gazebo::sensors::ImuSensor* parentSensor;
     
     gazebo::event::ConnectionPtr updateConnection;
 
 
 };
 
-#endif // __GAZEBO_YARP_FORCETORQUE_DRIVER_H__
+#endif // GAZEBOYARP_IMUDRIVER_H

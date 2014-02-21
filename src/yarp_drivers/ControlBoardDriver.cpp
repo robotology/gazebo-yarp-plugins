@@ -6,12 +6,12 @@
 
 
 #include <gazebo_yarp_plugins/ControlBoardDriver.h>
-#include "../test/jointlogger.hpp"
+
+//#include "../test/jointlogger.hpp"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
-#include <boost/archive/text_iarchive.hpp>
 #include <stdio.h>
 
 #define toDeg(X) (X*180.0/M_PI)
@@ -22,11 +22,18 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-void GazeboYarpControlBoardDriver::gazebo_init()
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver(): RateThread(20)
+{}
+    
+GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
+
+bool GazeboYarpControlBoardDriver::gazebo_init()
 {
     //_robot = gazebo_pointer_wrapper::getModel();
-    std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
+    // std::cout<<"if this message is the last one you read, _robot has not been set"<<std::endl;
+    //assert is a NOP in release mode. We should change the error handling either with an exception or something else
     assert ( _robot );
+    if (!_robot) return false;
 
     std::cout<<"Robot Name: "<<_robot->GetName() <<std::endl;
     std::cout<<"# Joints: "<<_robot->GetJoints().size() <<std::endl;
@@ -50,9 +57,8 @@ void GazeboYarpControlBoardDriver::gazebo_init()
     ref_torque.size ( _controlboard_number_of_joints );
     max_pos.resize ( _controlboard_number_of_joints );
     min_pos.size ( _controlboard_number_of_joints );
-    _p.reserve ( _controlboard_number_of_joints );
-    _i.reserve ( _controlboard_number_of_joints );
-    _d.reserve ( _controlboard_number_of_joints );
+    _positionPIDs.reserve ( _controlboard_number_of_joints );
+    _velocityPIDs.reserve ( _controlboard_number_of_joints );
 
     setMinMaxPos();
     setPIDs();
@@ -77,6 +83,7 @@ void GazeboYarpControlBoardDriver::gazebo_init()
 
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
                                  boost::bind ( &GazeboYarpControlBoardDriver::onUpdate, this, _1 ) );
+    
     gazebo_node_ptr = gazebo::transport::NodePtr ( new gazebo::transport::Node );
     gazebo_node_ptr->Init ( this->_robot->GetWorld()->GetName() );
     jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
@@ -112,13 +119,14 @@ void GazeboYarpControlBoardDriver::gazebo_init()
             _robot->GetJoint(joint_name)->SetAngle(0,a);
         }
     }
+    return true;
 }
 
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
     _clock++;
 
-    if ( !started ) //This is a simple way to start with a coman in standing position
+    if ( !started ) //This is a simple way to start with the robot in standing position
     {
         started=true;
         for ( unsigned int j = 0; j < _controlboard_number_of_joints; ++j )
@@ -136,7 +144,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     }
     pos_lock.post();
     
-//     logger.log(speed[2]);
+    //logger.log(speed[2]);
     
     for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
     {
@@ -212,15 +220,14 @@ void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
         }        
 }
 
-void GazeboYarpControlBoardDriver::setPIDs() //WORKS
-{        
+void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
+                                                   std::vector<GazeboYarpControlBoardDriver::PID> &pids,
+                                                   enum PIDFeedbackTerm pidTerms)
+{
     yarp::os::Property prop;
-    //now try to load the pid from the plugin configuration file, if that fails fallback to the old methods
-    std::string gazebo_pids_group_name = "GAZEBO_PIDS";
-    
-    if(plugin_parameters.check(gazebo_pids_group_name.c_str())) 
+    if(plugin_parameters.check(pidGroupName.c_str()))
     {
-        std::cout<<"Found PID information in plugin parameters "<<std::endl;
+        std::cout<<"Found PID information in plugin parameters group " << pidGroupName << std::endl;
         
         for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
         {
@@ -228,28 +235,40 @@ void GazeboYarpControlBoardDriver::setPIDs() //WORKS
             property_name<<"Pid";
             property_name<<i;
             
-            yarp::os::Bottle& pid = plugin_parameters.findGroup(gazebo_pids_group_name.c_str()).findGroup(property_name.str().c_str());
-            _p.push_back(pid.get(1).asDouble());
-            _i.push_back(pid.get(3).asDouble());
-            _d.push_back(pid.get(2).asDouble());
-            std::cout<<"  P: "<<_p[i]<<" I: "<<_i[i]<<" D: "<<_d[i]<<std::endl;
+            yarp::os::Bottle& pid = plugin_parameters.findGroup(pidGroupName.c_str()).findGroup(property_name.str().c_str());
+            
+            GazeboYarpControlBoardDriver::PID pidValue;
+            if (pidTerms & PIDFeedbackTermProportionalTerm)
+                pidValue.p = pid.get(1).asDouble();
+            if (pidTerms & PIDFeedbackTermIntegrativeTerm)
+                pidValue.i = pid.get(3).asDouble();
+            if (pidTerms & PIDFeedbackTermDerivativeTerm)
+                pidValue.d = pid.get(2).asDouble();
+            
+            pids.push_back(pidValue);
+            std::cout<<"  P: "<<pidValue.p<<" I: "<<pidValue.i<<" D: "<<pidValue.d<<std::endl;
         }
         std::cout<<"OK!"<<std::endl;
-    } 
+    }
     else
     {
-        double default_p = 500.0;
-        double default_i = 0.1;
-        double default_d = 1.0;
-        std::cout<<"PID gain information not found in plugin parameters, using default gains ( " 
-                 <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
+        double default_p = pidTerms & PIDFeedbackTermProportionalTerm ? 500.0 : 0;
+        double default_i = pidTerms & PIDFeedbackTermIntegrativeTerm ? 0.1 : 0;
+        double default_d = pidTerms & PIDFeedbackTermDerivativeTerm ? 1.0 : 0;
+        std::cout<<"PID gain information not found in plugin parameters, using default gains ( "
+        <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
         for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
         {
-            _p.push_back(default_p);
-            _i.push_back(default_i);
-            _d.push_back(default_d);
+            GazeboYarpControlBoardDriver::PID pid = {500, 0.1, 1.0};
+            pids.push_back(pid);
         }
     }
+}
+
+void GazeboYarpControlBoardDriver::setPIDs()
+{
+    setPIDsForGroup("GAZEBO_PIDS", _positionPIDs, PIDFeedbackTermAllTerms);
+    setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
 }
 
 bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)
@@ -272,11 +291,13 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 
 void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
 {
+    GazeboYarpControlBoardDriver::PID positionPID = _positionPIDs[joint_index];
+    
     j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
     j_cmd.mutable_position()->set_target(toRad(ref));
-    j_cmd.mutable_position()->set_p_gain(_p[joint_index]);
-    j_cmd.mutable_position()->set_i_gain(_i[joint_index]);
-    j_cmd.mutable_position()->set_d_gain(_d[joint_index]);
+    j_cmd.mutable_position()->set_p_gain(positionPID.p);
+    j_cmd.mutable_position()->set_i_gain(positionPID.i);
+    j_cmd.mutable_position()->set_d_gain(positionPID.d);
     j_cmd.mutable_velocity()->set_p_gain(0.0);
     j_cmd.mutable_velocity()->set_i_gain(0.0);
     j_cmd.mutable_velocity()->set_d_gain(0.0);
@@ -315,13 +336,15 @@ bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref) //NOT 
 
 void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
+    GazeboYarpControlBoardDriver::PID velocityPID = _velocityPIDs[j];
+    
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
     j_cmd.mutable_position()->set_p_gain(0.0);
     j_cmd.mutable_position()->set_i_gain(0.0);
     j_cmd.mutable_position()->set_d_gain(0.0);
-    j_cmd.mutable_velocity()->set_p_gain(0.200);
-    j_cmd.mutable_velocity()->set_i_gain(0.02);
-    j_cmd.mutable_velocity()->set_d_gain(0.0);
+    j_cmd.mutable_velocity()->set_p_gain(velocityPID.p);
+    j_cmd.mutable_velocity()->set_i_gain(velocityPID.i);
+    j_cmd.mutable_velocity()->set_d_gain(velocityPID.d);
     j_cmd.mutable_velocity()->set_target(toRad(ref));
 }
 

@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
-#define __GAZEBO_YARP_CONTROLBOARD_DRIVER_HH__
+#ifndef GAZEBOYARP_CONTROLBOARDDRIVER_HH
+#define GAZEBOYARP_CONTROLBOARDDRIVER_HH
 
 #include <yarp/sig/all.h>
 #include <yarp/os/all.h>
@@ -19,26 +19,21 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/RateThread.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 
-#pragma GCC diagnostic pop
-
-#include "../src/test/jointlogger.hpp"
 
 #define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
-
-static const std::string pid_config_abs_path = "../config/pid.ini";
 
 namespace yarp {
     namespace dev {
         class GazeboYarpControlBoardDriver;
     }
+    
 }
+
 
 class yarp::dev::GazeboYarpControlBoardDriver : 
     public DeviceDriver,
@@ -55,15 +50,15 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public yarp::os::RateThread
 {
 public:
-    GazeboYarpControlBoardDriver() : RateThread(20)
-    {}
+    
+    GazeboYarpControlBoardDriver();
 
-    ~GazeboYarpControlBoardDriver(){}
+    virtual ~GazeboYarpControlBoardDriver();
 
     /**
      * Gazebo stuff
      */
-    void gazebo_init();
+    bool gazebo_init();
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
     /**
@@ -72,7 +67,7 @@ public:
     
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);    
-    virtual bool close(); //NOT IMPLEMENTED
+    virtual bool close();
     //THREAD (inside comanDeviceDriver.cpp)
     virtual void run();
     virtual bool threadInit();
@@ -210,6 +205,21 @@ public:
     bool setPositions(const double *refs);
     
 private:
+	
+    /* PID structures */
+    struct PID {
+        double p;
+        double i;
+        double d;
+    };
+    
+    enum PIDFeedbackTerm {
+        PIDFeedbackTermProportionalTerm = 1,
+        PIDFeedbackTermIntegrativeTerm = 1 << 1,
+        PIDFeedbackTermDerivativeTerm = 1 << 2,
+        PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
+    };
+
     unsigned int robot_refresh_period; //ms
     gazebo::physics::Model* _robot;
     gazebo::event::ConnectionPtr updateConnection;
@@ -238,9 +248,8 @@ private:
     std::vector<std::string> joint_names;
     gazebo::transport::NodePtr gazebo_node_ptr;
     gazebo::transport::PublisherPtr jointCmdPub;
-    std::vector<double> _p;
-    std::vector<double> _i;
-    std::vector<double> _d;
+    std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
 
     bool *motion_done;
     int  *control_mode;
@@ -249,16 +258,20 @@ private:
     int _clock;
     int _T_controller;
     
-    jointLogger logger;
+    //jointLogger logger;
 
     yarp::os::Port _joint_torq_port;
     yarp::os::Port _joint_speed_port;
+
+    yarp::os::Port _joint_torq_port_rpc;
+    yarp::os::Port _joint_speed_port_rpc;
 
     /**
      * Private Gazebo methods
      */
     void setMinMaxPos();  //NOT TESTED
     void setJointNames();  //WORKS
+    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
     void setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector refs);
     bool sendPositionToGazebo(int j,double ref);
@@ -272,4 +285,5 @@ private:
 
 };
 
-#endif //COMAN_H
+#endif //GAZEBOYARP_CONTROLBOARDDRIVER_HH
+

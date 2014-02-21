@@ -5,16 +5,20 @@
  */
 
 
-#ifndef _GAZEBO_YARP_IMU_PLUGIN_HH_
-#define _GAZEBO_YARP_IMU_PLUGIN_HH_
+#ifndef GAZEBOYARP_IMU_HH
+#define GAZEBOYARP_IMU_HH
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/sensors/ImuSensor.hh>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
+#include <string>
 
 namespace gazebo
 {
+    namespace sensors {
+        class ImuSensor;
+    }
+    
     class GazeboYarpIMU : public SensorPlugin
     {
     public:
@@ -24,15 +28,13 @@ namespace gazebo
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        sensors::ImuSensorPtr parentSensor;
-        event::ConnectionPtr updateConnection;
+        sensors::ImuSensor* parentSensor;
         yarp::os::Network _yarp;
-        yarp::os::Port _p;
-        yarp::os::Bottle _bot;
-
+        yarp::os::Property _parameters; 
+        yarp::dev::PolyDriver _imu_driver;
+        std::string _sensorName;
+        
         virtual void Init();
-        virtual void OnUpdate();
-
     };
 }
 

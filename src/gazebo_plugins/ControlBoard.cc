@@ -19,7 +19,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     void GazeboYarpControlBoard::Init()
     {
-        std::cout<<"*** COMAN GAZEBO YARP PLUGIN ***"<<std::endl;
+        std::cout<<"GazeboYarpControlBoard::Init() called"<<std::endl;
         if (!_yarp.checkNetwork())
             std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
         else
@@ -28,7 +28,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
+        _controlBoard.close();
         _wrapper.close();
+        GazeboYarpPluginHandler::getHandler()->removeRobot(_robotName);
         std::cout<<"Goodbye!"<<std::endl;
     }
 
@@ -37,11 +39,11 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
-        GazeboYarpPluginHandler::getHandler()->setRobot(get_pointer(_parent), _sdf);
+     
+        _robotName = _parent->GetScopedName();
+        GazeboYarpPluginHandler::getHandler()->setRobot(get_pointer(_parent));
 
-        this->_robot = _parent;
-
-        // Add my gazebo device driver to the factory.
+        // Add the gazebo_controlboard device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>
                                           ("gazebo_controlboard", "controlboardwrapper2", "GazeboYarpControlBoardDriver"));
 
@@ -60,10 +62,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
             if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
             {
-                std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+                std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
                 _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
             
-//                std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
+                //std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
                 wrapper_group = _parameters.findGroup("WRAPPER");
                 if(wrapper_group.isNull())
                 {
@@ -77,23 +79,16 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
         if( !configuration_loaded )
         {
-            std::cout << "File .ini not found, quitting\n" << std::endl;
+            std::cout << "GazeboYarpControlBoard: File .ini not found, quitting\n" << std::endl;
             return;
         }
-
-        //Now I love everything and every interface
-        std::ostringstream archive_stream;
-        boost::archive::text_oarchive archive(archive_stream);
-        uintptr_t cast_boost_to_pointer=(uintptr_t)_parent.get();
-        archive<<cast_boost_to_pointer;
-        _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
 
         _wrapper.open(wrapper_group);
     
         if (!_wrapper.isValid())
-            fprintf(stderr, "wrapper did not open\n");
+            fprintf(stderr, "GazeboYarpControlBoard: wrapper did not open\n");
         else
-            fprintf(stderr, "wrapper opened correctly\n");
+            fprintf(stderr, "GazeboYarpControlBoard: wrapper opened correctly\n");
 
         if( !_wrapper.view(_iWrap) )
         {
@@ -103,9 +98,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
         if(netList->isNull())
         {
-            printf("ERROR, net list to attach to was not found, exiting\n");
+            printf("GazeboYarpControlBoard ERROR, net list to attach to was not found, exiting\n");
             _wrapper.close();
-            _controlBoard.close();
+            // _controlBoard.close();
             return;
         }
 
@@ -123,25 +118,20 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 return;
             }
 
-            yarp::os::Property driver_property(driver_group.toString().c_str());
-            driver_property.put("loving_gazebo_pointer",archive_stream.str().c_str());
-            driver_property.put("name", driverName.c_str());
-//            std::cout << "before open: params are " << driver_property.toString() << std::endl;
-
-            _parameters.put("loving_gazebo_pointer",archive_stream.str().c_str());
             _parameters.put("name", driverName.c_str());
             _parameters.fromString(driver_group.toString(), false);
-//            std::cout << "before open: params are " << _parameters.toString() << std::endl;
+            _parameters.put("robotScopedName", _robotName);
+            std::cout << "GazeboYarpControlBoard: setting robotScopedName " << _robotName << std::endl;
+             //std::cout << "before open: params are " << _parameters.toString() << std::endl;
 
             if(_sdf->HasElement("initialConfiguration") )
             {
-                std::cout<<"Found initial Configuration: "<<std::endl;
+                //std::cout<<"Found initial Configuration: "<<std::endl;
                 std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
                 _parameters.put("initialConfiguration", configuration_s.c_str());
-                std::cout<<configuration_s<<std::endl;
+                //std::cout<<configuration_s<<std::endl;
             }
 
-//            _controlBoard.open(driver_property);
             _controlBoard.open(_parameters);
 
             if (!_controlBoard.isValid())
@@ -155,7 +145,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         if(!_iWrap || !_iWrap->attachAll(p))
         {
-            printf("Error while attaching wrapper to device\n");
+            printf("GazeboYarpControlBoard: Error while attaching wrapper to device\n");
             _wrapper.close();
             _controlBoard.close();
             return;

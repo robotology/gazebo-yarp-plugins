@@ -68,7 +68,7 @@ To use the gazebo_yarp_plugins you can try to use a Yarp-enabled Gazebo model of
 To use Coman in Gazebo, please follow [the instructions on gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Using-Coman-model-with-gazebo_yarp_plugins)
 
 ### iCub 
-To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/traversaro/icub_gazebo)
+To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/robotology-playground/icub_gazebo)
 
 ### Arbitrary robot
 To add gazebo_yarp_plugins to another robot, please follow the instructions on [gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Embed-gazebo_yarp_plugins-in-a-SDF-model)

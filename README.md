@@ -60,6 +60,12 @@ export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/gazebo_yarp_plugins/bui
 Where "/path/to/gazebo_yarp_plugins/build" is the path on your computer where you located the build directory.
 To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your home directory.
 
+You can decide to install the plugins by issuing a
+```
+sudo make install
+```
+at which point you need to update the GAZEBO_PLUGIN_PATH accordingly, if the installation path is not in the LD_LIBRARY_PATH of your system
+
 Usage
 -----
 To use the gazebo_yarp_plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently two robot support gazebo_yarp_plugins: Coman and iCub.

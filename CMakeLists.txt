@@ -119,3 +119,13 @@ target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GA
 
 #add_executable(testmotor src/test/test.cpp)
 #target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
+# INSTALLATION
+install(TARGETS singleton 
+                gazebo_yarp_controlboard 
+                gazebo_yarp_forcetorque 
+                gazebo_yarp_forcetorque 
+                gazebo_yarp_imu 
+                gazebo_yarp_clock
+                DESTINATION lib)
+

@@ -79,14 +79,25 @@ To use iCub in Gazebo, please follow [the instruction in the icub_gazebo reposit
 ### Arbitrary robot
 To add gazebo_yarp_plugins to another robot, please follow the instructions on [gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Embed-gazebo_yarp_plugins-in-a-SDF-model)
 
+Troubleshooting
+---------------
+- If gazebo_yarp_plugins does not compile complaning about an -fPIC option missing, check that you compiled yarp with shared library option enabled.
+
+- If Gazebo complains about not finding the libgazebo_yarp_*.so files, check if you properly defined the GAZEBO_PLUGIN_PATH enviroment variable.
+
+- If Gazebo complains that a yarp server is not available, remember to launch a yarp server on your machine (i.e. open a new terminal a launch the yarpserver command).
+
+- If the simulation run slowly, check that you are using the latest graphics driver available for your platform. If you a running a recent Ubuntu version (13.10 or 14.04) you can try (at your own risk) to use the drivers provided by the [oibaf PPA](https://launchpad.net/~oibaf/+archive/graphics-drivers).
+
 
 Design
 ------
 More information on the internal structure of gazebo_yarp_plugins is [available in this wiki page](https://github.com/robotology/gazebo_yarp_plugins/wiki/Design).
 
+
 Contributing
 ------------
-If you would like to contribute to the development of gazebo_yarp_plugins, please get in contact with the development team using GitHub issues. 
+If you would like to contribute to the development of gazebo_yarp_plugins, please get in contact with the development team using [GitHub issues](https://github.com/robotology/gazebo_yarp_plugins/issues). 
 
 
 

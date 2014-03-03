@@ -110,10 +110,10 @@ add_library(gazebo_yarp_clock        MODULE ${clock_source}        ${clock_heade
 
 
 target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${Gazebo_libraries} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ForceTorquePlugin  ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GAZEBO_libraries} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ForceTorquePlugin  ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 
 

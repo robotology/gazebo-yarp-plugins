@@ -15,19 +15,23 @@
  * Public License for more details
  */
 
+#include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IEncoders.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Network.h>
+#include <yarp/sig/Matrix.h>
+#include <yarp/sig/Vector.h>
+#include <yarp/math/Math.h>
 #include <stdio.h>
-#include <cmath>
+#include <math.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::math;
 
 
 const double pi = 3.141592654;
@@ -35,35 +39,6 @@ const double g = 9.80;
 
 int main(int argc, char **argv)
 {
-//     ResourceFinder *rf = new ResourceFinder;
-//     
-//     rf->setVerbose(true);
-//     rf->setDefaultConfigFile("default.ini");         //default config file name.
-//     rf->setDefaultContext("TorqueControl/conf"); //when no parameters are given to the module this is the default context
-//     rf->configure("ICUB_ROOT",argc,argv);
-//     
-//     if (rf->check("help"))
-//     {
-//         std::cout<< "Possible parameters" << std::endl << std::endl;
-//         std::cout<< "\t--context          :Where to find a user defined .ini file within $ICUB_ROOT/app e.g. /adaptiveControl/conf" << std::endl;
-// //        std::cout<< "\t--from             :Name of the file.ini to be used for calibration." << std::endl;
-//         std::cout<< "\t--rate             :Period used by the module. Default set to 10ms." << std::endl;
-//         std::cout<< "\t--robot            :Robot name (icubSim or icub). Set to icub by default." << std::endl;
-//         std::cout<< "\t--local            :Prefix of the ports opened by the module. Set to the module name by default, i.e. adaptiveControl." << std::endl;
-//         return 0;
-//     }
-//     
-//     Network yarp;
-//     
-//     if (!yarp.checkNetwork())
-//     {
-//         std::cerr << "Sorry YARP network is not available\n";
-//         return -1;
-//     }
-//     
-//     //Creating the module
-//     torqueController::TorqueControllerModule module();
-//     return module.runModule(*rf);
 
     Network yarp;
 
@@ -117,21 +92,24 @@ int main(int argc, char **argv)
         return 0;
     }
     
-       BufferedPort<Bottle> *speedInput = new BufferedPort<Bottle>();
-        if (!speedInput || !speedInput->open(("/" + localPorts + "/speeds:i").c_str())) {
-            fprintf(stderr, "Could not open port speed\n");
-            return false;
-        }
-        Network::connect((remotePorts + "/analog/speeds:o").c_str(), ("/" + localPorts + "/speeds:i").c_str());
+    BufferedPort<Bottle> *speedInput = new BufferedPort<Bottle>();
+    if (!speedInput || !speedInput->open((localPorts + "/speeds:i").c_str())) {
+        fprintf(stderr, "Could not open port speed\n");                
+        return false;
+    }
 
+    fprintf(stderr, "Trying to connect: %s to %s...", (remotePorts + "/analog/speed").c_str(), (localPorts + "/speeds:i").c_str());
+    Network::connect((remotePorts + "/analog:o/speed").c_str(), (localPorts + "/speeds:i").c_str());
+    fprintf(stderr, "hopefully ok \n");
 
     //parameters
-    const double m1 = 1;
-    const double m2 = 1;
-    const double l1 = 0.5;
-    const double l2 = 0.5;
-    const double a1 = 1;
-    
+    const double m1  = 1;
+    const double m2  = 1;
+    const double l1  = 0.5;
+    const double l2  = 0.5;
+    const double a1  = 1;
+    const double Il1 = 1.0/12.0;
+    const double Il2 = 1.0/12.0;
 
     controlMode->setTorqueMode(0);
     controlMode->setTorqueMode(1);
@@ -158,6 +136,18 @@ int main(int argc, char **argv)
     double dq1 = 0;
     double dq2 = 0;
     
+    yarp::sig::Vector qDes(2);
+    qDes(0) = 0.0;
+    qDes(1) = 0.7;
+    
+    yarp::sig::Matrix kp(2,2);
+    kp.zero();
+    kp(0, 0) = 0.1; kp(1, 1) = 0.1;
+    yarp::sig::Matrix kd(2,2);
+    kd.zero();
+    kd(0, 0) = 1; kd(1, 1) = 1;
+
+     
     while(1) {
         
         encoders->getEncoder(0, &q1);
@@ -177,25 +167,52 @@ int main(int argc, char **argv)
                 dq2= val2.asDouble();              
         }
         
+        yarp::sig::Vector q(2);
+        q(0) = q1;
+        q(1) = q2;
         
+        yarp::sig::Vector dq(2);
+        dq(0) = dq1;
+        dq(1) = dq2;
         
         grav1 = (m1 * l1 + m2 * a1) * g * cos(q1) + m2 * l2 * g * cos(q1 + q2);
         grav2 = m2 * l2 * g * cos(q1 + q2);
         
         cH = -m2 * a1 * l2 * sin(q2);
         cTerm1 = cH * dq2 * dq1 + cH * (dq1 + dq2) * dq2;
-        cTerm1 = -cH * dq1 * dq1;
+        cTerm2 = -cH * dq1 * dq1;
          
-        tau1 = grav1 + cTerm1;
-        tau2 = grav2 + cTerm2;
+        m11 = Il1 + m1 * l1 * l1 + Il2 + m2 * (a1 * a1 + l2 * l2 + 2 * a1* l2 * cos(q2));
+        m12 = Il2 + m2 * (l2 * l2 + a1* l2 * cos(q2));
+        m22 = Il2 + m2 * l2 * l2;
         
-        torque->setRefTorque(0, tau1);
-        torque->setRefTorque(1, tau2);
+        yarp::sig::Matrix M(2,2);
+        M(0,0) = m11; 
+        M(0,1) = M(1,0) = m12;
+        M(1,1) = m22;
+        
+        yarp::sig::Vector Cdq(2);
+        Cdq(0) = cTerm1;
+        Cdq(1) = cTerm2;
+        
+        yarp::sig::Vector grav(2);
+        grav(0) = grav1;
+        grav(1) = grav2;
+        
+        yarp::sig::Vector tau(2);
+        
+        tau =   grav + Cdq - M * (kd * dq + kp * (q - qDes)); // computed torque
+//         tau =   grav - (kd*dq + kp*(q-qDes)); //PD + gravity compensation
+        
+        yarp::sig::Vector error(2);
+        error = q-qDes;
+        
+        printf("Error: %lf * %lf      Torque:  %lf * %lf       Vel:  %lf * %lf\n", error(0), error(1), tau(0), tau(1), dq(0), dq(1));
+        
+        torque->setRefTorques(tau.data());
         
         torque->getTorque(0, &readTau1);
         torque->getTorque(1, &readTau2);
-        
-        printf("Joint 0: written %lf\tread %lf\t\tJoint 1: written %lf\tread %lf\n", tau1, readTau1, tau2, readTau2);
         
         yarp::os::Time::delay(0.01);
     }

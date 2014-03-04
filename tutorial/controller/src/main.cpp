@@ -201,8 +201,8 @@ int main(int argc, char **argv)
         
         yarp::sig::Vector tau(2);
         
-        tau =   grav + Cdq - M * (kd * dq + kp * (q - qDes)); // computed torque
-//         tau =   grav - (kd*dq + kp*(q-qDes)); //PD + gravity compensation
+//         tau =   grav + Cdq - M * (kd * dq + kp * (q - qDes)); // computed torque
+        tau =   grav - (kd*dq + kp*(q-qDes)); //PD + gravity compensation
         
         yarp::sig::Vector error(2);
         error = q-qDes;
@@ -213,6 +213,17 @@ int main(int argc, char **argv)
         
         torque->getTorque(0, &readTau1);
         torque->getTorque(1, &readTau2);
+        
+        //check lyapunov function
+        yarp::sig::Matrix dqMatrix(2, 1);
+        dqMatrix.setSubcol(dq, 0, 0);
+        yarp::sig::Matrix eMatrix(2, 1);
+        eMatrix.setSubcol(error, 0, 0);
+        
+        yarp::sig::Matrix vLyapunov(1, 1);
+        vLyapunov = 0.5 * (dqMatrix.transposed() * M) * dqMatrix + 0.5 * eMatrix.transposed() * kp * eMatrix;
+        printf("Lyapunov Value: %lf\n", vLyapunov(0, 0));
+        
         
         yarp::os::Time::delay(0.01);
     }

@@ -52,6 +52,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     amp.size ( _controlboard_number_of_joints );
     torque.size ( _controlboard_number_of_joints ); torque.zero();
     ref_speed.size ( _controlboard_number_of_joints );
+    des_pos.size ( _controlboard_number_of_joints );
     ref_pos.size ( _controlboard_number_of_joints );
     ref_acc.size ( _controlboard_number_of_joints );
     ref_torque.size ( _controlboard_number_of_joints );
@@ -67,6 +68,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     vel = 0;
     speed = 0;
     ref_speed=0;
+    des_pos=0;
     ref_pos=0;
     ref_acc=0;
     ref_torque=0;
@@ -106,6 +108,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             }
             initial_config[counter-1] = tmp;
             ref_pos[counter-1] = toDeg(tmp);
+            des_pos[counter-1] = toDeg(tmp);
             pos[counter-1] = toDeg(tmp);
             counter++;
         }
@@ -152,23 +155,23 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
         {
             if ( _clock%_T_controller==0 )
             {
-                double temp=ref_pos[j];
-                if ( ( pos[j]-ref_pos[j] ) < -ROBOT_POSITION_TOLERANCE )
+                if ( ( des_pos[j]-ref_pos[j] ) < -ROBOT_POSITION_TOLERANCE )
                 {
-                    if ( ref_speed[j]!=0 ) temp=pos[j]+ ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
+                    if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]+ ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
                     motion_done[j]=false;
                 }
-                else if ( ( pos[j]-ref_pos[j] ) >ROBOT_POSITION_TOLERANCE )
+                else if ( ( des_pos[j]-ref_pos[j] ) >ROBOT_POSITION_TOLERANCE )
                 {
-                    if ( ref_speed[j]!=0 ) temp=pos[j]- ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
+                    if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]- ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
                     motion_done[j]=false;
                 }
                 else
                 {
+                    des_pos[j]=ref_pos[j];
                     motion_done[j]=true;
                 }
-                //std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<temp<<std::endl;
-                sendPositionToGazebo ( j,temp );
+                //std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<des_pos[j]<<std::endl;
+                sendPositionToGazebo ( j,des_pos[j] );
             }
         }
         else if ( control_mode[j]==VOCAB_CM_VELOCITY ) //set vmo joint value

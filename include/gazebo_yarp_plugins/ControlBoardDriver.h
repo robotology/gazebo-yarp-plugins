@@ -232,7 +232,11 @@ private:
      * The GAZEBO position of each joints, readonly from outside this interface
      */
     yarp::sig::Vector pos;
-
+    /**
+     * The GAZEBO desired position of each joints, (output of trajectory interp)
+     */
+    yarp::sig::Vector des_pos;
+    
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
      * i.e. getEncoder(j)=zero_pos+gazebo.getEncoder(j);

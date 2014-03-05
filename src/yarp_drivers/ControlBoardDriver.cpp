@@ -44,18 +44,18 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     _controlboard_number_of_joints = joint_names.size();
     //pos_lock.unlock();
-    pos.size ( _controlboard_number_of_joints );
-    zero_pos.size ( _controlboard_number_of_joints );
-    vel.size ( _controlboard_number_of_joints );
-    speed.size ( _controlboard_number_of_joints );
-    acc.size ( _controlboard_number_of_joints );
-    amp.size ( _controlboard_number_of_joints );
-    torque.size ( _controlboard_number_of_joints ); torque.zero();
-    ref_speed.size ( _controlboard_number_of_joints );
-    des_pos.size ( _controlboard_number_of_joints );
-    ref_pos.size ( _controlboard_number_of_joints );
-    ref_acc.size ( _controlboard_number_of_joints );
-    ref_torque.size ( _controlboard_number_of_joints );
+    pos.resize ( _controlboard_number_of_joints );
+    zero_pos.resize ( _controlboard_number_of_joints );
+    vel.resize ( _controlboard_number_of_joints );
+    speed.resize ( _controlboard_number_of_joints );
+    acc.resize ( _controlboard_number_of_joints );
+    amp.resize ( _controlboard_number_of_joints );
+    torque.resize ( _controlboard_number_of_joints ); torque.zero();
+    ref_speed.resize ( _controlboard_number_of_joints );
+    des_pos.resize ( _controlboard_number_of_joints );
+    ref_pos.resize ( _controlboard_number_of_joints );
+    ref_acc.resize ( _controlboard_number_of_joints );
+    ref_torque.resize ( _controlboard_number_of_joints );
     max_pos.resize ( _controlboard_number_of_joints );
     min_pos.size ( _controlboard_number_of_joints );
     _positionPIDs.reserve ( _controlboard_number_of_joints );
@@ -240,7 +240,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
             
             yarp::os::Bottle& pid = plugin_parameters.findGroup(pidGroupName.c_str()).findGroup(property_name.str().c_str());
             
-            GazeboYarpControlBoardDriver::PID pidValue;
+            GazeboYarpControlBoardDriver::PID pidValue = {0, 0, 0};
             if (pidTerms & PIDFeedbackTermProportionalTerm)
                 pidValue.p = pid.get(1).asDouble();
             if (pidTerms & PIDFeedbackTermIntegrativeTerm)

@@ -211,6 +211,8 @@ private:
         double p;
         double i;
         double d;
+        double maxInt;
+        double maxOut;
     };
     
     enum PIDFeedbackTerm {

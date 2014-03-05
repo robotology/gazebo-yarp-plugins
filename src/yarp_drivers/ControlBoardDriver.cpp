@@ -22,7 +22,7 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver(): RateThread(20)
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver(): RateThread(10)
 {}
     
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}

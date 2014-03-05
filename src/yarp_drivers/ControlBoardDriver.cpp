@@ -240,13 +240,13 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
             
             yarp::os::Bottle& pid = plugin_parameters.findGroup(pidGroupName.c_str()).findGroup(property_name.str().c_str());
             
-            GazeboYarpControlBoardDriver::PID pidValue = {0, 0, 0};
+            GazeboYarpControlBoardDriver::PID pidValue = {0, 0, 0, -1, -1};
             if (pidTerms & PIDFeedbackTermProportionalTerm)
-                pidValue.p      = pid.get(1).asDouble();
+                pidValue.p = pid.get(1).asDouble();
             if (pidTerms & PIDFeedbackTermDerivativeTerm)
-                pidValue.d      = pid.get(2).asDouble();
+                pidValue.d = pid.get(2).asDouble();
             if (pidTerms & PIDFeedbackTermIntegrativeTerm)
-                pidValue.i      = pid.get(3).asDouble();
+                pidValue.i = pid.get(3).asDouble();
             
             pidValue.maxInt = pid.get(4).asDouble();
             pidValue.maxOut = pid.get(5).asDouble();
@@ -266,7 +266,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
         <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
         for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
         {
-            GazeboYarpControlBoardDriver::PID pid = {500, 0.1, 1.0};
+            GazeboYarpControlBoardDriver::PID pid = {500, 0.1, 1.0, -1, -1};
             pids.push_back(pid);
         }
     }
@@ -305,9 +305,14 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
     j_cmd.mutable_position()->set_d_gain(positionPID.d);
-    j_cmd.mutable_position()->set_i_max( positionPID.maxInt);
-    j_cmd.mutable_position()->set_i_min(-positionPID.maxInt);
-    j_cmd.mutable_position()->set_limit(positionPID.maxOut);
+    if (positionPID.maxInt > 0) {
+        j_cmd.mutable_position()->set_i_max(positionPID.maxInt);
+        j_cmd.mutable_position()->set_i_min(-positionPID.maxInt);
+    }
+    if (positionPID.maxOut > 0) {
+        j_cmd.mutable_position()->set_limit(positionPID.maxOut);
+    }
+    
     j_cmd.mutable_velocity()->set_p_gain(0.0);
     j_cmd.mutable_velocity()->set_i_gain(0.0);
     j_cmd.mutable_velocity()->set_d_gain(0.0);
@@ -355,6 +360,14 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     j_cmd.mutable_velocity()->set_p_gain(velocityPID.p);
     j_cmd.mutable_velocity()->set_i_gain(velocityPID.i);
     j_cmd.mutable_velocity()->set_d_gain(velocityPID.d);
+    if (velocityPID.maxInt > 0) {
+        j_cmd.mutable_velocity()->set_i_max(velocityPID.maxInt);
+        j_cmd.mutable_velocity()->set_i_min(-velocityPID.maxInt);
+    }
+    if (velocityPID.maxOut > 0) {
+        j_cmd.mutable_velocity()->set_limit(velocityPID.maxOut);
+    }
+
     j_cmd.mutable_velocity()->set_target(toRad(ref));
 }
 

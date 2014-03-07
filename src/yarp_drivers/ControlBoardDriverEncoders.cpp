@@ -44,7 +44,7 @@ bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
 /**
  * Read the instantaneous acceleration of the specified axis
  * @param j axis index
- * @param encs output parameter: it will contains the encoder value
+ * @param encs pointer to double 
  * @param time corresponding timestamp (pointer to)
  * @return true if all goes well, false if anything bad happens.
  */

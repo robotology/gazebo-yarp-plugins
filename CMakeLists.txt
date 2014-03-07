@@ -103,10 +103,10 @@ SOURCE_GROUP("Header Files" FILES ${clock_headers})
 
 
 add_library(singleton                SHARED ${singleton_source}    ${singleton_headers})
-add_library(gazebo_yarp_controlboard MODULE ${controlBoard_source} ${controlBoard_headers})
-add_library(gazebo_yarp_forcetorque  MODULE ${forceTorque_source}  ${forceTorque_headers})
-add_library(gazebo_yarp_imu          MODULE ${imu_source}          ${imu_headers})
-add_library(gazebo_yarp_clock        MODULE ${clock_source}        ${clock_headers})
+add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})
+add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
+add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
+add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
 
 
 target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})

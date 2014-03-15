@@ -204,6 +204,15 @@ void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
     }
 }
 
+bool hasEnding (std::string const &fullString, std::string const &ending)
+{
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
+
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
     std::cout << ".ini file found, using joint names in ini file" << std::endl;
@@ -217,14 +226,27 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
     int nr_of_joints = joint_names_bottle.size()-1;
         
     joint_names.resize(nr_of_joints);
+    
+    const gazebo::physics::Joint_V & gazebo_models_joints = _robot->GetJoints();
+
     for(unsigned int i=0; i < joint_names.size(); i++ ) {
-        std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
-        joint_names[i] = _robot->GetName()+"::"+joint_name;
-        if( ! ( this->_robot->GetJoint(joint_names[i]) ) ) {
+        bool joint_found = false;
+        std::string controlboard_joint_name(joint_names_bottle.get(i+1).asString().c_str());
+        
+        for(unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++ ) {
+            std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
+            if( hasEnding(gazebo_joint_name,controlboard_joint_name) ) {
+                joint_found = true;
+                joint_names[i] = gazebo_joint_name;
+            }
+        }
+        
+        if( !joint_found ) { 
             std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error, cannot find joint " << joint_names[i] << std::endl;
             joint_names.resize(0);
             return false;
         }
+       
     }     
     return true;
 }

@@ -40,7 +40,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     std::cout<<"# Links: "<<_robot->GetLinks().size() <<std::endl;
 
     this->robot_refresh_period=this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() *1000.0;
-    setJointNames();
+    if( !setJointNames() ) return false;
 
     _controlboard_number_of_joints = joint_names.size();
     //pos_lock.unlock();
@@ -204,23 +204,29 @@ void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
     }
 }
 
-void GazeboYarpControlBoardDriver::setJointNames()  //WORKS
+bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
-        std::cout << ".ini file found, using joint names in ini file" << std::endl;
-        yarp::os::Bottle joint_names_bottle = plugin_parameters.findGroup("jointNames");
+    std::cout << ".ini file found, using joint names in ini file" << std::endl;
+    yarp::os::Bottle joint_names_bottle = plugin_parameters.findGroup("jointNames");
 
-        if(joint_names_bottle.isNull())
-        {
-            std::cout << "Error cannot find jointNames!!";
-            return;
-        }
-        int nr_of_joints = joint_names_bottle.size()-1;
+    if(joint_names_bottle.isNull()) {
+        std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." << std::endl;
+        return false;
+    }
+    
+    int nr_of_joints = joint_names_bottle.size()-1;
         
-        joint_names.resize(nr_of_joints);
-        for(unsigned int i=0; i < joint_names.size(); i++ ) {
-            std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
-            joint_names[i] = _robot->GetName()+"::"+joint_name;
-        }        
+    joint_names.resize(nr_of_joints);
+    for(unsigned int i=0; i < joint_names.size(); i++ ) {
+        std::string joint_name(joint_names_bottle.get(i+1).asString().c_str());
+        joint_names[i] = _robot->GetName()+"::"+joint_name;
+        if( ! ( this->_robot->GetJoint(joint_names[i]) ) ) {
+            std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error, cannot find joint " << joint_names[i] << std::endl;
+            joint_names.resize(0);
+            return false;
+        }
+    }     
+    return true;
 }
 
 void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,

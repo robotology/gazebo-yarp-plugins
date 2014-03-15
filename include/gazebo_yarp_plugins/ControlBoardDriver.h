@@ -276,7 +276,7 @@ private:
      * Private Gazebo methods
      */
     void setMinMaxPos();  //NOT TESTED
-    void setJointNames();  //WORKS
+    bool setJointNames();  //WORKS
     void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
     void setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector refs);

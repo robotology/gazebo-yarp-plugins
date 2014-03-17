@@ -228,13 +228,19 @@ bool GazeboYarpControlBoardDriver::stop(const int n_joint, const int *joints) //
 // IPOSITION DIRECT
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
-    return positionMove(j, ref);
+    if (j >= 0 && j < (int)_controlboard_number_of_joints)
+    {
+        des_pos[j] = ref;
+        return positionMove(j, ref);
+    }
+    return false;
 }
 
 bool GazeboYarpControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs)
 {
+    for (unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+        des_pos[i] = refs[i];
     return positionMove(n_joint, joints, refs);
-
 }
 
 bool GazeboYarpControlBoardDriver::setPositions(const double *refs)

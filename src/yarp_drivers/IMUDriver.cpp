@@ -97,7 +97,10 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpIMUDriver::close()
 {
-    gazebo::event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+    if (this->updateConnection.get()) {
+        gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
+        this->updateConnection = ConnectionPtr();
+    }
     return true;
 }
     

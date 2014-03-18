@@ -91,7 +91,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     jointCmdPub = gazebo_node_ptr->Advertise<gazebo::msgs::JointCmd>
                   ( std::string ( "~/" ) + this->_robot->GetName() + "/joint_cmd" );
 
-    _T_controller = 10;
+    _T_controller = 1;
 
     std::stringstream ss(plugin_parameters.find("initialConfiguration").toString());
     if(!(plugin_parameters.find("initialConfiguration") == ""))

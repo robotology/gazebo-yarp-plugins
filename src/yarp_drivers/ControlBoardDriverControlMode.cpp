@@ -70,7 +70,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  }
  
 
- bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT IMPLEMENTED
+ bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
  {
      /* WARNING: disabling velocity mode. This is needed as long as we use
       *               the SetVelocity method for velocity control*/

@@ -60,6 +60,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     min_pos.size ( _controlboard_number_of_joints );
     _positionPIDs.reserve ( _controlboard_number_of_joints );
     _velocityPIDs.reserve ( _controlboard_number_of_joints );
+    _impedancePosPDs.reserve ( _controlboard_number_of_joints );
 
     setMinMaxPos();
     setPIDs();
@@ -304,6 +305,7 @@ void GazeboYarpControlBoardDriver::setPIDs()
 {
     setPIDsForGroup("GAZEBO_PIDS", _positionPIDs, PIDFeedbackTermAllTerms);
     setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+    setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", _impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
 }
 
 bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)

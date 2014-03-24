@@ -66,7 +66,8 @@ set(controlBoard_source     src/gazebo_plugins/ControlBoard.cc
                             src/yarp_drivers/ControlBoardDriverOthers.cpp
                             src/yarp_drivers/ControlBoardDriverPositionControl.cpp
                             src/yarp_drivers/ControlBoardTorqueDriverControl.cpp
-                            src/yarp_drivers/ControlBoardDriverVelocityControl.cpp)
+                            src/yarp_drivers/ControlBoardDriverVelocityControl.cpp
+                            src/yarp_drivers/ControlBoardDriverImpedancePositionControl.cpp)
 
 set(controlBoard_headers    include/gazebo_yarp_plugins/ControlBoard.hh
                             include/gazebo_yarp_plugins/ControlBoardDriver.h )

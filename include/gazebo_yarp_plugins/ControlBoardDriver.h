@@ -47,6 +47,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
+    public IImpedanceControl,
     public yarp::os::RateThread
 {
 public:
@@ -173,6 +174,13 @@ public:
     virtual bool disableTorquePid(int j); //NOT IMPLEMENTED
     virtual bool enableTorquePid(int j); //NOT IMPLEMENTED
     virtual bool setTorqueOffset(int j, double v); //NOT IMPLEMENTED
+
+    //IMPEDANCE CTRL
+    virtual bool getImpedance(int j, double *stiffness, double *damping); // [Nm/rad] & [Nm*sec/rad]
+    virtual bool setImpedance(int j, double stiffness, double damping); // [Nm/rad] & [Nm*sec/rad]
+    virtual bool setImpedanceOffset(int j, double offset);
+    virtual bool getImpedanceOffset(int j, double* offset);
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
     
     /*
      * Probably useless stuff here
@@ -256,6 +264,7 @@ private:
     gazebo::transport::PublisherPtr jointCmdPub;
     std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
 
     bool *motion_done;
     int  *control_mode;

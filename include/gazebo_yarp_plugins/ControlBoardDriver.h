@@ -266,6 +266,8 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
 
+    yarp::sig::Vector torq_offset;
+
     bool *motion_done;
     int  *control_mode;
     bool command_changed;
@@ -288,7 +290,7 @@ private:
     bool setJointNames();  //WORKS
     void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
     void setPIDs(); //WORKS
-    bool sendPositionsToGazebo(yarp::sig::Vector refs);
+    bool sendPositionsToGazebo(yarp::sig::Vector& refs);
     bool sendPositionToGazebo(int j,double ref);
     void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref);  //WORKS
     bool sendVelocitiesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
@@ -297,6 +299,9 @@ private:
     bool sendTorquesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
     bool sendTorqueToGazebo(const int j,const double ref); //NOT TESTED
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
+    void sendImpPositionToGazebo ( const int j, const double des );
+    void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
+    void compute_trj(const int j);
 
 };
 

@@ -61,6 +61,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     _positionPIDs.reserve ( _controlboard_number_of_joints );
     _velocityPIDs.reserve ( _controlboard_number_of_joints );
     _impedancePosPDs.reserve ( _controlboard_number_of_joints );
+    torq_offset.resize( _controlboard_number_of_joints );
 
     setMinMaxPos();
     setPIDs();
@@ -79,6 +80,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     control_mode=new int[_controlboard_number_of_joints];
     motion_done=new bool[_controlboard_number_of_joints];
     _clock=0;
+    torq_offset = 0;
     for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
         control_mode[j]=VOCAB_CM_POSITION;
 
@@ -126,6 +128,25 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     return true;
 }
 
+void GazeboYarpControlBoardDriver::compute_trj(const int j)
+{
+    if ( ( des_pos[j]-ref_pos[j] ) < -ROBOT_POSITION_TOLERANCE )
+    {
+        if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]+ ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
+        motion_done[j]=false;
+    }
+    else if ( ( des_pos[j]-ref_pos[j] ) >ROBOT_POSITION_TOLERANCE )
+    {
+        if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]- ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
+        motion_done[j]=false;
+    }
+    else
+    {
+        des_pos[j]=ref_pos[j];
+        motion_done[j]=true;
+    }
+}
+
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
     _clock++;
@@ -153,24 +174,10 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
     {
         if ( control_mode[j]==VOCAB_CM_POSITION ) //set pos joint value, set vel joint value
-        {
+        {   
             if ( _clock%_T_controller==0 )
             {
-                if ( ( des_pos[j]-ref_pos[j] ) < -ROBOT_POSITION_TOLERANCE )
-                {
-                    if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]+ ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
-                    motion_done[j]=false;
-                }
-                else if ( ( des_pos[j]-ref_pos[j] ) >ROBOT_POSITION_TOLERANCE )
-                {
-                    if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]- ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
-                    motion_done[j]=false;
-                }
-                else
-                {
-                    des_pos[j]=ref_pos[j];
-                    motion_done[j]=true;
-                }
+                compute_trj(j);
                 //std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<des_pos[j]<<std::endl;
                 sendPositionToGazebo ( j,des_pos[j] );
             }
@@ -189,6 +196,14 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
             {
                 sendTorqueToGazebo ( j,ref_torque[j] );
                 //std::cout<<" torque "<<ref_torque[j]<<" to joint "<<j<<std::endl;
+            }
+        }
+        else if ( control_mode[j] == VOCAB_CM_IMPEDANCE_POS)
+        {
+            if ( _clock%_T_controller==0 )
+            {
+                compute_trj(j);
+                sendImpPositionToGazebo ( j,des_pos[j] );
             }
         }
     }
@@ -308,7 +323,7 @@ void GazeboYarpControlBoardDriver::setPIDs()
     setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", _impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
 }
 
-bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)
+bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(Vector &refs)
 {
     for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
     {
@@ -428,4 +443,20 @@ void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd&
     j_cmd.mutable_velocity()->set_i_gain(0.0);
     j_cmd.mutable_velocity()->set_d_gain(0.0);
     j_cmd.set_force(ref);
+}
+
+void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const double des )
+{
+    if(j >= 0 && j < _controlboard_number_of_joints)
+    {
+        double q = pos[j]-zero_pos[j];
+        double t_ref = -_impedancePosPDs[j].p * (q - des) -_impedancePosPDs[j].d * speed[j] + torq_offset[j];
+        sendTorqueToGazebo(j,t_ref);
+    }
+}
+
+void GazeboYarpControlBoardDriver::sendImpPositionsToGazebo ( Vector &dess )
+{
+    for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+        sendImpPositionToGazebo(i, dess[i]);
 }

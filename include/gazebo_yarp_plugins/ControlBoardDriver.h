@@ -267,6 +267,10 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
 
     yarp::sig::Vector torq_offset;
+    yarp::sig::Vector min_stiffness;
+    yarp::sig::Vector min_damping;
+    yarp::sig::Vector max_stiffness;
+    yarp::sig::Vector max_damping;
 
     bool *motion_done;
     int  *control_mode;
@@ -289,6 +293,7 @@ private:
     void setMinMaxPos();  //NOT TESTED
     bool setJointNames();  //WORKS
     void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
+    void setMinMaxImpedance();
     void setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector& refs);
     bool sendPositionToGazebo(int j,double ref);

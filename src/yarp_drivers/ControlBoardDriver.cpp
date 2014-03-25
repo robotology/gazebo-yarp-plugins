@@ -62,8 +62,13 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     _velocityPIDs.reserve ( _controlboard_number_of_joints );
     _impedancePosPDs.reserve ( _controlboard_number_of_joints );
     torq_offset.resize( _controlboard_number_of_joints );
+    min_stiffness.resize( _controlboard_number_of_joints, 0.0);
+    max_stiffness.resize( _controlboard_number_of_joints, 1000.0);
+    min_damping.resize( _controlboard_number_of_joints, 0.0);
+    max_damping.resize( _controlboard_number_of_joints, 100.0);
 
     setMinMaxPos();
+    setMinMaxImpedance();
     setPIDs();
     pos = 0;
     zero_pos=0;
@@ -314,6 +319,79 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
             pids.push_back(pid);
         }
     }
+}
+
+void GazeboYarpControlBoardDriver::setMinMaxImpedance()
+{
+
+    yarp::os::Bottle& name_bot = plugin_parameters.findGroup("WRAPPER").findGroup("networks");
+    std::string name = name_bot.get(1).toString();
+
+    yarp::os::Bottle& kin_chain_bot = plugin_parameters.findGroup(name);
+    if(kin_chain_bot.check("min_stiffness"))
+    {
+        std::cout<<"min_stiffness param found!"<<std::endl;
+        yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
+        if(min_stiff_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                min_stiffness[i] = min_stiff_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
+
+    if(kin_chain_bot.check("max_stiffness"))
+    {
+        std::cout<<"max_stiffness param found!"<<std::endl;
+        yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
+        if(max_stiff_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                max_stiffness[i] = max_stiff_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
+
+    if(kin_chain_bot.check("min_damping"))
+    {
+        std::cout<<"min_damping param found!"<<std::endl;
+        yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
+        if(min_damping_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                min_damping[i] = min_damping_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
+
+    if(kin_chain_bot.check("max_damping"))
+    {
+        std::cout<<"max_damping param found!"<<std::endl;
+        yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
+        if(max_damping_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                max_damping[i] = max_damping_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
+
+    std::cout<<"min_stiffness: [ "<<min_stiffness.toString()<<" ]"<<std::endl;
+    std::cout<<"max_stiffness: [ "<<max_stiffness.toString()<<" ]"<<std::endl;
+    std::cout<<"min_damping: [ "<<min_damping.toString()<<" ]"<<std::endl;
+    std::cout<<"max_damping: [ "<<max_damping.toString()<<" ]"<<std::endl;
 }
 
 void GazeboYarpControlBoardDriver::setPIDs()

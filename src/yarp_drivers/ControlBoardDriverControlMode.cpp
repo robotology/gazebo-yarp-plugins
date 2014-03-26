@@ -70,9 +70,19 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  }
  
 
- bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int)//NOT IMPLEMENTED
+ bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
  {
-     return false;
+     /* WARNING: disabling velocity mode. This is needed as long as we use
+      *               the SetVelocity method for velocity control*/
+     if(control_mode[j]==VOCAB_CM_VELOCITY) {
+         gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+         joint->SetMaxForce(0, 0);
+         joint->SetVelocity(0,0);
+     }
+
+     control_mode[j]=VOCAB_CM_IMPEDANCE_POS;
+     std::cout<<"control mode = impedance position "<<j<<std::endl;
+     return true;
  }
  bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
  {

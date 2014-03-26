@@ -57,10 +57,10 @@ bool GazeboYarpControlBoardDriver::getCurrentImpedanceLimit(int j, double *min_s
     if(j >= 0 && j < _controlboard_number_of_joints)
     {
         //Hardcoded numbers...just to try
-        *min_stiff = 0.0;
-        *max_stiff = 1000.0;
-        *min_damp = 0.0;
-        *max_damp = 100.0;
+        *min_stiff = min_stiffness[j];
+        *max_stiff = max_stiffness[j];
+        *min_damp = min_damping[j];
+        *max_damp = max_damping[j];
         return true;
     }
     return false;

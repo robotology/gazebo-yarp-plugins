@@ -527,6 +527,11 @@ void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const 
 {
     if(j >= 0 && j < _controlboard_number_of_joints)
     {
+        /*
+            Here joint positions and speeds are in [deg] and [deg/sec].
+            Therefore also stiffness and damping has to be [Nm/deg] and [Nm*sec/deg].
+            This is really unusual, btw, conversion factor is 180.0/pi.
+        */
         double q = pos[j]-zero_pos[j];
         double t_ref = -_impedancePosPDs[j].p * (q - des) -_impedancePosPDs[j].d * speed[j] + torq_offset[j];
         sendTorqueToGazebo(j,t_ref);

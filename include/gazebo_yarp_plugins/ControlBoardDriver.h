@@ -176,8 +176,8 @@ public:
     virtual bool setTorqueOffset(int j, double v); //NOT IMPLEMENTED
 
     //IMPEDANCE CTRL
-    virtual bool getImpedance(int j, double *stiffness, double *damping); // [Nm/rad] & [Nm*sec/rad]
-    virtual bool setImpedance(int j, double stiffness, double damping); // [Nm/rad] & [Nm*sec/rad]
+    virtual bool getImpedance(int j, double *stiffness, double *damping); // [Nm/deg] & [Nm*sec/deg]
+    virtual bool setImpedance(int j, double stiffness, double damping); // [Nm/deg] & [Nm*sec/deg]
     virtual bool setImpedanceOffset(int j, double offset);
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);

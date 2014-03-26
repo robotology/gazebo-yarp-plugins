@@ -3,8 +3,9 @@
  * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-#include <gazebo_yarp_plugins/ControlBoard.hh>
+#include "gazebo_yarp_plugins/ControlBoard.hh"
 #include "gazebo_yarp_plugins/Handler.hh"
+#include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
 using namespace std;
 namespace gazebo

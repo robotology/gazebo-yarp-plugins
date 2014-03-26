@@ -4,9 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
-
-#include <gazebo_yarp_plugins/ControlBoardDriver.h>
+#include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
 using namespace yarp::dev;
 
@@ -34,7 +32,7 @@ bool GazeboYarpControlBoardDriver::setImpedance(int j, double stiffness, double 
 
 bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
 {
-    if(j = 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < _controlboard_number_of_joints)
     {
         torq_offset[j] = offset;
         return true;
@@ -44,7 +42,7 @@ bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
 
 bool GazeboYarpControlBoardDriver::getImpedanceOffset(int j, double* offset)
 {
-    if(j = 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < _controlboard_number_of_joints)
     {
         *offset = torq_offset[j];
         return true;

@@ -5,16 +5,14 @@
  */
 
 
-#include <gazebo_yarp_plugins/ControlBoardDriver.h>
+#include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
-//#include "../test/jointlogger.hpp"
+#include "gazebo_yarp_plugins/common.h"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
 #include <stdio.h>
-
-#define toDeg(X) (X*180.0/M_PI)
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -22,7 +20,7 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver(): RateThread(10)
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver()
 {}
     
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
@@ -115,9 +113,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 break;
             }
             initial_config[counter-1] = tmp;
-            ref_pos[counter-1] = toDeg(tmp);
-            des_pos[counter-1] = toDeg(tmp);
-            pos[counter-1] = toDeg(tmp);
+            ref_pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
+            des_pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
+            pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
             counter++;
         }
         std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
@@ -169,7 +167,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     {
         /** \todo consider multi-dof joint ? */
         pos[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetAngle ( 0 ).Degree();
-        speed[jnt_cnt] = toDeg(this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 ));
+        speed[jnt_cnt] = gazebo::yarp::convertRadiansToDegrees(this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 ));
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
     pos_lock.post();
@@ -424,7 +422,7 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     GazeboYarpControlBoardDriver::PID positionPID = _positionPIDs[joint_index];
     
     j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
-    j_cmd.mutable_position()->set_target(toRad(ref));
+    j_cmd.mutable_position()->set_target(gazebo::yarp::convertDegreesToRadians(ref));
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
     j_cmd.mutable_position()->set_d_gain(positionPID.d);
@@ -490,7 +488,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
 //         j_cmd.mutable_velocity()->set_limit(velocityPID.maxOut);
 //     }
 
-    j_cmd.mutable_velocity()->set_target(toRad(ref));
+    j_cmd.mutable_velocity()->set_target(gazebo::yarp::convertDegreesToRadians(ref));
 }
 
 bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED

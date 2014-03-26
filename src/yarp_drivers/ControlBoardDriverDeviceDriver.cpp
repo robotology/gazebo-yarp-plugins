@@ -5,7 +5,7 @@
  */
 
 
-#include <gazebo_yarp_plugins/ControlBoardDriver.h>
+#include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
 #include "gazebo_yarp_plugins/Handler.hh"
 
@@ -28,43 +28,15 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
         return false;
     }
     
-    return gazebo_init() && RateThread::start();
+    return gazebo_init();
 }
 
 bool GazeboYarpControlBoardDriver::close()
 {
-    this->askToStop(); //stop thread.
     //unbinding events
     gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
     
     delete [] control_mode;
     delete [] motion_done;
     return true;
-}
-
-
-//We need a thread to publish some extra information like joint torques and velocities.
-bool GazeboYarpControlBoardDriver::threadInit()
-{
-    //Find robot prefix used in wrapper
-    yarp::os::Value &wrapper_port_name = plugin_parameters.findGroup("WRAPPER").find("name");
-    if(wrapper_port_name.isNull())
-        printf("\n\nerror WRAPPER name not found\n %s\n\n", plugin_parameters.toString().c_str());
-
-    return true;
-}
-
-void GazeboYarpControlBoardDriver::afterStart(bool s)
-{
-
-}
-
-void GazeboYarpControlBoardDriver::run()
-{
-
-}
-
-void GazeboYarpControlBoardDriver::threadRelease()
-{
-
 }

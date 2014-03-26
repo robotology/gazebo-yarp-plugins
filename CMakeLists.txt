@@ -52,9 +52,12 @@ endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
+set(commons_headers         include/gazebo_yarp_plugins/common.h)
+SOURCE_GROUP("Header Files" FILES ${commons_headers})
+
 set(singleton_source        src/gazebo_plugins/Handler.cc)
 set(singleton_headers       include/gazebo_yarp_plugins/Handler.hh)
-# for visual studio
+
 SOURCE_GROUP("Source Files" FILES ${singleton_source})
 SOURCE_GROUP("Header Files" FILES ${singleton_headers})
 
@@ -71,7 +74,7 @@ set(controlBoard_source     src/gazebo_plugins/ControlBoard.cc
 
 set(controlBoard_headers    include/gazebo_yarp_plugins/ControlBoard.hh
                             include/gazebo_yarp_plugins/ControlBoardDriver.h )
-# for visual studio
+
 SOURCE_GROUP("Source Files" FILES ${controlBoard_source})
 SOURCE_GROUP("Header Files" FILES ${controlBoard_headers})
 
@@ -82,7 +85,7 @@ set(forceTorque_source      src/gazebo_plugins/ForceTorque.cc
 set(forceTorque_headers     include/gazebo_yarp_plugins/ForceTorque.hh
                             include/gazebo_yarp_plugins/ForceTorqueDriver.h)
 
-# for visual studio
+
 SOURCE_GROUP("Source Files" FILES ${forceTorque_source})
 SOURCE_GROUP("Header Files" FILES ${forceTorque_headers})
 
@@ -91,17 +94,14 @@ set(imu_headers             include/gazebo_yarp_plugins/IMU.hh
 set(imu_source              src/gazebo_plugins/IMU.cc 
                             src/yarp_drivers/IMUDriver.cpp)
 
-# for visual studio
 SOURCE_GROUP("Source Files" FILES ${imu_source})
 SOURCE_GROUP("Header Files" FILES ${imu_headers})
 
 set(clock_headers           include/gazebo_yarp_plugins/Clock.hh)
 set(clock_source            src/gazebo_plugins/Clock.cc)
 
-# for visual studio
 SOURCE_GROUP("Source Files" FILES ${clock_source})
 SOURCE_GROUP("Header Files" FILES ${clock_headers})
-
 
 add_library(singleton                SHARED ${singleton_source}    ${singleton_headers})
 add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})

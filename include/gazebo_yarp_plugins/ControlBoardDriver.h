@@ -17,14 +17,12 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/RateThread.h>
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 
 
-#define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
 
 namespace yarp {
@@ -47,8 +45,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
-    public IImpedanceControl,
-    public yarp::os::RateThread
+    public IImpedanceControl
 {
 public:
     
@@ -69,11 +66,6 @@ public:
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);    
     virtual bool close();
-    //THREAD (inside comanDeviceDriver.cpp)
-    virtual void run();
-    virtual bool threadInit();
-    virtual void afterStart(bool s);
-    virtual void threadRelease();
     
     //ENCODERS
     virtual bool getEncoder(int j, double *v); //WORKS

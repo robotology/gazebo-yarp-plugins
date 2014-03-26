@@ -281,12 +281,6 @@ private:
     
     //jointLogger logger;
 
-    yarp::os::Port _joint_torq_port;
-    yarp::os::Port _joint_speed_port;
-
-    yarp::os::Port _joint_torq_port_rpc;
-    yarp::os::Port _joint_speed_port_rpc;
-
     /**
      * Private Gazebo methods
      */

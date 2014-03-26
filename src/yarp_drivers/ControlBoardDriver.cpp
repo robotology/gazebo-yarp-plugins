@@ -169,7 +169,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     {
         /** \todo consider multi-dof joint ? */
         pos[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetAngle ( 0 ).Degree();
-        speed[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 );
+        speed[jnt_cnt] = toDeg(this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 ));
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
     pos_lock.post();
@@ -530,8 +530,8 @@ void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const 
         /*
             Here joint positions and speeds are in [deg] and [deg/sec].
             Therefore also stiffness and damping has to be [Nm/deg] and [Nm*sec/deg].
-            This is really unusual, btw, conversion factor is 180.0/pi.
         */
+        //std::cout<<"speed"<<j<<" : "<<speed[j]<<std::endl;
         double q = pos[j]-zero_pos[j];
         double t_ref = -_impedancePosPDs[j].p * (q - des) -_impedancePosPDs[j].d * speed[j] + torq_offset[j];
         sendTorqueToGazebo(j,t_ref);

@@ -103,18 +103,18 @@ set(clock_source            src/gazebo_plugins/Clock.cc)
 SOURCE_GROUP("Source Files" FILES ${clock_source})
 SOURCE_GROUP("Header Files" FILES ${clock_headers})
 
-add_library(singleton                SHARED ${singleton_source}    ${singleton_headers})
+add_library(gazebo_singleton         SHARED ${singleton_source}    ${singleton_headers})
 add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})
 add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
 add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
 add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
 
 
-target_link_libraries(singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_controlboard  singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_forcetorque   singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ForceTorquePlugin  ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_imu           singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_controlboard  gazebo_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_forcetorque   gazebo_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ForceTorquePlugin  ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_imu           gazebo_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_clock         gazebo_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 
 
@@ -122,7 +122,7 @@ target_link_libraries(gazebo_yarp_clock         singleton ${YARP_LIBRARIES} ${GA
 #target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 # INSTALLATION
-install(TARGETS singleton 
+install(TARGETS gazebo_singleton 
                 gazebo_yarp_controlboard 
                 gazebo_yarp_forcetorque 
                 gazebo_yarp_forcetorque 

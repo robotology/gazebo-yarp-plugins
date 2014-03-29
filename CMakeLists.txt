@@ -4,8 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-set(PROJECT_NAME GazeboYarpPlugins)
-PROJECT(${PROJECT_NAME})
+PROJECT(GazeboYarpPlugins)
 
 #### Find YARP, require that YARP version is at least GYP_REQYARP_VERSION
 SET(GYP_REQYARP_VERSION_MAJOR "2")

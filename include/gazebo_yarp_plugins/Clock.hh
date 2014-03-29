@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __GAZEBO_YARP_CLOCK_PLUGIN_HH__
-#define __GAZEBO_YARP_CLOCK_PLUGIN_HH__
+#ifndef GAZEBOYARP_CLOCKPLUGIN_HH
+#define GAZEBOYARP_CLOCKPLUGIN_HH
 
 #include <gazebo/gazebo.hh>
 #include <yarp/os/Network.h>

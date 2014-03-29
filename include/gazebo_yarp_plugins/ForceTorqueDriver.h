@@ -14,7 +14,7 @@
 #include <yarp/os/Semaphore.h>
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/sensors/ForceTorqueSensor.hh>
+#include "gazebo/sensors/ForceTorqueSensor.hh"
 
 
 namespace yarp {

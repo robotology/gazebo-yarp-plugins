@@ -5,22 +5,18 @@
  */
 
 
-#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
-#include <gazebo_yarp_plugins/Handler.hh>
+#include "gazebo_yarp_plugins/ForceTorqueDriver.h"
+#include "gazebo_yarp_plugins/Handler.hh"
 
 using namespace yarp::dev;
 
 
 GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver()
-{
-
-}
+{}
 
 
 GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
-{
-
-}
+{}
 
 
 /**
@@ -70,7 +66,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName (config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
     std::cout << "GazeboYarpForceTorqueDriver::open( is looking for sensor " << sensorScopedName << "...\n";
     
-    parentSensor = (gazebo::sensors::ForceTorqueSensor*) gazebo::GazeboYarpPluginHandler::getHandler()->getSensor(sensorScopedName);
+    parentSensor = (gazebo::sensors::ForceTorqueSensor*) GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     
     if(NULL == parentSensor)
     {

@@ -6,7 +6,6 @@
 
 
 #include "gazebo_yarp_plugins/ControlBoardDriver.h"
-
 #include "gazebo_yarp_plugins/Handler.hh"
 
 
@@ -21,7 +20,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     std::string robotName (plugin_parameters.find("robotScopedName").asString().c_str());
     std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
 
-    _robot = GazeboYarpPluginHandler::getHandler()->getRobot(robotName);
+    _robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(NULL == _robot)
     {
         std::cout << "Error, robot was not found\n";

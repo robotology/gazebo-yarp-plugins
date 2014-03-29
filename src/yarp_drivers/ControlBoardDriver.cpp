@@ -113,9 +113,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 break;
             }
             initial_config[counter-1] = tmp;
-            ref_pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
-            des_pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
-            pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
+            ref_pos[counter-1] = GazeboYarpPlugins::convertRadiansToDegrees(tmp);
+            des_pos[counter-1] = GazeboYarpPlugins::convertRadiansToDegrees(tmp);
+            pos[counter-1] = GazeboYarpPlugins::convertRadiansToDegrees(tmp);
             counter++;
         }
         std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
@@ -167,7 +167,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     {
         /** \todo consider multi-dof joint ? */
         pos[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetAngle ( 0 ).Degree();
-        speed[jnt_cnt] = gazebo::yarp::convertRadiansToDegrees(this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 ));
+        speed[jnt_cnt] = GazeboYarpPlugins::convertRadiansToDegrees(this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 ));
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
     pos_lock.post();
@@ -422,7 +422,7 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     GazeboYarpControlBoardDriver::PID positionPID = _positionPIDs[joint_index];
     
     j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
-    j_cmd.mutable_position()->set_target(gazebo::yarp::convertDegreesToRadians(ref));
+    j_cmd.mutable_position()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
     j_cmd.mutable_position()->set_d_gain(positionPID.d);
@@ -488,7 +488,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
 //         j_cmd.mutable_velocity()->set_limit(velocityPID.maxOut);
 //     }
 
-    j_cmd.mutable_velocity()->set_target(gazebo::yarp::convertDegreesToRadians(ref));
+    j_cmd.mutable_velocity()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
 }
 
 bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED

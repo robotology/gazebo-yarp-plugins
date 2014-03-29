@@ -5,22 +5,20 @@
  */
 
 
-#include <gazebo_yarp_plugins/IMU.hh>
-#include <gazebo_yarp_plugins/IMUDriver.h>
+#include "gazebo_yarp_plugins/IMU.hh"
+#include "gazebo_yarp_plugins/IMUDriver.h"
+#include "gazebo_yarp_plugins/Handler.hh"
+#include "gazebo_yarp_plugins/common.h"
 
 #include <gazebo/sensors/ImuSensor.hh>
 
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include "gazebo_yarp_plugins/Handler.hh"
 
+GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpIMU)
 
-using namespace gazebo;
-
-GZ_REGISTER_SENSOR_PLUGIN(GazeboYarpIMU)
-
-#define toDeg(X) (X*180.0/M_PI)
+namespace gazebo {
 
 GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(), _yarp()
 {
@@ -39,7 +37,7 @@ GazeboYarpIMU::~GazeboYarpIMU()
 {
     std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
     _imu_driver.close();
-    GazeboYarpPluginHandler::getHandler()->removeSensor(_sensorName);
+    GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
 }
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
@@ -54,7 +52,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     _sensor->SetActive(true);
     
     // Add my gazebo device driver to the factory.
-    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpIMUDriver>
+    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpIMUDriver>
                                       ("gazebo_imu", "inertial", "GazeboYarpIMUDriver"));
 
         
@@ -82,7 +80,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     
     _sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
-    GazeboYarpPluginHandler::getHandler()->setSensor(_sensor.get());
+    GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
     
     _parameters.put(yarp_scopedname_parameter.c_str(), _sensorName.c_str());
    
@@ -97,4 +95,6 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     std::cout << _parameters.toString() << std::endl;
     std::cout << "GazeboYarpIMU getOptions" << std::endl;
     std::cout << _imu_driver.getOptions().toString() << std::endl;
+}
+
 }

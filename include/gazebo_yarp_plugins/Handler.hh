@@ -9,26 +9,31 @@
 
 #include <map>
 #include <yarp/os/Semaphore.h>
-#include <gazebo/physics/Entity.hh>
-#include <gazebo/sensors/sensors.hh>
+#include <boost/shared_ptr.hpp>
 
 namespace gazebo
 {
-    class GazeboYarpPluginHandler;
-
-//    namespace sensors {
-//        class Sensor;
-//    }
-//    namespace physics {
-//        class Model;
-//    }
+    namespace sensors {
+        class Sensor;
+    }
+    namespace physics {
+        class Model;
+    }
 }
 
-class gazebo::GazeboYarpPluginHandler
+namespace sdf {
+    class Element;
+    //I'm not so happy about this forward declaration. We must decide if keeping it or not.
+    typedef boost::shared_ptr<Element> ElementPtr;
+}
+
+namespace GazeboYarpPlugins {
+    
+class Handler
 {
 public:
     // static method for using the handler
-    static GazeboYarpPluginHandler* getHandler();
+    static Handler* getHandler();
 
     // add a new modelPointer to the "database", if it already exists and the pointer are the same return success,
     // if pointers doesn't match returns error.
@@ -55,7 +60,7 @@ public:
      */
     void removeSensor(const std::string sensorName);
 
-    ~GazeboYarpPluginHandler();
+    ~Handler();
 
 private:
     
@@ -81,9 +86,9 @@ private:
     
     // singleton stuff
     static yarp::os::Semaphore          _mutex;
-    static GazeboYarpPluginHandler*     _handle;
+    static Handler*     _handle;
 
-    GazeboYarpPluginHandler();
+    Handler();
     RobotsMap                           _robotMap;      // map of known robots
     SensorsMap                          _sensorsMap;    // map of known sensors
 
@@ -91,5 +96,6 @@ private:
     
 };
 
+}
 
 #endif  // GAZEBOYARP_HANDLER_HH

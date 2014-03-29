@@ -31,7 +31,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
     {
         _controlBoard.close();
         _wrapper.close();
-        GazeboYarpPluginHandler::getHandler()->removeRobot(_robotName);
+        GazeboYarpPlugins::Handler::getHandler()->removeRobot(_robotName);
         std::cout<<"Goodbye!"<<std::endl;
     }
 
@@ -42,7 +42,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
     {
      
         _robotName = _parent->GetScopedName();
-        GazeboYarpPluginHandler::getHandler()->setRobot(get_pointer(_parent));
+        GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 
         // Add the gazebo_controlboard device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>

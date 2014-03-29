@@ -5,12 +5,11 @@
  */
 
 
-#include <gazebo_yarp_plugins/IMUDriver.h>
-#include <gazebo_yarp_plugins/Handler.hh>
+#include "gazebo_yarp_plugins/IMUDriver.h"
+#include "gazebo_yarp_plugins/Handler.hh"
+#include "gazebo_yarp_plugins/common.h"
 
 using namespace yarp::dev;
-
-#define toDeg(X) (X*180.0/M_PI)
 
 GazeboYarpIMUDriver::GazeboYarpIMUDriver()
 {
@@ -54,7 +53,7 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     data_mutex.wait();
     
     for(i = 0; i < 3; i++ ) {
-        imu_data[0+i] = toDeg(euler_orientation[i]);
+        imu_data[0+i] = GazeboYarpPlugins::convertRadiansToDegrees(euler_orientation[i]);
     }
     
     for(i = 0; i < 3; i++ ) {
@@ -62,7 +61,7 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     }
     
     for(i = 0; i < 3; i++ ) {
-        imu_data[6+i] = toDeg(angular_velocity[i]);
+        imu_data[6+i] = GazeboYarpPlugins::convertRadiansToDegrees(angular_velocity[i]);
     }
     
     data_mutex.post();
@@ -81,7 +80,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName (config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
     std::cout << "GazeboYarpIMUDriver is looking for sensor " << sensorScopedName << "...\n";
     
-    parentSensor = (gazebo::sensors::ImuSensor*)gazebo::GazeboYarpPluginHandler::getHandler()->getSensor(sensorScopedName);
+    parentSensor = (gazebo::sensors::ImuSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     
     if(NULL == parentSensor)
     {

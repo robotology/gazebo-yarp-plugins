@@ -5,21 +5,19 @@
  */
 
 
-#include <gazebo_yarp_plugins/ForceTorque.hh>
-#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
+#include "gazebo_yarp_plugins/ForceTorque.hh"
+#include "gazebo_yarp_plugins/ForceTorqueDriver.h"
+#include "gazebo_yarp_plugins/Handler.hh"
+#include "gazebo_yarp_plugins/common.h"
 
+#include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
-#include <gazebo/sensors/ForceTorqueSensor.hh>
-#include "gazebo_yarp_plugins/Handler.hh"
 
+GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpForceTorque)
 
-using namespace gazebo;
-
-GZ_REGISTER_SENSOR_PLUGIN(GazeboYarpForceTorque)
-
-#define toDeg(X) (X*180.0/M_PI)
+namespace gazebo {
 
 GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp()
 {
@@ -38,7 +36,7 @@ GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
     _forcetorque_driver.close();
-    GazeboYarpPluginHandler::getHandler()->removeSensor(_sensorName);
+    GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
@@ -53,13 +51,13 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     _sensor->SetActive(true);
 
     // Add my gazebo device driver to the factory.
-    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
+    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpForceTorqueDriver>
                                       ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
         
     //Getting .ini configuration file from sdf
     
-    yarp::os::Property wrapper_properties;
-    yarp::os::Property driver_properties;
+    ::yarp::os::Property wrapper_properties;
+    ::yarp::os::Property driver_properties;
     bool configuration_loaded = false;
         
     if(_sdf->HasElement("yarpConfigurationFile") )
@@ -85,7 +83,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     
     _sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
-    GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor));
+    GazeboYarpPlugins::Handler::getHandler()->setSensor(boost::get_pointer(_sensor));
     
     driver_properties.put(yarp_scopedname_parameter.c_str(), _sensorName.c_str());
     
@@ -110,8 +108,8 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
     
     //Attach the driver to the wrapper
-    yarp::dev::IMultipleWrapper * iWrap;
-    yarp::dev::PolyDriverList driver_list;
+    ::yarp::dev::IMultipleWrapper * iWrap;
+    ::yarp::dev::PolyDriverList driver_list;
     
     if( !_forcetorque_wrapper.view(iWrap) ) {
         std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
@@ -126,4 +124,6 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
     }
     
+}
+
 }

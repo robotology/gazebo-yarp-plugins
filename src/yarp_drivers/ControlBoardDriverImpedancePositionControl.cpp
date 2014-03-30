@@ -8,6 +8,9 @@
 
 using namespace yarp::dev;
 
+/*
+ * Get Stiffness in [Nm/deg] and damping in [Nm*sec/deg]
+ */
 bool GazeboYarpControlBoardDriver::getImpedance(int j, double *stiffness, double *damping)
 {
     if(j >= 0 && j < _controlboard_number_of_joints)
@@ -19,6 +22,9 @@ bool GazeboYarpControlBoardDriver::getImpedance(int j, double *stiffness, double
     return false;
 }
 
+/*
+ * Set Stiffness in [Nm/deg] and damping in [Nm*sec/deg]
+ */
 bool GazeboYarpControlBoardDriver::setImpedance(int j, double stiffness, double damping)
 {
     if(j >= 0 && j < _controlboard_number_of_joints)
@@ -30,6 +36,9 @@ bool GazeboYarpControlBoardDriver::setImpedance(int j, double stiffness, double 
     return false;
 }
 
+/*
+ * Set torque offset in [Nm]
+ */
 bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
 {
     if(j >= 0 && j < _controlboard_number_of_joints)
@@ -40,6 +49,9 @@ bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
     return false;
 }
 
+/*
+ * Get torque offset in [Nm]
+ */
 bool GazeboYarpControlBoardDriver::getImpedanceOffset(int j, double* offset)
 {
     if(j >= 0 && j < _controlboard_number_of_joints)
@@ -50,6 +62,9 @@ bool GazeboYarpControlBoardDriver::getImpedanceOffset(int j, double* offset)
     return false;
 }
 
+/*
+ * Set minimum and maximum stiffness in [Nm/deg] and damping in [Nm*sec/deg]
+ */
 bool GazeboYarpControlBoardDriver::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     if(j >= 0 && j < _controlboard_number_of_joints)

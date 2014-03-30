@@ -529,7 +529,6 @@ void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const 
             Here joint positions and speeds are in [deg] and [deg/sec].
             Therefore also stiffness and damping has to be [Nm/deg] and [Nm*sec/deg].
         */
-        //std::cout<<"speed"<<j<<" : "<<speed[j]<<std::endl;
         double q = pos[j]-zero_pos[j];
         double t_ref = -_impedancePosPDs[j].p * (q - des) -_impedancePosPDs[j].d * speed[j] + torq_offset[j];
         sendTorqueToGazebo(j,t_ref);

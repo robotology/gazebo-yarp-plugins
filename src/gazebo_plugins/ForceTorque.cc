@@ -35,6 +35,7 @@ void GazeboYarpForceTorque::Init()
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
+    _forcetorque_wrapper.close();
     _forcetorque_driver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
 }
@@ -55,7 +56,6 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
                                       ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
         
     //Getting .ini configuration file from sdf
-    
     ::yarp::os::Property wrapper_properties;
     ::yarp::os::Property driver_properties;
     bool configuration_loaded = false;

@@ -223,15 +223,6 @@ void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
     }
 }
 
-bool hasEnding (std::string const &fullString, std::string const &ending)
-{
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-    } else {
-        return false;
-    }
-}
-
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
     std::cout << ".ini file found, using joint names in ini file" << std::endl;
@@ -254,7 +245,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
         
         for(unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++ ) {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
-            if( hasEnding(gazebo_joint_name,controlboard_joint_name) ) {
+            if( GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_name) ) {
                 joint_found = true;
                 joint_names[i] = gazebo_joint_name;
             }

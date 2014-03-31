@@ -7,6 +7,8 @@
 #ifndef GAZEBOYARP_COMMON_H
 #define GAZEBOYARP_COMMON_H
 
+#include <string>
+
 namespace GazeboYarpPlugins {
         
     double const pi = 3.1415926535897932384626433;
@@ -25,10 +27,27 @@ namespace GazeboYarpPlugins {
      */
     double convertRadiansToDegrees(double radians);
     
+    /**
+     * \brief check if a string has a certaing ending
+     * \param fullString the full string
+     * \param ending the candidate ending
+     * \return true if fullString ends with ending, false otherwise
+     */
+    bool hasEnding (std::string const &fullString, std::string const &ending);
+    
     
     inline double convertDegreesToRadians(double degrees) { return degrees / 180.0 * pi; }
     
     inline double convertRadiansToDegrees(double radians) { return radians * 180.0 / pi; }
+    
+    inline bool hasEnding (std::string const &fullString, std::string const &ending)
+    {
+        if (fullString.length() >= ending.length()) {
+            return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+        } else {
+            return false;
+        }
+    }
 }
 
 

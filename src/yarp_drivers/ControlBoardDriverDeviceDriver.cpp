@@ -35,7 +35,7 @@ bool GazeboYarpControlBoardDriver::close()
     //unbinding events
     if (this->updateConnection.get()) {
         gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
-        this->updateConnection = ConnectionPtr();
+        this->updateConnection = gazebo::event::ConnectionPtr();
     }
     
     delete [] control_mode;

@@ -98,7 +98,7 @@ bool GazeboYarpIMUDriver::close()
 {
     if (this->updateConnection.get()) {
         gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
-        this->updateConnection = ConnectionPtr();
+        this->updateConnection = gazebo::event::ConnectionPtr();
     }
     return true;
 }

@@ -84,7 +84,10 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpForceTorqueDriver::close()
 {
-    gazebo::event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+    if (this->updateConnection.get()) {
+        gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
+        this->updateConnection = ConnectionPtr();
+    }
     return true;
 }
     

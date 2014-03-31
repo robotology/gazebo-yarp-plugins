@@ -29,8 +29,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
-        _controlBoard.close();
         _wrapper.close();
+        _controlBoard.close();
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(_robotName);
         std::cout<<"Goodbye!"<<std::endl;
     }

@@ -5,16 +5,14 @@
  */
 
 
-#include <gazebo_yarp_plugins/ControlBoardDriver.h>
+#include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
-//#include "../test/jointlogger.hpp"
+#include "gazebo_yarp_plugins/common.h"
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/all.h>
 #include <stdio.h>
-
-#define toDeg(X) (X*180.0/M_PI)
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -22,7 +20,7 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
-GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver(): RateThread(10)
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver()
 {}
     
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
@@ -60,8 +58,15 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     min_pos.size ( _controlboard_number_of_joints );
     _positionPIDs.reserve ( _controlboard_number_of_joints );
     _velocityPIDs.reserve ( _controlboard_number_of_joints );
+    _impedancePosPDs.reserve ( _controlboard_number_of_joints );
+    torq_offset.resize( _controlboard_number_of_joints );
+    min_stiffness.resize( _controlboard_number_of_joints, 0.0);
+    max_stiffness.resize( _controlboard_number_of_joints, 1000.0);
+    min_damping.resize( _controlboard_number_of_joints, 0.0);
+    max_damping.resize( _controlboard_number_of_joints, 100.0);
 
     setMinMaxPos();
+    setMinMaxImpedance();
     setPIDs();
     pos = 0;
     zero_pos=0;
@@ -78,6 +83,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     control_mode=new int[_controlboard_number_of_joints];
     motion_done=new bool[_controlboard_number_of_joints];
     _clock=0;
+    torq_offset = 0;
     for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
         control_mode[j]=VOCAB_CM_POSITION;
 
@@ -107,9 +113,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 break;
             }
             initial_config[counter-1] = tmp;
-            ref_pos[counter-1] = toDeg(tmp);
-            des_pos[counter-1] = toDeg(tmp);
-            pos[counter-1] = toDeg(tmp);
+            ref_pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
+            des_pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
+            pos[counter-1] = gazebo::yarp::convertRadiansToDegrees(tmp);
             counter++;
         }
         std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
@@ -123,6 +129,25 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         }
     }
     return true;
+}
+
+void GazeboYarpControlBoardDriver::compute_trj(const int j)
+{
+    if ( ( des_pos[j]-ref_pos[j] ) < -ROBOT_POSITION_TOLERANCE )
+    {
+        if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]+ ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
+        motion_done[j]=false;
+    }
+    else if ( ( des_pos[j]-ref_pos[j] ) >ROBOT_POSITION_TOLERANCE )
+    {
+        if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]- ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
+        motion_done[j]=false;
+    }
+    else
+    {
+        des_pos[j]=ref_pos[j];
+        motion_done[j]=true;
+    }
 }
 
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
@@ -142,7 +167,7 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     {
         /** \todo consider multi-dof joint ? */
         pos[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetAngle ( 0 ).Degree();
-        speed[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 );
+        speed[jnt_cnt] = gazebo::yarp::convertRadiansToDegrees(this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetVelocity ( 0 ));
         torque[jnt_cnt] = this->_robot->GetJoint ( joint_names[jnt_cnt] )->GetForce ( 0 );
     }
     pos_lock.post();
@@ -152,24 +177,10 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
     for ( unsigned int j=0; j<_controlboard_number_of_joints; ++j )
     {
         if ( control_mode[j]==VOCAB_CM_POSITION ) //set pos joint value, set vel joint value
-        {
+        {   
             if ( _clock%_T_controller==0 )
             {
-                if ( ( des_pos[j]-ref_pos[j] ) < -ROBOT_POSITION_TOLERANCE )
-                {
-                    if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]+ ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
-                    motion_done[j]=false;
-                }
-                else if ( ( des_pos[j]-ref_pos[j] ) >ROBOT_POSITION_TOLERANCE )
-                {
-                    if ( ref_speed[j]!=0 ) des_pos[j]=des_pos[j]- ( ref_speed[j]/1000.0 ) *robot_refresh_period* ( double ) _T_controller;
-                    motion_done[j]=false;
-                }
-                else
-                {
-                    des_pos[j]=ref_pos[j];
-                    motion_done[j]=true;
-                }
+                compute_trj(j);
                 //std::cout<<"pos: "<<pos[j]<<" ref_pos: "<<ref_pos[j]<<" ref_speed: "<<ref_speed[j]<<" period: "<<robot_refresh_period<<" result: "<<des_pos[j]<<std::endl;
                 sendPositionToGazebo ( j,des_pos[j] );
             }
@@ -188,6 +199,14 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
             {
                 sendTorqueToGazebo ( j,ref_torque[j] );
                 //std::cout<<" torque "<<ref_torque[j]<<" to joint "<<j<<std::endl;
+            }
+        }
+        else if ( control_mode[j] == VOCAB_CM_IMPEDANCE_POS)
+        {
+            if ( _clock%_T_controller==0 )
+            {
+                compute_trj(j);
+                sendImpPositionToGazebo ( j,des_pos[j] );
             }
         }
     }
@@ -300,13 +319,87 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
     }
 }
 
+void GazeboYarpControlBoardDriver::setMinMaxImpedance()
+{
+
+    yarp::os::Bottle& name_bot = plugin_parameters.findGroup("WRAPPER").findGroup("networks");
+    std::string name = name_bot.get(1).toString();
+
+    yarp::os::Bottle& kin_chain_bot = plugin_parameters.findGroup(name);
+    if(kin_chain_bot.check("min_stiffness"))
+    {
+        std::cout<<"min_stiffness param found!"<<std::endl;
+        yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
+        if(min_stiff_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                min_stiffness[i] = min_stiff_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
+
+    if(kin_chain_bot.check("max_stiffness"))
+    {
+        std::cout<<"max_stiffness param found!"<<std::endl;
+        yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
+        if(max_stiff_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                max_stiffness[i] = max_stiff_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
+
+    if(kin_chain_bot.check("min_damping"))
+    {
+        std::cout<<"min_damping param found!"<<std::endl;
+        yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
+        if(min_damping_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                min_damping[i] = min_damping_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
+
+    if(kin_chain_bot.check("max_damping"))
+    {
+        std::cout<<"max_damping param found!"<<std::endl;
+        yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
+        if(max_damping_bot.size()-1 == _controlboard_number_of_joints)
+        {
+            for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+                max_damping[i] = max_damping_bot.get(i+1).asDouble();
+        }
+        else
+            std::cout<<"Invalid number of params"<<std::endl;
+    }
+    else
+        std::cout<<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
+
+    std::cout<<"min_stiffness: [ "<<min_stiffness.toString()<<" ]"<<std::endl;
+    std::cout<<"max_stiffness: [ "<<max_stiffness.toString()<<" ]"<<std::endl;
+    std::cout<<"min_damping: [ "<<min_damping.toString()<<" ]"<<std::endl;
+    std::cout<<"max_damping: [ "<<max_damping.toString()<<" ]"<<std::endl;
+}
+
 void GazeboYarpControlBoardDriver::setPIDs()
 {
     setPIDsForGroup("GAZEBO_PIDS", _positionPIDs, PIDFeedbackTermAllTerms);
     setPIDsForGroup("GAZEBO_VELOCITY_PIDS", _velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+    setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", _impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
 }
 
-bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(yarp::sig::Vector refs)
+bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(Vector &refs)
 {
     for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
     {
@@ -329,7 +422,7 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     GazeboYarpControlBoardDriver::PID positionPID = _positionPIDs[joint_index];
     
     j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
-    j_cmd.mutable_position()->set_target(toRad(ref));
+    j_cmd.mutable_position()->set_target(gazebo::yarp::convertDegreesToRadians(ref));
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
     j_cmd.mutable_position()->set_d_gain(positionPID.d);
@@ -395,7 +488,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
 //         j_cmd.mutable_velocity()->set_limit(velocityPID.maxOut);
 //     }
 
-    j_cmd.mutable_velocity()->set_target(toRad(ref));
+    j_cmd.mutable_velocity()->set_target(gazebo::yarp::convertDegreesToRadians(ref));
 }
 
 bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
@@ -426,4 +519,24 @@ void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd&
     j_cmd.mutable_velocity()->set_i_gain(0.0);
     j_cmd.mutable_velocity()->set_d_gain(0.0);
     j_cmd.set_force(ref);
+}
+
+void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const double des )
+{
+    if(j >= 0 && j < _controlboard_number_of_joints)
+    {
+        /*
+            Here joint positions and speeds are in [deg] and [deg/sec].
+            Therefore also stiffness and damping has to be [Nm/deg] and [Nm*sec/deg].
+        */
+        double q = pos[j]-zero_pos[j];
+        double t_ref = -_impedancePosPDs[j].p * (q - des) -_impedancePosPDs[j].d * speed[j] + torq_offset[j];
+        sendTorqueToGazebo(j,t_ref);
+    }
+}
+
+void GazeboYarpControlBoardDriver::sendImpPositionsToGazebo ( Vector &dess )
+{
+    for(unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
+        sendImpPositionToGazebo(i, dess[i]);
 }

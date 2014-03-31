@@ -13,11 +13,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriverList.h>
-#include <gazebo_yarp_plugins/ControlBoardDriver.h>
-
-
-#define ms(X) (X * 1000.0)
-#define toRad(X) (X*M_PI/180.0)
 
 namespace gazebo
 {

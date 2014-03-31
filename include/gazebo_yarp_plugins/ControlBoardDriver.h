@@ -17,14 +17,12 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/RateThread.h>
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 
 
-#define toRad(X) (X*M_PI/180.0)
 const double ROBOT_POSITION_TOLERANCE=0.9;
 
 namespace yarp {
@@ -47,7 +45,7 @@ class yarp::dev::GazeboYarpControlBoardDriver :
     public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
-    public yarp::os::RateThread
+    public IImpedanceControl
 {
 public:
     
@@ -68,11 +66,6 @@ public:
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);    
     virtual bool close();
-    //THREAD (inside comanDeviceDriver.cpp)
-    virtual void run();
-    virtual bool threadInit();
-    virtual void afterStart(bool s);
-    virtual void threadRelease();
     
     //ENCODERS
     virtual bool getEncoder(int j, double *v); //WORKS
@@ -173,6 +166,13 @@ public:
     virtual bool disableTorquePid(int j); //NOT IMPLEMENTED
     virtual bool enableTorquePid(int j); //NOT IMPLEMENTED
     virtual bool setTorqueOffset(int j, double v); //NOT IMPLEMENTED
+
+    //IMPEDANCE CTRL
+    virtual bool getImpedance(int j, double *stiffness, double *damping); // [Nm/deg] & [Nm*sec/deg]
+    virtual bool setImpedance(int j, double stiffness, double damping); // [Nm/deg] & [Nm*sec/deg]
+    virtual bool setImpedanceOffset(int j, double offset);
+    virtual bool getImpedanceOffset(int j, double* offset);
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
     
     /*
      * Probably useless stuff here
@@ -256,6 +256,13 @@ private:
     gazebo::transport::PublisherPtr jointCmdPub;
     std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
+
+    yarp::sig::Vector torq_offset;
+    yarp::sig::Vector min_stiffness;
+    yarp::sig::Vector min_damping;
+    yarp::sig::Vector max_stiffness;
+    yarp::sig::Vector max_damping;
 
     bool *motion_done;
     int  *control_mode;
@@ -266,20 +273,15 @@ private:
     
     //jointLogger logger;
 
-    yarp::os::Port _joint_torq_port;
-    yarp::os::Port _joint_speed_port;
-
-    yarp::os::Port _joint_torq_port_rpc;
-    yarp::os::Port _joint_speed_port_rpc;
-
     /**
      * Private Gazebo methods
      */
     void setMinMaxPos();  //NOT TESTED
     bool setJointNames();  //WORKS
     void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
+    void setMinMaxImpedance();
     void setPIDs(); //WORKS
-    bool sendPositionsToGazebo(yarp::sig::Vector refs);
+    bool sendPositionsToGazebo(yarp::sig::Vector& refs);
     bool sendPositionToGazebo(int j,double ref);
     void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref);  //WORKS
     bool sendVelocitiesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
@@ -288,6 +290,9 @@ private:
     bool sendTorquesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
     bool sendTorqueToGazebo(const int j,const double ref); //NOT TESTED
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
+    void sendImpPositionToGazebo ( const int j, const double des );
+    void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
+    void compute_trj(const int j);
 
 };
 

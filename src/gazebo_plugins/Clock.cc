@@ -25,7 +25,12 @@ namespace gazebo
 
 
     void GazeboYarpClock::Load(int _argc, char **_argv)
-    {
+    { 
+        if( !_yarp.checkNetwork() ) { 
+            std::cerr << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+            return;
+        }
+        
         std::cout << "GazeboYarpClock loaded." << std::endl;
         
         port_name = "/clock";

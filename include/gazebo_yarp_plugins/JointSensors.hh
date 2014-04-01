@@ -25,8 +25,6 @@ class GazeboYarpJointSensors : public ModelPlugin
 public:
     GazeboYarpJointSensors();
 
-    void Init();
-
     virtual ~GazeboYarpJointSensors();
 
     /**
@@ -43,7 +41,8 @@ private:
     yarp::os::Property _parameters;
     
     std::string _robotName;
-
+    
+    bool plugin_loaded;
 };
 
 }

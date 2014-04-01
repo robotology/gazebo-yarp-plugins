@@ -24,15 +24,6 @@ GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(), _yarp()
 {
 }
 
-void GazeboYarpIMU::Init()
-{
-    std::cout<<"*** GazeboYarpIMU plugin started ***"<<std::endl;
-    if (!_yarp.checkNetwork())
-        std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
-    else
-        std::cout<<"YARP Server found!"<<std::endl;
-}
-
 GazeboYarpIMU::~GazeboYarpIMU()
 {
     std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
@@ -42,6 +33,12 @@ GazeboYarpIMU::~GazeboYarpIMU()
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
+    if( !_yarp.checkNetwork() ) { 
+        std::cerr << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+        return;
+    }
+    
+    std::cout<<"*** GazeboYarpIMU plugin started ***"<<std::endl;
     
     if (!_sensor)
     {

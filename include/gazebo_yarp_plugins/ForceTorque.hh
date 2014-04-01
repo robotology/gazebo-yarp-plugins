@@ -36,8 +36,6 @@ namespace gazebo
         yarp::dev::PolyDriver _forcetorque_driver;
         
         std::string _sensorName;
-        
-        virtual void Init();
     };
 }
 

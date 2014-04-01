@@ -19,30 +19,26 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpForceTorque)
 
 namespace gazebo {
 
-GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp()
+GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp(), _iWrap(0)
 {
-}
-
-void GazeboYarpForceTorque::Init()
-{
-    std::cout<<"*** GazeboYarpForceTorque plugin started ***"<<std::endl;
-    if (!_yarp.checkNetwork())
-        std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
-    else
-        std::cout<<"YARP Server found!"<<std::endl;
 }
 
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
-    _iWrap->detachAll();
-    _forcetorque_wrapper.close();
-    _forcetorque_driver.close();
+    if(_iWrap) { _iWrap->detachAll(); _iWrap = 0; }
+    if( _forcetorque_wrapper.isValid() ) _forcetorque_wrapper.close();
+    if( _forcetorque_driver.isValid() ) _forcetorque_driver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
+    if( !_yarp.checkNetwork() ) { 
+       std::cerr << "GazeboYarpForceTorque::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+       return;
+    }
+    std::cout<<"*** GazeboYarpForceTorque plugin started ***"<<std::endl;
     
     if (!_sensor)
     {

@@ -35,8 +35,6 @@ class GazeboYarpControlBoard : public ModelPlugin
 public:
     GazeboYarpControlBoard();
 
-    void Init();
-
     virtual ~GazeboYarpControlBoard();
 
     /**
@@ -53,7 +51,7 @@ private:
     yarp::os::Property _parameters;
     
     std::string _robotName;
-
+    
 };
 
 }

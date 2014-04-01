@@ -26,9 +26,7 @@ namespace gazebo
         
         void ClockUpdate();
         
-    private:
-        virtual void Init() {};
-        
+    private:        
         yarp::os::Network _yarp;
 
         std::string port_name;

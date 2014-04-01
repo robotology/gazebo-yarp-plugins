@@ -13,25 +13,16 @@ namespace gazebo
     
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
-    GazeboYarpControlBoard::GazeboYarpControlBoard() : _yarp()
+    GazeboYarpControlBoard::GazeboYarpControlBoard() : _yarp(), _iWrap(0)
     {
 
-    }
-
-    void GazeboYarpControlBoard::Init()
-    {
-        std::cout<<"GazeboYarpControlBoard::Init() called"<<std::endl;
-        if (!_yarp.checkNetwork())
-            std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
-        else
-            std::cout<<"YARP Server found!"<<std::endl;
     }
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
-        _iWrap->detachAll();
-        _wrapper.close();
-        _controlBoard.close();
+        if(_iWrap) { _iWrap->detachAll(); _iWrap = 0; }
+        if( _wrapper.isValid() ) _wrapper.close();
+        if( _controlBoard.isValid() ) _controlBoard.close();
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(_robotName);
         std::cout<<"Goodbye!"<<std::endl;
     }
@@ -41,7 +32,18 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
-     
+        if( !_yarp.checkNetwork() ) { 
+            std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+            return;
+        }
+        std::cout<<"*** GazeboYarpControlBoard plugin started ***"<<std::endl;
+        
+        if (!_parent)
+        {
+            gzerr << "GazeboYarpControlBoard plugin requires a parent.\n";
+            return;
+        }
+        
         _robotName = _parent->GetScopedName();
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 

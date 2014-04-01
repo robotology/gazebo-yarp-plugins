@@ -18,30 +18,26 @@ GZ_REGISTER_MODEL_PLUGIN(gazebo::GazeboYarpJointSensors)
 
 namespace gazebo {
 
-GazeboYarpJointSensors::GazeboYarpJointSensors() : ModelPlugin(), _yarp()
+GazeboYarpJointSensors::GazeboYarpJointSensors() : ModelPlugin(), _yarp(), _iWrap(0)
 {
-}
-
-void GazeboYarpJointSensors::Init()
-{
-    std::cout<<"*** GazeboYarpJointSensors plugin started ***"<<std::endl;
-    if (!_yarp.checkNetwork())
-        std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
-    else
-        std::cout<<"YARP Server found!"<<std::endl;
 }
 
 GazeboYarpJointSensors::~GazeboYarpJointSensors()
 {
     std::cout<<"*** GazeboYarpJointSensors closing ***"<<std::endl;
-    _iWrap->detachAll();
-    _jointsensors_wrapper.close();
-    _jointsensors_driver.close();
+    if(_iWrap) { _iWrap->detachAll(); _iWrap = 0; }
+    if( _jointsensors_wrapper.isValid() ) _jointsensors_wrapper.close();
+    if( _jointsensors_driver.isValid() ) _jointsensors_driver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeRobot(_robotName);
 }
 
 void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
+    if( !_yarp.checkNetwork() ) { 
+       std::cerr << "GazeboYarpJointSensors::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+       return;
+    }
+    std::cout<<"*** GazeboYarpJointSensors plugin started ***"<<std::endl;
     
     if (!_parent)
     {

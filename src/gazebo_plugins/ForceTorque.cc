@@ -35,6 +35,7 @@ void GazeboYarpForceTorque::Init()
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
+    _iWrap->detachAll();
     _forcetorque_wrapper.close();
     _forcetorque_driver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
@@ -108,17 +109,16 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
     
     //Attach the driver to the wrapper
-    ::yarp::dev::IMultipleWrapper * iWrap;
     ::yarp::dev::PolyDriverList driver_list;
     
-    if( !_forcetorque_wrapper.view(iWrap) ) {
+    if( !_forcetorque_wrapper.view(_iWrap) ) {
         std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
         return;
     }
     
     driver_list.push(&_forcetorque_driver,"dummy");
     
-    if( iWrap->attachAll(driver_list) ) {
+    if( _iWrap->attachAll(driver_list) ) {
         std::cerr << "GazeboYarpForceTorque : wrapper was connected with driver " << std::endl;
     } else {
         std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;

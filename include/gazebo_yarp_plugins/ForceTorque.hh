@@ -10,6 +10,7 @@
 
 #include <gazebo/gazebo.hh>
 #include <yarp/os/Network.h>
+#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <string>
 
@@ -31,6 +32,7 @@ namespace gazebo
         sensors::ForceTorqueSensor* parentSensor;
         yarp::os::Network _yarp;
         yarp::dev::PolyDriver _forcetorque_wrapper;
+        yarp::dev::IMultipleWrapper *_iWrap;
         yarp::dev::PolyDriver _forcetorque_driver;
         
         std::string _sensorName;

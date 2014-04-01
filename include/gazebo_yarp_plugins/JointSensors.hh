@@ -38,6 +38,7 @@ private:
     
     yarp::os::Network _yarp;
     yarp::dev::PolyDriver _jointsensors_wrapper;
+    yarp::dev::IMultipleWrapper *_iWrap;
     yarp::dev::PolyDriver _jointsensors_driver;
     yarp::os::Property _parameters;
     

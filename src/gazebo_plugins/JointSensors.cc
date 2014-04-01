@@ -34,6 +34,7 @@ void GazeboYarpJointSensors::Init()
 GazeboYarpJointSensors::~GazeboYarpJointSensors()
 {
     std::cout<<"*** GazeboYarpJointSensors closing ***"<<std::endl;
+    _iWrap->detachAll();
     _jointsensors_wrapper.close();
     _jointsensors_driver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeRobot(_robotName);
@@ -105,17 +106,16 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     }
     
     //Attach the driver to the wrapper
-    ::yarp::dev::IMultipleWrapper * iWrap;
     ::yarp::dev::PolyDriverList driver_list;
     
-    if( !_jointsensors_wrapper.view(iWrap) ) {
+    if( !_jointsensors_wrapper.view(_iWrap) ) {
         std::cerr << "GazeboYarpJointSensors : error in loading wrapper" << std::endl;
         return;
     }
     
     driver_list.push(&_jointsensors_driver,"dummy");
     
-    if( iWrap->attachAll(driver_list) ) {
+    if( _iWrap->attachAll(driver_list) ) {
         std::cerr << "GazeboYarpJointSensors : wrapper was connected with driver " << std::endl;
     } else {
         std::cerr << "GazeboYarpJointSensors : error in connecting wrapper and device " << std::endl;

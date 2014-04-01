@@ -77,7 +77,6 @@ set(controlBoard_headers    include/gazebo_yarp_plugins/ControlBoard.hh
 SOURCE_GROUP("Source Files" FILES ${controlBoard_source})
 SOURCE_GROUP("Header Files" FILES ${controlBoard_headers})
 
-
 set(forceTorque_source      src/gazebo_plugins/ForceTorque.cc
                             src/yarp_drivers/ForceTorqueDriver.cpp)
 
@@ -88,6 +87,7 @@ set(forceTorque_headers     include/gazebo_yarp_plugins/ForceTorque.hh
 SOURCE_GROUP("Source Files" FILES ${forceTorque_source})
 SOURCE_GROUP("Header Files" FILES ${forceTorque_headers})
 
+
 set(imu_headers             include/gazebo_yarp_plugins/IMU.hh
                             include/gazebo_yarp_plugins/IMUDriver.h)
 set(imu_source              src/gazebo_plugins/IMU.cc 
@@ -95,6 +95,14 @@ set(imu_source              src/gazebo_plugins/IMU.cc
 
 SOURCE_GROUP("Source Files" FILES ${imu_source})
 SOURCE_GROUP("Header Files" FILES ${imu_headers})
+
+set(jointSensors_headers    include/gazebo_yarp_plugins/JointSensors.hh
+                            include/gazebo_yarp_plugins/JointSensorsDriver.h)
+set(jointSensors_source     src/gazebo_plugins/JointSensors.cc 
+                            src/yarp_drivers/JointSensorsDriver.cpp)
+
+SOURCE_GROUP("Source Files" FILES ${jointSensors_source})
+SOURCE_GROUP("Header Files" FILES ${jointSensors_headers})
 
 set(clock_headers           include/gazebo_yarp_plugins/Clock.hh)
 set(clock_source            src/gazebo_plugins/Clock.cc)
@@ -106,6 +114,7 @@ add_library(gazebo_yarp_singleton    SHARED ${singleton_source}    ${singleton_h
 add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})
 add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
 add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
+add_library(gazebo_yarp_jointsensors SHARED ${jointSensors_source} ${jointSensors_source})
 add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
 
 
@@ -113,6 +122,7 @@ target_link_libraries(gazebo_yarp_singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARI
 target_link_libraries(gazebo_yarp_controlboard  gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_forcetorque   gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ForceTorquePlugin  ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_imu           gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_jointsensors  gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_clock         gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 
@@ -126,6 +136,7 @@ install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_forcetorque 
                 gazebo_yarp_forcetorque 
                 gazebo_yarp_imu 
+                gazebo_yarp_jointsensors
                 gazebo_yarp_clock
                 DESTINATION lib)
 

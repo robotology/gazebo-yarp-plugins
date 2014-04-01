@@ -23,7 +23,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     _robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(NULL == _robot)
     {
-        std::cout << "Error, robot was not found\n";
+        std::cout << "GazeboYarpControlBoardDriver error: robot was not found\n";
         return false;
     }
     

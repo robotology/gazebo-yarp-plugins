@@ -32,7 +32,7 @@ GazeboYarpIMUDriver::~GazeboYarpIMUDriver()
  * 6  7   8  = Calibrated 3-axis (X, Y, Z) gyroscope data
  * 9 10 11   = Calibrated 3-axis (X, Y, Z) magnetometer data
  *
- * \todo check orientation data
+ * \todo TODO check orientation data
  */
 void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
 {
@@ -44,7 +44,7 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
     linear_acceleration = this->parentSensor->GetLinearAcceleration();
     angular_velocity = this->parentSensor->GetAngularVelocity();
     
-    /** \todo ensure that the timestamp is the right one */
+    /** \todo TODO ensure that the timestamp is the right one */
     last_timestamp.update(this->parentSensor->GetLastUpdateTime().Double());
     
         

@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef GAZEBOYARP_FORCETORQUEDRIVER_H
-#define GAZEBOYARP_FORCETORQUEDRIVER_H
+#ifndef GAZEBOYARP_JOINTSENSORSDRIVER_HH
+#define GAZEBOYARP_JOINTSENSORSDRIVER_HH
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
@@ -14,33 +14,35 @@
 #include <yarp/os/Semaphore.h>
 
 #include <gazebo/gazebo.hh>
-#include "gazebo/sensors/ForceTorqueSensor.hh"
-
+#include <gazebo/physics/physics.hh>
+#include <gazebo/transport/transport.hh>
 
 namespace yarp {
     namespace dev {
-        class GazeboYarpForceTorqueDriver;
+        class GazeboYarpJointSensorsDriver;
     }
 }
 
-const int yarp_forcetorque_nr_of_channels = 6; //The IMU has 6 fixed channels
 
-const std::string yarp_scopedname_parameter = "sensorScopedName";
-
-class yarp::dev::GazeboYarpForceTorqueDriver: 
+class yarp::dev::GazeboYarpJointSensorsDriver: 
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
 {
 public:
-    GazeboYarpForceTorqueDriver();
-
-    virtual ~GazeboYarpForceTorqueDriver();
     
+    GazeboYarpJointSensorsDriver();
+
+    virtual ~GazeboYarpJointSensorsDriver();
+
+    /**
+     * Gazebo stuff
+     */
+    bool gazebo_init();
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
     /**
-     * Yarp interfaces start here
+     * Yarp interfaces implementation
      */
     
     //DEVICE DRIVER
@@ -59,19 +61,32 @@ public:
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
-
+    
 private:
-    yarp::sig::Vector forcetorque_data; //buffer for forcetorque sensor data
+    enum {
+        Position,
+        Speed,
+        Torque 
+    } jointsensors_type;
+    
+    gazebo::physics::Model* _robot;
+    
+    std::vector<gazebo::physics::Joint *> joint_ptrs;
+    
+    yarp::sig::Vector jointsensors_data; //buffer for joint sensors data
+    
+    int jointsensors_nr_of_channels;
     
     yarp::os::Stamp last_timestamp; //buffer for last timestamp data
     
     yarp::os::Semaphore data_mutex; //mutex for accessing the data
-    
-    gazebo::sensors::ForceTorqueSensor* parentSensor;
-    
+        
     gazebo::event::ConnectionPtr updateConnection;
-
+    
+    bool setJointPointers(yarp::os::Property & plugin_parameters); 
+    bool setJointSensorsType(yarp::os::Property & plugin_parameters); 
 
 };
 
-#endif // GAZEBO_YARP_FORCETORQUE_DRIVER_H
+#endif //GAZEBOYARP_JOINTSENSORSDRIVER_HH
+

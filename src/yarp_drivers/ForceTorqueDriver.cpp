@@ -34,6 +34,7 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo & /*
     torque = this->parentSensor->GetTorque();
     
     /** \todo ensure that the timestamp is the right one */
+    /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */
     last_timestamp.update(this->parentSensor->GetLastUpdateTime().Double());
     
     int i=0;

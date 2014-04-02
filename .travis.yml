@@ -13,7 +13,7 @@ before_script:
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu precise main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update
-  - sudo apt-get --force-yes install libtinyxml-dev gazebo3-prerelease libboost-system-dev libace-dev
+  - sudo apt-get --force-yes install libtinyxml-dev gazebo-current libboost-system-dev libace-dev
   #check gazebo version 
   - gazebo 
   - git clone https://github.com/robotology/yarp

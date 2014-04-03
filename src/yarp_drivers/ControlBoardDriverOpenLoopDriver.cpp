@@ -5,8 +5,7 @@
  */
 
 
-#include "ControlBoardDriver.h"
-
+#include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
 namespace yarp {
     namespace dev {

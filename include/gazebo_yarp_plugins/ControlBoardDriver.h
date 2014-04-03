@@ -13,6 +13,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
@@ -45,7 +46,8 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
-    public IImpedanceControl
+    public IImpedanceControl,
+    public IOpenLoopControl
 {
 public:
     
@@ -173,6 +175,19 @@ public:
     virtual bool setImpedanceOffset(int j, double offset);
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
+    
+    //IOpenLoopControl interface methods
+    /**
+     * Command direct output value to joint j. On gazebo this is done by...
+     * \param j joint number
+     * \param v value to be set
+     * \return true if the operation succeeded. False otherwise
+     */
+    virtual bool setOutput(int j, double v);
+    virtual bool setOutputs(const double *v);
+    virtual bool getOutput(int j, double *v);
+    virtual bool getOutputs(double *v);
+    virtual bool setOpenLoopMode();
     
     /*
      * Probably useless stuff here

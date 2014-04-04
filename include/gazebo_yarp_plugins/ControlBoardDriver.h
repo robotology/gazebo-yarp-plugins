@@ -178,7 +178,7 @@ public:
     
     //IOpenLoopControl interface methods
     /**
-     * Command direct output value to joint j. On gazebo this is done by...
+     * Command direct output value to joint j. Currently this is a torque
      * \param j joint number
      * \param v value to be set
      * \return true if the operation succeeded. False otherwise

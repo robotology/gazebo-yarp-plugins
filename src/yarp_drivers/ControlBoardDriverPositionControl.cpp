@@ -224,6 +224,11 @@ bool GazeboYarpControlBoardDriver::stop(const int n_joint, const int *joints) //
 
 
 // IPOSITION DIRECT
+bool GazeboYarpControlBoardDriver::setPositionDirectMode() //NOT IMPLEMENTED -> Is it the same as setPositionMode?
+{
+    return false;
+}
+
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
     if (j >= 0 && j < (int)_controlboard_number_of_joints)

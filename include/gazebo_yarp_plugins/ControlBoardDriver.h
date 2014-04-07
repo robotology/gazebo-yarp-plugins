@@ -200,6 +200,7 @@ public:
      */
     
     // IPOSITION DIRECT
+    bool setPositionDirectMode();
     bool setPosition(int j, double ref);
     bool setPositions(const int n_joint, const int *joints, double *refs);
     bool setPositions(const double *refs);

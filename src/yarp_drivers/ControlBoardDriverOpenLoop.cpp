@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
+#include <iostream>
 #include "gazebo_yarp_plugins/ControlBoardDriver.h"
 
 namespace yarp {
@@ -40,12 +40,12 @@ namespace yarp {
         
         bool GazeboYarpControlBoardDriver::getOutputs(double *v)
         {
+            std::cout << "get outputs - gazebo\n";
             if (!v) return false;
             for(unsigned int j = 0; j < _controlboard_number_of_joints; ++j) {
                 v[j] = torque[j];
             }
             return true;
-
         }
         
         bool GazeboYarpControlBoardDriver::setOpenLoopMode()

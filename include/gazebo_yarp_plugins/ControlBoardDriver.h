@@ -15,6 +15,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
@@ -47,7 +48,8 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public ITorqueControl,
     public IPositionDirect,
     public IImpedanceControl,
-    public IOpenLoopControl
+    public IOpenLoopControl,
+    public IPidControl
 {
 public:
     
@@ -188,6 +190,28 @@ public:
     virtual bool getOutput(int j, double *v);
     virtual bool getOutputs(double *v);
     virtual bool setOpenLoopMode();
+    
+    /*
+     * IPidControl Interface methods
+     */
+    virtual bool setPid (int j, const Pid &pid);
+    virtual bool setPids (const Pid *pids);
+    virtual bool setReference (int j, double ref);
+    virtual bool setReferences (const double *refs);
+    virtual bool setErrorLimit (int j, double limit);
+    virtual bool setErrorLimits (const double *limits);
+    virtual bool getError (int j, double *err);
+    virtual bool getErrors (double *errs);
+    virtual bool getPid (int j, Pid *pid);
+    virtual bool getPids (Pid *pids);
+    virtual bool getReference (int j, double *ref);
+    virtual bool getReferences (double *refs);
+    virtual bool getErrorLimit (int j, double *limit);
+    virtual bool getErrorLimits (double *limits);
+    virtual bool resetPid (int j);
+    virtual bool disablePid (int j);
+    virtual bool enablePid (int j);
+    virtual bool setOffset (int j, double v);
     
     /*
      * Probably useless stuff here

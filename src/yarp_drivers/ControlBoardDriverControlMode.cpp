@@ -88,8 +88,16 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  {
      return false;
  }
- bool GazeboYarpControlBoardDriver::setOpenLoopMode(int) //NOT IMPLEMENTED
+ bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
  {
-     return false;
+     if(control_mode[j] == VOCAB_CM_VELOCITY) {
+         gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
+         joint->SetMaxForce(0, 0);
+         joint->SetVelocity(0,0);
+     }
+     
+     control_mode[j] = VOCAB_CM_OPENLOOP;
+     std::cout<<"control mode = openloop "<<j<<std::endl;
+     return true;
  }
 

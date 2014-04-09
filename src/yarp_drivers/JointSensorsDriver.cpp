@@ -32,8 +32,6 @@ void GazeboYarpJointSensorsDriver::onUpdate(const gazebo::common::UpdateInfo & _
     /** \todo ensure that the timestamp is the right one */
     last_timestamp.update(_info.simTime.Double());
     
-    int i=0;
-    
     data_mutex.wait();
     for ( unsigned int jnt_cnt=0; jnt_cnt < joint_ptrs.size(); jnt_cnt++ )
     {
@@ -49,7 +47,7 @@ void GazeboYarpJointSensorsDriver::onUpdate(const gazebo::common::UpdateInfo & _
                 break;
             case Torque : 
                 //As convention in yarp ports, the torque are expressed in Nm
-                jointsensors_data[jnt_cnt] = joint_ptrs[jnt_cnt]->GetForce ( 0 );
+                jointsensors_data[jnt_cnt] = joint_ptrs[jnt_cnt]->GetForce ( 0u );
                 break;
             default:
                 assert(false);

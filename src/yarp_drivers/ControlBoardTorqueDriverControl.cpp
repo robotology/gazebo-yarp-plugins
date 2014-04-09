@@ -16,6 +16,7 @@ bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t) //NOT TESTED
     if (j >= 0 && j < (int)_controlboard_number_of_joints)
     {
         ref_torque[j] = t;
+        std::cout<<"ref_torque = "<<ref_torque[j]<<std::endl;
         return true;
     }
     return false;

@@ -424,9 +424,9 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
 //     if (positionPID.maxOut > 0) {
 //         j_cmd.mutable_position()->set_limit(positionPID.maxOut);
 //     }
-    j_cmd.mutable_velocity()->set_p_gain(0.0);
-    j_cmd.mutable_velocity()->set_i_gain(0.0);
-    j_cmd.mutable_velocity()->set_d_gain(0.0);
+//    j_cmd.mutable_velocity()->set_p_gain(0.0);
+//    j_cmd.mutable_velocity()->set_i_gain(0.0);
+//    j_cmd.mutable_velocity()->set_d_gain(0.0);
 }
 
 bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
@@ -465,9 +465,9 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     GazeboYarpControlBoardDriver::PID velocityPID = _velocityPIDs[j];
     
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-    j_cmd.mutable_position()->set_p_gain(0.0);
-    j_cmd.mutable_position()->set_i_gain(0.0);
-    j_cmd.mutable_position()->set_d_gain(0.0);
+//    j_cmd.mutable_position()->set_p_gain(0.0);
+//    j_cmd.mutable_position()->set_i_gain(0.0);
+//    j_cmd.mutable_position()->set_d_gain(0.0);
     j_cmd.mutable_velocity()->set_p_gain(velocityPID.p);
     j_cmd.mutable_velocity()->set_i_gain(velocityPID.i);
     j_cmd.mutable_velocity()->set_d_gain(velocityPID.d);
@@ -503,12 +503,12 @@ bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double r
 void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-    j_cmd.mutable_position()->set_p_gain(0.0);
-    j_cmd.mutable_position()->set_i_gain(0.0);
-    j_cmd.mutable_position()->set_d_gain(0.0);
-    j_cmd.mutable_velocity()->set_p_gain(0.0);
-    j_cmd.mutable_velocity()->set_i_gain(0.0);
-    j_cmd.mutable_velocity()->set_d_gain(0.0);
+//    j_cmd.mutable_position()->set_p_gain(0.0);
+//    j_cmd.mutable_position()->set_i_gain(0.0);
+//    j_cmd.mutable_position()->set_d_gain(0.0);
+//    j_cmd.mutable_velocity()->set_p_gain(0.0);
+//    j_cmd.mutable_velocity()->set_i_gain(0.0);
+//    j_cmd.mutable_velocity()->set_d_gain(0.0);
     j_cmd.set_force(ref);
 }
 

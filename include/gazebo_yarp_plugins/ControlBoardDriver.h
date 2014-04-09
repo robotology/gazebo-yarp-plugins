@@ -294,6 +294,7 @@ private:
     void sendImpPositionToGazebo ( const int j, const double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
     void compute_trj(const int j);
+    void prepareResetJointMsg(int j);
 
 };
 

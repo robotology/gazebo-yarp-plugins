@@ -6,7 +6,6 @@
 
 
 #include "gazebo_yarp_plugins/ControlBoardDriver.h"
-
 #include "gazebo_yarp_plugins/Handler.hh"
 
 
@@ -21,10 +20,10 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     std::string robotName (plugin_parameters.find("robotScopedName").asString().c_str());
     std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
 
-    _robot = GazeboYarpPluginHandler::getHandler()->getRobot(robotName);
+    _robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(NULL == _robot)
     {
-        std::cout << "Error, robot was not found\n";
+        std::cout << "GazeboYarpControlBoardDriver error: robot was not found\n";
         return false;
     }
     
@@ -34,7 +33,10 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 bool GazeboYarpControlBoardDriver::close()
 {
     //unbinding events
-    gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
+    if (this->updateConnection.get()) {
+        gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
+        this->updateConnection = gazebo::event::ConnectionPtr();
+    }
     
     delete [] control_mode;
     delete [] motion_done;

@@ -23,7 +23,7 @@
 #include <gazebo/transport/transport.hh>
 
 
-const double ROBOT_POSITION_TOLERANCE=0.9;
+const double ROBOT_POSITION_TOLERANCE = 0.9;
 
 namespace yarp {
     namespace dev {
@@ -33,7 +33,7 @@ namespace yarp {
 }
 
 
-class yarp::dev::GazeboYarpControlBoardDriver : 
+class yarp::dev::GazeboYarpControlBoardDriver: 
     public DeviceDriver,
     public IPositionControl2,
     public IVelocityControl,

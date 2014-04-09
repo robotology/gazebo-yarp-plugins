@@ -5,44 +5,40 @@
  */
 
 
-#include <gazebo_yarp_plugins/ForceTorque.hh>
-#include <gazebo_yarp_plugins/ForceTorqueDriver.h>
+#include "gazebo_yarp_plugins/ForceTorque.hh"
+#include "gazebo_yarp_plugins/ForceTorqueDriver.h"
+#include "gazebo_yarp_plugins/Handler.hh"
+#include "gazebo_yarp_plugins/common.h"
 
+#include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
-#include <gazebo/sensors/ForceTorqueSensor.hh>
-#include "gazebo_yarp_plugins/Handler.hh"
 
+GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpForceTorque)
 
-using namespace gazebo;
+namespace gazebo {
 
-GZ_REGISTER_SENSOR_PLUGIN(GazeboYarpForceTorque)
-
-#define toDeg(X) (X*180.0/M_PI)
-
-GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp()
+GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp(), _iWrap(0)
 {
-}
-
-void GazeboYarpForceTorque::Init()
-{
-    std::cout<<"*** GazeboYarpForceTorque plugin started ***"<<std::endl;
-    if (!_yarp.checkNetwork())
-        std::cout<<"Sorry YARP network does not seem to be available, is the yarp server available?"<<std::endl;
-    else
-        std::cout<<"YARP Server found!"<<std::endl;
 }
 
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
-    _forcetorque_driver.close();
-    GazeboYarpPluginHandler::getHandler()->removeSensor(_sensorName);
+    if(_iWrap) { _iWrap->detachAll(); _iWrap = 0; }
+    if( _forcetorque_wrapper.isValid() ) _forcetorque_wrapper.close();
+    if( _forcetorque_driver.isValid() ) _forcetorque_driver.close();
+    GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
+    if( !_yarp.checkNetwork() ) { 
+       std::cerr << "GazeboYarpForceTorque::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+       return;
+    }
+    std::cout<<"*** GazeboYarpForceTorque plugin started ***"<<std::endl;
     
     if (!_sensor)
     {
@@ -53,13 +49,12 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     _sensor->SetActive(true);
 
     // Add my gazebo device driver to the factory.
-    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpForceTorqueDriver>
+    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpForceTorqueDriver>
                                       ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
         
     //Getting .ini configuration file from sdf
-    
-    yarp::os::Property wrapper_properties;
-    yarp::os::Property driver_properties;
+    ::yarp::os::Property wrapper_properties;
+    ::yarp::os::Property driver_properties;
     bool configuration_loaded = false;
         
     if(_sdf->HasElement("yarpConfigurationFile") )
@@ -85,7 +80,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     
     _sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
-    GazeboYarpPluginHandler::getHandler()->setSensor(boost::get_pointer(_sensor));
+    GazeboYarpPlugins::Handler::getHandler()->setSensor(boost::get_pointer(_sensor));
     
     driver_properties.put(yarp_scopedname_parameter.c_str(), _sensorName.c_str());
     
@@ -110,20 +105,21 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
     
     //Attach the driver to the wrapper
-    yarp::dev::IMultipleWrapper * iWrap;
-    yarp::dev::PolyDriverList driver_list;
+    ::yarp::dev::PolyDriverList driver_list;
     
-    if( !_forcetorque_wrapper.view(iWrap) ) {
+    if( !_forcetorque_wrapper.view(_iWrap) ) {
         std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
         return;
     }
     
     driver_list.push(&_forcetorque_driver,"dummy");
     
-    if( iWrap->attachAll(driver_list) ) {
+    if( _iWrap->attachAll(driver_list) ) {
         std::cerr << "GazeboYarpForceTorque : wrapper was connected with driver " << std::endl;
     } else {
         std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
     }
     
+}
+
 }

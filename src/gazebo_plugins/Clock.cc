@@ -3,14 +3,11 @@
  * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-#include <gazebo_yarp_plugins/Clock.hh>
 
+#include "gazebo_yarp_plugins/Clock.hh"
 #include <gazebo/physics/physics.hh>
-
 #include <yarp/os/Property.h>
-
 #include <iostream>
-
 #include <cmath>
 
 namespace gazebo
@@ -28,7 +25,12 @@ namespace gazebo
 
 
     void GazeboYarpClock::Load(int _argc, char **_argv)
-    {
+    { 
+        if( !_yarp.checkNetwork() ) { 
+            std::cerr << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+            return;
+        }
+        
         std::cout << "GazeboYarpClock loaded." << std::endl;
         
         port_name = "/clock";

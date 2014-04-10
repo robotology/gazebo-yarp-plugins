@@ -13,7 +13,9 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
@@ -45,7 +47,9 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
-    public IImpedanceControl
+    public IImpedanceControl,
+    public IOpenLoopControl,
+    public IPidControl
 {
 public:
     
@@ -174,6 +178,41 @@ public:
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
     
+    //IOpenLoopControl interface methods
+    /**
+     * Command direct output value to joint j. Currently this is a torque
+     * \param j joint number
+     * \param v value to be set
+     * \return true if the operation succeeded. False otherwise
+     */
+    virtual bool setOutput(int j, double v);
+    virtual bool setOutputs(const double *v);
+    virtual bool getOutput(int j, double *v);
+    virtual bool getOutputs(double *v);
+    virtual bool setOpenLoopMode();
+    
+    /*
+     * IPidControl Interface methods
+     */
+    virtual bool setPid (int j, const Pid &pid);
+    virtual bool setPids (const Pid *pids);
+    virtual bool setReference (int j, double ref);
+    virtual bool setReferences (const double *refs);
+    virtual bool setErrorLimit (int j, double limit);
+    virtual bool setErrorLimits (const double *limits);
+    virtual bool getError (int j, double *err);
+    virtual bool getErrors (double *errs);
+    virtual bool getPid (int j, Pid *pid);
+    virtual bool getPids (Pid *pids);
+    virtual bool getReference (int j, double *ref);
+    virtual bool getReferences (double *refs);
+    virtual bool getErrorLimit (int j, double *limit);
+    virtual bool getErrorLimits (double *limits);
+    virtual bool resetPid (int j);
+    virtual bool disablePid (int j);
+    virtual bool enablePid (int j);
+    virtual bool setOffset (int j, double v);
+    
     /*
      * Probably useless stuff here
      */
@@ -223,13 +262,13 @@ private:
         PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
 
-    unsigned int robot_refresh_period; //ms
+    unsigned int robotRefreshPeriod; //ms
     gazebo::physics::Model* _robot;
     gazebo::event::ConnectionPtr updateConnection;
-    unsigned int _controlboard_number_of_joints;
+    unsigned int numberOfJoints;
 
     //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
-    yarp::os::Property plugin_parameters;
+    yarp::os::Property pluginParameters;
     
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
@@ -238,35 +277,35 @@ private:
     /**
      * The GAZEBO desired position of each joints, (output of trajectory interp)
      */
-    yarp::sig::Vector des_pos;
+    yarp::sig::Vector desiredPosition;
     
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
-     * i.e. getEncoder(j)=zero_pos+gazebo.getEncoder(j);
+     * i.e. getEncoder(j)=zeroPosition+gazebo.getEncoder(j);
      */
-    yarp::sig::Vector zero_pos;
+    yarp::sig::Vector zeroPosition;
 
     yarp::sig::Vector vel, speed, acc, amp, torque;
     yarp::os::Semaphore pos_lock;
-    yarp::sig::Vector ref_speed, ref_pos, ref_acc, ref_torque;
+    yarp::sig::Vector referenceSpeed, referencePosition, referenceAcceleraton, referenceTorque;
     yarp::sig::Vector max_pos, min_pos;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
+//    yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
     std::vector<std::string> joint_names;
-    gazebo::transport::NodePtr gazebo_node_ptr;
+    gazebo::transport::NodePtr gazeboNode;
     gazebo::transport::PublisherPtr jointCmdPub;
     std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
 
-    yarp::sig::Vector torq_offset;
-    yarp::sig::Vector min_stiffness;
-    yarp::sig::Vector min_damping;
-    yarp::sig::Vector max_stiffness;
-    yarp::sig::Vector max_damping;
+    yarp::sig::Vector torqueOffsett;
+    yarp::sig::Vector minStiffness;
+    yarp::sig::Vector minDamping;
+    yarp::sig::Vector maxStiffness;
+    yarp::sig::Vector maxDamping;
 
     bool *motion_done;
-    int  *control_mode;
+    int  *controlMode;
     bool command_changed;
     bool started;
     int _clock;
@@ -293,7 +332,7 @@ private:
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
     void sendImpPositionToGazebo ( const int j, const double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
-    void compute_trj(const int j);
+    void computeTrajectory(const int j);
 
 };
 

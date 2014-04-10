@@ -43,8 +43,14 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -pedantic -Wextra")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic ")
-endif()
+endif() 
 endif(CMAKE_BUILD_TYPE MATCHES DEBUG) 
+
+#define debug flag
+set_property( 
+    DIRECTORY 
+    APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1 
+) 
 
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
@@ -69,7 +75,9 @@ set(controlBoard_source     src/gazebo_plugins/ControlBoard.cc
                             src/yarp_drivers/ControlBoardDriverPositionControl.cpp
                             src/yarp_drivers/ControlBoardTorqueDriverControl.cpp
                             src/yarp_drivers/ControlBoardDriverVelocityControl.cpp
-                            src/yarp_drivers/ControlBoardDriverImpedancePositionControl.cpp)
+                            src/yarp_drivers/ControlBoardDriverImpedancePositionControl.cpp
+                            src/yarp_drivers/ControlBoardDriverOpenLoop.cpp
+                            src/yarp_drivers/ControlBoardDriverPidControl.cpp)
 
 set(controlBoard_headers    include/gazebo_yarp_plugins/ControlBoard.hh
                             include/gazebo_yarp_plugins/ControlBoardDriver.h )

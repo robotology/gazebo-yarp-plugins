@@ -13,7 +13,7 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 {
-    for(unsigned int j=0; j<_controlboard_number_of_joints; j++)
+    for(unsigned int j=0; j<numberOfJoints; j++)
     {
         this->setVelocityMode(j);
     }
@@ -22,7 +22,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints)
+    if (j >= 0 && j < (int)numberOfJoints)
     {
         vel[j] = sp;
         return true;
@@ -32,7 +32,7 @@ bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::velocityMove(const double *sp) //NOT TESTED
 {
-    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
+    for (unsigned int i=0; i<numberOfJoints; ++i) {
         vel[i] = sp[i];
     }
     return true;

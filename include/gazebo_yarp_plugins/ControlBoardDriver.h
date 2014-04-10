@@ -13,7 +13,9 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
@@ -45,7 +47,9 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
-    public IImpedanceControl
+    public IImpedanceControl,
+    public IOpenLoopControl,
+    public IPidControl
 {
 public:
     
@@ -173,6 +177,41 @@ public:
     virtual bool setImpedanceOffset(int j, double offset);
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
+    
+    //IOpenLoopControl interface methods
+    /**
+     * Command direct output value to joint j. Currently this is a torque
+     * \param j joint number
+     * \param v value to be set
+     * \return true if the operation succeeded. False otherwise
+     */
+    virtual bool setOutput(int j, double v);
+    virtual bool setOutputs(const double *v);
+    virtual bool getOutput(int j, double *v);
+    virtual bool getOutputs(double *v);
+    virtual bool setOpenLoopMode();
+    
+    /*
+     * IPidControl Interface methods
+     */
+    virtual bool setPid (int j, const Pid &pid);
+    virtual bool setPids (const Pid *pids);
+    virtual bool setReference (int j, double ref);
+    virtual bool setReferences (const double *refs);
+    virtual bool setErrorLimit (int j, double limit);
+    virtual bool setErrorLimits (const double *limits);
+    virtual bool getError (int j, double *err);
+    virtual bool getErrors (double *errs);
+    virtual bool getPid (int j, Pid *pid);
+    virtual bool getPids (Pid *pids);
+    virtual bool getReference (int j, double *ref);
+    virtual bool getReferences (double *refs);
+    virtual bool getErrorLimit (int j, double *limit);
+    virtual bool getErrorLimits (double *limits);
+    virtual bool resetPid (int j);
+    virtual bool disablePid (int j);
+    virtual bool enablePid (int j);
+    virtual bool setOffset (int j, double v);
     
     /*
      * Probably useless stuff here

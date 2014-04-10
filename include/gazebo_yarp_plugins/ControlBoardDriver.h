@@ -331,7 +331,7 @@ private:
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
     void sendImpPositionToGazebo ( const int j, const double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
-    void compute_trj(const int j);
+    void computeTrajectory(const int j);
 
 };
 

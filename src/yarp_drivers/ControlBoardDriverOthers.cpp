@@ -38,9 +38,9 @@ bool GazeboYarpControlBoardDriver::setVelLimits(int axis, double min, double max
 //Amplifiers
 bool GazeboYarpControlBoardDriver::enableAmp(int j) //NOT IMPLEMENTED
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
+    if (j >= 0 && j < (int)numberOfJoints) {
         amp[j] = 1;
-        control_mode[j]=VOCAB_CM_POSITION;
+        controlMode[j]=VOCAB_CM_POSITION;
         return true;
     }
     return false;
@@ -48,9 +48,9 @@ bool GazeboYarpControlBoardDriver::enableAmp(int j) //NOT IMPLEMENTED
 
 bool GazeboYarpControlBoardDriver::disableAmp(int j) //NOT IMPLEMENTED
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
+    if (j >= 0 && j < (int)numberOfJoints) {
         amp[j] = 0;
-        control_mode[j]=VOCAB_CM_IDLE;
+        controlMode[j]=VOCAB_CM_IDLE;
         return true;
     }
     return false;
@@ -58,7 +58,7 @@ bool GazeboYarpControlBoardDriver::disableAmp(int j) //NOT IMPLEMENTED
 
 bool GazeboYarpControlBoardDriver::getCurrent(int j, double *val) //NOT IMPLEMENTED
 {
-    if (val && j >= 0 && j < (int)_controlboard_number_of_joints) {
+    if (val && j >= 0 && j < (int)numberOfJoints) {
         *val = amp[j];
         return true;
     }
@@ -68,7 +68,7 @@ bool GazeboYarpControlBoardDriver::getCurrent(int j, double *val) //NOT IMPLEMEN
 bool GazeboYarpControlBoardDriver::getCurrents(double *vals) //NOT IMPLEMENTED
 {
     if (!vals) return false;
-    for (unsigned int i=0; i<_controlboard_number_of_joints; i++) {
+    for (unsigned int i=0; i<numberOfJoints; i++) {
         vals[i] = amp[i];
     }
     return true;

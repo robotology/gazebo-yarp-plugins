@@ -15,9 +15,9 @@ using namespace gazebo;
 
 bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config) 
 {
-    plugin_parameters.fromString(config.toString().c_str());
+    pluginParameters.fromString(config.toString().c_str());
 
-    std::string robotName (plugin_parameters.find("robotScopedName").asString().c_str());
+    std::string robotName (pluginParameters.find("robotScopedName").asString().c_str());
     std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
 
     _robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
@@ -38,7 +38,7 @@ bool GazeboYarpControlBoardDriver::close()
         this->updateConnection = gazebo::event::ConnectionPtr();
     }
     
-    delete [] control_mode;
+    delete [] controlMode;
     delete [] motion_done;
     return true;
 }

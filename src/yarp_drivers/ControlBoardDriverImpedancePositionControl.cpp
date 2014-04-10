@@ -10,7 +10,7 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getImpedance(int j, double *stiffness, double *damping)
 {
-    if(j >= 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < numberOfJoints)
     {
         *stiffness = _impedancePosPDs[j].p;
         *damping = _impedancePosPDs[j].d;
@@ -21,7 +21,7 @@ bool GazeboYarpControlBoardDriver::getImpedance(int j, double *stiffness, double
 
 bool GazeboYarpControlBoardDriver::setImpedance(int j, double stiffness, double damping)
 {
-    if(j >= 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < numberOfJoints)
     {
         _impedancePosPDs[j].p = stiffness;
         _impedancePosPDs[j].d = damping;
@@ -32,9 +32,9 @@ bool GazeboYarpControlBoardDriver::setImpedance(int j, double stiffness, double 
 
 bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
 {
-    if(j >= 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < numberOfJoints)
     {
-        torq_offset[j] = offset;
+        torqueOffsett[j] = offset;
         return true;
     }
     return false;
@@ -42,9 +42,9 @@ bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
 
 bool GazeboYarpControlBoardDriver::getImpedanceOffset(int j, double* offset)
 {
-    if(j >= 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < numberOfJoints)
     {
-        *offset = torq_offset[j];
+        *offset = torqueOffsett[j];
         return true;
     }
     return false;
@@ -52,13 +52,13 @@ bool GazeboYarpControlBoardDriver::getImpedanceOffset(int j, double* offset)
 
 bool GazeboYarpControlBoardDriver::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
-    if(j >= 0 && j < _controlboard_number_of_joints)
+    if(j >= 0 && j < numberOfJoints)
     {
         //Hardcoded numbers...just to try
-        *min_stiff = min_stiffness[j];
-        *max_stiff = max_stiffness[j];
-        *min_damp = min_damping[j];
-        *max_damp = max_damping[j];
+        *min_stiff = minStiffness[j];
+        *max_stiff = maxStiffness[j];
+        *min_damp = minDamping[j];
+        *max_damp = maxDamping[j];
         return true;
     }
     return false;

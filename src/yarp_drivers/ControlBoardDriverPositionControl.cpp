@@ -12,8 +12,8 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 {
 //    std::cout << " positionMove" << j << ref;
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
-        ref_pos[j] = ref; //we will use this ref_pos in the next simulation onUpdate call to ask gazebo to set PIDs ref_pos to this value
+    if (j >= 0 && j < (int)numberOfJoints) {
+        referencePosition[j] = ref; //we will use this referencePosition in the next simulation onUpdate call to ask gazebo to set PIDs referencePosition to this value
         return true;
     }
     return false;
@@ -21,8 +21,8 @@ bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 
 bool GazeboYarpControlBoardDriver::stop(int j) //WORKS
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
-        ref_pos[j] = pos[j];
+    if (j >= 0 && j < (int)numberOfJoints) {
+        referencePosition[j] = pos[j];
         return true;
     }
     return false;
@@ -30,14 +30,14 @@ bool GazeboYarpControlBoardDriver::stop(int j) //WORKS
 
 bool GazeboYarpControlBoardDriver::stop() //WORKS
 {
-    ref_pos=pos;
+    referencePosition=pos;
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::positionMove(const double *refs) //WORKS
 {
-    for (unsigned int i = 0; i < _controlboard_number_of_joints; ++i) {
-        ref_pos[i] = refs[i];
+    for (unsigned int i = 0; i < numberOfJoints; ++i) {
+        referencePosition[i] = refs[i];
     }
     return true;
 }
@@ -45,14 +45,14 @@ bool GazeboYarpControlBoardDriver::positionMove(const double *refs) //WORKS
 bool GazeboYarpControlBoardDriver::getAxes(int *ax) // WORKS
 {
     if (!ax) return false;
-    *ax = _controlboard_number_of_joints;
+    *ax = numberOfJoints;
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setRefSpeed(int j, double sp) //WORKS
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
-        ref_speed[j] = sp;
+    if (j >= 0 && j < (int)numberOfJoints) {
+        referenceSpeed[j] = sp;
         return true;
     }
     return false;
@@ -60,8 +60,8 @@ bool GazeboYarpControlBoardDriver::setRefSpeed(int j, double sp) //WORKS
 
 bool GazeboYarpControlBoardDriver::getRefSpeed(int j, double *ref) //WORKS
 {
-    if (ref && j >= 0 && j < (int)_controlboard_number_of_joints) {
-        *ref = ref_speed[j];
+    if (ref && j >= 0 && j < (int)numberOfJoints) {
+        *ref = referenceSpeed[j];
         return true;
     }
     return false;
@@ -70,8 +70,8 @@ bool GazeboYarpControlBoardDriver::getRefSpeed(int j, double *ref) //WORKS
 bool GazeboYarpControlBoardDriver::getRefSpeeds(double *spds) //WORKS
 {
     if (!spds) return false;
-    for (unsigned int i = 0; i < _controlboard_number_of_joints; ++i) {
-        spds[i] = ref_speed[i];
+    for (unsigned int i = 0; i < numberOfJoints; ++i) {
+        spds[i] = referenceSpeed[i];
     }
     return true;
 }
@@ -80,8 +80,8 @@ bool GazeboYarpControlBoardDriver::getRefSpeeds(double *spds) //WORKS
 
 bool GazeboYarpControlBoardDriver::relativeMove(int j, double delta) //NOT TESTED
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
-        ref_pos[j] = pos[j] + delta; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
+    if (j >= 0 && j < (int)numberOfJoints) {
+        referencePosition[j] = pos[j] + delta; //TODO check if this is ok or referencePosition=referencePosition+delta!!!
         return true;
     }
     return false;
@@ -89,15 +89,15 @@ bool GazeboYarpControlBoardDriver::relativeMove(int j, double delta) //NOT TESTE
 
 bool GazeboYarpControlBoardDriver::relativeMove(const double *deltas) //NOT TESTED
 {
-    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
-        ref_pos[i] = pos[i]+ deltas[i]; //TODO check if this is ok or ref_pos=ref_pos+delta!!!
+    for (unsigned int i=0; i<numberOfJoints; ++i) {
+        referencePosition[i] = pos[i]+ deltas[i]; //TODO check if this is ok or referencePosition=referencePosition+delta!!!
     }
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::checkMotionDone(int j, bool *flag) //NOT TESTED
 {
-    if (flag && j >= 0 && j < (int)_controlboard_number_of_joints) {
+    if (flag && j >= 0 && j < (int)numberOfJoints) {
         *flag = motion_done[j];
         return true;
     }
@@ -109,7 +109,7 @@ bool GazeboYarpControlBoardDriver::checkMotionDone(bool *flag) //NOT TESTED
     if (!flag) return false;
     bool temp_flag = true;
     //*flag=true;
-    for(unsigned int j = 0; j < _controlboard_number_of_joints; ++j)
+    for(unsigned int j = 0; j < numberOfJoints; ++j)
     {
         temp_flag = temp_flag && motion_done[j];
     }
@@ -119,7 +119,7 @@ bool GazeboYarpControlBoardDriver::checkMotionDone(bool *flag) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setPositionMode() //NOT TESTED
 {
-    for (unsigned int j=0; j<_controlboard_number_of_joints; j++)
+    for (unsigned int j=0; j<numberOfJoints; j++)
     {
         this->setPositionMode(j);
     }
@@ -128,8 +128,8 @@ bool GazeboYarpControlBoardDriver::setPositionMode() //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 {
-    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
-        ref_speed[i] = spds[i];
+    for (unsigned int i=0; i<numberOfJoints; ++i) {
+        referenceSpeed[i] = spds[i];
     }
     return true;
 }
@@ -137,8 +137,8 @@ bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints) {
-        ref_acc[j] = acc;
+    if (j >= 0 && j < (int)numberOfJoints) {
+        referenceAcceleraton[j] = acc;
         return true;
     }
     return false;
@@ -146,16 +146,16 @@ bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) //NOT I
 
 bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs) //NOT IMPLEMENTED
 {
-    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
-        ref_acc[i] = accs[i];
+    for (unsigned int i=0; i<numberOfJoints; ++i) {
+        referenceAcceleraton[i] = accs[i];
     }
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) //NOT IMPLEMENTED
 {
-    if (acc && j >= 0 && j < (int)_controlboard_number_of_joints) {
-        *acc = ref_acc[j];
+    if (acc && j >= 0 && j < (int)numberOfJoints) {
+        *acc = referenceAcceleraton[j];
         return true;
     }
     return false;
@@ -164,8 +164,8 @@ bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) //NOT 
 bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) //NOT IMPLEMENTED
 {
     if (!accs) return false;
-    for (unsigned int i=0; i<_controlboard_number_of_joints; ++i) {
-        accs[i] = ref_acc[i];
+    for (unsigned int i=0; i<numberOfJoints; ++i) {
+        accs[i] = referenceAcceleraton[i];
     }
     return true;
 }
@@ -226,9 +226,9 @@ bool GazeboYarpControlBoardDriver::stop(const int n_joint, const int *joints) //
 // IPOSITION DIRECT
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
-    if (j >= 0 && j < (int)_controlboard_number_of_joints)
+    if (j >= 0 && j < (int)numberOfJoints)
     {
-        des_pos[j] = ref;
+        desiredPosition[j] = ref;
         return positionMove(j, ref);
     }
     return false;
@@ -236,8 +236,8 @@ bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 
 bool GazeboYarpControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs)
 {
-    for (unsigned int i = 0; i < _controlboard_number_of_joints; ++i)
-        des_pos[i] = refs[i];
+    for (unsigned int i = 0; i < numberOfJoints; ++i)
+        desiredPosition[i] = refs[i];
     return positionMove(n_joint, joints, refs);
 }
 

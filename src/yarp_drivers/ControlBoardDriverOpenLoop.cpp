@@ -12,9 +12,9 @@ namespace yarp {
         
         bool GazeboYarpControlBoardDriver::setOutput(int j, double v)
         {
-            if (j >= 0 && j < (int)_controlboard_number_of_joints)
+            if (j >= 0 && j < (int)numberOfJoints)
             {
-                ref_torque[j] = v;
+                referenceTorque[j] = v;
                 return true;
             }
             return false;
@@ -22,16 +22,16 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::setOutputs(const double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < _controlboard_number_of_joints; ++j)
+            for (unsigned int j = 0; j < numberOfJoints; ++j)
             {
-                ref_torque[j] = v[j];
+                referenceTorque[j] = v[j];
             }
             return true;
         }
         
         bool GazeboYarpControlBoardDriver::getOutput(int j, double *v)
         {
-            if (v && j >= 0 && j < (int)_controlboard_number_of_joints) {
+            if (v && j >= 0 && j < (int)numberOfJoints) {
                 *v = torque[j];
                 return true;
             }
@@ -42,7 +42,7 @@ namespace yarp {
         {
             std::cout << "get outputs - gazebo\n";
             if (!v) return false;
-            for(unsigned int j = 0; j < _controlboard_number_of_joints; ++j) {
+            for(unsigned int j = 0; j < numberOfJoints; ++j) {
                 v[j] = torque[j];
             }
             return true;
@@ -50,7 +50,7 @@ namespace yarp {
         
         bool GazeboYarpControlBoardDriver::setOpenLoopMode()
         {
-            for(unsigned int j = 0; j < _controlboard_number_of_joints; j++)
+            for(unsigned int j = 0; j < numberOfJoints; j++)
             {
                 this->setOpenLoopMode(j);
             }

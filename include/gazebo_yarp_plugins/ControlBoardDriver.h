@@ -262,13 +262,13 @@ private:
         PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
 
-    unsigned int robot_refresh_period; //ms
+    unsigned int robotRefreshPeriod; //ms
     gazebo::physics::Model* _robot;
     gazebo::event::ConnectionPtr updateConnection;
-    unsigned int _controlboard_number_of_joints;
+    unsigned int numberOfJoints;
 
     //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
-    yarp::os::Property plugin_parameters;
+    yarp::os::Property pluginParameters;
     
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
@@ -277,35 +277,35 @@ private:
     /**
      * The GAZEBO desired position of each joints, (output of trajectory interp)
      */
-    yarp::sig::Vector des_pos;
+    yarp::sig::Vector desiredPosition;
     
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
-     * i.e. getEncoder(j)=zero_pos+gazebo.getEncoder(j);
+     * i.e. getEncoder(j)=zeroPosition+gazebo.getEncoder(j);
      */
-    yarp::sig::Vector zero_pos;
+    yarp::sig::Vector zeroPosition;
 
     yarp::sig::Vector vel, speed, acc, amp, torque;
     yarp::os::Semaphore pos_lock;
-    yarp::sig::Vector ref_speed, ref_pos, ref_acc, ref_torque;
+    yarp::sig::Vector referenceSpeed, referencePosition, referenceAcceleraton, referenceTorque;
     yarp::sig::Vector max_pos, min_pos;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
+//    yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
     std::vector<std::string> joint_names;
-    gazebo::transport::NodePtr gazebo_node_ptr;
+    gazebo::transport::NodePtr gazeboNode;
     gazebo::transport::PublisherPtr jointCmdPub;
     std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
 
-    yarp::sig::Vector torq_offset;
-    yarp::sig::Vector min_stiffness;
-    yarp::sig::Vector min_damping;
-    yarp::sig::Vector max_stiffness;
-    yarp::sig::Vector max_damping;
+    yarp::sig::Vector torqueOffsett;
+    yarp::sig::Vector minStiffness;
+    yarp::sig::Vector minDamping;
+    yarp::sig::Vector maxStiffness;
+    yarp::sig::Vector maxDamping;
 
     bool *motion_done;
-    int  *control_mode;
+    int  *controlMode;
     bool command_changed;
     bool started;
     int _clock;
@@ -332,10 +332,9 @@ private:
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
     void sendImpPositionToGazebo ( const int j, const double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
-    void compute_trj(const int j);
+    void computeTrajectory(const int j);
     void prepareResetJointMsg(int j);
 
 };
 
 #endif //GAZEBOYARP_CONTROLBOARDDRIVER_HH
-

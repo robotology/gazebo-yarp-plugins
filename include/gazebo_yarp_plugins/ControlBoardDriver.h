@@ -333,8 +333,8 @@ private:
     void sendImpPositionToGazebo ( const int j, const double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
     void computeTrajectory(const int j);
+    void prepareResetJointMsg(int j);
 
 };
 
 #endif //GAZEBOYARP_CONTROLBOARDDRIVER_HH
-

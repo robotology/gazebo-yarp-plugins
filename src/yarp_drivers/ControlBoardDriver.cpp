@@ -103,7 +103,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         double tmp = 0.0;
         yarp::sig::Vector initial_config(numberOfJoints);
         unsigned int counter = 1;
-        while(ss>>tmp)
+        while(ss >> tmp)
         {
             if(counter > numberOfJoints)
             {
@@ -323,10 +323,10 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     std::string name = name_bot.get(1).toString();
     
     yarp::os::Bottle& kin_chain_bot = pluginParameters.findGroup(name);
-    if(kin_chain_bot.check("minStiffness"))
+    if(kin_chain_bot.check("min_stiffness"))
     {
-        std::cout<<"minStiffness param found!"<<std::endl;
-        yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("minStiffness");
+        std::cout<<"min_stiffness param found!"<<std::endl;
+        yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
         if(min_stiff_bot.size()-1 == numberOfJoints)
         {
             for(unsigned int i = 0; i < numberOfJoints; ++i)
@@ -338,10 +338,10 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     else
         std::cout<<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
     
-    if(kin_chain_bot.check("maxStiffness"))
+    if(kin_chain_bot.check("max_stiffness"))
     {
-        std::cout<<"maxStiffness param found!"<<std::endl;
-        yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("maxStiffness");
+        std::cout<<"max_stiffness param found!"<<std::endl;
+        yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
         if(max_stiff_bot.size()-1 == numberOfJoints)
         {
             for(unsigned int i = 0; i < numberOfJoints; ++i)
@@ -353,10 +353,10 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     else
         std::cout<<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
     
-    if(kin_chain_bot.check("minDamping"))
+    if(kin_chain_bot.check("min_damping"))
     {
-        std::cout<<"minDamping param found!"<<std::endl;
-        yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("minDamping");
+        std::cout<<"min_damping param found!"<<std::endl;
+        yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
         if(min_damping_bot.size()-1 == numberOfJoints)
         {
             for(unsigned int i = 0; i < numberOfJoints; ++i)
@@ -368,10 +368,10 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     else
         std::cout<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
     
-    if(kin_chain_bot.check("maxDamping"))
+    if(kin_chain_bot.check("max_damping"))
     {
-        std::cout<<"maxDamping param found!"<<std::endl;
-        yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("maxDamping");
+        std::cout<<"max_damping param found!"<<std::endl;
+        yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
         if(max_damping_bot.size()-1 == numberOfJoints)
         {
             for(unsigned int i = 0; i < numberOfJoints; ++i)
@@ -383,10 +383,10 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     else
         std::cout<<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
     
-    std::cout<<"minStiffness: [ "<<minStiffness.toString()<<" ]"<<std::endl;
-    std::cout<<"maxStiffness: [ "<<maxStiffness.toString()<<" ]"<<std::endl;
-    std::cout<<"minDamping: [ "<<minDamping.toString()<<" ]"<<std::endl;
-    std::cout<<"maxDamping: [ "<<maxDamping.toString()<<" ]"<<std::endl;
+    std::cout<<"min_stiffness: [ "<<minStiffness.toString()<<" ]"<<std::endl;
+    std::cout<<"max_stiffness: [ "<<maxStiffness.toString()<<" ]"<<std::endl;
+    std::cout<<"min_damping: [ "<<minDamping.toString()<<" ]"<<std::endl;
+    std::cout<<"max_damping: [ "<<maxDamping.toString()<<" ]"<<std::endl;
 }
 
 void GazeboYarpControlBoardDriver::setPIDs()
@@ -423,16 +423,6 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
     j_cmd.mutable_position()->set_d_gain(positionPID.d);
-    //     if (positionPID.maxInt > 0) {
-    //         j_cmd.mutable_position()->set_i_max(positionPID.maxInt);
-    //         j_cmd.mutable_position()->set_i_min(-positionPID.maxInt);
-    //     }
-    //     if (positionPID.maxOut > 0) {
-    //         j_cmd.mutable_position()->set_limit(positionPID.maxOut);
-    //     }
-    j_cmd.mutable_velocity()->set_p_gain(0.0);
-    j_cmd.mutable_velocity()->set_i_gain(0.0);
-    j_cmd.mutable_velocity()->set_d_gain(0.0);
 }
 
 bool GazeboYarpControlBoardDriver::sendVelocitiesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
@@ -471,9 +461,9 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     GazeboYarpControlBoardDriver::PID velocityPID = _velocityPIDs[j];
     
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-    j_cmd.mutable_position()->set_p_gain(0.0);
-    j_cmd.mutable_position()->set_i_gain(0.0);
-    j_cmd.mutable_position()->set_d_gain(0.0);
+//    j_cmd.mutable_position()->set_p_gain(0.0);
+//    j_cmd.mutable_position()->set_i_gain(0.0);
+//    j_cmd.mutable_position()->set_d_gain(0.0);
     j_cmd.mutable_velocity()->set_p_gain(velocityPID.p);
     j_cmd.mutable_velocity()->set_i_gain(velocityPID.i);
     j_cmd.mutable_velocity()->set_d_gain(velocityPID.d);
@@ -509,12 +499,12 @@ bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double r
 void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-    j_cmd.mutable_position()->set_p_gain(0.0);
-    j_cmd.mutable_position()->set_i_gain(0.0);
-    j_cmd.mutable_position()->set_d_gain(0.0);
-    j_cmd.mutable_velocity()->set_p_gain(0.0);
-    j_cmd.mutable_velocity()->set_i_gain(0.0);
-    j_cmd.mutable_velocity()->set_d_gain(0.0);
+//    j_cmd.mutable_position()->set_p_gain(0.0);
+//    j_cmd.mutable_position()->set_i_gain(0.0);
+//    j_cmd.mutable_position()->set_d_gain(0.0);
+//    j_cmd.mutable_velocity()->set_p_gain(0.0);
+//    j_cmd.mutable_velocity()->set_i_gain(0.0);
+//    j_cmd.mutable_velocity()->set_d_gain(0.0);
     j_cmd.set_force(ref);
 }
 

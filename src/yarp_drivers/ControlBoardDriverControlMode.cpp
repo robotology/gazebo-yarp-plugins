@@ -35,13 +35,13 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
     std::cout<<"control mode = speed "<<j<<std::endl;
     return true;
  }
- 
+
  bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
  {
      *mode=control_mode[j];
      return true;
  }
- 
+
  bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
  {
      for(unsigned int j=0; j<_controlboard_number_of_joints; ++j)
@@ -50,15 +50,15 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
      }
      return true;
  }
- 
+
  bool GazeboYarpControlBoardDriver::setTorqueMode(int j) //NOT TESTED
- {    
+ {
     prepareResetJointMsg(j);
     control_mode[j]=VOCAB_CM_TORQUE;
     std::cout<<"control mode = torque "<<j<<std::endl;
     return true;
  }
- 
+
 
  bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
  {
@@ -73,12 +73,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
  }
  bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
  {
-     if(control_mode[j] == VOCAB_CM_VELOCITY) {
-         gazebo::physics::JointPtr joint =  this->_robot->GetJoint(joint_names[j]);
-         joint->SetMaxForce(0, 0);
-         joint->SetVelocity(0,0);
-     }
-     
+     prepareResetJointMsg(j);
      control_mode[j] = VOCAB_CM_OPENLOOP;
      std::cout<<"control mode = openloop "<<j<<std::endl;
      return true;

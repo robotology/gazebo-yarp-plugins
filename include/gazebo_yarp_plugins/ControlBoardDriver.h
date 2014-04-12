@@ -7,8 +7,6 @@
 #ifndef GAZEBOYARP_CONTROLBOARDDRIVER_HH
 #define GAZEBOYARP_CONTROLBOARDDRIVER_HH
 
-#include <yarp/sig/all.h>
-#include <yarp/os/all.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
@@ -19,6 +17,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Semaphore.h>
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
@@ -31,11 +30,11 @@ namespace yarp {
     namespace dev {
         class GazeboYarpControlBoardDriver;
     }
-    
+
 }
 
 
-class yarp::dev::GazeboYarpControlBoardDriver: 
+class yarp::dev::GazeboYarpControlBoardDriver:
     public DeviceDriver,
     public IPositionControl2,
     public IVelocityControl,
@@ -52,7 +51,7 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IPidControl
 {
 public:
-    
+
     GazeboYarpControlBoardDriver();
 
     virtual ~GazeboYarpControlBoardDriver();
@@ -66,22 +65,22 @@ public:
     /**
      * Yarp interfaces start here
      */
-    
+
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //ENCODERS
     virtual bool getEncoder(int j, double *v); //WORKS
-    virtual bool getEncoders(double *encs); //WORKS    
+    virtual bool getEncoders(double *encs); //WORKS
     virtual bool resetEncoder(int j); //WORKS
     virtual bool resetEncoders(); //WORKS
     virtual bool setEncoder(int j, double val); //WORKS
-    virtual bool setEncoders(const double *vals); //WORKS 
-    
+    virtual bool setEncoders(const double *vals); //WORKS
+
     virtual bool getEncoderSpeed(int j, double *sp); //NOT TESTED
-    virtual bool getEncoderSpeeds(double *spds); //NOT TESTED 
-    
+    virtual bool getEncoderSpeeds(double *spds); //NOT TESTED
+
     virtual bool getEncoderAcceleration(int j, double *spds); //NOT IMPLEMENTED
     virtual bool getEncoderAccelerations(double *accs); //NOT IMPLEMENTED
 
@@ -99,7 +98,7 @@ public:
     virtual bool setRefSpeed(int j, double sp); //WORKS
     virtual bool getRefSpeed(int j, double *ref); //WORKS
     virtual bool getRefSpeeds(double *spds); //WORKS
-    
+
     virtual bool relativeMove(int j, double delta); //NOT TESTED
     virtual bool relativeMove(const double *deltas); //NOT TESTED
     virtual bool checkMotionDone(int j, bool *flag); //NOT TESTED
@@ -118,29 +117,29 @@ public:
 
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
-    
+
     virtual bool setRefAcceleration(int j, double acc); //NOT IMPLEMENTED
     virtual bool setRefAccelerations(const double *accs); //NOT IMPLEMENTED
     virtual bool getRefAcceleration(int j, double *acc); //NOT IMPLEMENTED
     virtual bool getRefAccelerations(double *accs); //NOT IMPLEMENTED
-    
+
     //VELOCITY CONTROL
     virtual bool setVelocityMode(); //NOT TESTED
-    virtual bool velocityMove(int j, double sp); //NOT TESTED    
-    virtual bool velocityMove(const double *sp); //NOT TESTED    
-    
+    virtual bool velocityMove(int j, double sp); //NOT TESTED
+    virtual bool velocityMove(const double *sp); //NOT TESTED
+
     //CONTROL MODE
-    virtual bool setPositionMode(int j); //WORKS    
+    virtual bool setPositionMode(int j); //WORKS
     virtual bool setVelocityMode(int j); //WORKS
     virtual bool getControlMode(int j, int *mode); //WORKS
-    
-    virtual bool setTorqueMode(int j); //NOT TESTED 
+
+    virtual bool setTorqueMode(int j); //NOT TESTED
     virtual bool getControlModes(int *modes); //NOT TESTED
-    
+
     virtual bool setImpedancePositionMode(int j);//NOT IMPLEMENTED
     virtual bool setImpedanceVelocityMode(int j); //NOT IMPLEMENTED
     virtual bool setOpenLoopMode(int j); //NOT IMPLEMENTED
-    
+
     //TORQUE CONTROL
     virtual bool setRefTorque(int j, double t); //NOT TESTED
     virtual bool setRefTorques(const double *t); //NOT TESTED
@@ -149,7 +148,7 @@ public:
     virtual bool getRefTorques(double *t);//NOT TESTED
     virtual bool getTorque(int j, double *t); //NOT TESTED
     virtual bool getTorques(double *t); //NOT TESTED
-    
+
     virtual bool getBemfParam(int j, double *bemf); //NOT IMPLEMENTED
     virtual bool setBemfParam(int j, double bemf); //NOT IMPLEMENTED
     virtual bool setTorquePid(int j, const Pid &pid); //NOT IMPLEMENTED
@@ -177,7 +176,7 @@ public:
     virtual bool setImpedanceOffset(int j, double offset);
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
-    
+
     //IOpenLoopControl interface methods
     /**
      * Command direct output value to joint j. Currently this is a torque
@@ -190,7 +189,7 @@ public:
     virtual bool getOutput(int j, double *v);
     virtual bool getOutputs(double *v);
     virtual bool setOpenLoopMode();
-    
+
     /*
      * IPidControl Interface methods
      */
@@ -212,7 +211,7 @@ public:
     virtual bool disablePid (int j);
     virtual bool enablePid (int j);
     virtual bool setOffset (int j, double v);
-    
+
     /*
      * Probably useless stuff here
      */
@@ -224,11 +223,11 @@ public:
     virtual bool setMaxCurrent(int j, double v); //NOT IMPLEMENTED
     virtual bool getAmpStatus(int *st); //NOT IMPLEMENTED
     virtual bool getAmpStatus(int k, int *v); //NOT IMPLEMENTED
-    
+
     //CONTROL CALIBRATION (inside comanOthers.cpp)
     virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
     virtual bool done(int j); // NOT IMPLEMENTED
-    
+
     // CONTROL LIMITS2 (inside comanOthers.cpp)
     bool getLimits(int axis, double *min, double *max); //WORKS
     bool setLimits(int axis, double min, double max); //WORKS
@@ -237,15 +236,15 @@ public:
     /*
      * End of useless stuff
      */
-    
+
     // IPOSITION DIRECT
     bool setPositionDirectMode();
     bool setPosition(int j, double ref);
     bool setPositions(const int n_joint, const int *joints, double *refs);
     bool setPositions(const double *refs);
-    
+
 private:
-	
+
     /* PID structures */
     struct PID {
         double p;
@@ -254,7 +253,7 @@ private:
         double maxInt;
         double maxOut;
     };
-    
+
     enum PIDFeedbackTerm {
         PIDFeedbackTermProportionalTerm = 1,
         PIDFeedbackTermIntegrativeTerm = 1 << 1,
@@ -269,7 +268,7 @@ private:
 
     //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
     yarp::os::Property pluginParameters;
-    
+
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
      */
@@ -278,7 +277,7 @@ private:
      * The GAZEBO desired position of each joints, (output of trajectory interp)
      */
     yarp::sig::Vector desiredPosition;
-    
+
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
      * i.e. getEncoder(j)=zeroPosition+gazebo.getEncoder(j);
@@ -310,7 +309,7 @@ private:
     bool started;
     int _clock;
     int _T_controller;
-    
+
     //jointLogger logger;
 
     /**

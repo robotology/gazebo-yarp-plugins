@@ -3,6 +3,8 @@
  * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+
+#include "gazebo_yarp_plugins/common.h"
 #include "gazebo_yarp_plugins/ControlBoard.hh"
 #include "gazebo_yarp_plugins/Handler.hh"
 #include "gazebo_yarp_plugins/ControlBoardDriver.h"
@@ -10,7 +12,7 @@
 using namespace std;
 namespace gazebo
 {
-    
+
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::GazeboYarpControlBoard() : _yarp(), _iWrap(0)
@@ -32,18 +34,18 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
-        if( !_yarp.checkNetwork() ) { 
+        if( !_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout) ) {
             std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;
         }
         std::cout<<"*** GazeboYarpControlBoard plugin started ***"<<std::endl;
-        
+
         if (!_parent)
         {
             gzerr << "GazeboYarpControlBoard plugin requires a parent.\n";
             return;
         }
-        
+
         _robotName = _parent->GetScopedName();
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 
@@ -66,9 +68,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
             if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
             {
-                std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+                std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
                 _parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
-            
+
                 //std::cout << "<<<<<< Just read file\n " << _parameters.toString() << "\n>>>>>>\n";
                 wrapper_group = _parameters.findGroup("WRAPPER");
                 if(wrapper_group.isNull())
@@ -79,7 +81,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
                 configuration_loaded = true;
             }
-            
+
         }
         if( !configuration_loaded )
         {
@@ -88,7 +90,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
 
         _wrapper.open(wrapper_group);
-    
+
         if (!_wrapper.isValid())
             fprintf(stderr, "GazeboYarpControlBoard: wrapper did not open\n");
         else

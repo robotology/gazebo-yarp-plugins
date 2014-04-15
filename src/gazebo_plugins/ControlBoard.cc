@@ -41,8 +41,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
-        if (!m_yarp.checkNetwork()) {
-            gzerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?" << std::endl;
+        if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
+            std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;
         }
         std::cout<<"*** GazeboYarpControlBoard plugin started ***"<<std::endl;

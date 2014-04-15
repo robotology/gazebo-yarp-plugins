@@ -33,8 +33,8 @@ GazeboYarpIMU::~GazeboYarpIMU()
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    if (!m_yarp.checkNetwork()) {
-        std::cerr << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?" << std::endl;
+    if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
+        std::cerr << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
         return;
     }
     
@@ -46,7 +46,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     }
     
     _sensor->SetActive(true);
-
+    
     // Add my gazebo device driver to the factory.
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpIMUDriver>
                                         ("gazebo_imu", "inertial", "GazeboYarpIMUDriver"));
@@ -82,7 +82,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     } else {
         std::cout << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver" << std::endl;
     }
-
+    
     std::cout << "GazeboYarpIMU original parameters" << std::endl;
     std::cout << m_parameters.toString() << std::endl;
     std::cout << "GazeboYarpIMU getOptions" << std::endl;

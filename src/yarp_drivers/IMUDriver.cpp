@@ -6,6 +6,7 @@
 
 
 #include "gazebo_yarp_plugins/IMUDriver.h"
+
 #include "gazebo_yarp_plugins/Handler.hh"
 #include "gazebo_yarp_plugins/common.h"
 
@@ -14,9 +15,8 @@
 
 using namespace yarp::dev;
 
-const int yarp_imu_nr_of_channels = 12; //The IMU has 12 fixed channels
-const std::string yarp_scopedname_parameter = "sensorScopedName";
-
+const int YarpIMUChannelsNumber = 12; //The IMU has 12 fixed channels
+const std::string YarpScopedName = "sensorScopedName";
 
 GazeboYarpIMUDriver::GazeboYarpIMUDriver() {}
 GazeboYarpIMUDriver::~GazeboYarpIMUDriver() {}
@@ -70,11 +70,11 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
 bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
 {
     m_dataMutex.wait();
-    m_imuData.resize(yarp_imu_nr_of_channels, 0.0);
+    m_imuData.resize(YarpIMUChannelsNumber, 0.0);
     m_dataMutex.post();
     
     //Get gazebo pointers
-    std::string sensorScopedName(config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
+    std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpIMUDriver is looking for sensor " << sensorScopedName << "..." << std::endl;
     
     m_parentSensor = (gazebo::sensors::ImuSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
@@ -102,7 +102,7 @@ bool GazeboYarpIMUDriver::close()
 //GENERIC SENSOR
 bool GazeboYarpIMUDriver::read(yarp::sig::Vector &out)
 {    
-    if ((int)m_imuData.size() != yarp_imu_nr_of_channels ) {
+    if ((int)m_imuData.size() != YarpIMUChannelsNumber ) {
         return false;
     }
     
@@ -121,7 +121,7 @@ bool GazeboYarpIMUDriver::read(yarp::sig::Vector &out)
 bool GazeboYarpIMUDriver::getChannels(int *nc)
 {
     if (!nc) return false;
-    *nc = yarp_imu_nr_of_channels;
+    *nc = YarpIMUChannelsNumber;
     return true;
 }
 

@@ -2,23 +2,11 @@
 # Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.7)
 
 PROJECT(GazeboYarpPlugins)
 
-#### Find YARP, require that YARP version is at least GYP_REQYARP_VERSION
-SET(GYP_REQYARP_VERSION_MAJOR "2")
-SET(GYP_REQYARP_VERSION_MINOR "3")
-SET(GYP_REQYARP_VERSION_PATCH "60")
-set(GYP_REQYARP_VERSION_TWEAK "0")
-
-if(GYP_REQYARP_VERSION_TWEAK)
-    set(GYP_REQYARP_VERSION ${GYP_REQYARP_VERSION_MAJOR}.${GYP_REQYARP_VERSION_MINOR}.${GYP_REQYARP_VERSION_PATCH}.${GYP_REQYARP_VERSION_TWEAK})
-else()
-    set(GYP_REQYARP_VERSION ${GYP_REQYARP_VERSION_MAJOR}.${GYP_REQYARP_VERSION_MINOR}.${GYP_REQYARP_VERSION_PATCH})
-endif()
-
-find_package(YARP ${GYP_REQYARP_VERSION} REQUIRED)
+find_package(YARP 2.3.62 REQUIRED)
 message(STATUS "YARP is version: ${YARP_VERSION}")
 
 if(YARP_VERSION VERSION_LESS GYP_REQYARP_VERSION)
@@ -38,25 +26,25 @@ if (PKG_CONFIG_FOUND)
   pkg_check_modules(PROTOBUF protobuf)
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES DEBUG) 
+if(CMAKE_BUILD_TYPE MATCHES DEBUG)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -pedantic -Wextra")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic ")
-endif() 
-endif(CMAKE_BUILD_TYPE MATCHES DEBUG) 
+endif()
+endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
 
 #define debug flag
-set_property( 
-    DIRECTORY 
-    APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1 
-) 
+set_property(
+    DIRECTORY
+    APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
+)
 
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
 set(commons_headers         include/gazebo_yarp_plugins/common.h)
-#if this is not a target it will not work :( 
+#if this is not a target it will not work :(
 SOURCE_GROUP("Common" FILES ${commons_headers})
 # SET_SOURCE_FILES_PROPERTIES(${commons_headers} PROPERTIES HEADER_FILE_ONLY TRUE)
 
@@ -98,7 +86,7 @@ SOURCE_GROUP("Header Files" FILES ${forceTorque_headers})
 
 set(imu_headers             include/gazebo_yarp_plugins/IMU.hh
                             include/gazebo_yarp_plugins/IMUDriver.h)
-set(imu_source              src/gazebo_plugins/IMU.cc 
+set(imu_source              src/gazebo_plugins/IMU.cc
                             src/yarp_drivers/IMUDriver.cpp)
 
 SOURCE_GROUP("Source Files" FILES ${imu_source})
@@ -106,7 +94,7 @@ SOURCE_GROUP("Header Files" FILES ${imu_headers})
 
 set(jointSensors_headers    include/gazebo_yarp_plugins/JointSensors.hh
                             include/gazebo_yarp_plugins/JointSensorsDriver.h)
-set(jointSensors_source     src/gazebo_plugins/JointSensors.cc 
+set(jointSensors_source     src/gazebo_plugins/JointSensors.cc
                             src/yarp_drivers/JointSensorsDriver.cpp)
 
 SOURCE_GROUP("Source Files" FILES ${jointSensors_source})
@@ -139,11 +127,11 @@ target_link_libraries(gazebo_yarp_clock         gazebo_yarp_singleton ${YARP_LIB
 #target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 # INSTALLATION
-install(TARGETS gazebo_yarp_singleton 
-                gazebo_yarp_controlboard 
-                gazebo_yarp_forcetorque 
-                gazebo_yarp_forcetorque 
-                gazebo_yarp_imu 
+install(TARGETS gazebo_yarp_singleton
+                gazebo_yarp_controlboard
+                gazebo_yarp_forcetorque
+                gazebo_yarp_forcetorque
+                gazebo_yarp_imu
                 gazebo_yarp_jointsensors
                 gazebo_yarp_clock
                 DESTINATION lib)

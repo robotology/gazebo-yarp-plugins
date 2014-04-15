@@ -8,7 +8,7 @@
 #ifndef GAZEBOYARP_IMU_HH
 #define GAZEBOYARP_IMU_HH
 
-#include <gazebo/gazebo.hh>
+#include <gazebo/common/Plugin.hh>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <string>
@@ -16,10 +16,6 @@
 
 namespace gazebo
 {
-    namespace sensors {
-        class ImuSensor;
-    }
-    
     /// \class GazeboYarpIMU
     /// Gazebo Plugin emulating the yarp imu device in Gazebo.
     /// 
@@ -44,16 +40,13 @@ namespace gazebo
     public:
         GazeboYarpIMU();
         virtual ~GazeboYarpIMU();
-
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        sensors::ImuSensor* parentSensor;
-        yarp::os::Network _yarp;
-        yarp::os::Property _parameters; 
-        yarp::dev::PolyDriver _imu_driver;
-        std::string _sensorName;
-        
+        yarp::os::Network m_yarp;
+        yarp::os::Property m_parameters; 
+        yarp::dev::PolyDriver m_imuDriver;
+        std::string m_sensorName;
     };
 }
 

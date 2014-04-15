@@ -38,7 +38,7 @@ bool GazeboYarpControlBoardDriver::close()
         this->m_updateConnection = gazebo::event::ConnectionPtr();
     }
     
-    delete [] controlMode;
-    delete [] motion_done;
+    delete [] m_controlMode;
+    delete [] m_isMotionDone;
     return true;
 }

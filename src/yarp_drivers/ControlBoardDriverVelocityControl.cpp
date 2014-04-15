@@ -22,7 +22,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
     if (j >= 0 && j < (int)m_numberOfJoints) {
-        vel[j] = sp;
+        m_referenceVelocities[j] = sp;
         return true;
     }
     return false;
@@ -32,7 +32,7 @@ bool GazeboYarpControlBoardDriver::velocityMove(const double *sp) //NOT TESTED
 {
     if (!sp) return false;
     for (unsigned int i=0; i < m_numberOfJoints; ++i) {
-        vel[i] = sp[i];
+        m_referenceVelocities[i] = sp[i];
     }
     return true;
 }

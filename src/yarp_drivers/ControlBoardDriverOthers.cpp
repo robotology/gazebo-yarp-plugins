@@ -12,16 +12,16 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max) //WORKS
 {
     if (!min || !max) return false;
-    *min = min_pos[axis];
-    *max = max_pos[axis];
+    *min = m_jointLimits[axis].min;
+    *max = m_jointLimits[axis].max;
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //WORKS
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
-    max_pos[axis] = max;
-    min_pos[axis] = min;
+    m_jointLimits[axis].max = max;
+    m_jointLimits[axis].min = min;
     return true;
 }
 
@@ -41,7 +41,7 @@ bool GazeboYarpControlBoardDriver::enableAmp(int j) //NOT IMPLEMENTED
 {
     if (j >= 0 && j < (int)m_numberOfJoints) {
         amp[j] = 1;
-        controlMode[j] = VOCAB_CM_POSITION;
+        m_controlMode[j] = VOCAB_CM_POSITION;
         return true;
     }
     return false;
@@ -51,7 +51,7 @@ bool GazeboYarpControlBoardDriver::disableAmp(int j) //NOT IMPLEMENTED
 {
     if (j >= 0 && j < (int)m_numberOfJoints) {
         amp[j] = 0;
-        controlMode[j] = VOCAB_CM_IDLE;
+        m_controlMode[j] = VOCAB_CM_IDLE;
         return true;
     }
     return false;

@@ -13,7 +13,7 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t)
 {
     if (j >= 0 && j < (int)m_numberOfJoints) {
-        referenceTorque[j] = t;
+        m_referenceTorques[j] = t;
         return true;
     }
     return false;
@@ -23,7 +23,7 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const double* t)
 {
     if (!t) return false;
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
-        referenceTorque[j] = t[j];
+        m_referenceTorques[j] = t[j];
     }
     return true;
 }
@@ -39,7 +39,7 @@ bool GazeboYarpControlBoardDriver::setTorqueMode()
 bool GazeboYarpControlBoardDriver::getRefTorque(int j, double* t)
 {
     if (t && j >= 0 && j < (int)m_numberOfJoints) {
-        *t = referenceTorque[j];
+        *t = m_referenceTorques[j];
         return true;
     }
     return false;
@@ -49,7 +49,7 @@ bool GazeboYarpControlBoardDriver::getRefTorques(double* t)
 {
     if (!t) return false;
     for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
-        t[j] = referenceTorque[j];
+        t[j] = m_referenceTorques[j];
     }
     return true;
 } 
@@ -57,7 +57,7 @@ bool GazeboYarpControlBoardDriver::getRefTorques(double* t)
 bool GazeboYarpControlBoardDriver::getTorque(int j, double* t)
 {
     if (t && j >= 0 && j < (int)m_numberOfJoints) {
-        *t = torque[j];
+        *t = m_torques[j];
         return true;
     }
     return false;
@@ -67,7 +67,7 @@ bool GazeboYarpControlBoardDriver::getTorques(double* t)
 {
     if (!t) return false;
     for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
-        t[j] = torque[j];
+        t[j] = m_torques[j];
     }
     return true;
 }

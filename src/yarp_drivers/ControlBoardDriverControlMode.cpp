@@ -24,60 +24,69 @@ void GazeboYarpControlBoardDriver::prepareResetJointMsg(int j)
 
 bool GazeboYarpControlBoardDriver::setPositionMode(int j) //WORKS
 {
+    if (j < 0 || j >= (int)m_numberOfJoints) return false;
     prepareResetJointMsg(j);
-    controlMode[j]=VOCAB_CM_POSITION;
+    m_controlMode[j] = VOCAB_CM_POSITION;
     std::cout<<"control mode = position "<<j<<std::endl;
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
- {
+{
+    if (j < 0 || j >= (int)m_numberOfJoints) return false;
     prepareResetJointMsg(j);
-    controlMode[j]=VOCAB_CM_VELOCITY;
+    m_controlMode[j] = VOCAB_CM_VELOCITY;
     std::cout<<"control mode = speed "<<j<<std::endl;
     return true;
- }
+}
 
- bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
- {
-     *mode=controlMode[j];
-     return true;
- }
+bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
+{
+    if (!mode
+        || j < 0 || j >= (int)m_numberOfJoints)
+        return false;
+    *mode = m_controlMode[j];
+    return true;
+}
 
- bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
- {
-     for(unsigned int j=0; j<m_numberOfJoints; ++j)
-     {
-         modes[j]=controlMode[j];
-     }
-     return true;
- }
+bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
+{
+    if (!modes) return false;
+    for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
+        modes[j] = m_controlMode[j];
+    }
+    return true;
+}
 
- bool GazeboYarpControlBoardDriver::setTorqueMode(int j) //NOT TESTED
- {
+bool GazeboYarpControlBoardDriver::setTorqueMode(int j) //NOT TESTED
+{
+    if (j < 0 || j >= (int)m_numberOfJoints) return false;
     prepareResetJointMsg(j);
-    controlMode[j]=VOCAB_CM_TORQUE;
+    m_controlMode[j]=VOCAB_CM_TORQUE;
     std::cout<<"control mode = torque "<<j<<std::endl;
     return true;
- }
+}
 
-
- bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
- {
+bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
+{
+    if (j < 0 || j >= (int)m_numberOfJoints) return false;
     prepareResetJointMsg(j);
-    controlMode[j]=VOCAB_CM_IMPEDANCE_POS;
+    m_controlMode[j]=VOCAB_CM_IMPEDANCE_POS;
     std::cout<<"control mode = impedance position "<<j<<std::endl;
     return true;
- }
- bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
- {
-     return false;
- }
- bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
- {
-     prepareResetJointMsg(j);
-     controlMode[j] = VOCAB_CM_OPENLOOP;
-     std::cout<<"control mode = openloop "<<j<<std::endl;
-     return true;
- }
+}
+
+bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
+{
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
+{
+    if (j < 0 || j >= (int)m_numberOfJoints) return false;
+    prepareResetJointMsg(j);
+    m_controlMode[j] = VOCAB_CM_OPENLOOP;
+    std::cout<<"control mode = openloop "<<j<<std::endl;
+    return true;
+}
 

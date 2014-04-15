@@ -128,7 +128,7 @@ public:
     virtual bool checkMotionDone(bool* flag); //NOT TESTED
     virtual bool setPositionMode(); //NOT TESTED
 
-    // POS 2
+    // m_positions 2
     virtual bool positionMove(const int n_joint, const int* joints, const double* refs);
     virtual bool relativeMove(const int n_joint, const int* joints, const double* deltas);
     virtual bool checkMotionDone(const int n_joint, const int* joints, bool* flags);
@@ -283,35 +283,43 @@ private:
         PIDFeedbackTermDerivativeTerm = 1 << 2,
         PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
+    
+    struct Range {
+        Range() : min(0), max(0){}
+        double min;
+        double max;
+    };
 
-    unsigned int m_robotRefreshPeriod; //ms
     gazebo::physics::Model* m_robot;
     gazebo::event::ConnectionPtr m_updateConnection;
-    unsigned int m_numberOfJoints;
-
-    //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
-    yarp::os::Property m_pluginParameters;
-
-    /**
-     * The GAZEBO position of each joints, readonly from outside this interface
-     */
-    yarp::sig::Vector pos;
-    /**
-     * The GAZEBO desired position of each joints, (output of trajectory interp)
-     */
-    yarp::sig::Vector desiredPosition;
-
+    
+    yarp::os::Property m_pluginParameters; /*<! Contains the parameters of the device contained in the yarpConfigurationFile .ini file */
+    
+    unsigned int m_robotRefreshPeriod; //ms
+    unsigned int m_numberOfJoints; /*<! number of joints controlled by the control board */
+    std::vector<Range> m_jointLimits;
+    
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
-     * i.e. getEncoder(j)=zeroPosition+gazebo.getEncoder(j);
+     * i.e. getEncoder(j)=m_zeroPosition+gazebo.getEncoder(j);
      */
-    yarp::sig::Vector zeroPosition;
+    yarp::sig::Vector m_zeroPosition;
+    
+    yarp::sig::Vector m_positions; /*<! joint positions */
+    yarp::sig::Vector m_velocities; /*<! joint velocities */
+    yarp::sig::Vector m_torques; /*<! joint torques */
 
-    yarp::sig::Vector vel, speed, acc, amp, torque;
-    yarp::os::Semaphore pos_lock;
-    yarp::sig::Vector referenceSpeed, referencePosition, referenceAcceleraton, referenceTorque;
-    yarp::sig::Vector max_pos, min_pos;
-//    yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
+    yarp::sig::Vector amp;
+    
+    //Desired Control variables
+    yarp::sig::Vector m_referencePositions; /*<! desired reference positions. Depending on the position mode, they can be set directly or indirectly through the trajectory generator */
+    yarp::sig::Vector m_referenceTorques; /*<! desired reference torques for torque control mode */
+    yarp::sig::Vector m_referenceVelocities; /*<! desired reference velocities for velocity control mode */
+
+    //trajectory generator
+    yarp::sig::Vector m_trajectoryGenerationReferencePosition; /*<! reference position for trajectory generation in position mode */
+    yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /*<! reference speed for trajectory generation in position mode */
+    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /*<! reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! */
 
     std::vector<std::string> m_jointNames;
     gazebo::transport::NodePtr m_gazeboNode;
@@ -320,23 +328,20 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> m_velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
 
-    yarp::sig::Vector torqueOffsett;
-    yarp::sig::Vector minStiffness;
-    yarp::sig::Vector minDamping;
-    yarp::sig::Vector maxStiffness;
-    yarp::sig::Vector maxDamping;
+    yarp::sig::Vector m_torqueOffsett;
+    yarp::sig::Vector m_minStiffness;
+    yarp::sig::Vector m_minDamping;
+    yarp::sig::Vector m_maxStiffness;
+    yarp::sig::Vector m_maxDamping;
 
-    bool *motion_done;
-    int  *controlMode;
-    bool command_changed;
+    bool* m_isMotionDone;
+    int * m_controlMode;
     bool started;
-    int _clock;
+    int m_clock;
     int _T_controller;
 
-    //jointLogger logger;
-
     /**
-     * Private Gazebo methods
+     * Private methods
      */
     void setMinMaxPos();  //NOT TESTED
     bool setJointNames();  //WORKS

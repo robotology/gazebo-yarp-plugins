@@ -19,7 +19,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 
-#include <gazebo/gazebo.hh>
+#include <gazebo/common/Plugin.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 

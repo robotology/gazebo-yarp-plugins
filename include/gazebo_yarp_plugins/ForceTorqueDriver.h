@@ -13,7 +13,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
 
-#include <gazebo/gazebo.hh>
+#include <gazebo/common/Plugin.hh>
 #include "gazebo/sensors/ForceTorqueSensor.hh"
 
 
@@ -27,7 +27,7 @@ const int yarp_forcetorque_nr_of_channels = 6; //The IMU has 6 fixed channels
 
 const std::string yarp_scopedname_parameter = "sensorScopedName";
 
-class yarp::dev::GazeboYarpForceTorqueDriver: 
+class yarp::dev::GazeboYarpForceTorqueDriver:
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
@@ -36,17 +36,17 @@ public:
     GazeboYarpForceTorqueDriver();
 
     virtual ~GazeboYarpForceTorqueDriver();
-    
+
     void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
 
     /**
      * Yarp interfaces start here
      */
-    
+
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //ANALOG SENSOR
     virtual int read(yarp::sig::Vector &out);
     virtual int getState(int ch);
@@ -55,20 +55,20 @@ public:
     virtual int calibrateSensor();
     virtual int calibrateSensor(const yarp::sig::Vector& value);
     virtual int calibrateChannel(int ch);
-    
+
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
 
 private:
     yarp::sig::Vector forcetorque_data; //buffer for forcetorque sensor data
-    
+
     yarp::os::Stamp last_timestamp; //buffer for last timestamp data
-    
+
     yarp::os::Semaphore data_mutex; //mutex for accessing the data
-    
+
     gazebo::sensors::ForceTorqueSensor* parentSensor;
-    
+
     gazebo::event::ConnectionPtr updateConnection;
 
 

@@ -110,7 +110,7 @@ add_library(gazebo_yarp_singleton    SHARED ${singleton_source}    ${singleton_h
 add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})
 add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
 add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
-add_library(gazebo_yarp_jointsensors SHARED ${jointSensors_source} ${jointSensors_source})
+add_library(gazebo_yarp_jointsensors SHARED ${jointSensors_source} ${jointSensors_headers})
 add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
 
 

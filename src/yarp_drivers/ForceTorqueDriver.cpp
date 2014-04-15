@@ -9,8 +9,12 @@
 #include "gazebo_yarp_plugins/Handler.hh"
 
 #include <gazebo/math/Vector3.hh>
+#include <gazebo/sensors/ForceTorqueSensor.hh>
 
 using namespace yarp::dev;
+
+const int YarpForceTorqueChannelsNumber = 6; //The IMU has 6 fixed channels
+const std::string YarpScopedName = "sensorScopedName";
 
 GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver() {}
 GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
@@ -26,27 +30,25 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_
     gazebo::math::Vector3 force;
     gazebo::math::Vector3 torque;
     
-    force = this->parentSensor->GetForce();
-    torque = this->parentSensor->GetTorque();
+    force = this->m_parentSensor->GetForce();
+    torque = this->m_parentSensor->GetTorque();
     
     /** \todo ensure that the timestamp is the right one */
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */
-    last_timestamp.update(this->parentSensor->GetLastUpdateTime().Double());
+    m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
     
     int i=0;
-    
-    data_mutex.wait();
-    
-    for(i = 0; i < 3; i++ ) {
-        forcetorque_data[0+i] = force[i];
+    m_dataMutex.wait();
+
+    for (i = 0; i < 3; i++) {
+        m_forceTorqueData[0 + i] = force[i];
     }
     
-    for(i = 0; i < 3; i++ ) {
-        forcetorque_data[3+i] = torque[i];
+    for (i = 0; i < 3; i++) {
+        m_forceTorqueData[3 + i] = torque[i];
     }
     
-    data_mutex.post();
-    
+    m_dataMutex.post();
     return;
 }
     
@@ -55,25 +57,24 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 {
     std::cout << "GazeboYarpForceTorqueDriver::open() called" << std::endl;
   
-    data_mutex.wait();
-    forcetorque_data.resize(YarpForceTorqueChannelsNumber,0.0);
-    data_mutex.post();
+    m_dataMutex.wait();
+    m_forceTorqueData.resize(YarpForceTorqueChannelsNumber, 0.0);
+    m_dataMutex.post();
     
     //Get gazebo pointers
-    std::string sensorScopedName (config.find(YarpScopedName.c_str()).asString().c_str());
-    std::cout << "GazeboYarpForceTorqueDriver::open( is looking for sensor " << sensorScopedName << "...\n";
+    std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
+    std::cout << "GazeboYarpForceTorqueDriver::open is looking for sensor " << sensorScopedName << "..." << std::endl;
     
-    parentSensor = (gazebo::sensors::ForceTorqueSensor*) GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
+    m_parentSensor = (gazebo::sensors::ForceTorqueSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     
-    if(NULL == parentSensor)
+    if (!m_parentSensor)
     {
-        std::cout << "Error, ForceTorque sensor was not found\n";
+        std::cout << "Error, ForceTorque sensor was not found" << std::endl;
         return AS_ERROR;
     }
     
     //Connect the driver to the gazebo simulation
-    this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
-                                 boost::bind ( &GazeboYarpForceTorqueDriver::onUpdate, this, _1 ) );
+    this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpForceTorqueDriver::onUpdate, this, _1));
   
     std::cout << "GazeboYarpForceTorqueDriver::open() returning true" << std::endl;
     return true;
@@ -81,36 +82,35 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpForceTorqueDriver::close()
 {
-    if (this->updateConnection.get()) {
-        gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
-        this->updateConnection = gazebo::event::ConnectionPtr();
+    if (this->m_updateConnection.get()) {
+        gazebo::event::Events::DisconnectWorldUpdateBegin(this->m_updateConnection);
+        this->m_updateConnection = gazebo::event::ConnectionPtr();
     }
     return true;
 }
     
 //ANALOG SENSOR
-int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector &out)
+int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector& out)
 {
     ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
     /*
-    if( (int)forcetorque_data.size() != YarpForceTorqueChannelsNumber ||
+    if( (int)m_forceTorqueData.size() != YarpForceTorqueChannelsNumber ||
         (int)out.size() != YarpForceTorqueChannelsNumber ) {
         return AS_ERROR;
     }
     */
     
-   if( (int)forcetorque_data.size() != YarpForceTorqueChannelsNumber ) {
+   if ((int)m_forceTorqueData.size() != YarpForceTorqueChannelsNumber) {
         return AS_ERROR;
    }
    
-   if( (int)out.size() != YarpForceTorqueChannelsNumber ) {
+   if ((int)out.size() != YarpForceTorqueChannelsNumber) {
        out.resize(YarpForceTorqueChannelsNumber);
    }
     
-    
-    data_mutex.wait();
-    out = forcetorque_data;
-    data_mutex.post();
+    m_dataMutex.wait();
+    out = m_forceTorqueData;
+    m_dataMutex.post();
     
     return AS_OK;
 }
@@ -122,7 +122,6 @@ int GazeboYarpForceTorqueDriver::getChannels()
 
 int GazeboYarpForceTorqueDriver::getState(int ch)
 {
-    printf("getstate\n");
     return AS_OK;
 }
 
@@ -149,5 +148,5 @@ int GazeboYarpForceTorqueDriver::calibrateChannel(int ch, double v)
 //PRECISELY TIMED
 yarp::os::Stamp GazeboYarpForceTorqueDriver::getLastInputStamp()
 {
-    return last_timestamp;
+    return m_lastTimestamp;
 }

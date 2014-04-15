@@ -9,6 +9,7 @@
 #define GAZEBOYARP_IMU_HH
 
 #include <gazebo/common/Plugin.hh>
+
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -17,6 +18,10 @@
 
 namespace gazebo
 {
+    namespace sensors {
+        class ImuSensor;
+    }
+
     /// \class GazeboYarpIMU
     /// Gazebo Plugin emulating the yarp imu device in Gazebo.
     ///

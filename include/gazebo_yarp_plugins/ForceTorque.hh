@@ -9,6 +9,7 @@
 #define GAZEBOYARP_FORCETORQUE_HH
 
 #include <gazebo/common/Plugin.hh>
+
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -21,6 +22,10 @@ namespace yarp {
 }
 namespace gazebo
 {
+    namespace sensors {
+        class ForceTorqueSensor;
+    }
+
     /// \class GazeboYarpForceTorque
     /// Gazebo Plugin emulating the yarp device exposing a 6 axis force-torque sensor.
     ///

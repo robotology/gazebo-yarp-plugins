@@ -18,21 +18,45 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
+#include <string>
+#include <vector>
 
-#include <gazebo/common/Plugin.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <boost/shared_ptr.hpp>
 
-
-const double ROBOT_POSITION_TOLERANCE = 0.9;
+extern const double RobotPositionTolerance;
 
 namespace yarp {
     namespace dev {
         class GazeboYarpControlBoardDriver;
     }
-
 }
 
+namespace gazebo {
+    namespace common {
+        class UpdateInfo;
+    }
+    
+    namespace physics {
+        class Model;
+    }
+    
+    namespace event {
+        class Connection;
+        typedef boost::shared_ptr<Connection> ConnectionPtr;
+    }
+    
+    namespace transport {
+        class Node;
+        class Publisher;
+        
+        typedef boost::shared_ptr<Node> NodePtr;
+        typedef boost::shared_ptr<Publisher> PublisherPtr;
+    }
+    
+    namespace msgs {
+        class JointCmd;
+    }
+}
 
 class yarp::dev::GazeboYarpControlBoardDriver:
     public DeviceDriver,
@@ -53,14 +77,13 @@ class yarp::dev::GazeboYarpControlBoardDriver:
 public:
 
     GazeboYarpControlBoardDriver();
-
     virtual ~GazeboYarpControlBoardDriver();
 
     /**
      * Gazebo stuff
      */
     bool gazebo_init();
-    void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
+    void onUpdate(const gazebo::common::UpdateInfo&);
 
     /**
      * Yarp interfaces start here
@@ -71,46 +94,46 @@ public:
     virtual bool close();
 
     //ENCODERS
-    virtual bool getEncoder(int j, double *v); //WORKS
-    virtual bool getEncoders(double *encs); //WORKS
+    virtual bool getEncoder(int j, double* v); //WORKS
+    virtual bool getEncoders(double* encs); //WORKS
     virtual bool resetEncoder(int j); //WORKS
     virtual bool resetEncoders(); //WORKS
     virtual bool setEncoder(int j, double val); //WORKS
-    virtual bool setEncoders(const double *vals); //WORKS
+    virtual bool setEncoders(const double* vals); //WORKS
 
-    virtual bool getEncoderSpeed(int j, double *sp); //NOT TESTED
-    virtual bool getEncoderSpeeds(double *spds); //NOT TESTED
+    virtual bool getEncoderSpeed(int j, double* sp); //NOT TESTED
+    virtual bool getEncoderSpeeds(double* spds); //NOT TESTED
 
-    virtual bool getEncoderAcceleration(int j, double *spds); //NOT IMPLEMENTED
-    virtual bool getEncoderAccelerations(double *accs); //NOT IMPLEMENTED
+    virtual bool getEncoderAcceleration(int j, double* spds); //NOT IMPLEMENTED
+    virtual bool getEncoderAccelerations(double* accs); //NOT IMPLEMENTED
 
     // ENCODERS TIMED
-    virtual bool getEncodersTimed(double *encs, double *time);
-    virtual bool getEncoderTimed(int j, double *encs, double *time);
+    virtual bool getEncodersTimed(double* encs, double* time);
+    virtual bool getEncoderTimed(int j, double* encs, double* time);
 
     //POSITION CONTROL
     virtual bool stop(int j); //WORKS
     virtual bool stop(); //WORKS
     virtual bool positionMove(int j, double ref); //WORKS
-    virtual bool getAxes(int *ax); // WORKS
-    virtual bool positionMove(const double *refs); //WORKS
+    virtual bool getAxes(int* ax); // WORKS
+    virtual bool positionMove(const double* refs); //WORKS
     /// @arg sp [deg/sec]
     virtual bool setRefSpeed(int j, double sp); //WORKS
-    virtual bool getRefSpeed(int j, double *ref); //WORKS
-    virtual bool getRefSpeeds(double *spds); //WORKS
+    virtual bool getRefSpeed(int j, double* ref); //WORKS
+    virtual bool getRefSpeeds(double* spds); //WORKS
 
     virtual bool relativeMove(int j, double delta); //NOT TESTED
-    virtual bool relativeMove(const double *deltas); //NOT TESTED
-    virtual bool checkMotionDone(int j, bool *flag); //NOT TESTED
-    virtual bool checkMotionDone(bool *flag); //NOT TESTED
+    virtual bool relativeMove(const double* deltas); //NOT TESTED
+    virtual bool checkMotionDone(int j, bool* flag); //NOT TESTED
+    virtual bool checkMotionDone(bool* flag); //NOT TESTED
     virtual bool setPositionMode(); //NOT TESTED
 
     // POS 2
-    virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
-    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas);
-    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags);
-    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds);
-    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
+    virtual bool positionMove(const int n_joint, const int* joints, const double* refs);
+    virtual bool relativeMove(const int n_joint, const int* joints, const double* deltas);
+    virtual bool checkMotionDone(const int n_joint, const int* joints, bool* flags);
+    virtual bool setRefSpeeds(const int n_joint, const int* joints, const double* spds);
+    virtual bool setRefAccelerations(const int n_joint, const int* joints, const double* accs);
     virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds);
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
     virtual bool stop(const int n_joint, const int *joints);
@@ -261,13 +284,13 @@ private:
         PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
 
-    unsigned int robotRefreshPeriod; //ms
-    gazebo::physics::Model* _robot;
-    gazebo::event::ConnectionPtr updateConnection;
-    unsigned int numberOfJoints;
+    unsigned int m_robotRefreshPeriod; //ms
+    gazebo::physics::Model* m_robot;
+    gazebo::event::ConnectionPtr m_updateConnection;
+    unsigned int m_numberOfJoints;
 
     //Contains the parameters of the device contained in the yarpConfigurationFile .ini file
-    yarp::os::Property pluginParameters;
+    yarp::os::Property m_pluginParameters;
 
     /**
      * The GAZEBO position of each joints, readonly from outside this interface
@@ -290,12 +313,12 @@ private:
     yarp::sig::Vector max_pos, min_pos;
 //    yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
-    std::vector<std::string> joint_names;
-    gazebo::transport::NodePtr gazeboNode;
-    gazebo::transport::PublisherPtr jointCmdPub;
-    std::vector<GazeboYarpControlBoardDriver::PID> _positionPIDs;
-    std::vector<GazeboYarpControlBoardDriver::PID> _velocityPIDs;
-    std::vector<GazeboYarpControlBoardDriver::PID> _impedancePosPDs;
+    std::vector<std::string> m_jointNames;
+    gazebo::transport::NodePtr m_gazeboNode;
+    gazebo::transport::PublisherPtr m_jointCommandPublisher;
+    std::vector<GazeboYarpControlBoardDriver::PID> m_positionPIDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> m_velocityPIDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
 
     yarp::sig::Vector torqueOffsett;
     yarp::sig::Vector minStiffness;

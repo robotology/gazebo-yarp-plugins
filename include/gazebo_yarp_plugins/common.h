@@ -8,10 +8,9 @@
 #define GAZEBOYARP_COMMON_H
 
 #include <string>
+#include <cmath>
 
 namespace GazeboYarpPlugins {
-        
-    double const pi = 3.1415926535897932384626433;
     
     /**
      * \brief convert from degrees to radians
@@ -36,9 +35,9 @@ namespace GazeboYarpPlugins {
     bool hasEnding (std::string const &fullString, std::string const &ending);
     
     
-    inline double convertDegreesToRadians(double degrees) { return degrees / 180.0 * pi; }
+    inline double convertDegreesToRadians(double degrees) { return degrees / 180.0 * M_PI; }
     
-    inline double convertRadiansToDegrees(double radians) { return radians * 180.0 / pi; }
+    inline double convertRadiansToDegrees(double radians) { return radians * 180.0 / M_PI; }
     
     inline bool hasEnding (std::string const &fullString, std::string const &ending)
     {

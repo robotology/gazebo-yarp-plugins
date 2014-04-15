@@ -12,8 +12,13 @@
 #include <string>
 
 #include <yarp/os/Network.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriverList.h>
+
+namespace yarp {
+    namespace dev {
+        class IMultipleWrapper;
+    }
+}
 
 namespace gazebo
 {
@@ -35,7 +40,6 @@ class GazeboYarpControlBoard : public ModelPlugin
 {
 public:
     GazeboYarpControlBoard();
-
     virtual ~GazeboYarpControlBoard();
 
     /**
@@ -45,14 +49,13 @@ public:
 
 private:
 
-    yarp::os::Network _yarp;
-    yarp::dev::PolyDriver _wrapper;
-    yarp::dev::IMultipleWrapper *_iWrap;
-    yarp::dev::PolyDriver _controlBoard;
-    yarp::os::Property _parameters;
+    yarp::os::Network m_yarp;
+    yarp::dev::PolyDriver m_wrapper;
+    yarp::dev::IMultipleWrapper* m_iWrap;
+    yarp::dev::PolyDriver m_controlBoard;
+    yarp::os::Property m_parameters;
 
-    std::string _robotName;
-
+    std::string m_robotName;
 };
 
 }

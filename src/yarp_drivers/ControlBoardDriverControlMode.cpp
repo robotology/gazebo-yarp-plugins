@@ -6,7 +6,9 @@
 
 
 #include "gazebo_yarp_plugins/ControlBoardDriver.h"
-
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/Joint.hh>
+#include <gazebo/transport/Publisher.hh>
 
 
 using namespace yarp::dev;
@@ -15,9 +17,9 @@ void GazeboYarpControlBoardDriver::prepareResetJointMsg(int j)
 {
     gazebo::msgs::JointCmd j_cmd;
     j_cmd.set_reset(true);
-    j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
-    this->jointCmdPub->WaitForConnection();
-    this->jointCmdPub->Publish(j_cmd);
+    j_cmd.set_name(this->m_robot->GetJoint(m_jointNames[j])->GetScopedName());
+    this->m_jointCommandPublisher->WaitForConnection();
+    this->m_jointCommandPublisher->Publish(j_cmd);
 }
 
 bool GazeboYarpControlBoardDriver::setPositionMode(int j) //WORKS
@@ -44,7 +46,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
 
  bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
  {
-     for(unsigned int j=0; j<numberOfJoints; ++j)
+     for(unsigned int j=0; j<m_numberOfJoints; ++j)
      {
          modes[j]=controlMode[j];
      }

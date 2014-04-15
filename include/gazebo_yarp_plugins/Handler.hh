@@ -106,8 +106,8 @@ private:
     typedef std::map<std::string, ReferenceCountingSensor> SensorsMap;
     
     // singleton stuff
-    static yarp::os::Semaphore m_mutex;
-    static Handler* m_handle;
+    static yarp::os::Semaphore s_mutex;
+    static Handler* s_handle;
 
     Handler();
     RobotsMap m_robotMap;      // map of known robots

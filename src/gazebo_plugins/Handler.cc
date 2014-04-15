@@ -12,29 +12,28 @@ using namespace gazebo;
 
 namespace GazeboYarpPlugins {
 
-Handler* Handler::m_handle = NULL;
-yarp::os::Semaphore Handler::m_mutex = 1;
+Handler* Handler::s_handle = NULL;
+yarp::os::Semaphore Handler::s_mutex = 1;
 
 
 Handler::Handler()
 {
     m_robotMap.clear();
     m_sensorsMap.clear();
-    m_handle = NULL;
 }
 
 Handler* Handler::getHandler()
 {
-    m_mutex.wait();
-    if (!m_handle) {
+    s_mutex.wait();
+    if (!s_handle) {
         std::cout << "Calling GazeboYarpPlugins::Handler Constructor" << std::endl;
-        m_handle = new Handler();
-        if (!m_handle)
+        s_handle = new Handler();
+        if (!s_handle)
             std::cout << "Error while calling GazeboYarpPluginHandler constructor" << std::endl;
     }
-    m_mutex.post();
+    s_mutex.post();
 
-    return m_handle;
+    return s_handle;
 }
 
 bool Handler::setRobot(gazebo::physics::Model* _model)

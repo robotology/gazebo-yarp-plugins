@@ -8,16 +8,12 @@
 #include "gazebo_yarp_plugins/ForceTorqueDriver.h"
 #include "gazebo_yarp_plugins/Handler.hh"
 
+#include <gazebo/math/Vector3.hh>
+
 using namespace yarp::dev;
 
-
-GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver()
-{}
-
-
-GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
-{}
-
+GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver() {}
+GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
 
 /**
  *
@@ -25,7 +21,7 @@ GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver()
  * 
  * \todo check forcetorque data
  */
-void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo & /*_info*/)
+void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
 {
     gazebo::math::Vector3 force;
     gazebo::math::Vector3 torque;
@@ -60,11 +56,11 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     std::cout << "GazeboYarpForceTorqueDriver::open() called" << std::endl;
   
     data_mutex.wait();
-    forcetorque_data.resize(yarp_forcetorque_nr_of_channels,0.0);
+    forcetorque_data.resize(YarpForceTorqueChannelsNumber,0.0);
     data_mutex.post();
     
     //Get gazebo pointers
-    std::string sensorScopedName (config.find(yarp_scopedname_parameter.c_str()).asString().c_str());
+    std::string sensorScopedName (config.find(YarpScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpForceTorqueDriver::open( is looking for sensor " << sensorScopedName << "...\n";
     
     parentSensor = (gazebo::sensors::ForceTorqueSensor*) GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
@@ -97,18 +93,18 @@ int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector &out)
 {
     ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
     /*
-    if( (int)forcetorque_data.size() != yarp_forcetorque_nr_of_channels ||
-        (int)out.size() != yarp_forcetorque_nr_of_channels ) {
+    if( (int)forcetorque_data.size() != YarpForceTorqueChannelsNumber ||
+        (int)out.size() != YarpForceTorqueChannelsNumber ) {
         return AS_ERROR;
     }
     */
     
-   if( (int)forcetorque_data.size() != yarp_forcetorque_nr_of_channels ) {
+   if( (int)forcetorque_data.size() != YarpForceTorqueChannelsNumber ) {
         return AS_ERROR;
    }
    
-   if( (int)out.size() != yarp_forcetorque_nr_of_channels ) {
-       out.resize(yarp_forcetorque_nr_of_channels);
+   if( (int)out.size() != YarpForceTorqueChannelsNumber ) {
+       out.resize(YarpForceTorqueChannelsNumber);
    }
     
     
@@ -121,7 +117,7 @@ int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector &out)
 
 int GazeboYarpForceTorqueDriver::getChannels()
 {
-    return yarp_forcetorque_nr_of_channels;
+    return YarpForceTorqueChannelsNumber;
 }
 
 int GazeboYarpForceTorqueDriver::getState(int ch)

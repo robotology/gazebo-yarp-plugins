@@ -8,18 +8,18 @@
 #ifndef GAZEBOYARP_FORCETORQUE_HH
 #define GAZEBOYARP_FORCETORQUE_HH
 
-#include <gazebo/gazebo.hh>
+#include <gazebo/common/Plugin.hh>
 #include <yarp/os/Network.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <string>
 
+namespace yarp {
+    namespace dev {
+        class IMultipleWrapper;
+    }
+}
 namespace gazebo
 {
-    namespace sensors {
-        class ForceTorqueSensor;
-    }
-    
     /// \class GazeboYarpForceTorque
     /// Gazebo Plugin emulating the yarp device exposing a 6 axis force-torque sensor.
     /// 
@@ -51,17 +51,16 @@ namespace gazebo
     public:
         GazeboYarpForceTorque();
         virtual ~GazeboYarpForceTorque();
-
+        
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        sensors::ForceTorqueSensor* parentSensor;
-        yarp::os::Network _yarp;
-        yarp::dev::PolyDriver _forcetorque_wrapper;
-        yarp::dev::IMultipleWrapper *_iWrap;
-        yarp::dev::PolyDriver _forcetorque_driver;
+        yarp::os::Network m_yarp;
+        yarp::dev::PolyDriver m_forcetorqueWrapper;
+        yarp::dev::IMultipleWrapper* m_iWrap;
+        yarp::dev::PolyDriver m_forceTorqueDriver;
         
-        std::string _sensorName;
+        std::string m_sensorName;
     };
 }
 

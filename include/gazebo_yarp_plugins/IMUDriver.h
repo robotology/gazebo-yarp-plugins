@@ -48,19 +48,19 @@ public:
 
     virtual ~GazeboYarpIMUDriver();
     
-    void onUpdate(const gazebo::common::UpdateInfo &);
+    void onUpdate(const gazebo::common::UpdateInfo&);
 
     /**
      * Yarp interfaces start here
      */
     
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable &config);
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
     
     //GENERIC SENSOR
-    virtual bool read(yarp::sig::Vector &outVector);
-    virtual bool getChannels(int *numberOfChannels);
+    virtual bool read(yarp::sig::Vector& outVector);
+    virtual bool getChannels(int* numberOfChannels);
     virtual bool calibrate(int channelIndex, double v);
     
     //PRECISELY TIMED

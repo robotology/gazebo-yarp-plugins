@@ -14,7 +14,7 @@ For using Yarp with Gazebo, you shall install:
 **Gazebo is under active development, so it is recommended to use the latest released version of Gazebo.**
 
 *You could prefer to run an older version of Gazebo if you want to use it with ROS integration. Depending on your ROS version you have to stick to a given Gazebo version.*
-*Yarp integration provided by gazebo_yarp_plugins is not affected by this kind of limitation.* 
+*Yarp integration provided by gazebo_yarp_plugins is not affected by this kind of limitations.* 
 
 ###Compile time dependencies
 For compiling gazebo_yarp_plugins you need the headers for the following libraries:

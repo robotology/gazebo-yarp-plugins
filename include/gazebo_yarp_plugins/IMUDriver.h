@@ -38,7 +38,7 @@ namespace gazebo {
 extern const int YarpIMUChannelsNumber; //The IMU has 12 fixed channels
 extern const std::string YarpScopedName;
 
-class yarp::dev::GazeboYarpIMUDriver: 
+class yarp::dev::GazeboYarpIMUDriver:
     public yarp::dev::IGenericSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
@@ -53,11 +53,11 @@ public:
     /**
      * Yarp interfaces start here
      */
-    
+
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //GENERIC SENSOR
     virtual bool read(yarp::sig::Vector& outVector);
     virtual bool getChannels(int* numberOfChannels);

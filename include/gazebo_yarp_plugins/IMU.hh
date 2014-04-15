@@ -11,6 +11,7 @@
 #include <gazebo/common/Plugin.hh>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
+
 #include <string>
 
 
@@ -18,12 +19,12 @@ namespace gazebo
 {
     /// \class GazeboYarpIMU
     /// Gazebo Plugin emulating the yarp imu device in Gazebo.
-    /// 
+    ///
     /// This plugin instantiate a yarp imu driver for the Gazebo simulator
-    /// and instantiate a network wrapper (provided by yarp::dev::ServerInertial) 
+    /// and instantiate a network wrapper (provided by yarp::dev::ServerInertial)
     /// to expose the sensor on the yarp network.
-    /// 
-    /// It can be configurated using the yarpConfigurationFile sdf tag, 
+    ///
+    /// It can be configurated using the yarpConfigurationFile sdf tag,
     /// that contains a Gazebo URI pointing at a yarp .ini configuration file
     /// containing the configuration parameters of the controlBoard
     ///
@@ -32,9 +33,9 @@ namespace gazebo
     ///  <TR><TD> name </TD><TD> Port name to assign to the wrapper to this device. </TD></TR>
     ///  <TR><TD> period </TD><TD> Update period (in s) of yarp port that publish the measure. </TD></TR>
     ///  </TABLE>
-    /// If the required parameters are not specified, their value will be the 
+    /// If the required parameters are not specified, their value will be the
     /// default one assigned by the yarp::dev::ServerInertial wrapper .
-    /// 
+    ///
     class GazeboYarpIMU : public SensorPlugin
     {
     public:

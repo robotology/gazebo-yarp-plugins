@@ -13,7 +13,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
 
-#include <gazebo/gazebo.hh>
+#include <gazebo/common/Plugin.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 
@@ -24,13 +24,13 @@ namespace yarp {
 }
 
 
-class yarp::dev::GazeboYarpJointSensorsDriver: 
+class yarp::dev::GazeboYarpJointSensorsDriver:
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
 {
 public:
-    
+
     GazeboYarpJointSensorsDriver();
 
     virtual ~GazeboYarpJointSensorsDriver();
@@ -44,11 +44,11 @@ public:
     /**
      * Yarp interfaces implementation
      */
-    
+
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //ANALOG SENSOR
     virtual int read(yarp::sig::Vector &out);
     virtual int getState(int ch);
@@ -57,34 +57,34 @@ public:
     virtual int calibrateSensor();
     virtual int calibrateSensor(const yarp::sig::Vector& value);
     virtual int calibrateChannel(int ch);
-    
+
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
-    
+
 private:
     enum {
         Position,
         Speed,
-        Torque 
+        Torque
     } jointsensors_type;
-    
+
     gazebo::physics::Model* _robot;
-    
+
     std::vector<gazebo::physics::Joint *> joint_ptrs;
-    
+
     yarp::sig::Vector jointsensors_data; //buffer for joint sensors data
-    
+
     int jointsensors_nr_of_channels;
-    
+
     yarp::os::Stamp last_timestamp; //buffer for last timestamp data
-    
+
     yarp::os::Semaphore data_mutex; //mutex for accessing the data
-        
+
     gazebo::event::ConnectionPtr updateConnection;
-    
-    bool setJointPointers(yarp::os::Property & plugin_parameters); 
-    bool setJointSensorsType(yarp::os::Property & plugin_parameters); 
+
+    bool setJointPointers(yarp::os::Property & plugin_parameters);
+    bool setJointSensorsType(yarp::os::Property & plugin_parameters);
 
 };
 

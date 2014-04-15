@@ -9,15 +9,10 @@
 
 #include "gazebo_yarp_plugins/common.h"
 
-#include <yarp/sig/all.h>
-#include <yarp/sig/ImageFile.h>
-#include <yarp/os/all.h>
 #include <stdio.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace yarp::sig::draw;
-using namespace yarp::sig::file;
 using namespace yarp::dev;
 
 GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver()
@@ -32,14 +27,14 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     //assert is a NOP in release mode. We should change the error handling either with an exception or something else
     assert(_robot);
     if (!_robot) return false;
-    
+
     std::cout<<"Robot Name: "<<_robot->GetName() <<std::endl;
     std::cout<<"# Joints: "<<_robot->GetJoints().size() <<std::endl;
     std::cout<<"# Links: "<<_robot->GetLinks().size() <<std::endl;
-    
+
     this->robotRefreshPeriod = this->_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0;
     if (!setJointNames()) return false;
-    
+
     numberOfJoints = joint_names.size();
     //pos_lock.unlock();
     pos.resize(numberOfJoints);
@@ -64,7 +59,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     maxStiffness.resize(numberOfJoints, 1000.0);
     minDamping.resize(numberOfJoints, 0.0);
     maxDamping.resize(numberOfJoints, 100.0);
-    
+
     setMinMaxPos();
     setMinMaxImpedance();
     setPIDs();
@@ -86,17 +81,17 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     torqueOffsett = 0;
     for (unsigned int j = 0; j < numberOfJoints; ++j)
         controlMode[j] = VOCAB_CM_POSITION;
-    
+
     std::cout << "gazebo_init set pid done!" << std::endl;
-    
+
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(                                                                           boost::bind(&GazeboYarpControlBoardDriver::onUpdate, this, _1));
-    
+
     gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
     gazeboNode->Init(this->_robot->GetWorld()->GetName());
     jointCmdPub = gazeboNode->Advertise<gazebo::msgs::JointCmd>(std::string("~/") + this->_robot->GetName() + "/joint_cmd");
-    
+
     _T_controller = 1;
-    
+
     std::stringstream ss(pluginParameters.find("initialConfiguration").toString());
     if(!(pluginParameters.find("initialConfiguration") == ""))
     {
@@ -117,7 +112,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             counter++;
         }
         std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
-        
+
         for(unsigned int i = 0; i < numberOfJoints; ++i)
         {
             gazebo::math::Angle a;
@@ -153,14 +148,14 @@ void GazeboYarpControlBoardDriver::computeTrajectory(const int j)
 void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo & /*_info*/ )
 {
     _clock++;
-    
+
     if (!started) //This is a simple way to start with the robot in standing position
     {
         started=true;
         for (unsigned int j = 0; j < numberOfJoints; ++j)
             sendPositionToGazebo (j, pos[j]);
     }
-    
+
     pos_lock.wait();
     // Sensing position & torque
     for (unsigned int jnt_cnt=0; jnt_cnt < joint_names.size(); jnt_cnt++)
@@ -171,9 +166,9 @@ void GazeboYarpControlBoardDriver::onUpdate ( const gazebo::common::UpdateInfo &
         torque[jnt_cnt] = this->_robot->GetJoint(joint_names[jnt_cnt])->GetForce(0);
     }
     pos_lock.post();
-    
+
     //logger.log(speed[2]);
-    
+
     for (unsigned int j=0; j<numberOfJoints; ++j)
     {
         if (controlMode[j] == VOCAB_CM_POSITION) //set pos joint value, set vel joint value
@@ -233,22 +228,22 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
     std::cout << ".ini file found, using joint names in ini file" << std::endl;
     yarp::os::Bottle joint_names_bottle = pluginParameters.findGroup("jointNames");
-    
+
     if(joint_names_bottle.isNull()) {
         std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." << std::endl;
         return false;
     }
-    
+
     int nr_of_joints = joint_names_bottle.size()-1;
-    
+
     joint_names.resize(nr_of_joints);
-    
+
     const gazebo::physics::Joint_V & gazebo_models_joints = _robot->GetJoints();
-    
+
     for(unsigned int i=0; i < joint_names.size(); i++ ) {
         bool joint_found = false;
         std::string controlboard_joint_name(joint_names_bottle.get(i+1).asString().c_str());
-        
+
         for(unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++ ) {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
             if( GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_name) ) {
@@ -256,13 +251,13 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
                 joint_names[i] = gazebo_joint_name;
             }
         }
-        
+
         if( !joint_found ) {
             std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error, cannot find joint " << joint_names[i] << std::endl;
             joint_names.resize(0);
             return false;
         }
-        
+
     }
     return true;
 }
@@ -275,15 +270,15 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
     if(pluginParameters.check(pidGroupName.c_str()))
     {
         std::cout<<"Found PID information in plugin parameters group " << pidGroupName << std::endl;
-        
+
         for(unsigned int i = 0; i < numberOfJoints; ++i)
         {
             std::stringstream property_name;
             property_name<<"Pid";
             property_name<<i;
-            
+
             yarp::os::Bottle& pid = pluginParameters.findGroup(pidGroupName.c_str()).findGroup(property_name.str().c_str());
-            
+
             GazeboYarpControlBoardDriver::PID pidValue = {0, 0, 0, -1, -1};
             if (pidTerms & PIDFeedbackTermProportionalTerm)
                 pidValue.p = pid.get(1).asDouble();
@@ -291,11 +286,11 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
                 pidValue.d = pid.get(2).asDouble();
             if (pidTerms & PIDFeedbackTermIntegrativeTerm)
                 pidValue.i = pid.get(3).asDouble();
-            
+
             pidValue.maxInt = pid.get(4).asDouble();
             pidValue.maxOut = pid.get(5).asDouble();
-            
-            
+
+
             pids.push_back(pidValue);
             std::cout<<"  P: "<<pidValue.p<<" I: "<<pidValue.i<<" D: "<<pidValue.d<<" maxInt: "<<pidValue.maxInt<<" maxOut: "<<pidValue.maxOut<<std::endl;
         }
@@ -318,10 +313,10 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
 
 void GazeboYarpControlBoardDriver::setMinMaxImpedance()
 {
-    
+
     yarp::os::Bottle& name_bot = pluginParameters.findGroup("WRAPPER").findGroup("networks");
     std::string name = name_bot.get(1).toString();
-    
+
     yarp::os::Bottle& kin_chain_bot = pluginParameters.findGroup(name);
     if(kin_chain_bot.check("min_stiffness"))
     {
@@ -337,7 +332,7 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     }
     else
         std::cout<<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
-    
+
     if(kin_chain_bot.check("max_stiffness"))
     {
         std::cout<<"max_stiffness param found!"<<std::endl;
@@ -352,7 +347,7 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     }
     else
         std::cout<<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
-    
+
     if(kin_chain_bot.check("min_damping"))
     {
         std::cout<<"min_damping param found!"<<std::endl;
@@ -367,7 +362,7 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     }
     else
         std::cout<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
-    
+
     if(kin_chain_bot.check("max_damping"))
     {
         std::cout<<"max_damping param found!"<<std::endl;
@@ -382,7 +377,7 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
     }
     else
         std::cout<<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
-    
+
     std::cout<<"min_stiffness: [ "<<minStiffness.toString()<<" ]"<<std::endl;
     std::cout<<"max_stiffness: [ "<<maxStiffness.toString()<<" ]"<<std::endl;
     std::cout<<"min_damping: [ "<<minDamping.toString()<<" ]"<<std::endl;
@@ -417,7 +412,7 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)  //WORKS
 {
     GazeboYarpControlBoardDriver::PID positionPID = _positionPIDs[joint_index];
-    
+
     j_cmd.set_name(this->_robot->GetJoint(joint_names[joint_index])->GetScopedName());
     j_cmd.mutable_position()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
@@ -459,7 +454,7 @@ bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref) //NOT 
 void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     GazeboYarpControlBoardDriver::PID velocityPID = _velocityPIDs[j];
-    
+
     j_cmd.set_name(this->_robot->GetJoint(joint_names[j])->GetScopedName());
 //    j_cmd.mutable_position()->set_p_gain(0.0);
 //    j_cmd.mutable_position()->set_i_gain(0.0);
@@ -474,7 +469,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     //     if (velocityPID.maxOut > 0) {
     //         j_cmd.mutable_velocity()->set_limit(velocityPID.maxOut);
     //     }
-    
+
     j_cmd.mutable_velocity()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
 }
 

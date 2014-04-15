@@ -38,7 +38,7 @@ namespace gazebo {
 const int YarpForceTorqueChannelsNumber = 6; //The IMU has 6 fixed channels
 const std::string YarpScopedName = "sensorScopedName";
 
-class yarp::dev::GazeboYarpForceTorqueDriver: 
+class yarp::dev::GazeboYarpForceTorqueDriver:
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
@@ -52,11 +52,11 @@ public:
     /**
      * Yarp interfaces start here
      */
-    
+
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //ANALOG SENSOR
     virtual int read(yarp::sig::Vector& out);
     virtual int getState(int ch);
@@ -65,7 +65,7 @@ public:
     virtual int calibrateSensor();
     virtual int calibrateSensor(const yarp::sig::Vector& value);
     virtual int calibrateChannel(int ch);
-    
+
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 

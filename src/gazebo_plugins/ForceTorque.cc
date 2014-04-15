@@ -39,7 +39,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
        return;
     }
     std::cout<<"*** GazeboYarpForceTorque plugin started ***"<<std::endl;
-    
+
     if (!_sensor)
     {
         gzerr << "GazeboYarpForceTorque plugin requires a ForceTorqueSensor.\n";
@@ -51,12 +51,12 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     // Add my gazebo device driver to the factory.
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpForceTorqueDriver>
                                       ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
-        
+
     //Getting .ini configuration file from sdf
     ::yarp::os::Property wrapper_properties;
     ::yarp::os::Property driver_properties;
     bool configuration_loaded = false;
-        
+
     if(_sdf->HasElement("yarpConfigurationFile") )
     {
         std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
@@ -68,10 +68,10 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
             configuration_loaded = true;
         }
     }
-    
+
     ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver
     wrapper_properties = driver_properties;
-        
+
     if( !configuration_loaded )
     {
         std::cout << "File .ini not found, quitting\n" << std::endl;
@@ -93,7 +93,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper"<<std::endl;
         return;
     }
-   
+
     //Open the driver
     //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
     driver_properties.put("device","gazebo_forcetorque");
@@ -103,7 +103,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver"<<std::endl;
         return;
     }
-    
+
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
     
@@ -119,7 +119,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     } else {
         std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
     }
-    
+
 }
 
 }

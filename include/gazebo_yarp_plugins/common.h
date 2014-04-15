@@ -18,14 +18,14 @@ namespace GazeboYarpPlugins {
      * \return the angle converted in radians
      */
     double convertDegreesToRadians(double degrees);
-    
+
     /**
      * \brief convert from radians to degrees
      * \param radians angle in radians
      * \return the angle converted in degrees
      */
     double convertRadiansToDegrees(double radians);
-    
+
     /**
      * \brief check if a string has a certaing ending
      * \param fullString the full string

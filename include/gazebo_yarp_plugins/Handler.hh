@@ -88,12 +88,12 @@ private:
     template <class T>
     class ReferenceCountingObject
     {
-        T& m_object;
+        T m_object;
         unsigned short m_count;
     public:
-        ReferenceCountingObject(T& object): m_object(object), m_count(1) {}
+        ReferenceCountingObject(T object): m_object(object), m_count(1) {}
         
-        T& object() const { return m_object; }
+        T object() const { return m_object; }
         unsigned short count() const { return m_count; }
         void incrementCount() { m_count++; }
         void decrementCount() { m_count--; }

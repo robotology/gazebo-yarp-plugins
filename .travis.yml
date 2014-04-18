@@ -1,21 +1,26 @@
 language: cpp
 
-compiler:
-  - gcc
-  - clang
-  
-env:
-  - GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
-  - GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
+matrix:
+  include:
+    - compiler: gcc
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_ONEDOTNINE=TRUE
+    - compiler: gcc
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_THREE=TRUE
+    - compiler: clang
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_THREE=TRUE
+    - compiler: clang
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_ONEDOTNINE=TRUE
 
 
 before_script:
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu precise main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update
-  - sudo apt-get --force-yes install libtinyxml-dev gazebo-current libboost-system-dev libace-dev
-  #check gazebo version 
-  - gazebo 
+  - sudo apt-get --force-yes install libace-dev
+  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev; fi
+  - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
+  #check gazebo version
+  - gazebo --version
   - git clone https://github.com/robotology/yarp
   - cd yarp
   - mkdir build
@@ -29,7 +34,7 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ./..
 
 
-script: make 
+script: make
 
 notifications:
   email:

@@ -13,21 +13,32 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
 
-#include <gazebo/gazebo.hh>
-#include <gazebo/sensors/ImuSensor.hh>
+#include <boost/shared_ptr.hpp>
 
-
+//Forward declarations
 namespace yarp {
     namespace dev {
         class GazeboYarpIMUDriver;
     }
 }
 
-const int yarp_imu_nr_of_channels = 12; //The IMU has 12 fixed channels
+namespace gazebo {
+    namespace common {
+        class UpdateInfo;
+    }
+    namespace sensors {
+        class ImuSensor;
+    }
+    namespace event {
+        class Connection;
+        typedef boost::shared_ptr<Connection> ConnectionPtr;
+    }
+}
 
-const std::string yarp_scopedname_parameter = "sensorScopedName";
+extern const int YarpIMUChannelsNumber; //The IMU has 12 fixed channels
+extern const std::string YarpScopedName;
 
-class yarp::dev::GazeboYarpIMUDriver: 
+class yarp::dev::GazeboYarpIMUDriver:
     public yarp::dev::IGenericSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
@@ -37,36 +48,32 @@ public:
 
     virtual ~GazeboYarpIMUDriver();
     
-    void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
+    void onUpdate(const gazebo::common::UpdateInfo&);
 
     /**
      * Yarp interfaces start here
      */
-    
+
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //GENERIC SENSOR
-    virtual bool read(yarp::sig::Vector &out);
-    virtual bool getChannels(int *nc);
-    virtual bool calibrate(int ch, double v);
+    virtual bool read(yarp::sig::Vector& outVector);
+    virtual bool getChannels(int* numberOfChannels);
+    virtual bool calibrate(int channelIndex, double v);
     
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
 
 private:
-    yarp::sig::Vector imu_data; //buffer for imu data
+    yarp::sig::Vector m_imuData; //buffer for imu data
+    yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
+    yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
     
-    yarp::os::Stamp last_timestamp; //buffer for last timestamp data
-    
-    yarp::os::Semaphore data_mutex; //mutex for accessing the data
-    
-    gazebo::sensors::ImuSensor* parentSensor;
-    
-    gazebo::event::ConnectionPtr updateConnection;
-
+    gazebo::sensors::ImuSensor* m_parentSensor;
+    gazebo::event::ConnectionPtr m_updateConnection;
 
 };
 

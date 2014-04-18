@@ -19,22 +19,22 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpForceTorque)
 
 namespace gazebo {
 
-GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), _yarp(), _iWrap(0)
+GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), m_yarp(), m_iWrap(0)
 {
 }
 
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
-    if(_iWrap) { _iWrap->detachAll(); _iWrap = 0; }
-    if( _forcetorque_wrapper.isValid() ) _forcetorque_wrapper.close();
-    if( _forcetorque_driver.isValid() ) _forcetorque_driver.close();
-    GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
+    if(m_iWrap) { m_iWrap->detachAll(); m_iWrap = 0; }
+    if( m_forcetorqueWrapper.isValid() ) m_forcetorqueWrapper.close();
+    if( m_forceTorqueDriver.isValid() ) m_forceTorqueDriver.close();
+    GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    if( !_yarp.checkNetwork() ) { 
+    if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
        std::cerr << "GazeboYarpForceTorque::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
        return;
     }
@@ -78,16 +78,16 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
     
-    _sensorName = _sensor->GetScopedName();
+    m_sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(boost::get_pointer(_sensor));
     
-    driver_properties.put(yarp_scopedname_parameter.c_str(), _sensorName.c_str());
+    driver_properties.put(YarpScopedName.c_str(), m_sensorName.c_str());
     
     //Open the wrapper
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
     wrapper_properties.put("device","analogServer");
-    if( _forcetorque_wrapper.open(wrapper_properties) ) {
+    if( m_forcetorqueWrapper.open(wrapper_properties) ) {
         std::cout<<"GazeboYarpForceTorque Plugin: correcly opened GazeboYarpForceTorqueDriver wrapper"<<std::endl;
     } else {
         std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper"<<std::endl;
@@ -97,24 +97,24 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Open the driver
     //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
     driver_properties.put("device","gazebo_forcetorque");
-    if( _forcetorque_driver.open(driver_properties) ) {
+    if( m_forceTorqueDriver.open(driver_properties) ) {
         std::cout<<"GazeboYarpForceTorque Plugin: correcly opened GazeboYarpForceTorqueDriver"<<std::endl;
     } else {
         std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver"<<std::endl;
         return;
     }
-    
+
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
     
-    if( !_forcetorque_wrapper.view(_iWrap) ) {
+    if( !m_forcetorqueWrapper.view(m_iWrap) ) {
         std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
         return;
     }
     
-    driver_list.push(&_forcetorque_driver,"dummy");
+    driver_list.push(&m_forceTorqueDriver,"dummy");
     
-    if( _iWrap->attachAll(driver_list) ) {
+    if( m_iWrap->attachAll(driver_list) ) {
         std::cerr << "GazeboYarpForceTorque : wrapper was connected with driver " << std::endl;
     } else {
         std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;

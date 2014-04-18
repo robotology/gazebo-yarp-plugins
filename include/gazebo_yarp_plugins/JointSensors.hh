@@ -7,7 +7,8 @@
 #ifndef GAZEBOYARP_JOINTSENSORS_HH
 #define GAZEBOYARP_JOINTSENSORS_HH
 
-#include <gazebo/gazebo.hh>
+#include <gazebo/common/Plugin.hh>
+
 #include <string>
 
 #include <yarp/os/Network.h>
@@ -17,8 +18,8 @@
 namespace gazebo
 {
 /// \class GazeboYarpJointSensors
-/// Gazebo plugin that creates a yarp streaming sensors (IAnalogSensor) 
-/// for streaming joint sensor measures (position, speed or torque) 
+/// Gazebo plugin that creates a yarp streaming sensors (IAnalogSensor)
+/// for streaming joint sensor measures (position, speed or torque)
 ///
 class GazeboYarpJointSensors : public ModelPlugin
 {
@@ -31,17 +32,17 @@ public:
      * Saves the gazebo pointer, creates the device driver
      */
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-    
+
 private:
-    
+
     yarp::os::Network _yarp;
     yarp::dev::PolyDriver _jointsensors_wrapper;
     yarp::dev::IMultipleWrapper *_iWrap;
     yarp::dev::PolyDriver _jointsensors_driver;
     yarp::os::Property _parameters;
-    
+
     std::string _robotName;
-    
+
     bool plugin_loaded;
 };
 

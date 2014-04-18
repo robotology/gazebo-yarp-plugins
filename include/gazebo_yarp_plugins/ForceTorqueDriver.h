@@ -12,10 +12,9 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
+#include <boost/shared_ptr.hpp>
 
-#include <gazebo/gazebo.hh>
-#include "gazebo/sensors/ForceTorqueSensor.hh"
-
+#include <gazebo/common/Plugin.hh>
 
 namespace yarp {
     namespace dev {
@@ -23,9 +22,22 @@ namespace yarp {
     }
 }
 
-const int yarp_forcetorque_nr_of_channels = 6; //The IMU has 6 fixed channels
+namespace gazebo {
+    namespace common {
+        class UpdateInfo;
+    }
+    namespace sensors {
+        class ForceTorqueSensor;
+    }
+    namespace event {
+        class Connection;
+        typedef boost::shared_ptr<Connection> ConnectionPtr;
+    }
+}
 
-const std::string yarp_scopedname_parameter = "sensorScopedName";
+
+extern const int YarpForceTorqueChannelsNumber;
+extern const std::string YarpScopedName;
 
 class yarp::dev::GazeboYarpForceTorqueDriver: 
     public yarp::dev::IAnalogSensor,
@@ -34,43 +46,37 @@ class yarp::dev::GazeboYarpForceTorqueDriver:
 {
 public:
     GazeboYarpForceTorqueDriver();
-
     virtual ~GazeboYarpForceTorqueDriver();
     
-    void onUpdate(const gazebo::common::UpdateInfo & /*_info*/);
+    void onUpdate(const gazebo::common::UpdateInfo& /*_info*/);
 
     /**
      * Yarp interfaces start here
      */
-    
+
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);    
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //ANALOG SENSOR
-    virtual int read(yarp::sig::Vector &out);
-    virtual int getState(int ch);
+    virtual int read(yarp::sig::Vector& out);
+    virtual int getState(int channel);
     virtual int getChannels();
-    virtual int calibrateChannel(int ch, double v);
+    virtual int calibrateChannel(int channel, double v);
     virtual int calibrateSensor();
     virtual int calibrateSensor(const yarp::sig::Vector& value);
-    virtual int calibrateChannel(int ch);
-    
+    virtual int calibrateChannel(int channel);
+
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
 
 private:
-    yarp::sig::Vector forcetorque_data; //buffer for forcetorque sensor data
-    
-    yarp::os::Stamp last_timestamp; //buffer for last timestamp data
-    
-    yarp::os::Semaphore data_mutex; //mutex for accessing the data
-    
-    gazebo::sensors::ForceTorqueSensor* parentSensor;
-    
-    gazebo::event::ConnectionPtr updateConnection;
-
+    yarp::sig::Vector m_forceTorqueData; //buffer for forcetorque sensor data
+    yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
+    yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    gazebo::sensors::ForceTorqueSensor* m_parentSensor;
+    gazebo::event::ConnectionPtr m_updateConnection;
 
 };
 

@@ -8,6 +8,7 @@
 #include "gazebo_yarp_plugins/ControlBoardDriver.h"
 #include "gazebo_yarp_plugins/Handler.hh"
 
+#include <gazebo/common/Events.hh>
 
 using namespace yarp::dev;
 using namespace gazebo;
@@ -15,15 +16,14 @@ using namespace gazebo;
 
 bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config) 
 {
-    pluginParameters.fromString(config.toString().c_str());
+    m_pluginParameters.fromString(config.toString().c_str());
 
-    std::string robotName (pluginParameters.find("robotScopedName").asString().c_str());
-    std::cout << "DeviceDriver is looking for robot " << robotName << "...\n";
+    std::string robotName(m_pluginParameters.find("robotScopedName").asString().c_str());
+    std::cout << "DeviceDriver is looking for robot " << robotName << "..." << std::endl;
 
-    _robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
-    if(NULL == _robot)
-    {
-        std::cout << "GazeboYarpControlBoardDriver error: robot was not found\n";
+    m_robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
+    if(!m_robot) {
+        std::cout << "GazeboYarpControlBoardDriver error: robot was not found" << std::endl;
         return false;
     }
     
@@ -33,12 +33,12 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 bool GazeboYarpControlBoardDriver::close()
 {
     //unbinding events
-    if (this->updateConnection.get()) {
-        gazebo::event::Events::DisconnectWorldUpdateBegin (this->updateConnection);
-        this->updateConnection = gazebo::event::ConnectionPtr();
+    if (this->m_updateConnection.get()) {
+        gazebo::event::Events::DisconnectWorldUpdateBegin (this->m_updateConnection);
+        this->m_updateConnection = gazebo::event::ConnectionPtr();
     }
     
-    delete [] controlMode;
-    delete [] motion_done;
+    delete [] m_controlMode;
+    delete [] m_isMotionDone;
     return true;
 }

@@ -23,43 +23,64 @@ namespace gazebo
 
 namespace sdf {
     class Element;
-    //I'm not so happy about this forward declaration. We must decide if keeping it or not.
     typedef boost::shared_ptr<Element> ElementPtr;
 }
 
 namespace GazeboYarpPlugins {
-    
+
+/** \class Handler
+ *
+ * Singleton object class. You can use this class to save robots and sensors and retrieve it in other part of the application
+ */
 class Handler
 {
 public:
-    // static method for using the handler
+    /** Returns the singleton intance of Handler class and creates it if it does not exist.
+     * \return the singleton handler
+     */
     static Handler* getHandler();
 
-    // add a new modelPointer to the "database", if it already exists and the pointer are the same return success,
-    // if pointers doesn't match returns error.
+    /** \brief Adds a new modelPointer to the "database".
+     *
+     * If it already exists and the pointer are the same return success,
+     * if pointers doesn't match returns error.
+     * \param _model the model to be added to the internal database
+     * \return true if successfully added, or the model already exists. False otherwise.
+     */
     bool setRobot(gazebo::physics::Model* _model);
 
-    // return the model pointer given the robot name
-    gazebo::physics::Model* getRobot(std::string robotName);
+    /** Returns the pointer to the model matching the robot name
+     * \param robotName robot name to be looked for
+     * \return the model matching the passed name
+     */
+    gazebo::physics::Model* getRobot(const std::string& robotName) const;
     
     /** \brief Removes a robot from the internal database
      *  \param robotName the name of the robot to be removed
      */
-    void removeRobot(std::string robotName);
-
-    // add a new sensorPointer to the "database", if the sensor already exists and the pointer are the same return success,
-    // if pointers doesn't match returns error.
-    // the key used in the "database" is the scoped name of the sensor
+    void removeRobot(const std::string& robotName);
+    
+    /** \brief Adds a new sensorPointer to the "database".
+     *
+     *  If the sensor already exists and the pointer are the same return success, if pointers doesn't match returns error.
+     * \param _sensor the sensor to be added to the internal database
+     * \return true if successfully added, or the model already exists. False otherwise.
+     */
     bool setSensor(gazebo::sensors::Sensor* _sensor);
     
-    // return the sensor pointer given the sensor scoped namespac
-    gazebo::sensors::Sensor* getSensor(const std::string sensorScopedName);
+    /** Returns the  pointer to the sensor matching the sensor name
+     * \param sensorScopedName sensor name to be looked for
+     * \return the sensor matching the passed name
+     */
+    gazebo::sensors::Sensor* getSensor(const std::string& sensorScopedName) const;
     
     /** \brief Removes a sensor from the internal database
      *  \param sensorScopedName the name of the sensor to be removed
      */
-    void removeSensor(const std::string sensorName);
+    void removeSensor(const std::string& sensorName);
 
+    /** Destructor
+     */
     ~Handler();
 
 private:
@@ -67,15 +88,15 @@ private:
     template <class T>
     class ReferenceCountingObject
     {
-        T _object;
-        unsigned short _count;
+        T m_object;
+        unsigned short m_count;
     public:
-        ReferenceCountingObject(T object):_object(object), _count(1) {}
+        ReferenceCountingObject(T object): m_object(object), m_count(1) {}
         
-        T object() { return _object; }
-        unsigned short count() { return _count; }
-        void incrementCount() { _count++; }
-        void decrementCount() { _count--; }
+        T object() const { return m_object; }
+        unsigned short count() const { return m_count; }
+        void incrementCount() { m_count++; }
+        void decrementCount() { m_count--; }
     };
     
     typedef ReferenceCountingObject<gazebo::physics::Model*> ReferenceCountingModel;
@@ -85,14 +106,14 @@ private:
     typedef std::map<std::string, ReferenceCountingSensor> SensorsMap;
     
     // singleton stuff
-    static yarp::os::Semaphore          _mutex;
-    static Handler*     _handle;
+    static yarp::os::Semaphore s_mutex;
+    static Handler* s_handle;
 
     Handler();
-    RobotsMap                           _robotMap;      // map of known robots
-    SensorsMap                          _sensorsMap;    // map of known sensors
+    RobotsMap m_robotMap;      // map of known robots
+    SensorsMap m_sensorsMap;    // map of known sensors
 
-    bool findRobotName(sdf::ElementPtr sdf, std::string *robotName);
+    bool findRobotName(sdf::ElementPtr sdf, std::string* robotName);
     
 };
 

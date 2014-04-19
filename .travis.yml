@@ -34,7 +34,10 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ./..
 
 
-script: make
+script: 
+  - make
+  - sudo make install
+  - sudo make uninstall
 
 notifications:
   email:

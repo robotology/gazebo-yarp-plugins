@@ -9,12 +9,7 @@ PROJECT(GazeboYarpPlugins)
 find_package(YARP 2.3.62 REQUIRED)
 message(STATUS "YARP is version: ${YARP_VERSION}")
 
-if(YARP_VERSION VERSION_LESS GYP_REQYARP_VERSION)
-    message(FATAL_ERROR "YARP version is not compatible, please update YARP (using VERSION_LESS)")
-else()
-    message(STATUS "found compatible YARP version")
-endif()
-
+# Finding dependencies
 find_package(Gazebo REQUIRED)
 
 find_package(Boost REQUIRED serialization system)
@@ -39,6 +34,10 @@ set_property(
     DIRECTORY
     APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
 )
+
+# add local cmake scripts
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+
 
 include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
@@ -122,17 +121,14 @@ target_link_libraries(gazebo_yarp_jointsensors  gazebo_yarp_singleton ${YARP_LIB
 target_link_libraries(gazebo_yarp_clock         gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 
-
-#add_executable(testmotor src/test/test.cpp)
-#target_link_libraries(testmotor ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-
-# INSTALLATION
+# Add install target
 install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_controlboard
-                gazebo_yarp_forcetorque
                 gazebo_yarp_forcetorque
                 gazebo_yarp_imu
                 gazebo_yarp_jointsensors
                 gazebo_yarp_clock
                 DESTINATION lib)
 
+# Add uninstall target                
+include(AddUninstallTarget)

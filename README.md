@@ -93,6 +93,7 @@ Troubleshooting
 
 - If the simulation run slowly, check that you are using the latest graphics driver available for your platform. If you a running a recent Ubuntu version (13.10 or 14.04) you can try (at your own risk) to use the drivers provided by the [oibaf PPA](https://launchpad.net/~oibaf/+archive/graphics-drivers).
 
+- If Gazebo crashes without any error message while loading a model using gazebo_yarp_plugins, you have issue with shared library linking. Probably gazebo_yarp_plugins is linked against a manually installed library (for example boost), while the gazebo binary is linking against the system version of the same library. For more information read [issue  71 discussion](https://github.com/robotology/gazebo_yarp_plugins/issues/71) or file [a new issue](https://github.com/robotology/gazebo_yarp_plugins/issues/new) to get help from the developers. 
 
 Design
 ------

@@ -19,7 +19,7 @@ For using Yarp with Gazebo, you shall install:
 ###Compile time dependencies
 For compiling gazebo_yarp_plugins you need the headers for the following libraries:
   * [tinyxml](http://www.grinninglizard.com/tinyxml/)
-  * [Boost System](www.boost.org/doc/libs/release/libs/system/)
+  * [Boost System](http://www.boost.org/doc/libs/release/libs/system/)
 
 For example on Ubuntu you can install them with the following command:
 ```

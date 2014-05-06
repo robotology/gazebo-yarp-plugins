@@ -11,11 +11,15 @@
 #include <gazebo/common/Plugin.hh>
 
 #include <yarp/os/Network.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <string>
 
+namespace yarp {
+    namespace dev {
+        class IMultipleWrapper;
+    }
+}
 namespace gazebo
 {
     namespace sensors {
@@ -53,17 +57,16 @@ namespace gazebo
     public:
         GazeboYarpForceTorque();
         virtual ~GazeboYarpForceTorque();
-
+        
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        sensors::ForceTorqueSensor* parentSensor;
-        yarp::os::Network _yarp;
-        yarp::dev::PolyDriver _forcetorque_wrapper;
-        yarp::dev::IMultipleWrapper *_iWrap;
-        yarp::dev::PolyDriver _forcetorque_driver;
-
-        std::string _sensorName;
+        yarp::os::Network m_yarp;
+        yarp::dev::PolyDriver m_forcetorqueWrapper;
+        yarp::dev::IMultipleWrapper* m_iWrap;
+        yarp::dev::PolyDriver m_forceTorqueDriver;
+        
+        std::string m_sensorName;
     };
 }
 

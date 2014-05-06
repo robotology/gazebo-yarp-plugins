@@ -19,79 +19,74 @@
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpIMU)
 
 namespace gazebo {
-
-GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(), _yarp()
+    
+GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(), m_yarp()
 {
 }
 
 GazeboYarpIMU::~GazeboYarpIMU()
 {
-    std::cout<<"*** GazeboYarpIMU closing ***"<<std::endl;
-    _imu_driver.close();
-    GazeboYarpPlugins::Handler::getHandler()->removeSensor(_sensorName);
+    std::cout << "*** GazeboYarpIMU closing ***" << std::endl;
+    m_imuDriver.close();
+    GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
 }
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    if( !_yarp.checkNetwork() ) { 
+    if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
         std::cerr << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
         return;
     }
     
-    std::cout<<"*** GazeboYarpIMU plugin started ***"<<std::endl;
+    std::cout << "*** GazeboYarpIMU plugin started ***" << std::endl;
     
-    if (!_sensor)
-    {
-        gzerr << "GazeboYarpIMU plugin requires a IMUSensor.\n";
+    if (!_sensor) {
+        gzerr << "GazeboYarpIMU plugin requires a IMUSensor." << std::endl;
         return;
     }
-
+    
     _sensor->SetActive(true);
     
     // Add my gazebo device driver to the factory.
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpIMUDriver>
-                                      ("gazebo_imu", "inertial", "GazeboYarpIMUDriver"));
-
-        
+                                        ("gazebo_imu", "inertial", "GazeboYarpIMUDriver"));
+    
+    
     //Getting .ini configuration file from sdf
     bool configuration_loaded = false;
-        
-    if(_sdf->HasElement("yarpConfigurationFile") )
-    {
+    
+    if (_sdf->HasElement("yarpConfigurationFile")) {
         std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
         std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-
-        if( ini_file_path != "" && _parameters.fromConfigFile(ini_file_path.c_str()) )
-        {
-            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl; 
+        
+        if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str())) {
+            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
             configuration_loaded = true;
         }
-        
     }
-        
-    if(!configuration_loaded)
-    {
-        std::cout << "File .ini not found, quitting\n" << std::endl;
+    
+    if (!configuration_loaded) {
+        std::cout << "File .ini not found, quitting" << std::endl;
         return;
     }
     
-    _sensorName = _sensor->GetScopedName();
+    m_sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
     
-    _parameters.put(yarp_scopedname_parameter.c_str(), _sensorName.c_str());
-   
+    m_parameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
+    
     //Open the driver
-    if(_imu_driver.open(_parameters)) {
+    if (m_imuDriver.open(m_parameters)) {
         std::cout << "Loaded GazeboYarpIMU Plugin correctly" << std::endl;
     } else {
         std::cout << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver" << std::endl;
     }
     
     std::cout << "GazeboYarpIMU original parameters" << std::endl;
-    std::cout << _parameters.toString() << std::endl;
+    std::cout << m_parameters.toString() << std::endl;
     std::cout << "GazeboYarpIMU getOptions" << std::endl;
-    std::cout << _imu_driver.getOptions().toString() << std::endl;
+    std::cout << m_imuDriver.getOptions().toString() << std::endl;
 }
-
+    
 }

@@ -8,98 +8,91 @@
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
 
-using namespace std;
 using namespace gazebo;
 
 namespace GazeboYarpPlugins {
 
-Handler* Handler::_handle = NULL;
-yarp::os::Semaphore Handler::_mutex = 1;
+Handler* Handler::s_handle = NULL;
+yarp::os::Semaphore Handler::s_mutex = 1;
 
 
 Handler::Handler()
 {
-    _robotMap.clear();
-    _sensorsMap.clear();
-    _handle = NULL;
+    m_robotMap.clear();
+    m_sensorsMap.clear();
 }
 
-Handler * Handler::getHandler()
+Handler* Handler::getHandler()
 {
-    _mutex.wait();
-    if (NULL == _handle)
-    {
-        cout << "Calling GazeboYarpPlugins::Handler Constructor";
-        _handle = new Handler();
-        if (NULL == _handle)
-            cout << "Error while calling GazeboYarpPluginHandler constructor";
-
+    s_mutex.wait();
+    if (!s_handle) {
+        std::cout << "Calling GazeboYarpPlugins::Handler Constructor" << std::endl;
+        s_handle = new Handler();
+        if (!s_handle)
+            std::cout << "Error while calling GazeboYarpPluginHandler constructor" << std::endl;
     }
-    _mutex.post();
+    s_mutex.post();
 
-    return _handle;
+    return s_handle;
 }
 
 bool Handler::setRobot(gazebo::physics::Model* _model)
 {
     bool ret = false;
     std::string scopedRobotName = _model->GetScopedName();
-    cout << "GazeboYarpPlugins::Handler: Inserting Robot : " << scopedRobotName << endl;
+    std::cout << "GazeboYarpPlugins::Handler: Inserting Robot : " << scopedRobotName << std::endl;
     
-    RobotsMap::iterator robot = _robotMap.find(scopedRobotName);
-    if (robot != _robotMap.end()) {
+    RobotsMap::iterator robot = m_robotMap.find(scopedRobotName);
+    if (robot != m_robotMap.end()) {
         //robot already exists. Increment reference counting
         robot->second.incrementCount();
-        cout << "Robot already registered, pointers match." << endl;
+        std::cout << "Robot already registered, pointers match." << std::endl;
         ret = true;
     }
     else {
         //robot does not exists. Add to map
         ReferenceCountingModel model(_model);
-        if(!_robotMap.insert(std::pair<std::string, ReferenceCountingModel>(scopedRobotName, model)).second) {
-            cout << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!\n";
-            cout << " The name of the sensor is already present but the pointer does not match with the one already registered!!\n";
-            cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << endl;
+        if (!m_robotMap.insert(std::pair<std::string, ReferenceCountingModel>(scopedRobotName, model)).second) {
+            std::cout << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!" << std::endl;
+            std::cout << " The name of the sensor is already present but the pointer does not match with the one already registered!" << std::endl;
+            std::cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << std::endl;
             ret = false;
-        }
-        else {
+        } else {
             ret = true;
-            cout << "Singleton: Added a new robot " << scopedRobotName << ".\n";
+            std::cout << "Singleton: Added a new robot " << scopedRobotName << "." << std::endl;
         }
     }
-
     return ret;
 }
 
-gazebo::physics::Model* Handler::getRobot(std::string robotName)
+gazebo::physics::Model* Handler::getRobot(const std::string& robotName) const
 {
     gazebo::physics::Model* tmp = NULL;
-    cout << "Looking for robot : " << robotName << endl;
+    std::cout << "Looking for robot : " << robotName << std::endl;
     
-    RobotsMap::iterator robot = _robotMap.find(robotName);
-    if (robot != _robotMap.end()) {
-        cout << "Robot " << robotName << " was happily found!\n";
+    RobotsMap::const_iterator robot = m_robotMap.find(robotName);
+    if (robot != m_robotMap.end()) {
+        std::cout << "Robot " << robotName << " was happily found!" << std::endl;
         tmp = robot->second.object();
     }
     else {
-        cout << "Robot was not found: " << robotName << endl;
+        std::cout << "Robot was not found: " << robotName << std::endl;
         tmp = NULL;
     }
     return tmp;
 }
 
-void Handler::removeRobot(std::string robotName)
+void Handler::removeRobot(const std::string& robotName)
 {
-    RobotsMap::iterator robot = _robotMap.find(robotName);
-    if (robot != _robotMap.end()) {
+    RobotsMap::iterator robot = m_robotMap.find(robotName);
+    if (robot != m_robotMap.end()) {
         robot->second.decrementCount();
         if (!robot->second.count()) {
-            cout << "Removing robot " << robotName << std::endl;
-            _robotMap.erase(robot);
+            std::cout << "Removing robot " << robotName << std::endl;
+            m_robotMap.erase(robot);
         }
-    }
-    else {
-        cout << "Could not remove robot " << robotName << ". Robot was not found" << std::endl;
+    } else {
+        std::cout << "Could not remove robot " << robotName << ". Robot was not found" << std::endl;
     }
 }
 
@@ -107,63 +100,58 @@ bool Handler::setSensor(gazebo::sensors::Sensor* _sensor)
 {
     bool ret = false;
     std::string scopedSensorName = _sensor->GetScopedName();
-    cout << "GazeboYarpPlugins::Handler: Inserting Sensor : " << scopedSensorName << endl;
+    std::cout << "GazeboYarpPlugins::Handler: Inserting Sensor : " << scopedSensorName << std::endl;
     
-    SensorsMap::iterator sensor = _sensorsMap.find(scopedSensorName);
-    if (sensor != _sensorsMap.end()) {
+    SensorsMap::iterator sensor = m_sensorsMap.find(scopedSensorName);
+    if (sensor != m_sensorsMap.end()) {
         //sensor already exists. Increment reference counting
         sensor->second.incrementCount();
-        cout << "Sensor already registered, pointers match." << endl;
+        std::cout << "Sensor already registered, pointers match." << std::endl;
         ret = true;
-    }
-    else {
+    } else {
         //sensor does not exists. Add to map
         ReferenceCountingSensor countedSensor(_sensor);
-        if(!_sensorsMap.insert(std::pair<std::string, ReferenceCountingSensor>(scopedSensorName, countedSensor)).second) {
-            cout << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!\n";
-            cout << " The name of the sensor is already present but the pointer does not match with the one already registered!!\n";
-            cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << endl;
+        if (!m_sensorsMap.insert(std::pair<std::string, ReferenceCountingSensor>(scopedSensorName, countedSensor)).second) {
+            std::cout << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!" << std::endl;
+            std::cout << " The name of the sensor is already present but the pointer does not match with the one already registered!" << std::endl;
+            std::cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << std::endl;
             ret = false;
-        }
-        else {
+        } else {
             ret = true;
-            cout << "Singleton: Added a new sensor " << scopedSensorName << ".\n";
+            std::cout << "Singleton: Added a new sensor " << scopedSensorName << "." << std::endl;
         }
     }
-    
     return ret;
 }
     
 // return the sensor pointer given the sensor scoped namespac
-gazebo::sensors::Sensor* Handler::getSensor(const std::string sensorScopedName)
+gazebo::sensors::Sensor* Handler::getSensor(const std::string& sensorScopedName) const
 {
     gazebo::sensors::Sensor* tmp = NULL;
-    cout << "Looking for sensor : " << sensorScopedName << endl;
+    std::cout << "Looking for sensor : " << sensorScopedName << std::endl;
     
-    SensorsMap::iterator sensor = _sensorsMap.find(sensorScopedName);
-    if (sensor != _sensorsMap.end()) {
-        cout << "Sensor " << sensorScopedName << " was happily found!\n";
+    SensorsMap::const_iterator sensor = m_sensorsMap.find(sensorScopedName);
+    if (sensor != m_sensorsMap.end()) {
+        std::cout << "Sensor " << sensorScopedName << " was happily found!" << std::endl;
         tmp = sensor->second.object();
-    }
-    else {
-        cout << "Sensor was not found: " << sensorScopedName << endl;
+    } else {
+        std::cout << "Sensor was not found: " << sensorScopedName << std::endl;
         tmp = NULL;
     }
     return tmp;
 }
 
-void Handler::removeSensor(const std::string sensorName)
+void Handler::removeSensor(const std::string& sensorName)
 {
-    SensorsMap::iterator sensor = _sensorsMap.find(sensorName);
-    if (sensor != _sensorsMap.end()) {
+    SensorsMap::iterator sensor = m_sensorsMap.find(sensorName);
+    if (sensor != m_sensorsMap.end()) {
         sensor->second.decrementCount();
         if (!sensor->second.count()) {
-            cout << "Removing sensor " << sensorName << std::endl;
-            _sensorsMap.erase(sensor);
+            std::cout << "Removing sensor " << sensorName << std::endl;
+            m_sensorsMap.erase(sensor);
         }
-    }
-    else {
-        cout << "Could not remove sensor " << sensorName << ". Sensor was not found" << std::endl;
+    } else {
+        std::cout << "Could not remove sensor " << sensorName << ". Sensor was not found" << std::endl;
     }
 }
 }

@@ -102,11 +102,4 @@ More information on the internal structure of gazebo_yarp_plugins is [available 
 
 Contributing
 ------------
-If you would like to contribute to the development of gazebo_yarp_plugins, please get in contact with the development team using [GitHub issues](https://github.com/robotology/gazebo_yarp_plugins/issues). 
-
-The easiest way to contribute is to pick an issue and try to solve it. A list of issues a new developer can work on is available under the [Volunteer needed](https://github.com/robotology/gazebo_yarp_plugins/issues?labels=Volunteer+needed&page=1&state=open) tag.
-
-If you need a new feature or to fix a bug, please [fill a GitHub issue](https://github.com/robotology/yarp/issues/new) describing the feature or the bugfix you would like to implement. 
-
-
-
+See [Contributing File](CONTRIBUTING.md)

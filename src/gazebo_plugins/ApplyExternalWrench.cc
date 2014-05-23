@@ -5,6 +5,7 @@ namespace gazebo
 
 GZ_REGISTER_MODEL_PLUGIN ( ApplyExternalForce )
 
+// TODO Change name of the class from ApplyExternalForce to ApplyExternalWrench
 ApplyExternalForce::ApplyExternalForce()
 {
     this->_wrench_to_apply.force.resize ( 3,0 );
@@ -57,8 +58,23 @@ void ApplyExternalForce::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
         printf ( "ERROR Yarp Network was not found active in ApplyExternalForce plugin" );
         return;
     }
-    // Get the world name
+
+    // Copy the pointer to the model
     this->_myModel = _model;
+
+    bool configuration_loaded = false;
+
+    // Read robot name
+    if ( _sdf->HasElement ( "robotNamefromConfigFile" ) ) {
+        std::string ini_robot_name      = _sdf->Get<std::string> ( "robotNamefromConfigFile" );
+        std::string ini_robot_name_path =  gazebo::common::SystemPaths::Instance()->FindFileURI ( ini_robot_name );
+
+        if ( ini_robot_name_path != "" && this->_iniParams.fromConfigFile ( ini_robot_name_path.c_str() ) ) {
+            std::cout << "ApplyExternalWrench: Found robotNamefromConfigFile in "<< ini_robot_name_path << std::endl;
+            yarp::os::Value robotNameParam = _iniParams.find ( "gazeboYarpPluginsRobotName" );
+            this->_robot_name = robotNameParam.asString();
+        }
+    }
 
     // Starting RPC thread to read desired wrench to be applied
     if ( !_rpcThread.start() ) {
@@ -115,5 +131,3 @@ yarp::os::Bottle RPCServerThread::get_cmd()
 {
     return _cmd;
 }
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs on; 

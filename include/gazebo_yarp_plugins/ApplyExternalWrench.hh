@@ -54,10 +54,13 @@ protected:
 private:
     yarp::os::Network    _yarpNet;
     RPCServerThread      _rpcThread;
+    yarp::os::Property   _iniParams;
 
     physics::ModelPtr    _myModel;
     /// \brief Link on which the wrench will be applied
     std::string          _link_name;
+    /// \brief Robot name that will be used to open rpc port
+    std::string          _robot_name;
     /// \brief Link the plugin is attached to
     physics::LinkPtr     _onLink;
     /// \brief Wrench to be applied on the body
@@ -75,4 +78,3 @@ private:
 
 
 #endif
-// kate: indent-mode cstyle; indent-width 4; replace-tabs on; 

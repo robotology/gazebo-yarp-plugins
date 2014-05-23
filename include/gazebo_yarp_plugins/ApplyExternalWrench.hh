@@ -22,28 +22,33 @@ public:
     virtual void        run();
     virtual void        threadRelease();
     yarp::os::Bottle    get_cmd();
+    void setRobotName(std::string robotName);
 private:
     yarp::os::RpcServer _rpcPort;
     yarp::os::Bottle    _cmd;
     yarp::os::Bottle    _reply;
     /// \brief Mutex to lock reading and writing of _cmd
     boost::mutex        _lock;
+    std::string         _robotName;
 
 };
 
 
 namespace gazebo
 {
-class ApplyExternalForce : public ModelPlugin
+class ApplyExternalWrench : public ModelPlugin
 {
 public:
-    ApplyExternalForce();
-    virtual ~ApplyExternalForce();
+    ApplyExternalWrench();
+    virtual ~ApplyExternalWrench();
 
     struct wrench {
         yarp::sig::Vector force;
         yarp::sig::Vector torque;
     };
+    
+    /// \brief Robot name that will be used to open rpc port
+    std::string          robot_name;
 
 protected:
     // Inherited
@@ -59,8 +64,6 @@ private:
     physics::ModelPtr    _myModel;
     /// \brief Link on which the wrench will be applied
     std::string          _link_name;
-    /// \brief Robot name that will be used to open rpc port
-    std::string          _robot_name;
     /// \brief Link the plugin is attached to
     physics::LinkPtr     _onLink;
     /// \brief Wrench to be applied on the body

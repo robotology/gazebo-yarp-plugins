@@ -3,21 +3,20 @@
 namespace gazebo
 {
 
-GZ_REGISTER_MODEL_PLUGIN ( ApplyExternalForce )
+GZ_REGISTER_MODEL_PLUGIN ( ApplyExternalWrench )
 
-// TODO Change name of the class from ApplyExternalForce to ApplyExternalWrench
-ApplyExternalForce::ApplyExternalForce()
+ApplyExternalWrench::ApplyExternalWrench()
 {
     this->_wrench_to_apply.force.resize ( 3,0 );
     this->_wrench_to_apply.torque.resize ( 3,0 );
     _link_name="neck_1";
 }
-ApplyExternalForce::~ApplyExternalForce()
+ApplyExternalWrench::~ApplyExternalWrench()
 {
     _rpcThread.stop();
 }
 
-void ApplyExternalForce::UpdateChild()
+void ApplyExternalWrench::UpdateChild()
 {
     // Reading apply wrench command
     yarp::os::Bottle tmpBottle;
@@ -51,11 +50,11 @@ void ApplyExternalForce::UpdateChild()
     this->_onLink->AddTorque ( torque );
 }
 
-void ApplyExternalForce::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
+void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
 {
     // Check if yarp network is active;
     if ( !this->_yarpNet.checkNetwork() ) {
-        printf ( "ERROR Yarp Network was not found active in ApplyExternalForce plugin" );
+        printf ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin" );
         return;
     }
 
@@ -72,7 +71,9 @@ void ApplyExternalForce::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
         if ( ini_robot_name_path != "" && this->_iniParams.fromConfigFile ( ini_robot_name_path.c_str() ) ) {
             std::cout << "ApplyExternalWrench: Found robotNamefromConfigFile in "<< ini_robot_name_path << std::endl;
             yarp::os::Value robotNameParam = _iniParams.find ( "gazeboYarpPluginsRobotName" );
-            this->_robot_name = robotNameParam.asString();
+            this->robot_name = robotNameParam.asString();
+            printf("ApplyExternalWrench: robotName is %s \n",robot_name.c_str());
+            _rpcThread.setRobotName(robot_name);
         }
     }
 
@@ -83,21 +84,29 @@ void ApplyExternalForce::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
 
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
-    this->_update_connection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalForce::UpdateChild, this ) );
+    this->_update_connection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::UpdateChild, this ) );
 }
+
 }
 
 
 // ############ RPCServerThread class ###############
 
+void RPCServerThread::setRobotName(std::string robotName)
+{
+    this->_robotName = robotName;
+}
+
 bool RPCServerThread::threadInit()
 {
+    
     printf ( "Starting RPCServerThread\n" );
     printf ( "Opening rpc port\n" );
-    if ( !_rpcPort.open ( "/applyExternalWrench/rpc:i" ) ) {
+    if ( !_rpcPort.open ( std::string("/"+_robotName + "/applyExternalWrench/rpc:i" ).c_str() )) {
         printf ( "ERROR opening RPC port /applyExternalWrench\n" );
         return false;
     }
+    // Default link on wihch wrenches are applied
     _cmd.addString ( "neck_1" );
     _cmd.addDouble ( 0 );
     _cmd.addDouble ( 0 );

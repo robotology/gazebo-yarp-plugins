@@ -9,7 +9,7 @@ ApplyExternalWrench::ApplyExternalWrench()
 {
     this->_wrench_to_apply.force.resize ( 3,0 );
     this->_wrench_to_apply.torque.resize ( 3,0 );
-    _link_name="neck_1";
+//     _link_name="neck_1";
 }
 ApplyExternalWrench::~ApplyExternalWrench()
 {
@@ -34,8 +34,8 @@ void ApplyExternalWrench::UpdateChild()
     for ( int i=4; i<7; i++ ) {
         _wrench_to_apply.torque[i-4] = tmpBottle.get ( i ).asDouble();
     }
-
-    this->_onLink  = _myModel->GetLink ( this->_link_name );
+        
+    this->_onLink  = _myModel->GetLink ( std::string(this->_modelScope + "::" + this->_link_name) );
     if ( !this->_onLink ) {
         std::cout<<"ERROR ApplyWrench plugin: link named "<< this->_link_name<< "not found"<<std::endl;
         return;
@@ -44,9 +44,9 @@ void ApplyExternalWrench::UpdateChild()
     // Copying command to force and torque Vector3 variables
     math::Vector3 force ( this->_wrench_to_apply.force[0], this->_wrench_to_apply.force[1], this->_wrench_to_apply.force[2] );
     math::Vector3 torque ( this->_wrench_to_apply.torque[0], this->_wrench_to_apply.torque[1], this->_wrench_to_apply.torque[2] );
-//     printf ( "Applying wrench:( Force: %s  Torque: %s ) on link %s",_wrench_to_apply.force.toString().c_str(), _wrench_to_apply.torque.toString().c_str(), _link_name.c_str() );
+    printf ( "Applying wrench:( Force: %s ) on link %s \n",_wrench_to_apply.force.toString().c_str(), _link_name.c_str() );
     // Applying wrench to the specified link
-    this->_onLink->AddForce ( force );
+    this->_onLink->AddForce  ( force );
     this->_onLink->AddTorque ( torque );
 }
 
@@ -57,7 +57,16 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
         printf ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin" );
         return;
     }
+    
+    // What is the parent name??
+    this->_modelScope = _model->GetScopedName();
+    printf("Scoped name: %s\n",this->_modelScope.c_str());
 
+    // Checking names of all links in this model
+//     physics::Link_V tmpLinksVec = _model->GetLinks();
+//     for(unsigned i=0; i<tmpLinksVec.size(); i++)
+//         std::cout << tmpLinksVec[i]->GetName();
+    
     // Copy the pointer to the model
     this->_myModel = _model;
 
@@ -74,6 +83,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
             this->robot_name = robotNameParam.asString();
             printf("ApplyExternalWrench: robotName is %s \n",robot_name.c_str());
             _rpcThread.setRobotName(robot_name);
+	    _rpcThread.setScopedName(this->_modelScope);
         }
     }
 
@@ -97,6 +107,11 @@ void RPCServerThread::setRobotName(std::string robotName)
     this->_robotName = robotName;
 }
 
+void RPCServerThread::setScopedName(std::string scopedName)
+{
+    this->_scopedName = scopedName;
+}
+
 bool RPCServerThread::threadInit()
 {
     
@@ -107,7 +122,7 @@ bool RPCServerThread::threadInit()
         return false;
     }
     // Default link on wihch wrenches are applied
-    _cmd.addString ( "neck_1" );
+    _cmd.addString ( this->_scopedName + "::l_arm");
     _cmd.addDouble ( 0 );
     _cmd.addDouble ( 0 );
     _cmd.addDouble ( 0 );

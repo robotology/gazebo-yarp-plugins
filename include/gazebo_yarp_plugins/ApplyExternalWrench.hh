@@ -23,6 +23,7 @@ public:
     virtual void        threadRelease();
     yarp::os::Bottle    get_cmd();
     void setRobotName(std::string robotName);
+    void setScopedName(std::string scopedName);
 private:
     yarp::os::RpcServer _rpcPort;
     yarp::os::Bottle    _cmd;
@@ -30,7 +31,7 @@ private:
     /// \brief Mutex to lock reading and writing of _cmd
     boost::mutex        _lock;
     std::string         _robotName;
-
+    std::string 	_scopedName;
 };
 
 
@@ -63,6 +64,7 @@ private:
 
     physics::ModelPtr    _myModel;
     /// \brief Link on which the wrench will be applied
+    std::string 	 _modelScope;
     std::string          _link_name;
     /// \brief Link the plugin is attached to
     physics::LinkPtr     _onLink;

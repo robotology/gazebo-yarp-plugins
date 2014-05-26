@@ -25,6 +25,8 @@ public:
     yarp::os::Bottle    get_cmd();
     void setRobotName(std::string robotName);
     void setScopedName(std::string scopedName);
+    void setDurationBuffer(double d);
+    double getDurationBuffer();
 private:
     yarp::os::RpcServer _rpcPort;
     yarp::os::Bottle    _cmd;
@@ -33,6 +35,7 @@ private:
     boost::mutex        _lock;
     std::string         _robotName;
     std::string 	_scopedName;
+    double 		_durationBuffer;
 };
 
 
@@ -54,6 +57,9 @@ public:
     
     /// \brief Robot name that will be used to open rpc port
     std::string          robot_name;
+    double 		 time_ini;
+//     yarp::os::Bottle     bufferBottle;
+    
 
 protected:
     // Inherited
@@ -80,6 +86,13 @@ private:
 
     /// \brief Pointer to the update event connection
     event::ConnectionPtr _update_connection;
+    
+    transport::PublisherPtr _visPub;
+    msgs::Visual _visualMsg;
+    
+    double 	_duration;
+    bool 	_timeChanged;
+
     
 
 };

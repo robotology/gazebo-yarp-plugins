@@ -81,12 +81,15 @@ void ApplyExternalWrench::UpdateChild()
 	math::Quaternion forceOrientation = rotation.GetRotation();
         math::Pose linkCoGPose( linkCoGPos, forceOrientation);
         msgs::Set ( _visualMsg.mutable_pose(), linkCoGPose );
+	_visualMsg.set_visible(1);
         _visPub->Publish ( _visualMsg );
     }
 
     if ( applying_force_flag && ( time_current - time_ini ) > this->_duration ) {
         printf ( "applying_force_flag set to zero because duration has been met\n" );
         applying_force_flag = 0;
+	_visualMsg.set_visible(0);
+	_visPub->Publish(_visualMsg);
     }
 
 }

@@ -75,21 +75,21 @@ void ApplyExternalWrench::UpdateChild()
         this->_onLink->AddTorque ( torque );
         math::Vector3 linkCoGPos = this->_onLink->GetWorldCoGPose().pos; // Get link's COG position where wrench will be applied
         math::Vector3 newZ = force.Normalize(); // normalized force. I want the z axis of the cylinder's reference frame to coincide with my force vector
-	math::Vector3 newX = newZ.Cross(math::Vector3::UnitZ);
-	math::Vector3 newY = newZ.Cross(newX);
-	math::Matrix4 rotation = math::Matrix4(newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
-	math::Quaternion forceOrientation = rotation.GetRotation();
-        math::Pose linkCoGPose( linkCoGPos, forceOrientation);
+        math::Vector3 newX = newZ.Cross ( math::Vector3::UnitZ );
+        math::Vector3 newY = newZ.Cross ( newX );
+        math::Matrix4 rotation = math::Matrix4 ( newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1 );
+        math::Quaternion forceOrientation = rotation.GetRotation();
+        math::Pose linkCoGPose ( linkCoGPos - rotation*math::Vector3(0,0,.15), forceOrientation );
         msgs::Set ( _visualMsg.mutable_pose(), linkCoGPose );
-	_visualMsg.set_visible(1);
+        _visualMsg.set_visible ( 1 );
         _visPub->Publish ( _visualMsg );
     }
 
     if ( applying_force_flag && ( time_current - time_ini ) > this->_duration ) {
         printf ( "applying_force_flag set to zero because duration has been met\n" );
         applying_force_flag = 0;
-	_visualMsg.set_visible(0);
-	_visPub->Publish(_visualMsg);
+        _visualMsg.set_visible ( 0 );
+        _visPub->Publish ( _visualMsg );
     }
 
 }

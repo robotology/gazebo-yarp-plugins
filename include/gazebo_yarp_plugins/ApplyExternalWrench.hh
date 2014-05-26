@@ -5,6 +5,7 @@
 #include <string>
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/physics/physics.hh>
+#include <gazebo/transport/transport.hh>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcServer.h>
@@ -39,6 +40,9 @@ namespace gazebo
 {
 class ApplyExternalWrench : public ModelPlugin
 {
+private:
+  transport::NodePtr node;
+
 public:
     ApplyExternalWrench();
     virtual ~ApplyExternalWrench();
@@ -76,6 +80,8 @@ private:
 
     /// \brief Pointer to the update event connection
     event::ConnectionPtr _update_connection;
+    
+
 };
 
 }

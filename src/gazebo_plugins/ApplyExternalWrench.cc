@@ -79,8 +79,9 @@ void ApplyExternalWrench::UpdateChild()
         math::Vector3 newY = newZ.Cross ( newX );
         math::Matrix4 rotation = math::Matrix4 ( newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1 );
         math::Quaternion forceOrientation = rotation.GetRotation();
-        math::Pose linkCoGPose ( linkCoGPos - rotation*math::Vector3(0,0,.15), forceOrientation );
+        math::Pose linkCoGPose ( linkCoGPos - rotation*math::Vector3 ( 0,0,.15 ), forceOrientation );
         msgs::Set ( _visualMsg.mutable_pose(), linkCoGPose );
+        msgs::Set ( _visualMsg.mutable_material()->mutable_ambient(),common::Color ( 1,0,0,0.3 ) );
         _visualMsg.set_visible ( 1 );
         _visPub->Publish ( _visualMsg );
     }

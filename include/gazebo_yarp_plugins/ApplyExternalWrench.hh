@@ -13,6 +13,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Vocab.h>
 
 
 // A YARP Thread class that will be used to read the rpc port to apply external wrench
@@ -27,6 +28,8 @@ public:
     void setScopedName(std::string scopedName);
     void setDurationBuffer(double d);
     double getDurationBuffer();
+    void sendReply(std::string rep);
+    virtual void onStop();
 private:
     yarp::os::RpcServer _rpcPort;
     yarp::os::Bottle    _cmd;
@@ -66,6 +69,7 @@ protected:
     void Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf );
     // Inherited
     virtual void UpdateChild();
+    
 
 private:
     yarp::os::Network    _yarpNet;
@@ -91,9 +95,6 @@ private:
     msgs::Visual _visualMsg;
     
     double 	_duration;
-    bool 	_timeChanged;
-
-    
 
 };
 

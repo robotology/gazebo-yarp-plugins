@@ -11,13 +11,14 @@ ApplyExternalWrench::ApplyExternalWrench()
     this->_wrench_to_apply.torque.resize ( 3,0 );
     this->_duration = 0;
     time_ini = 0;
-    this->_timeChanged = false;
-    // Default link on which wrenches are applied
-//     _link_name="neck_1";
 }
 ApplyExternalWrench::~ApplyExternalWrench()
 {
+    printf ( "*** GazeboYarpApplyExternalWrench closing ***\n" );
+    gazebo::event::Events::DisconnectWorldUpdateBegin ( this->_update_connection );
+    printf ( "Trying to stop rpcThread in ApplyExternalWrench plugin\n" );
     _rpcThread.stop();
+    printf ( "Goodbye from ApplyExternalWrench plugin\n" );
 }
 
 void ApplyExternalWrench::UpdateChild()
@@ -44,6 +45,7 @@ void ApplyExternalWrench::UpdateChild()
 
     this->_onLink  = _myModel->GetLink ( std::string ( this->_modelScope + "::" + this->_link_name ) );
     if ( !this->_onLink ) {
+//         _rpcThread.sendReply ( std::string ( "Link name <"+ this->_link_name + "> not found in SDF" ) );
         std::cout<<"ERROR ApplyWrench plugin: link named "<< this->_link_name<< "not found"<<std::endl;
         return;
     }
@@ -54,9 +56,6 @@ void ApplyExternalWrench::UpdateChild()
     // Copying command to force and torque Vector3 variables
     math::Vector3 force ( this->_wrench_to_apply.force[0], this->_wrench_to_apply.force[1], this->_wrench_to_apply.force[2] );
     math::Vector3 torque ( this->_wrench_to_apply.torque[0], this->_wrench_to_apply.torque[1], this->_wrench_to_apply.torque[2] );
-//     printf ( "Applying wrench:( Force: %s ) on link %s \n",_wrench_to_apply.force.toString().c_str(), _link_name.c_str() );
-    // Applying wrench to the specified link. If durationBuffer in rpcThread is different from duration in ApplyExternalWrench it means that duration has not been updated via rpc
-
 
     // Taking duration of the applied force into account
     static bool applying_force_flag = 0;
@@ -70,7 +69,7 @@ void ApplyExternalWrench::UpdateChild()
     double time_current = yarp::os::Time::now();
     // This has to be done during the specified duration
     if ( applying_force_flag && ( time_current - time_ini ) < this->_duration ) {
-        printf ( "Applying external force on the robot for %f seconds...\n", this->_duration );
+//         printf ( "Applying external force on the robot for %f seconds...\n", this->_duration );
         this->_onLink->AddForce ( force );
         this->_onLink->AddTorque ( torque );
         math::Vector3 linkCoGPos = this->_onLink->GetWorldCoGPose().pos; // Get link's COG position where wrench will be applied
@@ -87,7 +86,6 @@ void ApplyExternalWrench::UpdateChild()
     }
 
     if ( applying_force_flag && ( time_current - time_ini ) > this->_duration ) {
-        printf ( "applying_force_flag set to zero because duration has been met\n" );
         applying_force_flag = 0;
         _visualMsg.set_visible ( 0 );
         _visPub->Publish ( _visualMsg );
@@ -99,7 +97,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 {
     // Check if yarp network is active;
     if ( !this->_yarpNet.checkNetwork() ) {
-        printf ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin" );
+        printf ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin\n" );
         return;
     }
 
@@ -227,20 +225,51 @@ void RPCServerThread::run()
         yarp::os::Bottle command;
 
         _rpcPort.read ( command,true );
-        this->_reply.addString ( "[ACK]" );
-        this->_rpcPort.reply ( this->_reply );
+        if ( command.get ( 0 ).asString() == "help" ) {
+            this->_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
+            this->_reply.addString ( "Insert a command with the following format:" );
+            this->_reply.addString ( "[link] [force] [torque] [duration]" );
+            this->_reply.addString ( "[link]:     (string) Link ID of the robot as specified in robot's SDF" );
+            this->_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame" );
+            this->_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame" );
+            this->_reply.addString ( "[duration]: (double) Duration of the applied force in seconds" );
+            this->_rpcPort.reply ( this->_reply );
+        } else {
+            if ( command.get ( 0 ).isString() && \
+                    ( command.get ( 1 ).isDouble() || command.get ( 1 ).isInt() )  && ( command.get ( 2 ).isDouble() || command.get ( 2 ).isInt() ) && ( command.get ( 3 ).isDouble() || command.get ( 3 ).isInt() ) &&\
+                    ( command.get ( 4 ).isDouble() || command.get ( 4 ).isInt() )  && ( command.get ( 5 ).isDouble() || command.get ( 5 ).isInt() ) && ( command.get ( 6 ).isDouble() || command.get ( 6 ).isInt() ) && \
+                    ( command.get ( 7 ).isDouble() || command.get ( 7 ).isInt() ) ) {
+                this->_reply.addString ( "[ACK] Correct command format" );
+                this->_rpcPort.reply ( this->_reply );
+                _lock.lock();
+                _cmd = command;
+                _lock.unlock();
+            } else {
+                this->_reply.addString ( "ERROR: Incorrect command format" );
+                this->_rpcPort.reply ( this->_reply );
+            }
+        }
         _reply.clear();
-        _lock.lock();
-        _cmd = command;
-        _lock.unlock();
+        command.clear();
     }
 }
 void RPCServerThread::threadRelease()
 {
     yarp::os::Thread::threadRelease();
+    _rpcPort.close();
     printf ( "Goodbye from RPC thread\n" );
 }
 yarp::os::Bottle RPCServerThread::get_cmd()
 {
     return _cmd;
 }
+void RPCServerThread::sendReply ( std::string rep )
+{
+    this->_reply.addString ( rep );
+    this->_rpcPort.reply ( this->_reply );
+}
+void RPCServerThread::onStop()
+{
+  _rpcPort.interrupt();
+}
+

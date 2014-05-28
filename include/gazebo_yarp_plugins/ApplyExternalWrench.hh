@@ -1,5 +1,5 @@
-#ifndef __APPLY_EXTERNAL_WRENCH_HH__
-#define __APPLY_EXTERNAL_WRENCH_HH__
+#ifndef APPLYEXTERNALWRENCH_HH
+#define APPLYEXTERNALWRENCH_HH
 
 #include <iostream>
 #include <string>
@@ -23,22 +23,21 @@ public:
     virtual bool        threadInit();
     virtual void        run();
     virtual void        threadRelease();
-    yarp::os::Bottle    get_cmd();
-    void setRobotName(std::string robotName);
-    void setScopedName(std::string scopedName);
-    void setDurationBuffer(double d);
-    double getDurationBuffer();
-    void sendReply(std::string rep);
-    virtual void onStop();
+    yarp::os::Bottle    getCmd();
+    void                setRobotName(std::string robotName);
+    void                setScopedName(std::string scopedName);
+    void                setDurationBuffer(double d);
+    double              getDurationBuffer();
+    virtual void        onStop();
 private:
-    yarp::os::RpcServer _rpcPort;
-    yarp::os::Bottle    _cmd;
-    yarp::os::Bottle    _reply;
+    yarp::os::RpcServer m_rpcPort;
+    yarp::os::Bottle    m_cmd;
+    yarp::os::Bottle    m_reply;
     /// \brief Mutex to lock reading and writing of _cmd
-    boost::mutex        _lock;
-    std::string         _robotName;
-    std::string 	_scopedName;
-    double 		_durationBuffer;
+    boost::mutex        m_lock;
+    std::string         m_robotName;
+    std::string         m_scopedName;
+    double              m_durationBuffer;
 };
 
 
@@ -47,7 +46,7 @@ namespace gazebo
 class ApplyExternalWrench : public ModelPlugin
 {
 private:
-  transport::NodePtr node;
+  transport::NodePtr m_node;
 
 public:
     ApplyExternalWrench();
@@ -59,8 +58,8 @@ public:
     };
     
     /// \brief Robot name that will be used to open rpc port
-    std::string          robot_name;
-    double 		 time_ini;
+    std::string          robotName;
+    double               timeIni;
 //     yarp::os::Bottle     bufferBottle;
     
 
@@ -72,29 +71,29 @@ protected:
     
 
 private:
-    yarp::os::Network    _yarpNet;
-    RPCServerThread      _rpcThread;
-    yarp::os::Property   _iniParams;
+    yarp::os::Network       m_yarpNet;
+    RPCServerThread         m_rpcThread;
+    yarp::os::Property      m_iniParams;
 
-    physics::ModelPtr    _myModel;
+    physics::ModelPtr       m_myModel;
     /// \brief Link on which the wrench will be applied
-    std::string 	 _modelScope;
-    std::string          _link_name;
+    std::string 	        m_modelScope;
+    std::string             m_linkName;
     /// \brief Link the plugin is attached to
-    physics::LinkPtr     _onLink;
+    physics::LinkPtr        m_onLink;
     /// \brief Wrench to be applied on the body
-    wrench		 _wrench_to_apply;
+    wrench		            m_wrenchToApply;
 
     /// \brief Mutex to lock access
-    boost::mutex         _lock;
+    boost::mutex            m_lock;
 
     /// \brief Pointer to the update event connection
-    event::ConnectionPtr _update_connection;
+    event::ConnectionPtr    m_updateConnection;
     
-    transport::PublisherPtr _visPub;
-    msgs::Visual _visualMsg;
+    transport::PublisherPtr m_visPub;
+    msgs::Visual            m_visualMsg;
     
-    double 	_duration;
+    double                  m_duration;
 
 };
 

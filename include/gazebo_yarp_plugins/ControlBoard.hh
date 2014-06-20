@@ -11,7 +11,6 @@
 
 #include <string>
 
-#include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriverList.h>
 
 namespace yarp {
@@ -49,7 +48,6 @@ public:
 
 private:
 
-    yarp::os::Network m_yarp;
     yarp::dev::PolyDriver m_wrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
     yarp::dev::PolyDriver m_controlBoard;

@@ -11,7 +11,6 @@
 
 #include <string>
 
-#include <yarp/os/Network.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriverList.h>
 
@@ -34,8 +33,6 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
-
-    yarp::os::Network _yarp;
     yarp::dev::PolyDriver _jointsensors_wrapper;
     yarp::dev::IMultipleWrapper *_iWrap;
     yarp::dev::PolyDriver _jointsensors_driver;

@@ -12,13 +12,13 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
-
+#include <yarp/os/Network.h>
 
 GZ_REGISTER_MODEL_PLUGIN(gazebo::GazeboYarpJointSensors)
 
 namespace gazebo {
 
-GazeboYarpJointSensors::GazeboYarpJointSensors() : ModelPlugin(), _yarp(), _iWrap(0)
+GazeboYarpJointSensors::GazeboYarpJointSensors() : ModelPlugin(), _iWrap(0)
 {
 }
 
@@ -29,11 +29,13 @@ GazeboYarpJointSensors::~GazeboYarpJointSensors()
     if( _jointsensors_wrapper.isValid() ) _jointsensors_wrapper.close();
     if( _jointsensors_driver.isValid() ) _jointsensors_driver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeRobot(_robotName);
+    yarp::os::Network::fini();
 }
 
 void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
-    if( !_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout) ) {
+    yarp::os::Network::init();
+    if( !yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout) ) {
        std::cerr << "GazeboYarpJointSensors::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
        return;
     }

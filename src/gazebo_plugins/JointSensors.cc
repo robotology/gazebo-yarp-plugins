@@ -52,7 +52,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     }
 
     // Add my gazebo device driver to the factory.
-    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf<::yarp::dev::GazeboYarpJointSensorsDriver>
+    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpJointSensorsDriver>
                                       ("gazebo_jointsensors", "analogServer", "GazeboYarpJointSensorsDriver"));
 
     //Getting .ini configuration file from sdf

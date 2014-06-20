@@ -41,7 +41,6 @@ private:
     yarp::dev::PolyDriver m_jointsensorsWrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
     yarp::dev::PolyDriver m_jointsensorsDriver;
-    yarp::os::Property m_parameters;
 
     std::string m_robotName;
 };

@@ -10,24 +10,12 @@
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/plugins/CameraPlugin.hh>
-//#include <gazebo_yarp_plugins/CameraDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
 #include <string>
-
-
-class IRobotranYarpInterface;
-
-
-class YARP_dev_API IRobotranYarpInterface
-{
-    virtual bool captureImage(const unsigned char *_image,
-                              unsigned int _width, unsigned int _height,
-                              unsigned int _depth, const std::string &_format) = 0;
-};
 
 namespace gazebo
 {
@@ -61,23 +49,15 @@ namespace gazebo
         virtual ~GazeboYarpCamera();
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
-//        //CAMERA UPDATE from Gazebo side
-//        virtual void OnNewFrame(const unsigned char *_image,
-//                              unsigned int _width, unsigned int _height,
-//                              unsigned int _depth, const std::string &_format);
-
     private:
         yarp::os::Network m_yarp;
         yarp::os::Property m_parameters; 
         yarp::dev::PolyDriver m_cameraDriver;
-        yarp::dev::PolyDriver _cameraDriver;
         std::string m_sensorName;
         sensors::CameraSensor *m_sensor;
 
-        yarp::dev::IFrameWriterImage*       iFrameWriterImage;
-        yarp::dev::IFrameGrabber*           iFrameGrabber;
+
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
-        yarp::dev::DeviceDriver *           dev;
     };
 }
 

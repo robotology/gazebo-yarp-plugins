@@ -42,9 +42,6 @@ namespace gazebo {
 extern const std::string YarpScopedName;
 
 class yarp::dev::GazeboYarpCameraDriver:
-//    virtual public yarp::dev::IPreciselyTimed,
-    virtual public yarp::dev::IFrameWriterImage,
-    virtual public yarp::dev::IFrameGrabber,
     virtual public yarp::dev::IFrameGrabberImage,
     virtual public yarp::dev::DeviceDriver
 {
@@ -53,8 +50,6 @@ public:
 
     virtual ~GazeboYarpCameraDriver();
     
-    void onUpdate(const gazebo::common::UpdateInfo&);  // do we need this??
-
     /**
      * Yarp interfaces start here
      */
@@ -62,11 +57,6 @@ public:
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-
-    //CAMERA UPDATE from Gazebo side
-    virtual void OnNewFrame(const unsigned char *_image,
-                          unsigned int _width, unsigned int _height,
-                          unsigned int _depth, const std::string &_format);
     
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
@@ -101,10 +91,6 @@ public:
     virtual bool captureImage(const unsigned char *_image,
                               unsigned int _width, unsigned int _height,
                               unsigned int _depth, const std::string &_format);
-
-    virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
-
-    virtual bool getRawBuffer(unsigned char *buffer);
 
     virtual int getRawBufferSize();
 

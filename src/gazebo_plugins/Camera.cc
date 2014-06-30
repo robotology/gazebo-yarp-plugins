@@ -98,80 +98,15 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     
     std::cout << "Trying to get the GazeboYarpCameraDriver interface from the device" << std::endl;
 
-    m_cameraDriver.view(iFrameWriterImage);
-    if(iFrameWriterImage == NULL)
-    {
-        std::cout << "@@@@@@@@@@@@@ Unable to get the iFrameWriterImage interface from the device" << std::endl;
-//        return;
-    }
-    else
-        std::cout << "@@@@@@@@@@@@@ GOT IT!! iFrameWriterImage interface from the device" << std::endl;
-
-
-    m_cameraDriver.view(iFrameGrabber);
-    if(iFrameGrabber == NULL)
-    {
-        std::cout << "@@@@@@@@@@@@@ Unable to get the iFrameGrabber interface from the device" << std::endl;
-//        return;
-    }
-    else
-        std::cout << "@@@@@@@@@@@@@ GOT IT!! iFrameGrabber interface from the device" << std::endl;
-
     m_cameraDriver.view(iFrameGrabberImage);
     if(iFrameGrabberImage == NULL)
     {
-        std::cout << "@@@@@@@@@@@@@ Unable to get the iFrameGrabberImage interface from the device" << std::endl;
-//        return;
+        std::cout << "Unable to get the iFrameGrabberImage interface from the device" << std::endl;
+        return;
     }
-    else
-        std::cout << "@@@@@@@@@@@@@ GOT IT!! iFrameGrabberImage interface from the device" << std::endl;
 
-    m_cameraDriver.view(dev);
-    if(dev == NULL)
-    {
-        std::cout << "@@@@@@@@@@@@@ Unable to get the dev interface from the device" << std::endl;
-//        return;
-    }
-    else
-        std::cout << "@@@@@@@@@@@@@ GOT IT!! dev interface from the device" << std::endl;
-
-
-//    m_cameraDriver.view(iFrameGrabberInterface);
-//    if(iFrameGrabberInterface == NULL)
-//    {
-//        std::cout << "@@@@@@@@@@@@@ Unable to get the iFrameGrabberInterface interface from the device" << std::endl;
-////        return;
-//    }
-//    else
-//        std::cout << "@@@@@@@@@@@@@ GOT IT!! iFrameGrabberInterface interface from the device" << std::endl;
-
-
-
-    std::cout << "GazeboYarpCamera original parameters" << std::endl;
+    std::cout << "GazeboYarpCamera parameters" << std::endl;
     std::cout << m_parameters.toString() << std::endl;
-    std::cout << "GazeboYarpCamera getOptions" << std::endl;
-    std::cout << m_cameraDriver.getOptions().toString() << std::endl;
 }
     
-
-////CAMERA UPDATE from Gazebo side
-//void GazeboYarpCamera::OnNewFrame(const unsigned char *_image,
-//                      unsigned int _width, unsigned int _height,
-//                      unsigned int _depth, const std::string &_format)
-//{
-////    static int saveCount = 0;
-
-////    char tmp[1024];
-////    snprintf(tmp, sizeof(tmp), "/tmp/gazeboCameras/%s-%04d.jpg", this->m_sensor->GetCamera()->GetName().c_str(), saveCount);
-
-////    if (saveCount < 1000)
-////    {
-////        this->m_sensor->GetCamera()->SaveFrame( _image, _width, _height, _depth, _format, tmp);
-
-////        std::cout << "Saving frame [" << saveCount << "] as [" << tmp << "]\n" << std::endl;
-////        saveCount++;
-////    }
-//}
-
-
 }

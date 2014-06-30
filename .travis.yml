@@ -17,7 +17,7 @@ before_script:
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update
   - sudo apt-get --force-yes install libace-dev
-  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev; fi
+  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
   #check gazebo version
   - gazebo --version

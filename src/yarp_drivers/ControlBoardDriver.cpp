@@ -149,7 +149,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& /*
 //TODO: consider multi-dof joint ?
         m_positions[jnt_cnt] = this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetAngle (0).Degree();
         m_velocities[jnt_cnt] = GazeboYarpPlugins::convertRadiansToDegrees(this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetVelocity(0));
-        m_torques[jnt_cnt] = this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetForce(0);
+        m_torques[jnt_cnt] = this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetForce(0u);
     }
 
     //logger.log(m_velocities[2]);

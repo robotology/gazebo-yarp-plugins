@@ -111,22 +111,33 @@ set(externalwrench_headers  include/gazebo_yarp_plugins/ApplyExternalWrench.hh)
 SOURCE_GROUP("Source Files" FILES ${externalwrench_source})
 SOURCE_GROUP("Header Files" FILES ${externalwrench_headers})
 
-add_library(gazebo_yarp_singleton      SHARED ${singleton_source}    	${singleton_headers})
-add_library(gazebo_yarp_controlboard   SHARED ${controlBoard_source} 	${controlBoard_headers})
-add_library(gazebo_yarp_forcetorque    SHARED ${forceTorque_source}  	${forceTorque_headers})
-add_library(gazebo_yarp_imu            SHARED ${imu_source}          	${imu_headers})
-add_library(gazebo_yarp_jointsensors   SHARED ${jointSensors_source} 	${jointSensors_headers})
-add_library(gazebo_yarp_clock          SHARED ${clock_source}        	${clock_headers})
+
+set(camera_headers          include/gazebo_yarp_plugins/Camera.hh
+                            include/gazebo_yarp_plugins/CameraDriver.h)
+set(camera_source           src/gazebo_plugins/Camera.cc
+                            src/yarp_drivers/CameraDriver.cpp)
+
+SOURCE_GROUP("Source Files" FILES ${camera_headers})
+SOURCE_GROUP("Header Files" FILES ${camera_source})
+
+add_library(gazebo_yarp_singleton    SHARED ${singleton_source}    ${singleton_headers})
+add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})
+add_library(gazebo_yarp_forcetorque  SHARED ${forceTorque_source}  ${forceTorque_headers})
+add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers})
+add_library(gazebo_yarp_jointsensors SHARED ${jointSensors_source} ${jointSensors_headers})
+add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
+add_library(gazebo_yarp_camera       SHARED ${camera_source}       ${camera_headers})
 add_library(gazebo_yarp_externalwrench SHARED ${externalwrench_source}	${externalwrench_headers})
 
 
 target_link_libraries(gazebo_yarp_singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_controlboard  	gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_forcetorque   	gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ForceTorquePlugin  ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_imu           	gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_jointsensors  	gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_clock         	gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(gazebo_yarp_externalwrench	${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_controlboard  gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_forcetorque   gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ForceTorquePlugin  ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_imu           gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_jointsensors  gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_clock         gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_externalwrench gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_camera        gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} CameraPlugin)
 
 
 # Add install target
@@ -136,7 +147,8 @@ install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_imu
                 gazebo_yarp_jointsensors
                 gazebo_yarp_clock
-		gazebo_yarp_externalwrench
+				gazebo_yarp_externalwrench
+                gazebo_yarp_camera
                 DESTINATION lib)
 
 # Add uninstall target                

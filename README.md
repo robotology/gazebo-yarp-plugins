@@ -8,7 +8,7 @@ Installation
 ------------
 ### Dependencies 
 For using Yarp with Gazebo, you shall install:
- * Gazebo simulator and its header files (at least version 2.0), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install).
+ * Gazebo simulator and its header files (at least version 1.9), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install).
  * Yarp (at least version 2.3.62, i.e. the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling the CREATE_SHARED_LIBRARY CMake option to compile Yarp as a shared library.
 
 **Gazebo is under active development, so it is recommended to use the latest released version of Gazebo.**
@@ -81,7 +81,7 @@ To use Coman in Gazebo, please follow [the instructions on gazebo_yarp_plugins w
 To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/robotology-playground/icub_gazebo)
 
 ### Arbitrary robot
-To add gazebo_yarp_plugins to another robot, please follow the instructions on [gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Embed-gazebo_yarp_plugins-in-a-SDF-model)
+To add gazebo_yarp_plugins to another robot, please follow the instructions on [gazebo_yarp_plugins wiki](https://github.com/robotology/gazebo_yarp_plugins/wiki/Embed-gazebo_yarp_plugins-in-an-SDF-model)
 
 Troubleshooting
 ---------------

@@ -35,6 +35,15 @@ set_property(
     APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
 )
 
+
+#take in account the API incompatibility in IOpenLoopControl interface
+if(YARP_VERSION VERSION_LESS 2.3.62.3)
+    #message(STATUS "found YARP (${YARP_VERSION}) using the old open loop motor interface")
+else()
+    #message(STATUS "found YARP (${YARP_VERSION}) using the new interaction mode open loop motor interface")
+    add_definitions(-DYARP_INTERACTION_MODE_MOTOR_INTERFACE)
+endif()
+
 # add local cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -141,5 +150,5 @@ install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_camera
                 DESTINATION lib)
 
-# Add uninstall target                
+# Add uninstall target
 include(AddUninstallTarget)

@@ -128,14 +128,22 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
             printf ( "ApplyExternalWrench: robotName is %s \n",robotName.c_str() );
             m_rpcThread.setRobotName ( robotName );
             m_rpcThread.setScopedName ( this->m_modelScope );
+            gazebo::physics::Link_V links = _model->GetLinks();
+            m_rpcThread.setDefaultLink(links.at(0)->GetName());
             configuration_loaded = true;
         } else {
             printf ( "ERROR trying to get robot configuration file\n" );
             return;
         }
     } else {
-        printf ( "ERROR: SDF file does not contain a <robotNamefromConfigFile> tag. A robot name is needed\n" );
-        return;
+            std::cout << "ApplyExternalWrench: robot name from sdf description will be used!"<<std::endl;
+            this->robotName = _model->GetName();
+            printf ( "ApplyExternalWrench: robotName is %s \n",robotName.c_str() );
+            m_rpcThread.setRobotName ( robotName );
+            m_rpcThread.setScopedName ( this->m_modelScope );
+            gazebo::physics::Link_V links = _model->GetLinks();
+            m_rpcThread.setDefaultLink(links.at(0)->GetName());
+            configuration_loaded = true;
     }
 
     // Starting RPC thread to read desired wrench to be applied
@@ -200,7 +208,10 @@ double RPCServerThread::getDurationBuffer()
     return this->m_durationBuffer;
 }
 
-
+void RPCServerThread::setDefaultLink(const std::string &defaultLink)
+{
+    this->m_defaultLink = defaultLink;
+}
 
 bool RPCServerThread::threadInit()
 {
@@ -212,7 +223,8 @@ bool RPCServerThread::threadInit()
         return false;
     }
     // Default link on which wrenches are applied
-    m_cmd.addString ( this->m_scopedName + "::l_arm" );
+    //m_cmd.addString ( this->m_scopedName + "::l_arm" );
+    m_cmd.addString ( this->m_defaultLink );
     m_cmd.addDouble ( 0 ); // Force  coord. x
     m_cmd.addDouble ( 0 ); // Force  coord. y
     m_cmd.addDouble ( 0 ); // Force  coord. z

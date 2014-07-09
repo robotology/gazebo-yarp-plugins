@@ -26,6 +26,7 @@ public:
     yarp::os::Bottle    getCmd();
     void                setRobotName(std::string robotName);
     void                setScopedName(std::string scopedName);
+    void                setDefaultLink(const std::string& defaultLink);
     void                setDurationBuffer(double d);
     double              getDurationBuffer();
     virtual void        onStop();
@@ -37,6 +38,7 @@ private:
     boost::mutex        m_lock;
     std::string         m_robotName;
     std::string         m_scopedName;
+    std::string         m_defaultLink;
     double              m_durationBuffer;
 };
 

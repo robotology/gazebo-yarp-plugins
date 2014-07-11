@@ -25,6 +25,9 @@ For example on Ubuntu you can install them with the following command:
 ```
 sudo apt-get install libtinyxml-dev libboost-system-dev
 ```
+If you are using Gazebo 3 (or any later version) installed using .deb packages, you need 
+also to install the Gazebo development files. This files are provided by the `libgazebo-dev` package. 
+
 On OS X you can instead use brew:
 ```
 brew install tinyxml boost

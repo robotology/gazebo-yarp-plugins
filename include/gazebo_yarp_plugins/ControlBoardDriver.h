@@ -34,24 +34,24 @@ namespace gazebo {
     namespace common {
         class UpdateInfo;
     }
-    
+
     namespace physics {
         class Model;
     }
-    
+
     namespace event {
         class Connection;
         typedef boost::shared_ptr<Connection> ConnectionPtr;
     }
-    
+
     namespace transport {
         class Node;
         class Publisher;
-        
+
         typedef boost::shared_ptr<Node> NodePtr;
         typedef boost::shared_ptr<Publisher> PublisherPtr;
     }
-    
+
     namespace msgs {
         class JointCmd;
     }
@@ -212,8 +212,15 @@ public:
      * \param v value to be set
      * \return true if the operation succeeded. False otherwise
      */
+#ifndef YARP_INTERACTION_MODE_MOTOR_INTERFACE
     virtual bool setOutput(int j, double v);
     virtual bool setOutputs(const double *v);
+#else /* YARP_INTERACTION_MODE_MOTOR_INTERFACE */
+    virtual bool setRefOutput(int j, double v);
+    virtual bool setRefOutputs(const double *v);
+    virtual bool getRefOutput(int j, double *v);
+    virtual bool getRefOutputs(double *v);
+#endif
     virtual bool getOutput(int j, double *v);
     virtual bool getOutputs(double *v);
     virtual bool setOpenLoopMode();
@@ -288,7 +295,7 @@ private:
         PIDFeedbackTermDerivativeTerm = 1 << 2,
         PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
-    
+
     struct Range {
         Range() : min(0), max(0){}
         double min;
@@ -297,25 +304,25 @@ private:
 
     gazebo::physics::Model* m_robot;
     gazebo::event::ConnectionPtr m_updateConnection;
-    
+
     yarp::os::Property m_pluginParameters; /*<! Contains the parameters of the device contained in the yarpConfigurationFile .ini file */
-    
+
     unsigned int m_robotRefreshPeriod; //ms
     unsigned int m_numberOfJoints; /*<! number of joints controlled by the control board */
     std::vector<Range> m_jointLimits;
-    
+
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
      * i.e. getEncoder(j)=m_zeroPosition+gazebo.getEncoder(j);
      */
     yarp::sig::Vector m_zeroPosition;
-    
+
     yarp::sig::Vector m_positions; /*<! joint positions */
     yarp::sig::Vector m_velocities; /*<! joint velocities */
     yarp::sig::Vector m_torques; /*<! joint torques */
 
     yarp::sig::Vector amp;
-    
+
     //Desired Control variables
     yarp::sig::Vector m_referencePositions; /*<! desired reference positions. Depending on the position mode, they can be set directly or indirectly through the trajectory generator */
     yarp::sig::Vector m_referenceTorques; /*<! desired reference torques for torque control mode */

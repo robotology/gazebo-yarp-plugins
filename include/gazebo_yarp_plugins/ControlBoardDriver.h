@@ -60,7 +60,7 @@ namespace gazebo {
 class yarp::dev::GazeboYarpControlBoardDriver:
     public DeviceDriver,
     public IPositionControl2,
-    public IVelocityControl,
+    public IVelocityControl2,
     public IAmplifierControl,
     public IEncodersTimed,
     public IControlCalibration2,
@@ -127,7 +127,7 @@ public:
     virtual bool checkMotionDone(bool* flag); //NOT TESTED
     virtual bool setPositionMode(); //NOT TESTED
 
-    // m_positions 2
+    // Position Control 2
     virtual bool positionMove(const int n_joint, const int* joints, const double* refs);
     virtual bool relativeMove(const int n_joint, const int* joints, const double* deltas);
     virtual bool checkMotionDone(const int n_joint, const int* joints, bool* flags);
@@ -145,10 +145,16 @@ public:
     virtual bool getRefAcceleration(int j, double *acc); //NOT IMPLEMENTED
     virtual bool getRefAccelerations(double *accs); //NOT IMPLEMENTED
 
-    //VELOCITY CONTROL
+    //VELOCITY CONTROL 2
     virtual bool setVelocityMode(); //NOT TESTED
     virtual bool velocityMove(int j, double sp); //NOT TESTED
     virtual bool velocityMove(const double *sp); //NOT TESTED
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
+    
+    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
+    virtual bool setVelPids(const yarp::dev::Pid *pids);
+    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
+    virtual bool getVelPids(yarp::dev::Pid *pids);
 
     //CONTROL MODE
     virtual bool setPositionMode(int j); //WORKS

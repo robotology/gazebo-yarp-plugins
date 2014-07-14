@@ -22,18 +22,8 @@ The contribution follows the classical GitHub stages:
 
 ## Repository structure and releases management.
 This part is mainly targeted to ''internal'' members.
-The repository has two (2) permanent branches:
-* `master`;
-* `development`.
 
-The `master` branch contains the stable code. Release versions will be tagged only in this branch.
-The `development` branch contains unstable (but hopefully compilable) code.
+Development of new features follows the [Feature Branch Workflow](https://www.atlassian.com/git/workflows#!workflow-feature-branch).
 
-Every effort expensive feature (i.e. it needs more than one commit to be developed) should be implemented in a separate branch (e.g. `feature/feature_name`). Once successfully implemented, the branch will be merged into `development` and  it will be deleted.
-When we want to freeze the code, we fork `development` into a new branch named `release/release_version`. No new features are allowed in this branch.
-When the code is stable, the branch is merged into both `development` and `master`, and `master` is tagged accordingly.
-
-Trivial fixes can be made directly into `development` or `master`, but do remember to propagate the changes to the right places. For more complex issues, once again, a new branch must be created (e.g. `fix/fix_name`).
-
-
-
+In a nutshell, development of new features/bugfixes happens in separated branch. When you believe your contribution is stable
+you can open a pull request against master, where your code will be review by other contributors prior to merging it.  

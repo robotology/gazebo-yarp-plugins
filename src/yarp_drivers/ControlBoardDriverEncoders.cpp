@@ -36,14 +36,14 @@ bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
         encs[i] = m_positions[i]-m_zeroPosition[i];  //should we just use memcopy here?
         time[i] = my_time;
     }
-    
+
     return true;
 }
 
 /**
  * Read the instantaneous acceleration of the specified axis
  * @param j axis index
- * @param encs pointer to double 
+ * @param encs pointer to double
  * @param time corresponding timestamp (pointer to)
  * @return true if all goes well, false if anything bad happens.
  */
@@ -51,7 +51,7 @@ bool GazeboYarpControlBoardDriver::getEncoderTimed(int j, double *encs, double *
 {
     if (time && encs && j >= 0 && j < (int)m_numberOfJoints) {
         *encs = m_positions[j]-m_zeroPosition[j];
-        *time = yarp::os::Time::now();
+        *time = m_lastTimestamp.getTime();
         return true;
     }
     return false;

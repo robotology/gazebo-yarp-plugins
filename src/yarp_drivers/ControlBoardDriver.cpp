@@ -134,7 +134,7 @@ void GazeboYarpControlBoardDriver::computeTrajectory(const int j)
     }
 }
 
-void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
+void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
     m_clock++;
 
@@ -151,6 +151,9 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& /*
         m_velocities[jnt_cnt] = GazeboYarpPlugins::convertRadiansToDegrees(this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetVelocity(0));
         m_torques[jnt_cnt] = this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetForce(0u);
     }
+
+    // Updating timestamp
+    m_lastTimestamp.update(_info.simTime.Double());
 
     //logger.log(m_velocities[2]);
 

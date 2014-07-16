@@ -18,6 +18,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Stamp.h>
 #include <string>
 #include <vector>
 
@@ -315,6 +316,8 @@ private:
     yarp::sig::Vector m_positions; /*<! joint positions */
     yarp::sig::Vector m_velocities; /*<! joint velocities */
     yarp::sig::Vector m_torques; /*<! joint torques */
+
+    yarp::os::Stamp m_lastTimestamp; /*<! timestamp, updated with simulation time at each onUpdate call */
 
     yarp::sig::Vector amp;
 

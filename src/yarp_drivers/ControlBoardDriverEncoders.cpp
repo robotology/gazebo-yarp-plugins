@@ -30,8 +30,7 @@ bool GazeboYarpControlBoardDriver::getEncoders(double *encs) //WORKS
 
 bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
 {
-    /// \todo TODO all other time instances of timed interfaces (PrecislyTimed) use gazebo time, not yarp one
-    double my_time = yarp::os::Time::now();
+    double my_time = m_lastTimestamp.getTime();
     for (unsigned int i = 0; i <m_numberOfJoints; ++i) {
         encs[i] = m_positions[i]-m_zeroPosition[i];  //should we just use memcopy here?
         time[i] = my_time;

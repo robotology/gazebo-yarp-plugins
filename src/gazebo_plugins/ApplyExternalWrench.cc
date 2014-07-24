@@ -251,7 +251,7 @@ void RPCServerThread::run()
             this->m_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame" );
             this->m_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame" );
             this->m_reply.addString ( "[duration]: (double) Duration of the applied force in seconds" );
-            this->m_reply.addString ( "Note: The reference frame is the base/root robot frame with x pointing backwards and z upwards.")
+            this->m_reply.addString ( "Note: The reference frame is the base/root robot frame with x pointing backwards and z upwards.");
             this->m_rpcPort.reply ( this->m_reply );
         } else {
             if ( command.get ( 0 ).isString() \

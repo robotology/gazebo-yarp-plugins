@@ -246,10 +246,12 @@ void RPCServerThread::run()
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
+            this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1")
             this->m_reply.addString ( "[link]:     (string) Link ID of the robot as specified in robot's SDF" );
             this->m_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame" );
             this->m_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame" );
             this->m_reply.addString ( "[duration]: (double) Duration of the applied force in seconds" );
+            this->m_reply.addString ( "Note: The reference frame is the base/root robot frame with x pointing backwards and z upwards.")
             this->m_rpcPort.reply ( this->m_reply );
         } else {
             if ( command.get ( 0 ).isString() \

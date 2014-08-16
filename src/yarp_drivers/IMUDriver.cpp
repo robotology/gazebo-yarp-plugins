@@ -16,7 +16,7 @@
 using namespace yarp::dev;
 
 const int YarpIMUChannelsNumber = 12; //The IMU has 12 fixed channels
-const std::string YarpScopedName = "sensorScopedName";
+const std::string YarpIMUScopedName = "sensorScopedName";
 
 GazeboYarpIMUDriver::GazeboYarpIMUDriver() {}
 GazeboYarpIMUDriver::~GazeboYarpIMUDriver() {}
@@ -74,7 +74,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     m_dataMutex.post();
     
     //Get gazebo pointers
-    std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
+    std::string sensorScopedName(config.find(YarpIMUScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpIMUDriver is looking for sensor " << sensorScopedName << "..." << std::endl;
     
     m_parentSensor = (gazebo::sensors::ImuSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);

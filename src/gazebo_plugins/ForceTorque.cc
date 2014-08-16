@@ -82,7 +82,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(boost::get_pointer(_sensor));
     
-    driver_properties.put(YarpScopedName.c_str(), m_sensorName.c_str());
+    driver_properties.put(YarpForceTorqueScopedName.c_str(), m_sensorName.c_str());
     
     //Open the wrapper
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)

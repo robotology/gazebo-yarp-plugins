@@ -20,7 +20,7 @@ before_script:
   - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
   #check gazebo version
-  - gazebo --version
+  #- gazebo --version
   - git clone https://github.com/robotology/yarp
   - cd yarp
   - mkdir build

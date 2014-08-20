@@ -13,8 +13,8 @@
 
 using namespace yarp::dev;
 
-const int YarpForceTorqueChannelsNumber = 6; //The IMU has 6 fixed channels
-const std::string YarpScopedName = "sensorScopedName";
+const int YarpForceTorqueChannelsNumber = 6; //The ForceTorque sensor has 6 fixed channels
+const std::string YarpForceTorqueScopedName = "sensorScopedName";
 
 GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver() {}
 GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
@@ -62,7 +62,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     m_dataMutex.post();
     
     //Get gazebo pointers
-    std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
+    std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpForceTorqueDriver::open is looking for sensor " << sensorScopedName << "..." << std::endl;
     
     m_parentSensor = (gazebo::sensors::ForceTorqueSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);

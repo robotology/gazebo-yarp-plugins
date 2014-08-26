@@ -53,6 +53,7 @@ private:
 public:
     ApplyExternalWrench();
     virtual ~ApplyExternalWrench();
+    std::string retrieveSubscope(gazebo::physics::Link_V& v, std::string  scope);
 
     struct wrench {
         yarp::sig::Vector force;
@@ -79,12 +80,13 @@ private:
 
     physics::ModelPtr       m_myModel;
     /// \brief Link on which the wrench will be applied
-    std::string 	        m_modelScope;
+    std::string             m_modelScope;
+    std::string             m_subscope;
     std::string             m_linkName;
     /// \brief Link the plugin is attached to
     physics::LinkPtr        m_onLink;
     /// \brief Wrench to be applied on the body
-    wrench		            m_wrenchToApply;
+    wrench                  m_wrenchToApply;
 
     /// \brief Mutex to lock access
     boost::mutex            m_lock;

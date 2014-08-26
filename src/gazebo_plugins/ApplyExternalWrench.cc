@@ -49,12 +49,25 @@ void ApplyExternalWrench::UpdateChild()
         m_wrenchToApply.torque[i-4] = tmpBottle.get ( i ).asDouble();
     }
 
-    this->m_onLink  = m_myModel->GetLink ( std::string ( this->m_modelScope + "::" + this->m_linkName ) );
-    if ( !this->m_onLink ) {
-//         m_rpcThread.sendReply ( std::string ( "Link name <"+ this->m_linkName + "> not found in SDF" ) );
-        std::cout<<"ERROR ApplyWrench plugin: link named "<< this->m_linkName<< "not found"<<std::endl;
-        return;
+    std::string fullScopeLinkName = "";
+    if(this->m_subscope!="") {
+      fullScopeLinkName = std::string ( this->m_modelScope + "::" + this->m_subscope + "::" + this->m_linkName );
+      this->m_onLink  = m_myModel->GetLink ( fullScopeLinkName );
+    } else {
+      this->m_onLink  = m_myModel->GetLink (  );      
     }
+    
+//  This piece of code shows the full name (scoped name + link name) of every link in the current loaded model.   
+//     gazebo::physics::Link_V tmpLinksVector;
+//     tmpLinksVector = m_myModel->GetLinks();   
+//     for (int i=0; i<tmpLinksVector.size(); i++)
+//       std::cout << tmpLinksVector[i]->GetName() << " ";
+//     std::cout << std::endl;
+    
+    if ( !this->m_onLink ) {
+        std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< "not found"<<std::endl;
+        return;
+    } 
 
     // Get wrench duration
     this->m_duration = tmpBottle.get ( 7 ).asDouble();
@@ -126,10 +139,11 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
             yarp::os::Value robotNameParam = m_iniParams.find ( "gazeboYarpPluginsRobotName" );
             this->robotName = robotNameParam.asString();
             printf ( "ApplyExternalWrench: robotName is %s \n",robotName.c_str() );
-            m_rpcThread.setRobotName ( robotName );
+            m_rpcThread.setRobotName  ( robotName );
             m_rpcThread.setScopedName ( this->m_modelScope );
             gazebo::physics::Link_V links = _model->GetLinks();
-            m_rpcThread.setDefaultLink(links.at(0)->GetName());
+            m_rpcThread.setDefaultLink("root_link");
+	    this->m_subscope = retrieveSubscope(links, m_modelScope);
             configuration_loaded = true;
         } else {
             printf ( "ERROR trying to get robot configuration file\n" );
@@ -182,6 +196,18 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
     // simulation iteration.
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::UpdateChild, this ) );
 }
+
+std::string ApplyExternalWrench::retrieveSubscope ( gazebo::physics::Link_V& v , std::string scope)
+{
+    std::string tmpName = v[0]->GetName();
+    std::size_t found = tmpName.find_first_of(":");
+    if(found!=std::string::npos)
+      tmpName = tmpName.substr (0, found);
+    else
+      tmpName = "";
+    return tmpName;
+}
+
 
 }
 

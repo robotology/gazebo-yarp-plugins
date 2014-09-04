@@ -74,6 +74,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     amp = 1; // initially on - ok for simulator
     started = false;
     m_controlMode = new int[m_numberOfJoints];
+    m_interactionMode = new int[m_numberOfJoints];
     m_isMotionDone = new bool[m_numberOfJoints];
     m_clock = 0;
     m_torqueOffsett = 0;

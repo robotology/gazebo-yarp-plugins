@@ -65,6 +65,7 @@ SOURCE_GROUP("Header Files" FILES ${singleton_headers})
 set(controlBoard_source     src/gazebo_plugins/ControlBoard.cc
                             src/yarp_drivers/ControlBoardDriver.cpp
                             src/yarp_drivers/ControlBoardDriverControlMode.cpp
+                            src/yarp_drivers/ControlBoardDriverInteractionMode.cpp
                             src/yarp_drivers/ControlBoardDriverDeviceDriver.cpp
                             src/yarp_drivers/ControlBoardDriverEncoders.cpp
                             src/yarp_drivers/ControlBoardDriverOthers.cpp

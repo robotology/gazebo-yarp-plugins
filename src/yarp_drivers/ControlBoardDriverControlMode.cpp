@@ -90,3 +90,37 @@ bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::getControlModes(const int n_joint, const int *joints, int *modes)
+{
+    bool ret = true;
+    for(int i=0; i<n_joint; i++)
+        ret = ret && getControlMode(joints[i], &modes[i]);
+    return ret;
+}
+
+bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
+{
+    if (j < 0 || j >= (int)m_numberOfJoints) return false;
+    prepareResetJointMsg(j);
+    m_controlMode[j] = mode;
+    std::cout<<"control mode = openloop "<<j<<std::endl;
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setControlModes(const int n_joint, const int *joints, int *modes)
+{
+    bool ret = true;
+    for(int i=0; i<n_joint; i++)
+        ret = ret && setControlMode(joints[i], modes[i]);
+    return ret;
+}
+
+bool GazeboYarpControlBoardDriver::setControlModes(int *modes)
+{
+    bool ret = true;
+    for(int i=0; i<(int)m_numberOfJoints; i++)
+        ret = ret && setControlMode(i, modes[i]);
+    return ret;
+}
+
+

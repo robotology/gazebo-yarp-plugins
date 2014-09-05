@@ -71,7 +71,9 @@ bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
 {
     if (j < 0 || j >= (int)m_numberOfJoints) return false;
     prepareResetJointMsg(j);
-    m_controlMode[j]=VOCAB_CM_IMPEDANCE_POS;
+    m_controlMode[j] = VOCAB_CM_POSITION;
+    m_interactionMode[j] = VOCAB_IM_COMPLIANT;
+
     std::cout<<"control mode = impedance position "<<j<<std::endl;
     return true;
 }

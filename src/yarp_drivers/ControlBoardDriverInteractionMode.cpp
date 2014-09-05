@@ -15,7 +15,6 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
 {
-    std::cout << "function getInteractionMode NOT YET IMPLEMENTED" << std::endl;
     *mode = (yarp::dev::InteractionModeEnum) m_interactionMode[j];
     return true;
 }
@@ -40,9 +39,8 @@ bool GazeboYarpControlBoardDriver::getInteractionModes(yarp::dev::InteractionMod
 
 bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
-    std::cout << "Warning FAKE setInteractionMode" << std::endl;
     if (j < 0 || j >= (int)m_numberOfJoints) return false;
-//    prepareResetJointMsg(j);
+    prepareResetJointMsg(j);
     m_interactionMode[j] = (int) mode;
     return true;
 }

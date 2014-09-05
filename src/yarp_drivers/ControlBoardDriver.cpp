@@ -80,6 +80,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_torqueOffsett = 0;
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
         m_controlMode[j] = VOCAB_CM_POSITION;
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+        m_interactionMode[j] = VOCAB_IM_STIFF;
 
     std::cout << "gazebo_init set pid done!" << std::endl;
 

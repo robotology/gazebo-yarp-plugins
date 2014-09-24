@@ -74,11 +74,14 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     amp = 1; // initially on - ok for simulator
     started = false;
     m_controlMode = new int[m_numberOfJoints];
+    m_interactionMode = new int[m_numberOfJoints];
     m_isMotionDone = new bool[m_numberOfJoints];
     m_clock = 0;
     m_torqueOffsett = 0;
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
         m_controlMode[j] = VOCAB_CM_POSITION;
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+        m_interactionMode[j] = VOCAB_IM_STIFF;
 
     std::cout << "gazebo_init set pid done!" << std::endl;
 
@@ -158,12 +161,13 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     //logger.log(m_velocities[2]);
 
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
-        if (m_controlMode[j] == VOCAB_CM_POSITION) {//set pos joint value, set m_referenceVelocities joint value
+        //set pos joint value, set m_referenceVelocities joint value
+        if (   (m_controlMode[j] == VOCAB_CM_POSITION) && (m_interactionMode[j] == VOCAB_IM_STIFF) ){
             if (m_clock % _T_controller == 0) {
                 computeTrajectory(j);
                 sendPositionToGazebo(j, m_referencePositions[j]);
             }
-        } else if (m_controlMode[j] == VOCAB_CM_VELOCITY) {//set vmo joint value
+        } else if ( (m_controlMode[j] == VOCAB_CM_VELOCITY)  && (m_interactionMode[j] == VOCAB_IM_STIFF) ) {//set vmo joint value
             if (m_clock % _T_controller == 0) {
                 sendVelocityToGazebo(j, m_referenceVelocities[j]);
             }
@@ -177,7 +181,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
-        } else if ( m_controlMode[j] == VOCAB_CM_IMPEDANCE_POS) {
+        } else if ( ( m_controlMode[j] == VOCAB_CM_POSITION) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT) ) {
             if (m_clock % _T_controller == 0) {
                 computeTrajectory(j);
                 sendImpPositionToGazebo(j, m_referencePositions[j]);

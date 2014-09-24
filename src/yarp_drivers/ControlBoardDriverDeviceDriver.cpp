@@ -39,6 +39,7 @@ bool GazeboYarpControlBoardDriver::close()
     }
     
     delete [] m_controlMode;
+    delete [] m_interactionMode;
     delete [] m_isMotionDone;
     return true;
 }

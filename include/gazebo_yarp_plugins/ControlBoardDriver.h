@@ -13,7 +13,8 @@
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IControlMode2.h>
+#include <yarp/dev/IInteractionMode.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
@@ -66,8 +67,9 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IEncodersTimed,
     public IControlCalibration2,
     public IControlLimits2,
+    public IInteractionMode,
     public DeviceResponder,
-    public IControlMode,
+    public IControlMode2,
     public ITorqueControl,
     public IPositionDirect,
     public IImpedanceControl,
@@ -168,6 +170,12 @@ public:
     virtual bool setImpedancePositionMode(int j);//NOT IMPLEMENTED
     virtual bool setImpedanceVelocityMode(int j); //NOT IMPLEMENTED
     virtual bool setOpenLoopMode(int j); //NOT IMPLEMENTED
+
+    // CONTROL MODE 2
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlMode(const int j, const int mode);
+    virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
+    virtual bool setControlModes(int *modes);
 
     //TORQUE CONTROL
     virtual bool setRefTorque(int j, double t); //NOT TESTED
@@ -279,6 +287,14 @@ public:
     bool setPositions(const int n_joint, const int *joints, double *refs);
     bool setPositions(const double *refs);
 
+    // INTERACTION MODE interface
+    bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
+    bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
+    bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
+    bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
+
 private:
 
     /* PID structures */
@@ -351,6 +367,8 @@ private:
 
     bool* m_isMotionDone;
     int * m_controlMode;
+    int * m_interactionMode;
+
     bool started;
     int m_clock;
     int _T_controller;

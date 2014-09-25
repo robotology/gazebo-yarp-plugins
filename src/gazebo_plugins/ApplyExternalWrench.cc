@@ -54,7 +54,7 @@ void ApplyExternalWrench::UpdateChild()
       fullScopeLinkName = std::string ( this->m_modelScope + "::" + this->m_subscope + "::" + this->m_linkName );
       this->m_onLink  = m_myModel->GetLink ( fullScopeLinkName );
     } else {
-      this->m_onLink  = m_myModel->GetLink (  );      
+      this->m_onLink  = m_myModel->GetLink ( this->m_linkName );      
     }
     
 //  This piece of code shows the full name (scoped name + link name) of every link in the current loaded model.   

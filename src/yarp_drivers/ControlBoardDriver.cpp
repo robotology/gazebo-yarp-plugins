@@ -85,8 +85,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     std::cout << "gazebo_init set pid done!" << std::endl;
 
-    this->m_updateConnection 
-        = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate, 
+    this->m_updateConnection
+        = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,
                                                                      this, _1));
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
@@ -164,7 +164,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
         //set pos joint value, set m_referenceVelocities joint value
-        if (   (m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && 
+        if (   (m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) &&
                (m_interactionMode[j] == VOCAB_IM_STIFF) ){
             if (m_clock % _T_controller == 0) {
                 if( m_controlMode[j] == VOCAB_CM_POSITION ) {
@@ -172,24 +172,24 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 }
                 sendPositionToGazebo(j, m_referencePositions[j]);
             }
-            
+
         } else if ( (m_controlMode[j] == VOCAB_CM_VELOCITY)  && (m_interactionMode[j] == VOCAB_IM_STIFF) ) {//set vmo joint value
             if (m_clock % _T_controller == 0) {
                 sendVelocityToGazebo(j, m_referenceVelocities[j]);
             }
-            
+
         } else if (m_controlMode[j] == VOCAB_CM_TORQUE) {
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
-            
+
         } else if (m_controlMode[j] == VOCAB_CM_OPENLOOP) {
             //OpenLoop control sends torques to gazebo at this moment.
             //Check if gazebo implements a "motor" entity and change the code accordingly.
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
-            
+
         } else if ( ( m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
             && (m_interactionMode[j] == VOCAB_IM_COMPLIANT) ) {
             if (m_clock % _T_controller == 0) {

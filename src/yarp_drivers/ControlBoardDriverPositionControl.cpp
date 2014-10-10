@@ -228,28 +228,39 @@ bool GazeboYarpControlBoardDriver::setPositionDirectMode()
     for(int j=0; j < (int)m_numberOfJoints; j++)  {
         this->setControlMode(j,VOCAB_CM_POSITION_DIRECT);
     }
-    
+
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
-    if (j >= 0 && j < (int)m_numberOfJoints)
-    {
-        m_referencePositions[j] = ref;
-        return positionMove(j, ref);
+    if( m_controlMode[j] != VOCAB_CM_POSITION_DIRECT ) {
+        if (j >= 0 && j < (int)m_numberOfJoints)
+        {
+            m_referencePositions[j] = ref;
+            return true;
+        }
+    } else {
+        std::cerr << "[WARN] gazebo_yarp_controlboard: you tried to call setPosition" << std::endl;
+        std::cerr << "[WARN] for a joint that is not in POSITION_DIRECT control mode." << std::endl;
     }
     return false;
 }
 
 bool GazeboYarpControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs)
 {
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i)
-        m_referencePositions[i] = refs[i];
-    return positionMove(n_joint, joints, refs);
+    bool ret = true;
+    for(int i = 0; i < n_joint; i++) {
+        ret = ret && setPosition(joints[i], refs[i]);
+    }
+    return ret;
 }
 
 bool GazeboYarpControlBoardDriver::setPositions(const double *refs)
 {
-    return positionMove(refs);
+    bool ret = true;
+    for(int j = 0; j < this->m_numberOfJoints; j++ ) {
+        ret = ret && setPosition(j,refs[j]);
+    }
+    return ret;
 }

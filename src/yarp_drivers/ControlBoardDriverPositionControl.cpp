@@ -237,7 +237,7 @@ bool GazeboYarpControlBoardDriver::setPositionDirectMode()
 
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
-    if( m_controlMode[j] != VOCAB_CM_POSITION_DIRECT ) {
+    if( m_controlMode[j] == VOCAB_CM_POSITION_DIRECT ) {
         if (j >= 0 && j < (int)m_numberOfJoints)
         {
             m_referencePositions[j] = ref;

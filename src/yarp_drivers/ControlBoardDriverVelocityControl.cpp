@@ -13,10 +13,11 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 {
+    bool ret = true;
     for(unsigned int j=0; j<m_numberOfJoints; j++) {
-        this->setVelocityMode(j);
+        ret = ret && this->setControlMode(j,VOCAB_CM_VELOCITY);
     }
-    return true;
+    return ret;
 }
 
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED

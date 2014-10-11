@@ -76,10 +76,11 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::setOpenLoopMode()
         {
+            bool ret = true;
             for(unsigned int j = 0; j < m_numberOfJoints; j++) {
-                this->setOpenLoopMode(j);
+                ret = ret && this->setControlMode(j,VOCAB_CM_OPENLOOP);
             }
-            return true;
+            return ret;
         }
 
     }

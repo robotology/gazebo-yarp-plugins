@@ -30,10 +30,11 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const double* t)
 
 bool GazeboYarpControlBoardDriver::setTorqueMode()
 {
+    bool ret = true;
     for(unsigned int j = 0; j < m_numberOfJoints; j++) {
-        this->setTorqueMode(j);
+        ret = ret && this->setControlMode(j,VOCAB_CM_TORQUE);
     }
-    return true;
+    return ret;
 }
 
 bool GazeboYarpControlBoardDriver::getRefTorque(int j, double* t)
@@ -43,7 +44,7 @@ bool GazeboYarpControlBoardDriver::getRefTorque(int j, double* t)
         return true;
     }
     return false;
-} 
+}
 
 bool GazeboYarpControlBoardDriver::getRefTorques(double* t)
 {
@@ -52,7 +53,7 @@ bool GazeboYarpControlBoardDriver::getRefTorques(double* t)
         t[j] = m_referenceTorques[j];
     }
     return true;
-} 
+}
 
 bool GazeboYarpControlBoardDriver::getTorque(int j, double* t)
 {
@@ -61,7 +62,7 @@ bool GazeboYarpControlBoardDriver::getTorque(int j, double* t)
         return true;
     }
     return false;
-} 
+}
 
 bool GazeboYarpControlBoardDriver::getTorques(double* t)
 {

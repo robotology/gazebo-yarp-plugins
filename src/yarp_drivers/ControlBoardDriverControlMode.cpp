@@ -24,23 +24,17 @@ void GazeboYarpControlBoardDriver::prepareResetJointMsg(int j)
 
 bool GazeboYarpControlBoardDriver::setPositionMode(int j) //WORKS
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
-    this->setControlMode(j,VOCAB_CM_POSITION);
-    return true;
+    return this->setControlMode(j,VOCAB_CM_POSITION);
 }
 
 bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
-    this->setControlMode(j,VOCAB_CM_VELOCITY);
-    std::cout<<"control mode = speed "<<j<<std::endl;
-    return true;
+    return this->setControlMode(j,VOCAB_CM_VELOCITY);
 }
 
 bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
 {
-    if (!mode
-        || j < 0 || j >= (int)m_numberOfJoints)
+    if (!mode || j < 0 || j >= (int)m_numberOfJoints)
         return false;
     *mode = m_controlMode[j];
     return true;
@@ -57,17 +51,15 @@ bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::setTorqueMode(int j) //NOT TESTED
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
-    this->setControlMode(j,VOCAB_CM_TORQUE);
-    return true;
+    return this->setControlMode(j,VOCAB_CM_TORQUE);
 }
 
 bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
-    this->setControlMode(j,VOCAB_CM_POSITION);
-    this->setInteractionMode(j,VOCAB_IM_COMPLIANT);
-    return true;
+    bool ret = true;
+    ret = ret && this->setControlMode(j,VOCAB_CM_POSITION);
+    ret = ret && this->setInteractionMode(j,VOCAB_IM_COMPLIANT);
+    return ret;
 }
 
 bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
@@ -77,9 +69,7 @@ bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENT
 
 bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
-    this->setControlMode(j,VOCAB_CM_OPENLOOP);
-    return true;
+    return this->setControlMode(j,VOCAB_CM_OPENLOOP);
 }
 
 bool GazeboYarpControlBoardDriver::getControlModes(const int n_joint, const int *joints, int *modes)

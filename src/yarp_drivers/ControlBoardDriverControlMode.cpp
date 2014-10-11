@@ -10,6 +10,8 @@
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
 
+#include <yarp/os/Vocab.h>
+
 
 using namespace yarp::dev;
 
@@ -83,6 +85,26 @@ bool GazeboYarpControlBoardDriver::getControlModes(const int n_joint, const int 
 bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
 {
     if (j < 0 || j >= (int)m_numberOfJoints) return false;
+
+    // Only accept supported control modes
+    // The only not supported control mode is
+    // (for now) VOCAB_CM_MIXED
+    if ( !(mode == VOCAB_CM_POSITION ||
+           mode == VOCAB_CM_POSITION_DIRECT ||
+           mode == VOCAB_CM_VELOCITY ||
+           mode == VOCAB_CM_TORQUE ||
+           mode == VOCAB_CM_OPENLOOP ||
+           mode == VOCAB_CM_IDLE ) ) {
+        std::cerr << "[WARN] request control mode "
+                  << yarp::os::Vocab::decode(mode) << " that is not supported by "
+                  << " gazebo_yarp_controlboard plugin." << std::endl;
+        return false;
+    }
+
+    // If the joint is already in the selected control mode
+    // don't perform switch specific actions
+    if (m_controlMode[j] == mode) return true;
+
     prepareResetJointMsg(j);
     m_controlMode[j] = mode;
 

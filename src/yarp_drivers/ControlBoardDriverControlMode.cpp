@@ -85,6 +85,24 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
     if (j < 0 || j >= (int)m_numberOfJoints) return false;
     prepareResetJointMsg(j);
     m_controlMode[j] = mode;
+
+    // mode specific switching actions
+    switch( mode ) {
+        case VOCAB_CM_POSITION :
+        case VOCAB_CM_POSITION_DIRECT :
+            m_referencePositions[j] = m_positions[j];
+            m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+        break;
+        case VOCAB_CM_VELOCITY :
+            m_referenceVelocities[j] = 0.0;
+        break;
+        case VOCAB_CM_TORQUE :
+        case VOCAB_CM_OPENLOOP :
+            m_referenceTorques[j] = m_torques[j];
+        break;
+        default :
+        break;
+    }
     return true;
 }
 

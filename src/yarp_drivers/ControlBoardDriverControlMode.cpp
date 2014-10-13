@@ -24,17 +24,17 @@ void GazeboYarpControlBoardDriver::prepareResetJointMsg(int j)
     this->m_jointCommandPublisher->Publish(j_cmd);
 }
 
-bool GazeboYarpControlBoardDriver::setPositionMode(int j) //WORKS
+bool GazeboYarpControlBoardDriver::setPositionMode(int j)
 {
-    return this->setControlMode(j,VOCAB_CM_POSITION);
+    return this->setControlMode(j, VOCAB_CM_POSITION);
 }
 
-bool GazeboYarpControlBoardDriver::setVelocityMode(int j) //WORKS
+bool GazeboYarpControlBoardDriver::setVelocityMode(int j)
 {
-    return this->setControlMode(j,VOCAB_CM_VELOCITY);
+    return this->setControlMode(j, VOCAB_CM_VELOCITY);
 }
 
-bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode) //WORKS
+bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode)
 {
     if (!mode || j < 0 || j >= (int)m_numberOfJoints)
         return false;
@@ -51,16 +51,16 @@ bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::setTorqueMode(int j) //NOT TESTED
+bool GazeboYarpControlBoardDriver::setTorqueMode(int j)
 {
-    return this->setControlMode(j,VOCAB_CM_TORQUE);
+    return this->setControlMode(j, VOCAB_CM_TORQUE);
 }
 
 bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
 {
     bool ret = true;
-    ret = ret && this->setControlMode(j,VOCAB_CM_POSITION);
-    ret = ret && this->setInteractionMode(j,VOCAB_IM_COMPLIANT);
+    ret = ret && this->setControlMode(j, VOCAB_CM_POSITION);
+    ret = ret && this->setInteractionMode(j, VOCAB_IM_COMPLIANT);
     return ret;
 }
 
@@ -71,13 +71,13 @@ bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENT
 
 bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
 {
-    return this->setControlMode(j,VOCAB_CM_OPENLOOP);
+    return this->setControlMode(j, VOCAB_CM_OPENLOOP);
 }
 
 bool GazeboYarpControlBoardDriver::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     bool ret = true;
-    for(int i=0; i<n_joint; i++)
+    for (int i = 0; i < n_joint; i++)
         ret = ret && getControlMode(joints[i], &modes[i]);
     return ret;
 }
@@ -89,12 +89,12 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
     // Only accept supported control modes
     // The only not supported control mode is
     // (for now) VOCAB_CM_MIXED
-    if ( !(mode == VOCAB_CM_POSITION ||
-           mode == VOCAB_CM_POSITION_DIRECT ||
-           mode == VOCAB_CM_VELOCITY ||
-           mode == VOCAB_CM_TORQUE ||
-           mode == VOCAB_CM_OPENLOOP ||
-           mode == VOCAB_CM_IDLE ) ) {
+    if (!(mode == VOCAB_CM_POSITION
+          || mode == VOCAB_CM_POSITION_DIRECT
+          || mode == VOCAB_CM_VELOCITY
+          || mode == VOCAB_CM_TORQUE
+          || mode == VOCAB_CM_OPENLOOP
+          || mode == VOCAB_CM_IDLE)) {
         std::cerr << "[WARN] request control mode "
                   << yarp::os::Vocab::decode(mode) << " that is not supported by "
                   << " gazebo_yarp_controlboard plugin." << std::endl;
@@ -109,7 +109,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
     m_controlMode[j] = mode;
 
     // mode specific switching actions
-    switch( mode ) {
+    switch (mode) {
         case VOCAB_CM_POSITION :
         case VOCAB_CM_POSITION_DIRECT :
             m_referencePositions[j] = m_positions[j];
@@ -131,7 +131,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
 bool GazeboYarpControlBoardDriver::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     bool ret = true;
-    for(int i=0; i<n_joint; i++)
+    for (int i = 0; i < n_joint; i++)
         ret = ret && setControlMode(joints[i], modes[i]);
     return ret;
 }
@@ -139,9 +139,7 @@ bool GazeboYarpControlBoardDriver::setControlModes(const int n_joint, const int 
 bool GazeboYarpControlBoardDriver::setControlModes(int *modes)
 {
     bool ret = true;
-    for(int i=0; i<(int)m_numberOfJoints; i++)
+    for (int i = 0; i < (int)m_numberOfJoints; i++)
         ret = ret && setControlMode(i, modes[i]);
     return ret;
 }
-
-

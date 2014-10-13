@@ -85,7 +85,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     std::cout << "gazebo_init set pid done!" << std::endl;
 
-    this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(                                                                           boost::bind(&GazeboYarpControlBoardDriver::onUpdate, this, _1));
+    this->m_updateConnection
+        = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,
+                                                                     this, _1));
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
     m_gazeboNode->Init(this->m_robot->GetWorld()->GetName());
@@ -162,12 +164,15 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
         //set pos joint value, set m_referenceVelocities joint value
-        if (   (m_controlMode[j] == VOCAB_CM_POSITION) && (m_interactionMode[j] == VOCAB_IM_STIFF) ){
+        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
+            && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
             if (m_clock % _T_controller == 0) {
-                computeTrajectory(j);
+                if (m_controlMode[j] == VOCAB_CM_POSITION) {
+                    computeTrajectory(j);
+                }
                 sendPositionToGazebo(j, m_referencePositions[j]);
             }
-        } else if ( (m_controlMode[j] == VOCAB_CM_VELOCITY)  && (m_interactionMode[j] == VOCAB_IM_STIFF) ) {//set vmo joint value
+        } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {//set vmo joint value
             if (m_clock % _T_controller == 0) {
                 sendVelocityToGazebo(j, m_referenceVelocities[j]);
             }
@@ -181,9 +186,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
-        } else if ( ( m_controlMode[j] == VOCAB_CM_POSITION) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT) ) {
+        } else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
+            && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
             if (m_clock % _T_controller == 0) {
-                computeTrajectory(j);
+                if (m_controlMode[j] == VOCAB_CM_POSITION) {
+                    computeTrajectory(j);
+                }
                 sendImpPositionToGazebo(j, m_referencePositions[j]);
             }
         }

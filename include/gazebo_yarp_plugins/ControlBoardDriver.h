@@ -329,28 +329,23 @@ private:
      */
     yarp::sig::Vector m_zeroPosition;
 
-    yarp::sig::Vector m_positions; /*<! joint positions [Degrees] */
-    yarp::sig::Vector m_velocities; /*<! joint velocities [Degrees/Seconds] */
-    yarp::sig::Vector m_torques; /*<! joint torques [Netwon Meters] */
+    yarp::sig::Vector m_positions; /*<! joint positions */
+    yarp::sig::Vector m_velocities; /*<! joint velocities */
+    yarp::sig::Vector m_torques; /*<! joint torques */
 
     yarp::os::Stamp m_lastTimestamp; /*<! timestamp, updated with simulation time at each onUpdate call */
 
     yarp::sig::Vector amp;
 
     //Desired Control variables
-    yarp::sig::Vector m_referencePositions; /*<! desired reference positions.
-                                                 Depending on the position mode,
-                                                 they can be set directly or indirectly
-                                                 through the trajectory generator.
-                                                 [Degrees] */
-
-    yarp::sig::Vector m_referenceTorques; /*<! desired reference torques for torque control mode [NetwonMeters] */
-    yarp::sig::Vector m_referenceVelocities; /*<! desired reference velocities for velocity control mode [Degrees/Seconds] */
+    yarp::sig::Vector m_referencePositions; /*<! desired reference positions. Depending on the position mode, they can be set directly or indirectly through the trajectory generator */
+    yarp::sig::Vector m_referenceTorques; /*<! desired reference torques for torque control mode */
+    yarp::sig::Vector m_referenceVelocities; /*<! desired reference velocities for velocity control mode */
 
     //trajectory generator
-    yarp::sig::Vector m_trajectoryGenerationReferencePosition; /*<! reference position for trajectory generation in position mode [Degrees] */
-    yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /*<! reference speed for trajectory generation in position mode [Degrees/Seconds]*/
-    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /*<! reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
+    yarp::sig::Vector m_trajectoryGenerationReferencePosition; /*<! reference position for trajectory generation in position mode */
+    yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /*<! reference speed for trajectory generation in position mode */
+    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /*<! reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! */
 
     std::vector<std::string> m_jointNames;
     gazebo::transport::NodePtr m_gazeboNode;

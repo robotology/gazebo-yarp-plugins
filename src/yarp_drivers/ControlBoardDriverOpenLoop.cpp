@@ -48,7 +48,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getOutputs(double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_torques[j];
             }
             return true;
@@ -67,7 +67,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getRefOutputs(double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_referenceTorques[j];
             }
             return true;
@@ -76,11 +76,10 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::setOpenLoopMode()
         {
-            bool ret = true;
-            for (unsigned int j = 0; j < m_numberOfJoints; j++) {
-                ret = ret && this->setControlMode(j, VOCAB_CM_OPENLOOP);
+            for(unsigned int j = 0; j < m_numberOfJoints; j++) {
+                this->setOpenLoopMode(j);
             }
-            return ret;
+            return true;
         }
 
     }

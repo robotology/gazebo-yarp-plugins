@@ -10,7 +10,6 @@
 
 #include <gazebo/common/Plugin.hh>
 
-#include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <string>
@@ -61,7 +60,6 @@ namespace gazebo
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        yarp::os::Network m_yarp;
         yarp::dev::PolyDriver m_forcetorqueWrapper;
         yarp::dev::IMultipleWrapper* m_iWrap;
         yarp::dev::PolyDriver m_forceTorqueDriver;

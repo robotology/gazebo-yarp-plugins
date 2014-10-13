@@ -14,13 +14,13 @@
 
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
-
+#include <yarp/os/Network.h>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpIMU)
 
 namespace gazebo {
     
-GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(), m_yarp()
+GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin()
 {
 }
 
@@ -29,11 +29,13 @@ GazeboYarpIMU::~GazeboYarpIMU()
     std::cout << "*** GazeboYarpIMU closing ***" << std::endl;
     m_imuDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
+    yarp::os::Network::fini();
 }
 
 void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
+    yarp::os::Network::init();
+    if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
         std::cerr << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
         return;
     }

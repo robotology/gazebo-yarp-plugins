@@ -9,6 +9,9 @@ PROJECT(GazeboYarpPlugins)
 find_package(YARP 2.3.61 REQUIRED)
 message(STATUS "YARP is version: ${YARP_VERSION}")
 
+set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Finding dependencies
 find_package(Gazebo REQUIRED)
 
@@ -29,12 +32,20 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif()
 endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
 
-#define debug flag
-set_property(
-    DIRECTORY
-    APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
-)
 
+#starting transitioning to newer cmake
+if(CMAKE_VERSION VERSION_GREATER 2.8.10)
+    #define debug flag
+    set_property(DIRECTORY APPEND PROPERTY
+      COMPILE_DEFINITIONS $<$<CONFIG:Debug>:DEBUG=1>
+    )
+else()
+    #define debug flag
+    set_property(
+        DIRECTORY
+        APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
+    )
+endif()
 
 #take in account the API incompatibility in IOpenLoopControl interface
 if(YARP_VERSION VERSION_LESS 2.3.62.3)

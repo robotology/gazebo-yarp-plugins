@@ -232,14 +232,13 @@ bool GazeboYarpControlBoardDriver::setPositionDirectMode()
 
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
-    if (m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) {
-        if (j >= 0 && j < (int)m_numberOfJoints) {
-            m_referencePositions[j] = ref;
-            return true;
-        }
-    } else {
-        std::cerr << "[WARN] gazebo_yarp_controlboard: you tried to call setPosition" << std::endl;
+    if (m_controlMode[j] != VOCAB_CM_POSITION_DIRECT) {
+        std::cerr << "[WARN] gazebo_yarp_controlboard: you called setPosition" << std::endl;
         std::cerr << "[WARN] for a joint that is not in POSITION_DIRECT control mode." << std::endl;
+    }
+    if (j >= 0 && j < (int)m_numberOfJoints) {
+        m_referencePositions[j] = ref;
+        return true;
     }
     return false;
 }

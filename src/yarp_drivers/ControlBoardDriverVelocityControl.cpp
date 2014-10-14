@@ -41,13 +41,8 @@ bool GazeboYarpControlBoardDriver::velocityMove(const int n_joint, const int *jo
 {
     if (!joints || !spds) return false;
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && velocityMove(joints[i], spds[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = velocityMove(joints[i], spds[i]);
     }
     return ret;
 }

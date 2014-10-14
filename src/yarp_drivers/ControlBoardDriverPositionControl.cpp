@@ -175,13 +175,8 @@ bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *jo
 {
     if (!joints || !refs) return false;
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && positionMove(joints[i], refs[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = positionMove(joints[i], refs[i]);
     }
     return ret;
 }
@@ -190,13 +185,8 @@ bool GazeboYarpControlBoardDriver::relativeMove(const int n_joint, const int *jo
 {
     if (!joints || !deltas) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && relativeMove(joints[i], deltas[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = relativeMove(joints[i], deltas[i]);
     }
     return ret;
 }
@@ -205,13 +195,8 @@ bool GazeboYarpControlBoardDriver::checkMotionDone(const int n_joint, const int 
 {
     if (!joints || !flags) return false;
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && checkMotionDone(joints[i], &flags[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = checkMotionDone(joints[i], &flags[i]);
     }
     return ret;
 }
@@ -220,13 +205,8 @@ bool GazeboYarpControlBoardDriver::setRefSpeeds(const int n_joint, const int *jo
 {
     if (!joints || !spds) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && setRefSpeed(joints[i], spds[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = setRefSpeed(joints[i], spds[i]);
     }
     return ret;
 }
@@ -236,13 +216,8 @@ bool GazeboYarpControlBoardDriver::setRefAccelerations(const int n_joint, const 
 {
     if (!joints || !accs) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && setRefAcceleration(joints[i], accs[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = setRefAcceleration(joints[i], accs[i]);
     }
     return ret;
 }
@@ -252,13 +227,8 @@ bool GazeboYarpControlBoardDriver::getRefSpeeds(const int n_joint, const int *jo
 {
     if (!joints || !spds) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && getRefSpeed(joints[i], &spds[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getRefSpeed(joints[i], &spds[i]);
     }
     return ret;
 }
@@ -268,13 +238,8 @@ bool GazeboYarpControlBoardDriver::getRefAccelerations(const int n_joint, const 
 {
     if (!joints || !accs) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
-            ret = ret && getRefAcceleration(joints[i], &accs[i]);
-        } else {
-            ret = false;
-            break;
-        }
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getRefAcceleration(joints[i], &accs[i]);
     }
     return ret;
 }

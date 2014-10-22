@@ -94,13 +94,20 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_VELOCITY
           || mode == VOCAB_CM_TORQUE
           || mode == VOCAB_CM_OPENLOOP
-          || mode == VOCAB_CM_IDLE)) {
+          || mode == VOCAB_CM_IDLE
+          || mode == VOCAB_CM_FORCE_IDLE)) {
         std::cerr << "[WARN] request control mode "
                   << yarp::os::Vocab::decode(mode) << " that is not supported by "
                   << " gazebo_yarp_controlboard plugin." << std::endl;
         return false;
     }
-
+    
+    // Convert VOCAB_CM_FORCE_IDLE (that as a special meaning in real robots 
+    //   subjects to hardware fault) to VOCAB_CM_IDLE
+    // This is necessary for having a working "idle" button in the robotMotorGui
+    if (mode == VOCAB_CM_FORCE_IDLE) {
+        mode = VOCAB_CM_IDLE;
+    }
     // If the joint is already in the selected control mode
     // don't perform switch specific actions
     if (m_controlMode[j] == mode) return true;

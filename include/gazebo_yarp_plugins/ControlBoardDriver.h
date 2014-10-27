@@ -222,7 +222,6 @@ public:
     virtual bool setRefOutputs(const double *v);
     virtual bool getRefOutput(int j, double *v);
     virtual bool getRefOutputs(double *v);
-#endif
     virtual bool getOutput(int j, double *v);
     virtual bool getOutputs(double *v);
     virtual bool setOpenLoopMode();

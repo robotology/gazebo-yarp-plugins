@@ -216,10 +216,8 @@ public:
      * \param v value to be set
      * \return true if the operation succeeded. False otherwise
      */
-#ifndef YARP_INTERACTION_MODE_MOTOR_INTERFACE
     virtual bool setOutput(int j, double v);
     virtual bool setOutputs(const double *v);
-#else /* YARP_INTERACTION_MODE_MOTOR_INTERFACE */
     virtual bool setRefOutput(int j, double v);
     virtual bool setRefOutputs(const double *v);
     virtual bool getRefOutput(int j, double *v);

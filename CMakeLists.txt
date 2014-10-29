@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.7)
 
 PROJECT(GazeboYarpPlugins)
 
-find_package(YARP 2.3.61 REQUIRED)
+find_package(YARP 2.3.63 REQUIRED)
 message(STATUS "YARP is version: ${YARP_VERSION}")
 
 # Finding dependencies
@@ -34,15 +34,6 @@ set_property(
     DIRECTORY
     APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
 )
-
-
-#take in account the API incompatibility in IOpenLoopControl interface
-if(YARP_VERSION VERSION_LESS 2.3.62.3)
-    #message(STATUS "found YARP (${YARP_VERSION}) using the old open loop motor interface")
-else()
-    #message(STATUS "found YARP (${YARP_VERSION}) using the new interaction mode open loop motor interface")
-    add_definitions(-DYARP_INTERACTION_MODE_MOTOR_INTERFACE)
-endif()
 
 # add local cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)

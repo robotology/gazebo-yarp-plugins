@@ -58,8 +58,8 @@ endif()
 # add local cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
-
-include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
+include_directories(include/gazebo_yarp_plugins)
+include_directories(SYSTEM ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
 set(commons_headers         include/gazebo_yarp_plugins/common.h)
@@ -138,8 +138,8 @@ set(camera_headers          include/gazebo_yarp_plugins/Camera.hh
 set(camera_source           src/gazebo_plugins/Camera.cc
                             src/yarp_drivers/CameraDriver.cpp)
 
-SOURCE_GROUP("Source Files" FILES ${camera_headers})
-SOURCE_GROUP("Header Files" FILES ${camera_source})
+SOURCE_GROUP("Source Files" FILES ${camera_source})
+SOURCE_GROUP("Header Files" FILES ${camera_headers})
 
 add_library(gazebo_yarp_singleton    SHARED ${singleton_source}    ${singleton_headers})
 add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})

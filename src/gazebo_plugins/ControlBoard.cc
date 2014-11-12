@@ -4,10 +4,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/common.h"
-#include "gazebo_yarp_plugins/ControlBoard.hh"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
+#include "common.h"
+#include "ControlBoard.hh"
+#include "Handler.hh"
+#include "ControlBoardDriver.h"
 
 #include <gazebo/physics/Model.hh>
 #include <yarp/dev/Wrapper.h>

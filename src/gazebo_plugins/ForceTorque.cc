@@ -5,10 +5,10 @@
  */
 
 
-#include "gazebo_yarp_plugins/ForceTorque.hh"
-#include "gazebo_yarp_plugins/ForceTorqueDriver.h"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "ForceTorque.hh"
+#include "ForceTorqueDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 #include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/dev/PolyDriver.h>

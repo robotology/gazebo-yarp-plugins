@@ -5,9 +5,9 @@
  */
 
 
-#include "gazebo_yarp_plugins/JointSensorsDriver.h"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "JointSensorsDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 using namespace yarp::dev;
 

@@ -5,10 +5,10 @@
  */
 
 
-#include "gazebo_yarp_plugins/JointSensorsDriver.h"
-#include "gazebo_yarp_plugins/JointSensors.hh"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "JointSensorsDriver.h"
+#include "JointSensors.hh"
+#include "Handler.hh"
+#include "common.h"
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>

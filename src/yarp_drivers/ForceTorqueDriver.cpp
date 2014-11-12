@@ -5,8 +5,8 @@
  */
 
 
-#include "gazebo_yarp_plugins/ForceTorqueDriver.h"
-#include "gazebo_yarp_plugins/Handler.hh"
+#include "ForceTorqueDriver.h"
+#include "Handler.hh"
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ForceTorqueSensor.hh>

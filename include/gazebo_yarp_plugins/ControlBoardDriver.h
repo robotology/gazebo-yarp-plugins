@@ -215,21 +215,10 @@ public:
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
     //IOpenLoopControl interface methods
-    /**
-     * Command direct output value to joint j. Currently this is a torque
-     * \param j joint number
-     * \param v value to be set
-     * \return true if the operation succeeded. False otherwise
-     */
-#ifndef YARP_INTERACTION_MODE_MOTOR_INTERFACE
-    virtual bool setOutput(int j, double v);
-    virtual bool setOutputs(const double *v);
-#else /* YARP_INTERACTION_MODE_MOTOR_INTERFACE */
     virtual bool setRefOutput(int j, double v);
     virtual bool setRefOutputs(const double *v);
     virtual bool getRefOutput(int j, double *v);
     virtual bool getRefOutputs(double *v);
-#endif
     virtual bool getOutput(int j, double *v);
     virtual bool getOutputs(double *v);
     virtual bool setOpenLoopMode();

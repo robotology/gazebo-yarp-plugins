@@ -23,13 +23,17 @@ namespace gazebo
 
         virtual void Load(int _argc = 0, char **_argv = NULL);
 
-        void GazeboYarpClockLoad(std::string world_name);
+        void gazeboYarpClockLoad(std::string world_name);
 
-        void ClockUpdate();
+        void clockUpdate();
+
+        void clockPause();
+
+        void clockContinue();
+
+        void clockStep(unsigned steps=1);
 
     private:
-        yarp::os::Network _yarp;
-
         std::string port_name;
 
         yarp::os::BufferedPort<yarp::os::Bottle> port;

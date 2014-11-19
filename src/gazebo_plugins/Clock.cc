@@ -14,7 +14,7 @@
 namespace gazebo
 {
 
-    GazeboYarpClock::GazeboYarpClock() : _yarp()
+    GazeboYarpClock::GazeboYarpClock()
     {
 
     }
@@ -22,12 +22,14 @@ namespace gazebo
     GazeboYarpClock::~GazeboYarpClock()
     {
         gazebo::event::Events::DisconnectWorldUpdateBegin(time_update_event_);
+        yarp::os::Network::fini();
     }
 
 
     void GazeboYarpClock::Load(int _argc, char **_argv)
     {
-        if( !_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout) ) {
+        yarp::os::Network::init();
+        if( !yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout) ) {
             std::cerr << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;
         }
@@ -37,10 +39,10 @@ namespace gazebo
         port_name = "/clock";
 
         //The proper loading is done when the world is created
-        load_gazebo_yarp_clock = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboYarpClock::GazeboYarpClockLoad,this,_1));
+        load_gazebo_yarp_clock = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboYarpClock::gazeboYarpClockLoad,this,_1));
     }
 
-    void GazeboYarpClock::GazeboYarpClockLoad(std::string world_name)
+    void GazeboYarpClock::gazeboYarpClockLoad(std::string world_name)
     {
           gazebo::event::Events::DisconnectWorldCreated(load_gazebo_yarp_clock);
 
@@ -50,10 +52,10 @@ namespace gazebo
           //Getting world pointer
           world_ = gazebo::physics::get_world(world_name);
 
-          time_update_event_ = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpClock::ClockUpdate,this));
+          time_update_event_ = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpClock::clockUpdate,this));
     }
 
-    void GazeboYarpClock::ClockUpdate()
+    void GazeboYarpClock::clockUpdate()
     {
          gazebo::common::Time currentTime = world_->GetSimTime();
          yarp::os::Bottle& b = port.prepare();
@@ -61,6 +63,21 @@ namespace gazebo
          b.addInt(currentTime.sec);
          b.addInt(currentTime.nsec);
          port.write();
+    }
+
+    void GazeboYarpClock::clockPause()
+    {
+        world_->SetPaused(true);
+    }
+
+    void GazeboYarpClock::clockContinue()
+    {
+        world_->SetPaused(false);
+    }
+
+    void GazeboYarpClock::clockStep(unsigned int step)
+    {
+        world_->Step(step);
     }
 
     // Register this plugin with the simulator

@@ -2,3 +2,6 @@ build/
 *.*~
 *.o
 *.kdev4
+
+.DS_Store
+

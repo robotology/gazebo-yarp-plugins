@@ -5,10 +5,10 @@
  */
 
 
-#include "gazebo_yarp_plugins/Camera.hh"
-#include "gazebo_yarp_plugins/CameraDriver.h"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "Camera.hh"
+#include "CameraDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 #include <gazebo/sensors/CameraSensor.hh>
 

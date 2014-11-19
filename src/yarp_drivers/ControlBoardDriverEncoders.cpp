@@ -4,8 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
-
+#include "ControlBoardDriver.h"
 
 using namespace yarp::dev;
 

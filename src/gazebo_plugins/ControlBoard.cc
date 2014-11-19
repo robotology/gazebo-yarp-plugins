@@ -4,13 +4,14 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/common.h"
-#include "gazebo_yarp_plugins/ControlBoard.hh"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
+#include "common.h"
+#include "ControlBoard.hh"
+#include "Handler.hh"
+#include "ControlBoardDriver.h"
 
 #include <gazebo/physics/Model.hh>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/os/Network.h>
 
 using namespace std;
 namespace gazebo
@@ -19,8 +20,7 @@ namespace gazebo
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::GazeboYarpControlBoard()
-    : m_yarp()
-    , m_iWrap(0) {}
+    : m_iWrap(0) {}
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
@@ -33,6 +33,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         if (m_controlBoard.isValid())
             m_controlBoard.close();
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
+        yarp::os::Network::fini();
         std::cout<<"Goodbye!"<<std::endl;
     }
 
@@ -41,7 +42,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
      */
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
-        if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
+        yarp::os::Network::init();
+        if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
             std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;
         }

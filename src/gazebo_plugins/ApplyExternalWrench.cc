@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/ApplyExternalWrench.hh"
+#include "ApplyExternalWrench.hh"
 
 namespace gazebo
 {

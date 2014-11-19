@@ -5,10 +5,9 @@
  */
 
 
-#include "gazebo_yarp_plugins/IMUDriver.h"
-
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "IMUDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ImuSensor.hh>

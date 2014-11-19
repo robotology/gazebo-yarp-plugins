@@ -4,7 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/Handler.hh"
+#include "Handler.hh"
+
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
 

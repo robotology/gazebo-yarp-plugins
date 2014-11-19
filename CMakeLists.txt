@@ -140,7 +140,7 @@ target_link_libraries(gazebo_yarp_jointsensors  gazebo_yarp_singleton ${YARP_LIB
 target_link_libraries(gazebo_yarp_clock ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_externalwrench gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_camera        gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} CameraPlugin)
-target_link_libraries(gazebo_yarp_timesynchronizer ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boos_LIBRARIES})
+target_link_libraries(gazebo_yarp_timesynchronizer ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 
 # Add install target

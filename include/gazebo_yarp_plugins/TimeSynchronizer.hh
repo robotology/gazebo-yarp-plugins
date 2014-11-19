@@ -7,18 +7,34 @@
 #ifndef GAZEBOYARP_TIMESYNCHRONIZERPLUGIN_HH
 #define GAZEBOYARP_TIMESYNCHRONIZERPLUGIN_HH
 
+
+#include <boost/shared_ptr.hpp>
 #include <gazebo/common/Plugin.hh>
 
 namespace gazebo
 {
-  class GazeboYarpTimeSynchronizer : public SystemPlugin
-  {
-  public:
+    
+    namespace event {
+        class Connection;
+        typedef boost::shared_ptr<Connection> ConnectionPtr;
+    }
+    
+    
+    class GazeboYarpTimeSynchronizer : public SystemPlugin
+    {
+    public:
         GazeboYarpTimeSynchronizer();
         virtual ~GazeboYarpTimeSynchronizer();
         
         virtual void Load(int _argc = 0, char **_argv = NULL);
-  };
+        
+        void worldHasBeenCreated(std::string worldName);
+        
+    private:
+        
+        gazebo::event::ConnectionPtr m_worldCreatedConnection;
+    };
+   
 }
 
 

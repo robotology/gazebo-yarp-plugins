@@ -17,7 +17,6 @@
 #include <gazebo/rendering/Camera.hh>
 #include <gazebo/sensors/CameraSensor.hh>
 
-#include "gazebo_yarp_plugins/Camera.hh"
 
 //Forward declarations
 namespace yarp {

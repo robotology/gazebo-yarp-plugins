@@ -4,8 +4,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/common.h"
-#include "gazebo_yarp_plugins/Clock.hh"
+#include "common.h"
+#include "Clock.hh"
+
 #include <gazebo/physics/physics.hh>
 #include <yarp/os/Property.h>
 #include <iostream>

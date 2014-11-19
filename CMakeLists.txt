@@ -9,6 +9,9 @@ PROJECT(GazeboYarpPlugins)
 find_package(YARP 2.3.63 REQUIRED)
 message(STATUS "YARP is version: ${YARP_VERSION}")
 
+set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Finding dependencies
 find_package(Gazebo REQUIRED)
 
@@ -21,25 +24,17 @@ if (PKG_CONFIG_FOUND)
   pkg_check_modules(PROTOBUF protobuf)
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES DEBUG)
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Weverything -pedantic -Wextra")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic ")
-endif()
-endif(CMAKE_BUILD_TYPE MATCHES DEBUG)
-
-#define debug flag
-set_property(
-    DIRECTORY
-    APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG DEBUG=1
-)
-
 # add local cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
+# Define (depending on CMAKE_BUILD_TYPE) the DEBUG macro
+include(AddDebugMacro)
 
-include_directories(${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} include)
+# Enable all possible warning if CMAKE_BUILD_TYPE is debug
+include(AddDebugWarnings)
+
+include_directories(include/gazebo_yarp_plugins)
+include_directories(SYSTEM ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
 set(commons_headers         include/gazebo_yarp_plugins/common.h)
@@ -118,8 +113,8 @@ set(camera_headers          include/gazebo_yarp_plugins/Camera.hh
 set(camera_source           src/gazebo_plugins/Camera.cc
                             src/yarp_drivers/CameraDriver.cpp)
 
-SOURCE_GROUP("Source Files" FILES ${camera_headers})
-SOURCE_GROUP("Header Files" FILES ${camera_source})
+SOURCE_GROUP("Source Files" FILES ${camera_source})
+SOURCE_GROUP("Header Files" FILES ${camera_headers})
 
 add_library(gazebo_yarp_singleton    SHARED ${singleton_source}    ${singleton_headers})
 add_library(gazebo_yarp_controlboard SHARED ${controlBoard_source} ${controlBoard_headers})

@@ -5,10 +5,10 @@
  */
 
 
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
-#include "gazebo_yarp_plugins/common.h"
-#include <stdio.h>
+#include "ControlBoardDriver.h"
+#include "common.h"
 
+#include <stdio.h>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 #include <gazebo/math/Angle.hh>

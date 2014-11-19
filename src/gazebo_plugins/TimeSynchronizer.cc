@@ -6,17 +6,11 @@
 
 #include "TimeSynchronizer.hh"
 
-#include <gazebo/physics/physics.hh>
-#include <yarp/os/Property.h>
-#include <iostream>
-#include <cmath>
-
-
 namespace gazebo {
-
-void GazeboYarpTimeSynchronizer::Load(int _argc, char** _argv)
-{
     
-}
-
+    void GazeboYarpTimeSynchronizer::Load(int _argc, char** _argv)
+    {
+        
+    }
+    
 }

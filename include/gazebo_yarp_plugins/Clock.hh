@@ -34,15 +34,14 @@ namespace gazebo
         void clockStep(unsigned steps=1);
 
     private:
-        std::string port_name;
+        std::string m_portName;
+        yarp::os::BufferedPort<yarp::os::Bottle> m_port;
 
-        yarp::os::BufferedPort<yarp::os::Bottle> port;
+        gazebo::event::ConnectionPtr m_timeUpdateEvent;
 
-        gazebo::event::ConnectionPtr time_update_event_;
+        gazebo::event::ConnectionPtr m_worldCreatedEvent;
 
-        gazebo::event::ConnectionPtr load_gazebo_yarp_clock;
-
-        gazebo::physics::WorldPtr world_;
+        gazebo::physics::WorldPtr m_world;
 
     };
 }

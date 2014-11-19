@@ -45,6 +45,6 @@ namespace gazebo
         gazebo::physics::WorldPtr world_;
 
     };
-};
+}
 
 #endif

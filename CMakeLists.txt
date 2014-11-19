@@ -107,6 +107,11 @@ set(externalwrench_headers  include/gazebo_yarp_plugins/ApplyExternalWrench.hh)
 SOURCE_GROUP("Source Files" FILES ${externalwrench_source})
 SOURCE_GROUP("Header Files" FILES ${externalwrench_headers})
 
+set(timeSynchronizer_source  src/gazebo_plugins/TimeSynchronizer.cc)
+set(timeSynchronizer_headers include/gazebo_yarp_plugins/TimeSynchronizer.hh)
+
+SOURCE_GROUP("Source Files" FILES ${timeSynchronizer_source})
+SOURCE_GROUP("Header Files" FILES ${timeSynchronizer_headers})
 
 set(camera_headers          include/gazebo_yarp_plugins/Camera.hh
                             include/gazebo_yarp_plugins/CameraDriver.h)
@@ -123,7 +128,8 @@ add_library(gazebo_yarp_imu          SHARED ${imu_source}          ${imu_headers
 add_library(gazebo_yarp_jointsensors SHARED ${jointSensors_source} ${jointSensors_headers})
 add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
 add_library(gazebo_yarp_camera       SHARED ${camera_source}       ${camera_headers})
-add_library(gazebo_yarp_externalwrench SHARED ${externalwrench_source}	${externalwrench_headers})
+add_library(gazebo_yarp_externalwrench   SHARED ${externalwrench_source}   ${externalwrench_headers})
+add_library(gazebo_yarp_timesynchronizer SHARED ${timeSynchronizer_source} ${timeSynchronizer_headers})
 
 
 target_link_libraries(gazebo_yarp_singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
@@ -134,6 +140,7 @@ target_link_libraries(gazebo_yarp_jointsensors  gazebo_yarp_singleton ${YARP_LIB
 target_link_libraries(gazebo_yarp_clock         gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_externalwrench gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_camera        gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} CameraPlugin)
+target_link_libraries(gazebo_yarp_timesynchronizer ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boos_LIBRARIES})
 
 
 # Add install target
@@ -143,8 +150,9 @@ install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_imu
                 gazebo_yarp_jointsensors
                 gazebo_yarp_clock
-				gazebo_yarp_externalwrench
+                gazebo_yarp_externalwrench
                 gazebo_yarp_camera
+                gazebo_yarp_timesynchronizer
                 DESTINATION lib)
 
 # Add uninstall target

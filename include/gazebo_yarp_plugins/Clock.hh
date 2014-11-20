@@ -9,12 +9,22 @@
 
 #include <gazebo/common/Plugin.hh>
 
-#include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/Bottle.h>
+namespace yarp {
+    namespace os {
+        class Port;
+        
+        template <class T>
+        class BufferedPort;
+        
+        class Network;
+        class Bottle;
+    }
+}
 
 namespace gazebo
 {
+    class ClockServer;
+    
     class GazeboYarpClock : public SystemPlugin
     {
     public:
@@ -26,22 +36,35 @@ namespace gazebo
         void gazeboYarpClockLoad(std::string world_name);
 
         void clockUpdate();
-
+        
+        //Simulation time manipulation methods
+        /** @brief pause the simulation
+         */
         void clockPause();
-
+        
+        /** @brief resume the simulation
+         */
         void clockContinue();
-
+        
+        /** @brief Step the simulation for the input number of steps. Defaults to 1
+         * @param[in] steps number of steps
+         */
         void clockStep(unsigned steps=1);
 
     private:
+        void cleanup();
+        
+        yarp::os::Network *m_network;
         std::string m_portName;
-        yarp::os::BufferedPort<yarp::os::Bottle> m_port;
+        yarp::os::BufferedPort<yarp::os::Bottle> *m_clockPort;
 
         gazebo::event::ConnectionPtr m_timeUpdateEvent;
-
         gazebo::event::ConnectionPtr m_worldCreatedEvent;
-
         gazebo::physics::WorldPtr m_world;
+        
+        //RPC variables
+        yarp::os::Port *m_rpcPort;
+        ClockServer *m_clockServer;
 
     };
 }

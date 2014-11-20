@@ -6,42 +6,87 @@
 
 #include "common.h"
 #include "Clock.hh"
+#include "ClockServerImpl.h"
 
 #include <gazebo/physics/physics.hh>
+#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Bottle.h>
+
 #include <iostream>
-#include <cmath>
 
 namespace gazebo
 {
     
     GazeboYarpClock::GazeboYarpClock()
+    : m_network(0)
+    , m_clockPort(0)
+    , m_rpcPort(0)
+    , m_clockServer(0)
     {
         
     }
     
     GazeboYarpClock::~GazeboYarpClock()
     {
-        if (m_worldCreatedEvent.get())
+        cleanup();
+    }
+    
+    void GazeboYarpClock::cleanup()
+    {
+        if (m_worldCreatedEvent.get()) {
             gazebo::event::Events::DisconnectWorldCreated(m_worldCreatedEvent);
-        if (m_timeUpdateEvent.get())
+            m_worldCreatedEvent = gazebo::event::ConnectionPtr(); //resetting the pointer to NULL. I don't know if boost does it automatically with the above call
+        }
+        if (m_timeUpdateEvent.get()) {
             gazebo::event::Events::DisconnectWorldUpdateBegin(m_timeUpdateEvent);
-        m_port.close();
-        yarp::os::Network::fini();
+            m_timeUpdateEvent = gazebo::event::ConnectionPtr();
+        }
+        
+        if (m_clockPort) {
+            m_clockPort->close();
+            delete m_clockPort; m_clockPort = 0;
+        }
+        
+        if (m_rpcPort) {
+            m_rpcPort->close();
+            delete m_rpcPort; m_rpcPort = 0;
+        }
+        
+        if (m_clockServer) {
+            delete m_clockServer; m_clockServer = 0;
+        }
+        
+        if (m_network) {
+            delete m_network; m_network = 0;
+        }
     }
     
     
     void GazeboYarpClock::Load(int _argc, char **_argv)
     {
-        yarp::os::Network::init();
-        if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
+        m_network = new yarp::os::Network();
+        if (!m_network
+            || !yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
             std::cerr << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+            cleanup();
             return;
         }
         
-        std::cout << "GazeboYarpClock loaded." << std::endl;
+        //This does not work yet. See: https://bitbucket.org/osrf/gazebo/issue/280/allow-for-command-line-arguments-to-system
+        yarp::os::Property commandLine;
+        commandLine.fromCommand(_argc, _argv, true, true);
         
         m_portName = "/clock";
+        //read port name from the command line
+        //--port port_name
+        yarp::os::Value portName = commandLine.find("port");
+        if (!portName.isNull()) {
+            m_portName = portName.asString();
+        }
+
+        std::cout << "GazeboYarpClock loaded. Clock port will be " << m_portName << std::endl;
         
         //The proper loading is done when the world is created
         m_worldCreatedEvent = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboYarpClock::gazeboYarpClockLoad,this,_1));
@@ -54,8 +99,45 @@ namespace gazebo
             m_worldCreatedEvent = gazebo::event::ConnectionPtr();
         }
         
-        //Opening port
-        m_port.open(m_portName);
+        //Create ports
+        m_clockPort = new yarp::os::BufferedPort<yarp::os::Bottle>();
+        if (!m_clockPort) {
+            std::cerr << "GazeboYarpClock: Failed to create clock port." << std::endl;
+            cleanup();
+            return;
+        }
+        
+        if (!m_clockPort->open(m_portName)) {
+            std::cerr << "GazeboYarpClock: Failed to open clock port." << std::endl;
+            cleanup();
+            return;
+        }
+        
+        m_rpcPort = new yarp::os::Port();
+        if (!m_rpcPort) {
+            std::cerr << "GazeboYarpClock: Failed to create rpc port." << std::endl;
+            cleanup();
+            return;
+        }
+        
+        m_clockServer = new ClockServerImpl(*this);
+        if (!m_clockServer) {
+            std::cerr << "GazeboYarpClock: Could not create Clock Server." << std::endl;
+            cleanup();
+            return;
+        }
+        
+        if (!m_clockServer->yarp().attachAsServer(*m_rpcPort)) {
+            std::cerr << "GazeboYarpClock: Failed to attach Clock Server to RPC port." << std::endl;
+            cleanup();
+            return;
+        }
+        
+        if (!m_rpcPort->open(m_portName + "/rpc")) {
+            std::cerr << "GazeboYarpClock: Failed to open rpc port " << (m_portName + "/rpc") << std::endl;
+            cleanup();
+            return;
+        }
         
         //Getting world pointer
         m_world = gazebo::physics::get_world(world_name);
@@ -65,12 +147,14 @@ namespace gazebo
     
     void GazeboYarpClock::clockUpdate()
     {
-        gazebo::common::Time currentTime = m_world->GetSimTime();
-        yarp::os::Bottle& b = m_port.prepare();
-        b.clear();
-        b.addInt(currentTime.sec);
-        b.addInt(currentTime.nsec);
-        m_port.write();
+        if (m_clockPort) {
+            gazebo::common::Time currentTime = m_world->GetSimTime();
+            yarp::os::Bottle& b = m_clockPort->prepare();
+            b.clear();
+            b.addInt(currentTime.sec);
+            b.addInt(currentTime.nsec);
+            m_clockPort->write();
+        }
     }
     
     void GazeboYarpClock::clockPause()

@@ -13,7 +13,7 @@
 
 using namespace yarp::dev;
 
-const int YarpForceTorqueChannelsNumber = 6; //The ForceTorque sensor has 6 fixed channels
+const unsigned YarpForceTorqueChannelsNumber = 6; //The ForceTorque sensor has 6 fixed channels
 const std::string YarpForceTorqueScopedName = "sensorScopedName";
 
 GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver() {}
@@ -37,14 +37,13 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */
     m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
     
-    int i=0;
     m_dataMutex.wait();
 
-    for (i = 0; i < 3; i++) {
+    for (unsigned i = 0; i < 3; i++) {
         m_forceTorqueData[0 + i] = force[i];
     }
     
-    for (i = 0; i < 3; i++) {
+    for (unsigned i = 0; i < 3; i++) {
         m_forceTorqueData[3 + i] = torque[i];
     }
     
@@ -65,7 +64,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpForceTorqueDriver::open is looking for sensor " << sensorScopedName << "..." << std::endl;
     
-    m_parentSensor = (gazebo::sensors::ForceTorqueSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
+    m_parentSensor = static_cast<gazebo::sensors::ForceTorqueSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     
     if (!m_parentSensor)
     {
@@ -100,11 +99,11 @@ int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector& out)
     }
     */
     
-   if ((int)m_forceTorqueData.size() != YarpForceTorqueChannelsNumber) {
+   if (m_forceTorqueData.size() != YarpForceTorqueChannelsNumber) {
         return AS_ERROR;
    }
    
-   if ((int)out.size() != YarpForceTorqueChannelsNumber) {
+   if (out.size() != YarpForceTorqueChannelsNumber) {
        out.resize(YarpForceTorqueChannelsNumber);
    }
     
@@ -120,7 +119,7 @@ int GazeboYarpForceTorqueDriver::getChannels()
     return YarpForceTorqueChannelsNumber;
 }
 
-int GazeboYarpForceTorqueDriver::getState(int ch)
+int GazeboYarpForceTorqueDriver::getState(int /*ch*/)
 {
     return AS_OK;
 }
@@ -130,17 +129,17 @@ int GazeboYarpForceTorqueDriver::calibrateSensor()
     return AS_OK;
 }
 
-int GazeboYarpForceTorqueDriver::calibrateSensor(const yarp::sig::Vector& value)
+int GazeboYarpForceTorqueDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
     return AS_OK;
 }
 
-int GazeboYarpForceTorqueDriver::calibrateChannel(int ch)
+int GazeboYarpForceTorqueDriver::calibrateChannel(int /*ch*/)
 {
     return AS_OK;
 }
 
-int GazeboYarpForceTorqueDriver::calibrateChannel(int ch, double v)
+int GazeboYarpForceTorqueDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
     return AS_OK;
 }

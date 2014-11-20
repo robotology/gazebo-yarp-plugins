@@ -33,7 +33,7 @@ before_script:
   - cd ../..
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ./..
+  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..
 
 
 script: 

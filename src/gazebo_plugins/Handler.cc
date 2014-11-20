@@ -17,7 +17,7 @@ Handler* Handler::s_handle = NULL;
 
 yarp::os::Semaphore& Handler::mutex()
 {
-    static yarp::os::Semaphore &s_mutex = *new yarp::os::Semaphore(1);
+    static yarp::os::Semaphore s_mutex(1);
     return s_mutex;
 }
     

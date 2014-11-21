@@ -64,7 +64,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpForceTorqueDriver::open is looking for sensor " << sensorScopedName << "..." << std::endl;
     
-    m_parentSensor = static_cast<gazebo::sensors::ForceTorqueSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
+    m_parentSensor = dynamic_cast<gazebo::sensors::ForceTorqueSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     
     if (!m_parentSensor)
     {

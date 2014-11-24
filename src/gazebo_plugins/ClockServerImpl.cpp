@@ -28,4 +28,14 @@ namespace gazebo {
         m_clock.clockStep(static_cast<unsigned>(numberOfSteps));
     }
     
+    void ClockServerImpl::stepSimulationAndWait(const int32_t numberOfSteps)
+    {
+        m_clock.clockStep(static_cast<unsigned>(numberOfSteps));
+    }
+    
+    double ClockServerImpl::getSimulationTime()
+    {
+        return m_clock.getSimulationTime().Double();
+    }
+    
 }

@@ -8,6 +8,7 @@
 #define GAZEBOYARP_CLOCKPLUGIN_HH
 
 #include <gazebo/common/Plugin.hh>
+#include <gazebo/common/Time.hh>
 
 namespace yarp {
     namespace os {
@@ -50,6 +51,11 @@ namespace gazebo
          * @param[in] steps number of steps
          */
         void clockStep(unsigned steps=1);
+        
+        /** @brief Returns the simulation time
+         * @return the simulation time
+         */
+        common::Time getSimulationTime();
 
     private:
         void cleanup();

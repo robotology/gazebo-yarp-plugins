@@ -170,11 +170,18 @@ namespace gazebo
     
     void GazeboYarpClock::clockStep(unsigned int step)
     {
+        std::cerr << "GazeboYarpClock: Stepping for " << step << std::endl;
 #if GAZEBO_MAJOR_VERSION >= 3
         m_world->Step(step);
 #else
         m_world->StepWorld(step);
 #endif
+        std::cerr << "GazeboYarpClock: End of step" << std::endl;
+    }
+    
+    common::Time GazeboYarpClock::getSimulationTime()
+    {
+        return m_world->GetSimTime();
     }
     
     // Register this plugin with the simulator

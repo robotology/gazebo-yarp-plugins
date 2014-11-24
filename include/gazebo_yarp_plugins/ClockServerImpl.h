@@ -18,6 +18,8 @@ public:
     virtual void pauseSimulation();
     virtual void continueSimulation();
     virtual void stepSimulation(const int32_t numberOfSteps = 1);
+    virtual void stepSimulationAndWait(const int32_t numberOfSteps = 1);
+    virtual double getSimulationTime();
     
 private:
     

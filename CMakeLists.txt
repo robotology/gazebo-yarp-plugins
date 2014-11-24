@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.7)
 
 PROJECT(GazeboYarpPlugins)
 
-find_package(YARP 2.3.63 REQUIRED)
+find_package(YARP 2.3.63.2 REQUIRED)
 message(STATUS "YARP is version: ${YARP_VERSION}")
 
 set(CMAKE_MACOSX_RPATH 1)

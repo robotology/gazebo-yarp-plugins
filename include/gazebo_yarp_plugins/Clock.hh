@@ -61,6 +61,12 @@ namespace gazebo
          * Reset the simulation time back to zero
          */
         void resetSimulationTime();
+        
+        /**
+         * Get the current step size in seconds.
+         * @return the step size in seconds
+         */
+        virtual double getStepSize();
 
     private:
         void cleanup();

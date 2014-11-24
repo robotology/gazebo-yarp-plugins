@@ -43,4 +43,8 @@ namespace gazebo {
         return m_clock.getSimulationTime().Double();
     }
     
+    double ClockServerImpl::getStepSize()
+    {
+        return m_clock.getStepSize();
+    }
 }

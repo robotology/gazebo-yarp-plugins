@@ -46,6 +46,13 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class ClockServer_getStepSize : public yarp::os::Portable {
+public:
+  double _return;
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 bool ClockServer_pauseSimulation::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -126,6 +133,23 @@ bool ClockServer_getSimulationTime::read(yarp::os::ConnectionReader& connection)
   return true;
 }
 
+bool ClockServer_getStepSize::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(1)) return false;
+  if (!writer.writeTag("getStepSize",1,1)) return false;
+  return true;
+}
+
+bool ClockServer_getStepSize::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readDouble(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
 ClockServer::ClockServer() {
   yarp().setOwner(*this);
 }
@@ -171,6 +195,15 @@ double ClockServer::getSimulationTime() {
   ClockServer_getSimulationTime helper;
   if (!yarp().canWrite()) {
     fprintf(stderr,"Missing server method '%s'?\n","double ClockServer::getSimulationTime()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+double ClockServer::getStepSize() {
+  double _return = (double)0;
+  ClockServer_getStepSize helper;
+  if (!yarp().canWrite()) {
+    fprintf(stderr,"Missing server method '%s'?\n","double ClockServer::getStepSize()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -247,6 +280,17 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "getStepSize") {
+      double _return;
+      _return = getStepSize();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeDouble(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "help") {
       std::string functionName;
       if (!reader.readString(functionName)) {
@@ -287,6 +331,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
     helpString.push_back("stepSimulationAndWait");
     helpString.push_back("resetSimulationTime");
     helpString.push_back("getSimulationTime");
+    helpString.push_back("getStepSize");
     helpString.push_back("help");
   }
   else {
@@ -318,7 +363,13 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
     }
     if (functionName=="getSimulationTime") {
       helpString.push_back("double getSimulationTime() ");
-      helpString.push_back("Returns the simulation time. ");
+      helpString.push_back("Get the current simulation time ");
+      helpString.push_back("@return the simulation time. ");
+    }
+    if (functionName=="getStepSize") {
+      helpString.push_back("double getStepSize() ");
+      helpString.push_back("Get the current step size in seconds. ");
+      helpString.push_back("@return the step size in seconds ");
     }
     if (functionName=="help") {
       helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");

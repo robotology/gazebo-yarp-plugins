@@ -189,6 +189,14 @@ namespace gazebo
         return m_world->GetSimTime();
     }
     
+    double GazeboYarpClock::getStepSize()
+    {
+        if (m_world->GetPhysicsEngine()) {
+            return m_world->GetPhysicsEngine()->GetMaxStepSize();
+        }
+        return -1;
+    }
+    
     // Register this plugin with the simulator
     GZ_REGISTER_SYSTEM_PLUGIN(GazeboYarpClock)
 }

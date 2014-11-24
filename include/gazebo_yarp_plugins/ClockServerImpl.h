@@ -21,6 +21,7 @@ public:
     virtual void stepSimulationAndWait(const int32_t numberOfSteps = 1);
     void resetSimulationTime();
     virtual double getSimulationTime();
+    virtual double getStepSize();
     
 private:
     

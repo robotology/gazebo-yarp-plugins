@@ -42,9 +42,15 @@ public:
    */
   virtual void resetSimulationTime();
   /**
-   * Returns the simulation time.
+   * Get the current simulation time
+   * @return the simulation time.
    */
   virtual double getSimulationTime();
+  /**
+   * Get the current step size in seconds.
+   * @return the step size in seconds
+   */
+  virtual double getStepSize();
   virtual bool read(yarp::os::ConnectionReader& connection);
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };

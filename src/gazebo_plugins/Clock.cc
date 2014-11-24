@@ -179,6 +179,11 @@ namespace gazebo
         std::cerr << "GazeboYarpClock: End of step" << std::endl;
     }
     
+    void GazeboYarpClock::resetSimulationTime()
+    {
+        m_world->ResetTime();
+    }
+    
     common::Time GazeboYarpClock::getSimulationTime()
     {
         return m_world->GetSimTime();

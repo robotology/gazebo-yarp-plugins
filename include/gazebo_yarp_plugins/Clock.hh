@@ -56,6 +56,11 @@ namespace gazebo
          * @return the simulation time
          */
         common::Time getSimulationTime();
+        
+        /**
+         * Reset the simulation time back to zero
+         */
+        void resetSimulationTime();
 
     private:
         void cleanup();

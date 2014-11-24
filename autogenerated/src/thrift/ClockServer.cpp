@@ -1,7 +1,7 @@
 // This is an automatically-generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <include/thrift/ClockServer.h>
+#include <thrift/ClockServer.h>
 #include <yarp/os/idl/WireTypes.h>
 
 namespace gazebo {
@@ -29,6 +29,12 @@ public:
 class ClockServer_stepSimulationAndWait : public yarp::os::Portable {
 public:
   int32_t numberOfSteps;
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class ClockServer_resetSimulationTime : public yarp::os::Portable {
+public:
   virtual bool write(yarp::os::ConnectionWriter& connection);
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
@@ -91,6 +97,18 @@ bool ClockServer_stepSimulationAndWait::read(yarp::os::ConnectionReader& connect
   return true;
 }
 
+bool ClockServer_resetSimulationTime::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(1)) return false;
+  if (!writer.writeTag("resetSimulationTime",1,1)) return false;
+  return true;
+}
+
+bool ClockServer_resetSimulationTime::read(yarp::os::ConnectionReader& connection) {
+  YARP_UNUSED(connection);
+  return true;
+}
+
 bool ClockServer_getSimulationTime::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -140,6 +158,13 @@ void ClockServer::stepSimulationAndWait(const int32_t numberOfSteps) {
     fprintf(stderr,"Missing server method '%s'?\n","void ClockServer::stepSimulationAndWait(const int32_t numberOfSteps)");
   }
   yarp().write(helper,helper);
+}
+void ClockServer::resetSimulationTime() {
+  ClockServer_resetSimulationTime helper;
+  if (!yarp().canWrite()) {
+    fprintf(stderr,"Missing server method '%s'?\n","void ClockServer::resetSimulationTime()");
+  }
+  yarp().write(helper);
 }
 double ClockServer::getSimulationTime() {
   double _return = (double)0;
@@ -202,6 +227,15 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "resetSimulationTime") {
+      resetSimulationTime();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeOnewayResponse()) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "getSimulationTime") {
       double _return;
       _return = getSimulationTime();
@@ -251,6 +285,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
     helpString.push_back("continueSimulation");
     helpString.push_back("stepSimulation");
     helpString.push_back("stepSimulationAndWait");
+    helpString.push_back("resetSimulationTime");
     helpString.push_back("getSimulationTime");
     helpString.push_back("help");
   }
@@ -276,6 +311,10 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
       helpString.push_back("The input paramter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed) ");
       helpString.push_back("@note: this function is blocking ");
       helpString.push_back("@param numberOfSteps number of steps to simulate ");
+    }
+    if (functionName=="resetSimulationTime") {
+      helpString.push_back("void resetSimulationTime() ");
+      helpString.push_back("Reset the simulation time back to zero ");
     }
     if (functionName=="getSimulationTime") {
       helpString.push_back("double getSimulationTime() ");

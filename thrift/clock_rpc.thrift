@@ -26,6 +26,11 @@ service ClockServer {
      */
     void stepSimulationAndWait(1:i32 numberOfSteps = 1);
     
+    /** Reset the simulation time back to zero
+     *
+     */
+    oneway void resetSimulationTime();
+    
     /** Returns the simulation time.
      */
     double getSimulationTime();

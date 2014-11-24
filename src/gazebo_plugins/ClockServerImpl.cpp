@@ -33,6 +33,11 @@ namespace gazebo {
         m_clock.clockStep(static_cast<unsigned>(numberOfSteps));
     }
     
+    void ClockServerImpl::resetSimulationTime()
+    {
+        m_clock.resetSimulationTime();
+    }
+    
     double ClockServerImpl::getSimulationTime()
     {
         return m_clock.getSimulationTime().Double();

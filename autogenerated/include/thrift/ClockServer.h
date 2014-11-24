@@ -38,6 +38,10 @@ public:
    */
   virtual void stepSimulationAndWait(const int32_t numberOfSteps = 1);
   /**
+   * Reset the simulation time back to zero
+   */
+  virtual void resetSimulationTime();
+  /**
    * Returns the simulation time.
    */
   virtual double getSimulationTime();

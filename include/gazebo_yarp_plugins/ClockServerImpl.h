@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "ClockServer.h"
+#include "thrift/ClockServer.h"
 
 namespace gazebo {
     
@@ -19,6 +19,7 @@ public:
     virtual void continueSimulation();
     virtual void stepSimulation(const int32_t numberOfSteps = 1);
     virtual void stepSimulationAndWait(const int32_t numberOfSteps = 1);
+    void resetSimulationTime();
     virtual double getSimulationTime();
     
 private:

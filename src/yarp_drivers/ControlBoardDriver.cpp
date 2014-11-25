@@ -116,8 +116,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             gazebo::math::Angle a;
             a.SetFromRadian(initial_config[i]);
-            //std::string joint_name = m_jointNames[i];
-            //m_robot->GetJoint(joint_name)->SetAngle(0,a);
             m_jointPointers[i]->SetAngle(0,a);
         }
     }

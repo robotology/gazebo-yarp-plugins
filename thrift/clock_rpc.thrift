@@ -13,7 +13,8 @@ service ClockServer {
     /**
      * Steps the simulation for the provided number of steps. 
      * The input paramter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed)
-     * @note: this function (will be) not blocking, i.e. it will return immediately
+     * @note: this function (will be) not blocking, i.e. it will return immediately. Currently calling this function
+     * twice before the previous call actually ends its computation gives and undefined behavior. 
      * @param numberOfSteps number of steps to simulate
      */
     oneway void stepSimulation(1:i32 numberOfSteps = 1);

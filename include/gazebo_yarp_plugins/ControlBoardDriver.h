@@ -39,6 +39,8 @@ namespace gazebo {
 
     namespace physics {
         class Model;
+        class Joint;
+        typedef boost::shared_ptr<Joint> JointPtr;
     }
 
     namespace event {
@@ -349,6 +351,7 @@ private:
     yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
 
     std::vector<std::string> m_jointNames;
+    std::vector<gazebo::physics::JointPtr> m_jointPointers; /* pointers for each joint, avoiding several calls to getJoint(joint_name) */
     gazebo::transport::NodePtr m_gazeboNode;
     gazebo::transport::PublisherPtr m_jointCommandPublisher;
     std::vector<GazeboYarpControlBoardDriver::PID> m_positionPIDs;

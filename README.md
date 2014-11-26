@@ -1,6 +1,5 @@
-gazebo-yarp-plugins
+gazebo-yarp-plugins [![Build Status](https://travis-ci.org/robotology/gazebo-yarp-plugins.svg?branch=master)](https://travis-ci.org/robotology/gazebo-yarp-plugins)
 ===================
-[![Build Status](https://travis-ci.org/robotology/gazebo-yarp-plugins.png)](https://travis-ci.org/robotology/gazebo-yarp-plugins)
 
 Plugins for exposing [Yarp](http://yarp.it/) interfaces on [Gazebo simulator](http://gazebosim.org/) models.
 

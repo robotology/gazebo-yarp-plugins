@@ -3,6 +3,7 @@
  * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+#include <map>
 
 #ifndef GAZEBOYARP_CONTROLBOARDDRIVER_HH
 #define GAZEBOYARP_CONTROLBOARDDRIVER_HH
@@ -36,10 +37,13 @@ namespace yarp {
 namespace gazebo {
     namespace common {
         class UpdateInfo;
+        class PID;
     }
 
     namespace physics {
         class Model;
+        class JointController;
+        typedef boost::shared_ptr<JointController> JointControllerPtr;
         class Joint;
         typedef boost::shared_ptr<Joint> JointPtr;
     }
@@ -351,6 +355,13 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> m_velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
 
+
+    // std::map<std::string, gazebo::common::PID> m_gazeboPositionPIDs; /* position PID controllers for each joint, needed to call gazebo's setForce() method */
+    std::vector<gazebo::common::PID> m_gazeboPositionPIDs;
+    std::vector<gazebo::common::PID> m_gazeboVelocityPIDs; /* velocity PID controllers for each joint, needed to call gazebo's setForce() method */
+    std::vector<gazebo::common::PID> m_gazeboImpedancePosPIDs; /* impedance position PID controllers for each joint, needed to call gazebo's setForce() method */
+    gazebo::physics::JointControllerPtr m_jointController;
+
     yarp::sig::Vector m_torqueOffsett;
     yarp::sig::Vector m_minStiffness;
     yarp::sig::Vector m_minDamping;
@@ -370,7 +381,7 @@ private:
      */
     void setMinMaxPos();  //NOT TESTED
     bool setJointNames();  //WORKS
-    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
+    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms, std::vector<gazebo::common::PID>&);
     void setMinMaxImpedance();
     void setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector& refs);

@@ -20,6 +20,7 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 const double RobotPositionTolerance = 0.9;
+gazebo::common::Time previousGazeboSimTime;
 
 GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() {}
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
@@ -97,7 +98,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
     m_gazeboNode->Init(this->m_robot->GetWorld()->GetName());
-    m_jointCommandPublisher = m_gazeboNode->Advertise<gazebo::msgs::JointCmd>(std::string("~/") + this->m_robot->GetName() + "/joint_cmd");
+    // m_jointCommandPublisher = m_gazeboNode->Advertise<gazebo::msgs::JointCmd>(std::string("~/") + this->m_robot->GetName() + "/joint_cmd");
 
     _T_controller = 1;
 
@@ -152,6 +153,9 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         started = true;
         for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
             sendPositionToGazebo (j, m_positions[j]);
+            double diff = m_jointPointers[j]->GetAngle(0).Radian() - GazeboYarpPlugins::convertDegreesToRadians(m_referencePositions[j]);
+            double cmd = m_gazeboPositionPIDs[j].Update(diff, 0.01);
+            m_jointPointers[j]->SetForce(0, cmd);
             //std::cout << "Joint number: " << j << " P: " << m_gazeboPositionPIDs[m_jointNames[j]].GetPGain() << " I: " << m_gazeboPositionPIDs[m_jointNames[j]].GetIGain() << " D: " << m_gazeboPositionPIDs[m_jointNames[j]].GetDGain() << std::endl;
         }
         //m_jointController = m_robot->GetJointController();
@@ -161,6 +165,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             //m_gazeboPositionPIDs[m_jointNames[j]].SetPGain(1000);
             std::cout << "Joint number: " << j << " P: " << m_gazeboPositionPIDs[j].GetPGain() << " I: " << m_gazeboPositionPIDs[j].GetIGain() << " D: " << m_gazeboPositionPIDs[j].GetDGain() << std::endl;
         }
+        previousGazeboSimTime = m_robot->GetWorld()->GetSimTime();
         //std::cout << "P: " << m_gazeboPositionPIDs[m_jointNames[0]].GetPGain() << "I: " << m_gazeboPositionPIDs[m_jointNames[0]].GetIGain() << "D: " << m_gazeboPositionPIDs[m_jointNames[0]].GetDGain() << std::endl;
     }
 
@@ -173,8 +178,11 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 
     // Updating timestamp
-    gazebo::common::Time currTime = gazebo::common::Time(_info.simTime.Double());
-    gazebo::common::Time stepTime = currTime - m_lastTimestamp.getTime();
+    //gazebo::common::Time currTime = gazebo::common::Time(_info.simTime.Double());
+    gazebo::common::Time currTime = m_robot->GetWorld()->GetSimTime();
+    gazebo::common::Time stepTime = currTime - previousGazeboSimTime;
+    previousGazeboSimTime = currTime;
+    
     m_lastTimestamp.update(_info.simTime.Double());
 
     //logger.log(m_velocities[2]);
@@ -183,26 +191,30 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         //set pos joint value, set m_referenceVelocities joint value
         if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
             && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
-            if (m_clock % _T_controller == 0) {
-                if (m_controlMode[j] == VOCAB_CM_POSITION) {
-                    computeTrajectory(j);
-                }
-                // sendPositionToGazebo(j, m_referencePositions[j]);
-                if (stepTime > 0.0) {
-                    double diff = m_jointPointers[j]->GetAngle(0).Radian() - GazeboYarpPlugins::convertDegreesToRadians(m_referencePositions[j]);
-                    //if (j == 5)
-                    //std::cout<<"\n\ndiff: "<<diff<<"\n\n"<<std::endl;
-                    //if (diff > GazeboYarpPlugins::convertDegreesToRadians(5.0)) {
-                        GazeboYarpControlBoardDriver::PID positionPID = m_positionPIDs[j];
-                        //m_gazeboPositionPIDs[j].SetPGain(positionPID.p);
-                        //m_gazeboPositionPIDs[j].SetIGain(positionPID.i);
-                        //m_gazeboPositionPIDs[j].SetDGain(positionPID.d);
-                        double cmd = m_gazeboPositionPIDs[j].Update(diff, stepTime);
-                        //std::cout<<"\n\ncmd: "<<cmd<<"\n\n"<<std::endl;
-                        m_jointPointers[j]->SetForce(0, cmd);
+            //if (stepTime  > 0.0) {
+                if (m_clock % _T_controller == 0) {
+                    if (m_controlMode[j] == VOCAB_CM_POSITION) {
+                        computeTrajectory(j);
+                        std::cout<<"\n\nhey\n\n"<<std::endl;
+                    }
+                    // sendPositionToGazebo(j, m_referencePositions[j]);
+                    //if (stepTime > 0.0) {
+                        double diff = m_jointPointers[j]->GetAngle(0).Radian() - GazeboYarpPlugins::convertDegreesToRadians(m_referencePositions[j]);
+                        std::cout<<"\n\ndiff: "<< diff <<"\n\n"<<std::endl;
+                        //if (j == 5)
+                        //std::cout<<"\n\nstep time: "<<stepTime.Double()<<"\n\n"<<std::endl;
+                        //if (diff > GazeboYarpPlugins::convertDegreesToRadians(1.0)) {
+                            //GazeboYarpControlBoardDriver::PID positionPID = m_positionPIDs[j];
+                            //m_gazeboPositionPIDs[j].SetPGain(positionPID.p);
+                            //m_gazeboPositionPIDs[j].SetIGain(positionPID.i);
+                            //m_gazeboPositionPIDs[j].SetDGain(positionPID.d);
+                            double cmd = m_gazeboPositionPIDs[j].Update(diff, stepTime);
+                            //std::cout<<"\n\ncmd: "<<cmd<<"\n\n"<<std::endl;
+                            m_jointPointers[j]->SetForce(0, cmd);
+                        //}
                     //}
                 }
-            }
+            //}
         } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {//set vmo joint value
             if (m_clock % _T_controller == 0) {
                 sendVelocityToGazebo(j, m_referenceVelocities[j]);
@@ -406,8 +418,8 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 {
     gazebo::msgs::JointCmd j_cmd;
     prepareJointMsg(j_cmd,j,ref);
-    m_jointCommandPublisher->WaitForConnection();
-    m_jointCommandPublisher->Publish(j_cmd);
+    // m_jointCommandPublisher->WaitForConnection();
+    // m_jointCommandPublisher->Publish(j_cmd);
     return true;
 }
 
@@ -446,8 +458,8 @@ bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref) //NOT 
      *      when you switch to velocity mode, to make sure the PIDs get reset */
     gazebo::msgs::JointCmd j_cmd;
     prepareJointVelocityMsg(j_cmd,j,ref);
-    m_jointCommandPublisher->WaitForConnection();
-    m_jointCommandPublisher->Publish(j_cmd);
+    // m_jointCommandPublisher->WaitForConnection();
+    // m_jointCommandPublisher->Publish(j_cmd);
     /**/
     return true;
 }
@@ -486,8 +498,8 @@ bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double r
 {
     gazebo::msgs::JointCmd j_cmd;
     prepareJointTorqueMsg(j_cmd,j,ref);
-    m_jointCommandPublisher->WaitForConnection();
-    m_jointCommandPublisher->Publish(j_cmd);
+    // m_jointCommandPublisher->WaitForConnection();
+    // m_jointCommandPublisher->Publish(j_cmd);
     return true;
 }
 

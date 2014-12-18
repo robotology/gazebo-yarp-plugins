@@ -37,7 +37,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     std::cout<<"# Joints: "<<m_robot->GetJoints().size() <<std::endl;
     std::cout<<"# Links: "<<m_robot->GetLinks().size() <<std::endl;
 
-    this->m_robotRefreshPeriod = 0.01 * 1000.0;
+    this->m_robotRefreshPeriod = this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0;
     if (!setJointNames()) return false;
 
     m_numberOfJoints = m_jointNames.size();
@@ -159,7 +159,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             //m_jointPointers[j]->SetForce(0, cmd);
             //std::cout << "Joint number: " << j << " P: " << m_gazeboPositionPIDs[m_jointNames[j]].GetPGain() << " I: " << m_gazeboPositionPIDs[m_jointNames[j]].GetIGain() << " D: " << m_gazeboPositionPIDs[m_jointNames[j]].GetDGain() << std::endl;
         }
-        //m_jointController = m_robot->GetJointController();
+        m_robot->GetJointController()->Reset();
         //m_gazeboPositionPIDs = this->m_jointController->GetPositionPIDs();
         for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
             //sendPositionToGazebo (j, m_positions[j]);
@@ -181,10 +181,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     // Updating timestamp
     //gazebo::common::Time currTime = gazebo::common::Time(_info.simTime.Double());
     /*gazebo::common::Time currTime = m_robot->GetWorld()->GetSimTime();
-    gazebo::common::Time stepTime = currTime - previousGazeboSimTime;
+    gazebo::common::Time stepTime = currTime.Double() - previousGazeboSimTime.Double();
     previousGazeboSimTime = currTime;*/
     gazebo::common::Time currTime = gazebo::common::Time(_info.simTime.Double());
     gazebo::common::Time stepTime = currTime - m_lastTimestamp.getTime();
+
+    // std::cout<<"\n\nstep time: "<< stepTime.Double() << "\n\n" << std::endl;
     
     m_lastTimestamp.update(_info.simTime.Double());
 
@@ -194,7 +196,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         //set pos joint value, set m_referenceVelocities joint value
         if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
             && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
-            if (stepTime  > 0.0) {
+            if (stepTime.Double()  > 0.0) {
                 if (m_clock % _T_controller == 0) {
                     if (m_controlMode[j] == VOCAB_CM_POSITION) {
                         computeTrajectory(j);
@@ -211,7 +213,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                             //m_gazeboPositionPIDs[j].SetPGain(positionPID.p);
                             //m_gazeboPositionPIDs[j].SetIGain(positionPID.i);
                             //m_gazeboPositionPIDs[j].SetDGain(positionPID.d);
-                            double cmd = m_gazeboPositionPIDs[j].Update(diff, stepTime);
+                            double cmd = m_gazeboPositionPIDs[j].Update(diff, stepTime.Double());
                             //std::cout<<"\n\ncmd: "<<cmd<<"\n\n"<<std::endl;
                             m_jointPointers[j]->SetForce(0, cmd);
                         //}

@@ -44,7 +44,7 @@ before_script:
   - git clone https://github.com/robotology-playground/icub-gazebo
   - export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/home/travis/build/robotology/icub-gazebo
   # compile gazebo-yarp-plugins
-  - cd gazebo-yar-plugins
+  - cd gazebo-yarp-plugins
   - mkdir build
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..

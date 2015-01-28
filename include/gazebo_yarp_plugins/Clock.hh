@@ -8,13 +8,24 @@
 #define GAZEBOYARP_CLOCKPLUGIN_HH
 
 #include <gazebo/common/Plugin.hh>
+#include <gazebo/common/Time.hh>
 
-#include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/Bottle.h>
+namespace yarp {
+    namespace os {
+        class Port;
+        
+        template <class T>
+        class BufferedPort;
+        
+        class Network;
+        class Bottle;
+    }
+}
 
 namespace gazebo
 {
+    class ClockServer;
+    
     class GazeboYarpClock : public SystemPlugin
     {
     public:
@@ -23,24 +34,56 @@ namespace gazebo
 
         virtual void Load(int _argc = 0, char **_argv = NULL);
 
-        void GazeboYarpClockLoad(std::string world_name);
+        void gazeboYarpClockLoad(std::string world_name);
 
-        void ClockUpdate();
+        void clockUpdate();
+        
+        //Simulation time manipulation methods
+        /** @brief pause the simulation
+         */
+        void clockPause();
+        
+        /** @brief resume the simulation
+         */
+        void clockContinue();
+        
+        /** @brief Step the simulation for the input number of steps. Defaults to 1
+         * @param[in] steps number of steps
+         */
+        void clockStep(unsigned steps=1);
+        
+        /** @brief Returns the simulation time
+         * @return the simulation time
+         */
+        common::Time getSimulationTime();
+        
+        /**
+         * Reset the simulation time back to zero
+         */
+        void resetSimulationTime();
+        
+        /**
+         * Get the current step size in seconds.
+         * @return the step size in seconds
+         */
+        virtual double getStepSize();
 
     private:
-        yarp::os::Network _yarp;
+        void cleanup();
+        
+        yarp::os::Network *m_network;
+        std::string m_portName;
+        yarp::os::BufferedPort<yarp::os::Bottle> *m_clockPort;
 
-        std::string port_name;
-
-        yarp::os::BufferedPort<yarp::os::Bottle> port;
-
-        gazebo::event::ConnectionPtr time_update_event_;
-
-        gazebo::event::ConnectionPtr load_gazebo_yarp_clock;
-
-        gazebo::physics::WorldPtr world_;
+        gazebo::event::ConnectionPtr m_timeUpdateEvent;
+        gazebo::event::ConnectionPtr m_worldCreatedEvent;
+        gazebo::physics::WorldPtr m_world;
+        
+        //RPC variables
+        yarp::os::Port *m_rpcPort;
+        ClockServer *m_clockServer;
 
     };
-};
+}
 
 #endif

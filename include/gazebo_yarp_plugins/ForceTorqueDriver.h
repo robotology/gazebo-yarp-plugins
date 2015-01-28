@@ -36,7 +36,7 @@ namespace gazebo {
 }
 
 
-extern const int YarpForceTorqueChannelsNumber;
+extern const unsigned YarpForceTorqueChannelsNumber;
 extern const std::string YarpForceTorqueScopedName;
 
 class yarp::dev::GazeboYarpForceTorqueDriver: 

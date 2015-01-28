@@ -14,9 +14,13 @@ using namespace gazebo;
 namespace GazeboYarpPlugins {
 
 Handler* Handler::s_handle = NULL;
-yarp::os::Semaphore Handler::s_mutex = 1;
 
-
+yarp::os::Semaphore& Handler::mutex()
+{
+    static yarp::os::Semaphore s_mutex(1);
+    return s_mutex;
+}
+    
 Handler::Handler()
 {
     m_robotMap.clear();
@@ -25,14 +29,14 @@ Handler::Handler()
 
 Handler* Handler::getHandler()
 {
-    s_mutex.wait();
+    mutex().wait();
     if (!s_handle) {
         std::cout << "Calling GazeboYarpPlugins::Handler Constructor" << std::endl;
         s_handle = new Handler();
         if (!s_handle)
             std::cout << "Error while calling GazeboYarpPluginHandler constructor" << std::endl;
     }
-    s_mutex.post();
+    mutex().post();
 
     return s_handle;
 }

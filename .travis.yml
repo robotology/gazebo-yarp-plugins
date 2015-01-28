@@ -31,13 +31,38 @@ before_script:
   - make
   - sudo make install
   - cd ../..
+  # install robot-testing framework
+  - git clone https://github.com/robotology/robot-testing
+  - cd robot-testing
+  - mkdir build 
+  - cd build 
+  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
+  - make 
+  - cd ../..
+  # install icub-gazebo (for testing)
+  - git clone https://github.com/robotology-playground/icub-gazebo
+  - export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/home/travis/gazebo-yarp-plugins/icub-gazebo
+  # compile gazebo-yarp-plugins
   - mkdir build
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..
+  - pwd
+  
 
 
 script: 
   - make
+  # set GAZEBO_PLUGIN_PATH for running the tests
+  - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/home/travis/gazebo-yarp-plugins/build
+  # launch yarpserver, gazebo and wait
+  - yarpserver & 
+  - gzserver ../icub-gazebo/world/icub_fixed.world &
+  - sleep 10
+  # launch tests 
+  - ../robot-testing/build/bin/robot-testing --from ../robot-testing/app/iCubTest/test-gazebo.ini
+  - pkill gazebo
+  - pkill yarpserver
+  # test install/uninstall
   - sudo make install
   - sudo make uninstall
 

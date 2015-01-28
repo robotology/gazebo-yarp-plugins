@@ -10,6 +10,10 @@ matrix:
       env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_THREE=TRUE
     - compiler: clang
       env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_ONEDOTNINE=TRUE
+    - compiler: gcc
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_FIVE=TRUE
+    - compiler: clang
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_FIVE=TRUE
 
 
 before_script:
@@ -19,6 +23,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install cmake
   - sudo apt-get --force-yes install libace-dev
+  - if [ $USE_GAZEBO_FIVE ]; then sudo apt-get install -qq libgazebo5-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
   #check gazebo version

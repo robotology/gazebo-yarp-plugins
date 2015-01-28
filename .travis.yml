@@ -47,8 +47,6 @@ before_script:
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..
   - pwd
-  
-
 
 script: 
   - make

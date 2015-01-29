@@ -60,7 +60,7 @@ script:
   - gzserver ../../icub-gazebo/world/icub_fixed.world &
   - sleep 10
   # launch tests 
-  - ../robot-testing/build/bin/robot-testing --from ../robot-testing/app/iCubTest/test-gazebo.ini
+  - ../../robot-testing/build/bin/robot-testing --from ../../robot-testing/app/iCubTest/test-gazebo.ini
   - pkill gazebo
   - pkill yarpserver
   # test install/uninstall

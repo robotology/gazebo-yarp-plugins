@@ -31,6 +31,7 @@ before_script:
   - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
   - make
   - sudo make install
+  - sudo ldconfig
   - cd ../..
   # install robot-testing framework
   - git clone https://github.com/robotology/robot-testing

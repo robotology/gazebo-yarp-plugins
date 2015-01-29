@@ -61,7 +61,7 @@ script:
   - sleep 10
   # launch tests 
   - ../../robot-testing/build/bin/robot-testing --from ../../robot-testing/app/iCubTest/test-gazebo.ini
-  - pkill gazebo
+  - pkill gzserver
   - pkill yarpserver
   # test install/uninstall
   - sudo make install

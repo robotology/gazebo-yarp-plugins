@@ -8,14 +8,17 @@
 #include "ControlBoardDriver.h"
 #include "common.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 #include <gazebo/math/Angle.hh>
 
+#include <yarp/os/LogStream.h>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
+
 
 const double RobotPositionTolerance = 0.9;
 
@@ -197,19 +200,16 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 }
 
-void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
+void GazeboYarpControlBoardDriver::setMinMaxPos()
 {
-    std::cout<<"Joint Limits"<<std::endl;
     for(unsigned int i = 0; i < m_numberOfJoints; ++i) {
         m_jointLimits[i].max = m_jointPointers[i]->GetUpperLimit(0).Degree();
         m_jointLimits[i].min = m_jointPointers[i]->GetLowerLimit(0).Degree();
-        std::cout<<m_jointNames[i]<<" max_pos: "<< m_jointLimits[i].max<<" min_pos: "<< m_jointLimits[i].min <<std::endl;
     }
 }
 
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
-    std::cout << ".ini file found, using joint names in ini file" << std::endl;
     yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
 
     if (joint_names_bottle.isNull()) {
@@ -238,7 +238,9 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
         }
 
         if (!joint_found) {
-            std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error, cannot find joint " << m_jointNames[i] << std::endl;
+            yError() << "GazeboYarpControlBoardDriver::setJointNames(): cannot find joint " << m_jointNames[i]
+                     << " ( " << i << " of " << nr_of_joints << " ) " << "\n";
+            yError() << "jointNames is " << joint_names_bottle.toString() << "\n";
             m_jointNames.resize(0);
             m_jointPointers.resize(0);
             return false;

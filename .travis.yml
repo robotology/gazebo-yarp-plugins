@@ -59,7 +59,6 @@ script:
   # test install/uninstall
   - sudo make install
   - sudo make uninstall
-
 notifications:
   email:
     - pegua1@gmail.com

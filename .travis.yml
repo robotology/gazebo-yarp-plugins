@@ -28,7 +28,7 @@ before_script:
   - cd yarp
   - mkdir build
   - cd build
-  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
+  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DYARP_USE_OPENCV:BOOL=OFF -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
   - make
   - sudo make install
   - sudo ldconfig

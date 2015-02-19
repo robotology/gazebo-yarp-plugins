@@ -102,11 +102,13 @@ Troubleshooting
 
 #### Old Gazebo Versions
 - In versions of Gazebo prior to 3.0 there is a bug related to the integral part of the low-level position controller. If you are using 
-  Gazebo 1.9 or 2.2 then the low level position control will excert no integral action on the model. If you want to get more information on
+  Gazebo 1.9 or 2.2 then the low level position control will excert no integral action on the model. If you want to get more informations on
   this bug, please check [issue 119](https://github.com/robotology/gazebo-yarp-plugins/issues/119) and [Gazebo issue 1082] (https://bitbucket.org/osrf/gazebo/issue/1082/jointcontroller-does-not-handle-correctly). 
 
 - In versions of Gazebo prior to 3.1 there is a bug related to the coordinates frame of the six axis force torque sensor measure, so you 
-  have to handle with care the force torque measurement returned by the `gazebo_yarp_forcetorque` plugin. For more information check [issue 73]( https://github.com/robotology/gazebo-yarp-plugins/issues/73). 
+  have to handle with care the force torque measurement returned by the `gazebo_yarp_forcetorque` plugin. For more informations check [issue 73]( https://github.com/robotology/gazebo-yarp-plugins/issues/73). 
+
+- In versions of Gazebo prior to 4.1 there is a bug affecting the use of `gazebo-yarp-plugins` powered model with `roslaunch` . For more informations check [issue 123](https://github.com/robotology/gazebo-yarp-plugins/issues/123) . 
 
 Design
 ------

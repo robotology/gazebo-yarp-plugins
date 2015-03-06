@@ -80,6 +80,13 @@ bool GazeboYarpControlBoardDriver::setMaxCurrent(int, double) //NOT IMPLEMENTED
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::getMaxCurrent(int j, double *v) //NOT IMPLEMENTED
+{
+    if (!v) return false;
+    *v = 0;
+    return true;
+}
+
 bool GazeboYarpControlBoardDriver::getAmpStatus(int *st) //NOT IMPLEMENTED
 {
     if (!st) return false;

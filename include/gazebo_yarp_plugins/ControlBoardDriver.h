@@ -256,6 +256,7 @@ public:
     virtual bool getCurrent(int j, double *val); //NOT IMPLEMENTED
     virtual bool getCurrents(double *vals); //NOT IMPLEMENTED
     virtual bool setMaxCurrent(int j, double v); //NOT IMPLEMENTED
+    virtual bool getMaxCurrent(int j, double *v);  //NOT IMPLEMENTED
     virtual bool getAmpStatus(int *st); //NOT IMPLEMENTED
     virtual bool getAmpStatus(int k, int *v); //NOT IMPLEMENTED
 

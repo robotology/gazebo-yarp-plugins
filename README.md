@@ -75,13 +75,16 @@ at which point you need to update the GAZEBO_PLUGIN_PATH accordingly, if the ins
 
 Usage
 -----
-To use the gazebo-yarp-plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently two robot support gazebo-yarp-plugins: Coman and iCub.
+To use the gazebo-yarp-plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently three humanoids robots support gazebo-yarp-plugins: Coman, iCub and Vizzy. 
 
 ### Coman
 To use Coman in Gazebo, please follow [the instructions on gazebo-yarp-plugins wiki](https://github.com/robotology/gazebo-yarp-plugins/wiki/Using-Coman-model-with-gazebo-yarp-plugins)
 
 ### iCub
 To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/robotology-playground/icub_gazebo)
+
+### Vizzy
+To simulate Vizzy in Gazebo please follow [the instructions on vizzy repository https://github.com/vislab-tecnico-lisboa/vizzy].
 
 ### Arbitrary robot
 To add gazebo-yarp-plugins to another robot, please follow the instructions on [gazebo-yarp-plugins wiki](https://github.com/robotology/gazebo-yarp-plugins/wiki/Embed-gazebo-yarp-plugins-in-an-SDF-model)

@@ -112,6 +112,12 @@ set(externalwrench_headers  include/gazebo_yarp_plugins/ApplyExternalWrench.hh)
 SOURCE_GROUP("Source Files" FILES ${externalwrench_source})
 SOURCE_GROUP("Header Files" FILES ${externalwrench_headers})
 
+set(showmodelcom_source   src/gazebo_plugins/ShowModelCoM.cc)
+set(showmodelcom_headers  include/gazebo_yarp_plugins/ShowModelCoM.hh)
+
+SOURCE_GROUP("Source Files" FILES ${showmodelcom_source})
+SOURCE_GROUP("Header Files" FILES ${showmodelcom_headers})
+
 
 set(camera_headers          include/gazebo_yarp_plugins/Camera.hh
                             include/gazebo_yarp_plugins/CameraDriver.h)
@@ -129,6 +135,7 @@ add_library(gazebo_yarp_jointsensors SHARED ${jointSensors_source} ${jointSensor
 add_library(gazebo_yarp_clock        SHARED ${clock_source}        ${clock_headers})
 add_library(gazebo_yarp_camera       SHARED ${camera_source}       ${camera_headers})
 add_library(gazebo_yarp_externalwrench SHARED ${externalwrench_source}	${externalwrench_headers})
+add_library(gazebo_yarp_showmodelcom SHARED ${showmodelcom_source}	${showmodelcom_headers})
 
 
 target_link_libraries(gazebo_yarp_singleton ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES})
@@ -138,6 +145,7 @@ target_link_libraries(gazebo_yarp_imu           gazebo_yarp_singleton ${YARP_LIB
 target_link_libraries(gazebo_yarp_jointsensors  gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_clock         gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_externalwrench gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(gazebo_yarp_showmodelcom gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(gazebo_yarp_camera        gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} CameraPlugin)
 
 
@@ -148,8 +156,10 @@ install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_imu
                 gazebo_yarp_jointsensors
                 gazebo_yarp_clock
-				gazebo_yarp_externalwrench
+                gazebo_yarp_externalwrench
+                gazebo_yarp_showmodelcom
                 gazebo_yarp_camera
+                gazebo_yarp_showmodelcom
                 DESTINATION lib)
 
 # Add uninstall target

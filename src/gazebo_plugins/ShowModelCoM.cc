@@ -36,6 +36,13 @@ void ShowModelCoM::UpdateChild()
 
     gazebo::math::Vector3 wordlCoGModel = weighted_position_acc/mass_acc;
 
+    gazebo::math::Pose WorldCoGPose = gazebo::math::Pose::Zero;
+    WorldCoGPose.pos = wordlCoGModel;
+
+    msgs::Set ( m_visualMsg.mutable_pose(), WorldCoGPose );
+    msgs::Set ( m_visualMsg.mutable_material()->mutable_ambient(),common::Color ( 1,0,0,0.3 ) );
+    m_visualMsg.set_visible ( 1 );
+    m_visPub->Publish ( m_visualMsg );
 
 }
 
@@ -55,6 +62,30 @@ void ShowModelCoM::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
     this->robotName = _model->GetName();
     printf ( "ShowModelCoM: robotName is %s \n",robotName.c_str() );
     configuration_loaded = true;
+
+    /// ############ TRYING TO MODIFY VISUALS #######################################################
+
+
+    this->m_node = transport::NodePtr ( new gazebo::transport::Node() );
+
+    this->m_node->Init ( _model->GetWorld()->GetName() );
+    m_visPub = this->m_node->Advertise<msgs::Visual> ( "~/visual", 10 );
+
+    // Set the visual's name. This should be unique.
+    m_visualMsg.set_name ( "__COM_VISUAL__" );
+
+    // Set the visual's parent. This visual will be attached to the parent
+    m_visualMsg.set_parent_name ( _model->GetScopedName() );
+
+    // Create a cylinder
+    msgs::Geometry *geomMsg = m_visualMsg.mutable_geometry();
+    geomMsg->set_type ( msgs::Geometry::SPHERE );
+    geomMsg->mutable_sphere()->set_radius ( 0.02 );
+
+    // Don't cast shadows
+    m_visualMsg.set_cast_shadows ( false );
+
+    /// ############ END: TRYING TO MODIFY VISUALS #####################################################
 
     // Listen to the update event. This event is broadcast every
     // simulation iteration.

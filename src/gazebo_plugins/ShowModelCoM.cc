@@ -13,6 +13,7 @@ ShowModelCoM::ShowModelCoM()
 ShowModelCoM::~ShowModelCoM()
 {
     printf ( "*** GazeboYarpShowModelCoM closing ***\n" );
+    this->m_com_port.close();
     gazebo::event::Events::DisconnectWorldUpdateBegin ( this->m_updateConnection );
     printf ( "Goodbye from ShowModelCoM plugin\n" );
 }
@@ -36,6 +37,12 @@ void ShowModelCoM::UpdateChild()
 
     gazebo::math::Vector3 wordlCoGModel = weighted_position_acc/mass_acc;
 
+    yarp::os::Bottle bot;
+    bot.addDouble(wordlCoGModel.x);
+    bot.addDouble(wordlCoGModel.y);
+    bot.addDouble(wordlCoGModel.z);
+    this->m_com_port.write(bot);
+
     gazebo::math::Pose WorldCoGPose = gazebo::math::Pose::Zero;
     WorldCoGPose.pos = wordlCoGModel;
 
@@ -48,9 +55,18 @@ void ShowModelCoM::UpdateChild()
 
 void ShowModelCoM::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
 {
+    // Check if yarp network is active;
+    if ( !this->m_yarpNet.checkNetwork() ) {
+        printf ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin\n" );
+        return;
+    }
+
     // What is the parent name??
     this->m_modelScope = _model->GetScopedName();
     printf ( "Scoped name: %s\n",this->m_modelScope.c_str() );
+
+    std::string port_name = "/" + this->m_modelScope + "/CoMInWorld:o";
+    this->m_com_port.open(port_name);
 
     // Copy the pointer to the model to access later from UpdateChild
     this->m_myModel = _model;

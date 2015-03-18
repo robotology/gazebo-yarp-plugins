@@ -39,6 +39,8 @@ protected:
 
 
 private:
+    yarp::os::Network       m_yarpNet;
+
     physics::ModelPtr       m_myModel;
 
     std::string             m_modelScope;
@@ -46,6 +48,8 @@ private:
 
     transport::PublisherPtr m_visPub;
     msgs::Visual            m_visualMsg;
+
+    yarp::os::Port          m_com_port;
 
 };
 

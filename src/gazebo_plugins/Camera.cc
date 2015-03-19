@@ -11,8 +11,6 @@
 #include "common.h"
 
 #include <gazebo/sensors/CameraSensor.hh>
-
-#include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
 
 
@@ -20,7 +18,7 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpCamera)
 
 
 namespace gazebo {
-    
+
 GazeboYarpCamera::GazeboYarpCamera() : CameraPlugin(), m_yarp()
 {
     std::cout << "*** GazeboYarpCamera contructor ***" << std::endl;

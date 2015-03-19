@@ -12,14 +12,13 @@
 
 #include <gazebo/sensors/ImuSensor.hh>
 
-#include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Network.h>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpIMU)
 
 namespace gazebo {
-    
+
 GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin()
 {
 }

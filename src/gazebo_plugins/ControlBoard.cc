@@ -78,6 +78,13 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     printf("GazeboYarpControlBoard::Load  Error: [WRAPPER] group not found in config file\n");
                     return;
                 }
+                std::cout << "\n\nm_parameters.findGroup(ROS): \n\t" << m_parameters.findGroup("ROS").toString() << std::endl;
+                if(m_parameters.check("ROS"))
+                {
+                    yarp::os::ConstString ROS;
+                    ROS = yarp::os::ConstString ("(") + m_parameters.findGroup("ROS").toString() + yarp::os::ConstString (")");
+                    wrapper_group.append(yarp::os::Bottle(ROS));
+                }
                 configuration_loaded = true;
             }
         }

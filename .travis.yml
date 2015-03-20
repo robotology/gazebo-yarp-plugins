@@ -55,14 +55,6 @@ script:
   - make
   # set GAZEBO_PLUGIN_PATH for running the tests
   - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/home/travis/build/robotology/gazebo-yarp-plugins/build
-  # launch yarpserver, gazebo and wait
-  - yarpserver & 
-  - gzserver ../../icub-gazebo/world/icub_fixed.world &
-  - sleep 10
-  # launch tests 
-  - ../../robot-testing/build/bin/robot-testing --from ../../robot-testing/app/iCubTest/test-gazebo.ini
-  - pkill gzserver
-  - pkill yarpserver
   # test install/uninstall
   - sudo make install
   - sudo make uninstall

@@ -1,4 +1,4 @@
-#include "gazebo_yarp_plugins/ShowModelCoM.hh"
+#include "ShowModelCoM.hh"
 
 namespace gazebo
 {

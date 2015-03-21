@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
+#include "ControlBoardDriver.h"
 
 
 using namespace yarp::dev;
@@ -170,53 +170,93 @@ bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) //NOT IMPLE
 
 // IPositionControl2
 
-bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs)
 {
+    if (!joints || !refs) return false;
     bool ret = true;
-    for (int i = 0; i < n_joint; i++) {
-        ret = ret && positionMove(joints[i], refs[i]);
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = positionMove(joints[i], refs[i]);
     }
     return ret;
 }
 
-bool GazeboYarpControlBoardDriver::relativeMove(const int n_joint, const int *joints, const double *deltas) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
-    return false;
+    if (!joints || !deltas) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = relativeMove(joints[i], deltas[i]);
+    }
+    return ret;
 }
 
-
-bool GazeboYarpControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flags) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
-    return false;
+    if (!joints || !flags) return false;
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = checkMotionDone(joints[i], &flags[i]);
+    }
+    return ret;
 }
 
 bool GazeboYarpControlBoardDriver::setRefSpeeds(const int n_joint, const int *joints, const double *spds) //NOT IMPLEMENTED
 {
-    return false;
+    if (!joints || !spds) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = setRefSpeed(joints[i], spds[i]);
+    }
+    return ret;
 }
 
 
-bool GazeboYarpControlBoardDriver::setRefAccelerations(const int n_joint, const int *joints, const double *accs) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
-    return false;
+    if (!joints || !accs) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = setRefAcceleration(joints[i], accs[i]);
+    }
+    return ret;
 }
 
 
-bool GazeboYarpControlBoardDriver::getRefSpeeds(const int n_joint, const int *joints, double *spds) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
-    return false;
+    if (!joints || !spds) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getRefSpeed(joints[i], &spds[i]);
+    }
+    return ret;
 }
 
 
-bool GazeboYarpControlBoardDriver::getRefAccelerations(const int n_joint, const int *joints, double *accs) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
-    return false;
+    if (!joints || !accs) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getRefAcceleration(joints[i], &accs[i]);
+    }
+    return ret;
 }
 
 
 bool GazeboYarpControlBoardDriver::stop(const int n_joint, const int *joints) //NOT IMPLEMENTED
 {
-    return false;
+    if (!joints) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint; i++) {
+        if (joints[i] >= 0 && joints[i] < (int)m_numberOfJoints) {
+            ret = ret && stop(joints[i]);
+        } else {
+            ret = false;
+            break;
+        }
+    }
+    return ret;
 }
 
 

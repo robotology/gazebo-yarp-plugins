@@ -75,7 +75,7 @@ public:
     gazebo::sensors::Sensor* getSensor(const std::string& sensorScopedName) const;
     
     /** \brief Removes a sensor from the internal database
-     *  \param sensorScopedName the name of the sensor to be removed
+     *  \param sensorName the name of the sensor to be removed
      */
     void removeSensor(const std::string& sensorName);
 
@@ -106,8 +106,9 @@ private:
     typedef std::map<std::string, ReferenceCountingSensor> SensorsMap;
     
     // singleton stuff
-    static yarp::os::Semaphore s_mutex;
     static Handler* s_handle;
+    static yarp::os::Semaphore& mutex();
+    
 
     Handler();
     RobotsMap m_robotMap;      // map of known robots

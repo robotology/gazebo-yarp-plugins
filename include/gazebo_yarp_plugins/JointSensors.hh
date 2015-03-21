@@ -11,9 +11,13 @@
 
 #include <string>
 
-#include <yarp/os/Network.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/PolyDriverList.h>
+
+namespace yarp {
+    namespace dev {
+        class IMultipleWrapper;
+    }
+}
 
 namespace gazebo
 {
@@ -34,16 +38,11 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
+    yarp::dev::PolyDriver m_jointsensorsWrapper;
+    yarp::dev::IMultipleWrapper* m_iWrap;
+    yarp::dev::PolyDriver m_jointsensorsDriver;
 
-    yarp::os::Network _yarp;
-    yarp::dev::PolyDriver _jointsensors_wrapper;
-    yarp::dev::IMultipleWrapper *_iWrap;
-    yarp::dev::PolyDriver _jointsensors_driver;
-    yarp::os::Property _parameters;
-
-    std::string _robotName;
-
-    bool plugin_loaded;
+    std::string m_robotName;
 };
 
 }

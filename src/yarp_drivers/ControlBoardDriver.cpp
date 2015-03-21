@@ -5,17 +5,20 @@
  */
 
 
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
-#include "gazebo_yarp_plugins/common.h"
-#include <stdio.h>
+#include "ControlBoardDriver.h"
+#include "common.h"
 
+#include <cstdio>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 #include <gazebo/math/Angle.hh>
 
+#include <yarp/os/LogStream.h>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
+
 
 const double RobotPositionTolerance = 0.9;
 
@@ -34,7 +37,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     std::cout<<"# Joints: "<<m_robot->GetJoints().size() <<std::endl;
     std::cout<<"# Links: "<<m_robot->GetLinks().size() <<std::endl;
 
-    this->m_robotRefreshPeriod = this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0;
+    this->m_robotRefreshPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     if (!setJointNames()) return false;
 
     m_numberOfJoints = m_jointNames.size();
@@ -116,8 +119,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             gazebo::math::Angle a;
             a.SetFromRadian(initial_config[i]);
-            std::string joint_name = m_jointNames[i];
-            m_robot->GetJoint(joint_name)->SetAngle(0,a);
+            m_jointPointers[i]->SetAngle(0,a);
         }
     }
     return true;
@@ -150,11 +152,11 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 
     // Sensing position & torque
-    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointNames.size(); jnt_cnt++) {
+    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
 //TODO: consider multi-dof joint ?
-        m_positions[jnt_cnt] = this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetAngle (0).Degree();
-        m_velocities[jnt_cnt] = GazeboYarpPlugins::convertRadiansToDegrees(this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetVelocity(0));
-        m_torques[jnt_cnt] = this->m_robot->GetJoint(m_jointNames[jnt_cnt])->GetForce(0u);
+        m_positions[jnt_cnt] = m_jointPointers[jnt_cnt]->GetAngle (0).Degree();
+        m_velocities[jnt_cnt] = GazeboYarpPlugins::convertRadiansToDegrees(m_jointPointers[jnt_cnt]->GetVelocity(0));
+        m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
 
     // Updating timestamp
@@ -198,19 +200,16 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 }
 
-void GazeboYarpControlBoardDriver::setMinMaxPos()  //NOT TESTED
+void GazeboYarpControlBoardDriver::setMinMaxPos()
 {
-    std::cout<<"Joint Limits"<<std::endl;
     for(unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_jointLimits[i].max = this->m_robot->GetJoint(m_jointNames[i])->GetUpperLimit(0).Degree();
-        m_jointLimits[i].min = this->m_robot->GetJoint(m_jointNames[i])->GetLowerLimit(0).Degree();
-        std::cout<<m_jointNames[i]<<" max_pos: "<< m_jointLimits[i].max<<" min_pos: "<< m_jointLimits[i].min <<std::endl;
+        m_jointLimits[i].max = m_jointPointers[i]->GetUpperLimit(0).Degree();
+        m_jointLimits[i].min = m_jointPointers[i]->GetLowerLimit(0).Degree();
     }
 }
 
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
-    std::cout << ".ini file found, using joint names in ini file" << std::endl;
     yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
 
     if (joint_names_bottle.isNull()) {
@@ -221,6 +220,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
     int nr_of_joints = joint_names_bottle.size()-1;
 
     m_jointNames.resize(nr_of_joints);
+    m_jointPointers.resize(nr_of_joints);
 
     const gazebo::physics::Joint_V & gazebo_models_joints = m_robot->GetJoints();
 
@@ -233,12 +233,16 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
             if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_name)) {
                 joint_found = true;
                 m_jointNames[i] = gazebo_joint_name;
+                m_jointPointers[i] = this->m_robot->GetJoint(gazebo_joint_name);
             }
         }
 
         if (!joint_found) {
-            std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error, cannot find joint " << m_jointNames[i] << std::endl;
+            yError() << "GazeboYarpControlBoardDriver::setJointNames(): cannot find joint " << m_jointNames[i]
+                     << " ( " << i << " of " << nr_of_joints << " ) " << "\n";
+            yError() << "jointNames is " << joint_names_bottle.toString() << "\n";
             m_jointNames.resize(0);
+            m_jointPointers.resize(0);
             return false;
         }
     }
@@ -375,7 +379,7 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
 {
     GazeboYarpControlBoardDriver::PID positionPID = m_positionPIDs[joint_index];
 
-    j_cmd.set_name(this->m_robot->GetJoint(m_jointNames[joint_index])->GetScopedName());
+    j_cmd.set_name(m_jointPointers[joint_index]->GetScopedName());
     j_cmd.mutable_position()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
@@ -416,7 +420,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
 {
     GazeboYarpControlBoardDriver::PID velocityPID = m_velocityPIDs[j];
 
-    j_cmd.set_name(this->m_robot->GetJoint(m_jointNames[j])->GetScopedName());
+    j_cmd.set_name(m_jointPointers[j]->GetScopedName());
 //    j_cmd.mutable_position()->set_p_gain(0.0);
 //    j_cmd.mutable_position()->set_i_gain(0.0);
 //    j_cmd.mutable_position()->set_d_gain(0.0);
@@ -453,7 +457,7 @@ bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double r
 
 void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
-    j_cmd.set_name(this->m_robot->GetJoint(m_jointNames[j])->GetScopedName());
+    j_cmd.set_name(m_jointPointers[j]->GetScopedName());
 //    j_cmd.mutable_position()->set_p_gain(0.0);
 //    j_cmd.mutable_position()->set_i_gain(0.0);
 //    j_cmd.mutable_position()->set_d_gain(0.0);

@@ -21,23 +21,41 @@ before_script:
   - sudo apt-get --force-yes install libace-dev
   - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
-  #check gazebo version
-  #- gazebo --version
+  # move to /home/travis/build/robotology/ directory
+  - cd ..
+  # install yarp
   - git clone https://github.com/robotology/yarp
   - cd yarp
   - mkdir build
   - cd build
-  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
+  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DYARP_USE_OPENCV:BOOL=OFF -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
   - make
   - sudo make install
+  - sudo ldconfig
   - cd ../..
+  # install robot-testing framework
+  - git clone https://github.com/robotology/robot-testing
+  - cd robot-testing
+  - mkdir build 
+  - cd build 
+  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
+  - make 
+  - cd ../..
+  # install icub-gazebo (for testing)
+  - git clone https://github.com/robotology-playground/icub-gazebo
+  - export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/home/travis/build/robotology/icub-gazebo
+  # compile gazebo-yarp-plugins
+  - cd gazebo-yarp-plugins
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ./..
-
+  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..
+  - pwd
 
 script: 
   - make
+  # set GAZEBO_PLUGIN_PATH for running the tests
+  - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/home/travis/build/robotology/gazebo-yarp-plugins/build
+  # test install/uninstall
   - sudo make install
   - sudo make uninstall
 

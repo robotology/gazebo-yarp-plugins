@@ -1,6 +1,5 @@
-gazebo-yarp-plugins
+gazebo-yarp-plugins [![Build Status](https://travis-ci.org/robotology/gazebo-yarp-plugins.svg?branch=master)](https://travis-ci.org/robotology/gazebo-yarp-plugins)
 ===================
-[![Build Status](https://travis-ci.org/robotology/gazebo-yarp-plugins.png)](https://travis-ci.org/robotology/gazebo-yarp-plugins)
 
 Plugins for exposing [Yarp](http://yarp.it/) interfaces on [Gazebo simulator](http://gazebosim.org/) models.
 
@@ -8,8 +7,8 @@ Installation
 ------------
 ### Dependencies
 For using Yarp with Gazebo, you shall install:
- * Gazebo simulator and its header files (at least version 1.9), following the [instructions on the official Gazebo website](http://gazebosim.org/wiki/Install).
- * Yarp (at least version 2.3.62, i.e. the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling the CREATE_SHARED_LIBRARY CMake option to compile Yarp as a shared library.
+ * Gazebo simulator and its header files (at least version 1.9), following the [instructions on the official Gazebo website](http://gazebosim.org/tutorials?cat=install).
+ * Yarp (at least version 2.3.63.2, i.e. the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources) and enabling the CREATE_SHARED_LIBRARY CMake option to compile Yarp as a shared library.
 
 **Gazebo is under active development, so it is recommended to use the latest released version of Gazebo.**
 
@@ -76,13 +75,16 @@ at which point you need to update the GAZEBO_PLUGIN_PATH accordingly, if the ins
 
 Usage
 -----
-To use the gazebo-yarp-plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently two robot support gazebo-yarp-plugins: Coman and iCub.
+To use the gazebo-yarp-plugins you can try to use a Yarp-enabled Gazebo model of a robot. Currently three humanoids robots support gazebo-yarp-plugins: Coman, iCub and Vizzy. 
 
 ### Coman
 To use Coman in Gazebo, please follow [the instructions on gazebo-yarp-plugins wiki](https://github.com/robotology/gazebo-yarp-plugins/wiki/Using-Coman-model-with-gazebo-yarp-plugins)
 
 ### iCub
 To use iCub in Gazebo, please follow [the instruction in the icub_gazebo repository](https://github.com/robotology-playground/icub_gazebo)
+
+### Vizzy
+To simulate Vizzy in Gazebo please follow [the instructions on vizzy repository https://github.com/vislab-tecnico-lisboa/vizzy].
 
 ### Arbitrary robot
 To add gazebo-yarp-plugins to another robot, please follow the instructions on [gazebo-yarp-plugins wiki](https://github.com/robotology/gazebo-yarp-plugins/wiki/Embed-gazebo-yarp-plugins-in-an-SDF-model)
@@ -103,11 +105,13 @@ Troubleshooting
 
 #### Old Gazebo Versions
 - In versions of Gazebo prior to 3.0 there is a bug related to the integral part of the low-level position controller. If you are using 
-  Gazebo 1.9 or 2.2 then the low level position control will excert no integral action on the model. If you want to get more information on
+  Gazebo 1.9 or 2.2 then the low level position control will excert no integral action on the model. If you want to get more informations on
   this bug, please check [issue 119](https://github.com/robotology/gazebo-yarp-plugins/issues/119) and [Gazebo issue 1082] (https://bitbucket.org/osrf/gazebo/issue/1082/jointcontroller-does-not-handle-correctly). 
 
 - In versions of Gazebo prior to 3.1 there is a bug related to the coordinates frame of the six axis force torque sensor measure, so you 
-  have to handle with care the force torque measurement returned by the `gazebo_yarp_forcetorque` plugin. For more information check [issue 73]( https://github.com/robotology/gazebo-yarp-plugins/issues/73). 
+  have to handle with care the force torque measurement returned by the `gazebo_yarp_forcetorque` plugin. For more informations check [issue 73]( https://github.com/robotology/gazebo-yarp-plugins/issues/73). 
+
+- In versions of Gazebo prior to 4.1 there is a bug affecting the use of `gazebo-yarp-plugins` powered model with `roslaunch` . For more informations check [issue 123](https://github.com/robotology/gazebo-yarp-plugins/issues/123) . 
 
 Design
 ------

@@ -5,9 +5,9 @@
  */
 
 
-#include "gazebo_yarp_plugins/JointSensorsDriver.h"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "JointSensorsDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 using namespace yarp::dev;
 
@@ -107,14 +107,14 @@ bool GazeboYarpJointSensorsDriver::setJointPointers(yarp::os::Property & pluginP
     std::cout << ".ini file found, using joint names in ini file" << std::endl;
     yarp::os::Bottle joint_names_bottle = pluginParameters.findGroup("jointNames");
 
-    if(joint_names_bottle.isNull()) {
+    if (joint_names_bottle.isNull()) {
         std::cout << "GazeboYarpJointSensorsDriver::setJointPointers() error: cannot find jointNames parameter." << std::endl;
         return false;
     }
     
-    jointsensors_nr_of_channels = joint_names_bottle.size()-1;
+    jointsensors_nr_of_channels = joint_names_bottle.size() - 1;
     
-    if( jointsensors_nr_of_channels == 0 ) {
+    if (jointsensors_nr_of_channels == 0) {
         std::cout << "GazeboYarpJointSensorsDriver::setJointPointers() error: no joint selected." << std::endl;
         return false;
     }
@@ -216,7 +216,7 @@ int GazeboYarpJointSensorsDriver::getChannels()
     return jointsensors_nr_of_channels;
 }
 
-int GazeboYarpJointSensorsDriver::getState(int ch)
+int GazeboYarpJointSensorsDriver::getState(int /*ch*/)
 {
     printf("getstate\n");
     return AS_OK;
@@ -227,17 +227,17 @@ int GazeboYarpJointSensorsDriver::calibrateSensor()
     return AS_OK;
 }
 
-int GazeboYarpJointSensorsDriver::calibrateSensor(const yarp::sig::Vector& value)
+int GazeboYarpJointSensorsDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
     return AS_OK;
 }
 
-int GazeboYarpJointSensorsDriver::calibrateChannel(int ch)
+int GazeboYarpJointSensorsDriver::calibrateChannel(int /*ch*/)
 {
     return AS_OK;
 }
 
-int GazeboYarpJointSensorsDriver::calibrateChannel(int ch, double v)
+int GazeboYarpJointSensorsDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
     return AS_OK;
 }

@@ -5,7 +5,8 @@
  */
 
 
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
+#include "ControlBoardDriver.h"
+
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
@@ -94,22 +95,32 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_VELOCITY
           || mode == VOCAB_CM_TORQUE
           || mode == VOCAB_CM_OPENLOOP
-          || mode == VOCAB_CM_IDLE)) {
+          || mode == VOCAB_CM_IDLE
+          || mode == VOCAB_CM_FORCE_IDLE)) {
         std::cerr << "[WARN] request control mode "
                   << yarp::os::Vocab::decode(mode) << " that is not supported by "
                   << " gazebo_yarp_controlboard plugin." << std::endl;
         return false;
     }
-
+    
+    
+    int desired_mode = mode;
+    
+    // Convert VOCAB_CM_FORCE_IDLE (that as a special meaning in real robots 
+    //   subjects to hardware fault) to VOCAB_CM_IDLE
+    // This is necessary for having a working "idle" button in the robotMotorGui
+    if (mode == VOCAB_CM_FORCE_IDLE) {
+        desired_mode = VOCAB_CM_IDLE;
+    }
     // If the joint is already in the selected control mode
     // don't perform switch specific actions
-    if (m_controlMode[j] == mode) return true;
+    if (m_controlMode[j] == desired_mode) return true;
 
     prepareResetJointMsg(j);
-    m_controlMode[j] = mode;
+    m_controlMode[j] = desired_mode;
 
     // mode specific switching actions
-    switch (mode) {
+    switch (desired_mode) {
         case VOCAB_CM_POSITION :
         case VOCAB_CM_POSITION_DIRECT :
             m_referencePositions[j] = m_positions[j];

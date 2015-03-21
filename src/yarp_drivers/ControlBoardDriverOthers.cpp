@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "gazebo_yarp_plugins/ControlBoardDriver.h"
+#include "ControlBoardDriver.h"
 
 using namespace yarp::dev;
 
@@ -77,6 +77,13 @@ bool GazeboYarpControlBoardDriver::getCurrents(double *vals) //NOT IMPLEMENTED
 
 bool GazeboYarpControlBoardDriver::setMaxCurrent(int, double) //NOT IMPLEMENTED
 {
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::getMaxCurrent(int j, double *v) //NOT IMPLEMENTED
+{
+    if (!v) return false;
+    *v = 0;
     return true;
 }
 

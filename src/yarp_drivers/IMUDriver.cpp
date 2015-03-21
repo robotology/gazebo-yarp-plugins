@@ -5,17 +5,16 @@
  */
 
 
-#include "gazebo_yarp_plugins/IMUDriver.h"
-
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "IMUDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ImuSensor.hh>
 
 using namespace yarp::dev;
 
-const int YarpIMUChannelsNumber = 12; //The IMU has 12 fixed channels
+const unsigned YarpIMUChannelsNumber = 12; //The IMU has 12 fixed channels
 const std::string YarpIMUScopedName = "sensorScopedName";
 
 GazeboYarpIMUDriver::GazeboYarpIMUDriver() {}
@@ -46,19 +45,17 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
     /** \todo TODO ensure that the timestamp is the right one */
     m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
     
-    int i=0;
-    
     m_dataMutex.wait();
     
-    for (i = 0; i < 3; i++) {
+    for (unsigned i = 0; i < 3; i++) {
         m_imuData[0 + i] = GazeboYarpPlugins::convertRadiansToDegrees(euler_orientation[i]);
     }
     
-    for (i = 0; i < 3; i++) {
+    for (unsigned i = 0; i < 3; i++) {
         m_imuData[3 + i] = linear_acceleration[i];
     }
     
-    for (i = 0; i < 3; i++) {
+    for (unsigned i = 0; i < 3; i++) {
         m_imuData[6 + i] = GazeboYarpPlugins::convertRadiansToDegrees(angular_velocity[i]);
     }
     
@@ -77,7 +74,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName(config.find(YarpIMUScopedName.c_str()).asString().c_str());
     std::cout << "GazeboYarpIMUDriver is looking for sensor " << sensorScopedName << "..." << std::endl;
     
-    m_parentSensor = (gazebo::sensors::ImuSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
+    m_parentSensor = dynamic_cast<gazebo::sensors::ImuSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     
     if (!m_parentSensor) {
         std::cout << "GazeboYarpIMUDriver Error: IMU sensor was not found" << std::endl;
@@ -102,11 +99,11 @@ bool GazeboYarpIMUDriver::close()
 //GENERIC SENSOR
 bool GazeboYarpIMUDriver::read(yarp::sig::Vector &out)
 {    
-    if ((int)m_imuData.size() != YarpIMUChannelsNumber ) {
+    if (m_imuData.size() != YarpIMUChannelsNumber ) {
         return false;
     }
     
-    //< \todo TODO this should be avoided by properly modifyng the wrapper
+    ///< \todo TODO this should be avoided by properly modifyng the wrapper
     if (out.size() != m_imuData.size()) {
         out.resize(m_imuData.size());
     }
@@ -125,7 +122,7 @@ bool GazeboYarpIMUDriver::getChannels(int *nc)
     return true;
 }
 
-bool GazeboYarpIMUDriver::calibrate(int ch, double v)
+bool GazeboYarpIMUDriver::calibrate(int /*ch*/, double /*v*/)
 {
     return true; //Calibration is not needed in simulation
 }

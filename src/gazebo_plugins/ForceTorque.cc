@@ -5,21 +5,22 @@
  */
 
 
-#include "gazebo_yarp_plugins/ForceTorque.hh"
-#include "gazebo_yarp_plugins/ForceTorqueDriver.h"
-#include "gazebo_yarp_plugins/Handler.hh"
-#include "gazebo_yarp_plugins/common.h"
+#include "ForceTorque.hh"
+#include "ForceTorqueDriver.h"
+#include "Handler.hh"
+#include "common.h"
 
 #include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/os/Network.h>
 
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpForceTorque)
 
 namespace gazebo {
 
-GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), m_yarp(), m_iWrap(0)
+GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), m_iWrap(0)
 {
 }
 
@@ -30,11 +31,13 @@ GazeboYarpForceTorque::~GazeboYarpForceTorque()
     if( m_forcetorqueWrapper.isValid() ) m_forcetorqueWrapper.close();
     if( m_forceTorqueDriver.isValid() ) m_forceTorqueDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
+    yarp::os::Network::fini();
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
+    yarp::os::Network::init();
+    if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
        std::cerr << "GazeboYarpForceTorque::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
        return;
     }

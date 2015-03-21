@@ -159,7 +159,6 @@ install(TARGETS gazebo_yarp_singleton
                 gazebo_yarp_externalwrench
                 gazebo_yarp_showmodelcom
                 gazebo_yarp_camera
-                gazebo_yarp_showmodelcom
                 DESTINATION lib)
 
 # Add uninstall target

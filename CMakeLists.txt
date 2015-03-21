@@ -166,7 +166,6 @@ set(camera_headers          include/gazebo_yarp_plugins/Camera.hh
                             include/gazebo_yarp_plugins/CameraDriver.h)
 set(camera_source           src/gazebo_plugins/Camera.cc
                             src/yarp_drivers/CameraDriver.cpp)
-
 SOURCE_GROUP("Source Files" FILES ${camera_source})
 SOURCE_GROUP("Header Files" FILES ${camera_headers})
 
@@ -175,6 +174,19 @@ target_link_libraries(gazebo_yarp_camera gazebo_yarp_singleton ${YARP_LIBRARIES}
 
 # Add install target
 install(TARGETS gazebo_yarp_camera
+                DESTINATION lib)
+
+set(showmodelcom_source   src/gazebo_plugins/ShowModelCoM.cc)
+set(showmodelcom_headers  include/gazebo_yarp_plugins/ShowModelCoM.hh)
+
+SOURCE_GROUP("Source Files" FILES ${showmodelcom_source})
+SOURCE_GROUP("Header Files" FILES ${showmodelcom_headers})
+
+add_library(gazebo_yarp_showmodelcom SHARED ${showmodelcom_source}       ${showmodelcom_headers})
+target_link_libraries(gazebo_yarp_showmodelcom gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
+# Add install target
+install(TARGETS gazebo_yarp_showmodelcom
                 DESTINATION lib)
 
 # Add uninstall target

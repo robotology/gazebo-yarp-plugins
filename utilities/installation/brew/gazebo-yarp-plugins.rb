@@ -35,25 +35,30 @@ class GazeboYarpPlugins < Formula
 
   ## Dependencies
   depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
   depends_on "yarp" => :recommended
   depends_on "gazebo5"
 
   # Additional downloads can be defined as resources and accessed in the
   # install method. Resources can also be defined inside a stable, devel, or
   # head block. This mechanism replaces ad-hoc "subformula" classes.
-  resource "iCub_models" do
-    url "https://github.com/robotology-playground/icub-gazebo.git", :using => :git
-#    sha1 "deadbeef7890123456789012345678901234567890"
-  end
+#   resource "iCub_models" do
+#     url "https://github.com/robotology-playground/icub-gazebo.git", :using => :git
+# #    sha1 "deadbeef7890123456789012345678901234567890"
+#   end
   ## The install method.
 
   def install
     # Now the sources (from `url`) are downloaded, hash-checked and
     # Homebrew has changed into a temporary directory where the
     # archive has been unpacked or the repository has been cloned.
-  
+
     # For Cmake, we have some necessary defaults in `std_cmake_args`:
-    system "cmake", ".", *std_cmake_args
+    mkdir "build" do
+      system "cmake", "..", *std_cmake_args
+      system "make", "install"
+    end
+
 
     # If the arguments given to configure (or make or cmake) are depending
     # on options defined above, we usually make a list first and then
@@ -75,8 +80,7 @@ class GazeboYarpPlugins < Formula
     # A general note: The commands here are executed line by line, so if
     # you change some variable or call a method like ENV.deparallelize, it
     # only affects the lines after that command.
-    
-    system "make", "install"
+
 
     # We are in a temporary directory and don't have to care about cleanup.
 

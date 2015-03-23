@@ -1,60 +1,78 @@
+/*
+ * Copyright (C) 2013-2015 Istituto Italiano di Tecnologia RBCS & ADVR & iCub Facility
+ * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 #ifndef SHOWMODELCOM_HH
 #define SHOWMODELCOM_HH
 
 #include <iostream>
 #include <string>
 #include <gazebo/common/Plugin.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
-
-#include <yarp/os/Network.h>
-#include <yarp/os/RpcServer.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/sig/Vector.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Vocab.h>
+#include <gazebo/msgs/msgs.hh>
 
 namespace gazebo
 {
-class ShowModelCoM : public ModelPlugin
-{
-private:
-  transport::NodePtr m_node;
+    class ShowModelCoM;
 
-public:
-    ShowModelCoM();
-    virtual ~ShowModelCoM();
-    std::string retrieveSubscope(gazebo::physics::Link_V& v, std::string  scope);
+    namespace transport {
+        class Publisher;
+        typedef boost::shared_ptr<Publisher> PublisherPtr;
+        class Node;
+        typedef boost::shared_ptr<Node> NodePtr;
+    }
 
-    /// \brief Robot name that will be used to open rpc port
-    std::string          robotName;
-    double               timeIni;
+    namespace Physics {
+        class Model;
+        typedef boost::shared_ptr<Model> ModelPtr;
+    }
+    namespace event {
+        class Connection;
+        typedef boost::shared_ptr<Connection> ConnectionPtr;
+    }
 
-protected:
-    // Inherited
-    void Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf );
-    // Inherited
-    virtual void UpdateChild();
+    namespace msgs {
+        class Visual;
+    }
+}
 
+namespace yarp {
+    namespace os {
+        class Bottle;
 
-private:
-    yarp::os::Network       m_yarpNet;
-
-    physics::ModelPtr       m_myModel;
-
-    std::string             m_modelScope;
-    event::ConnectionPtr    m_updateConnection;
-
-    transport::PublisherPtr m_visPub;
-    msgs::Visual            m_visualMsg;
-
-    yarp::os::Port          m_com_port;
-
-};
-
+        template <class T>
+        class BufferedPort;
+    }
 }
 
 
+class gazebo::ShowModelCoM : public gazebo::ModelPlugin
+{
+public:
+    ShowModelCoM();
+    virtual ~ShowModelCoM();
+
+    std::string retrieveSubscope(gazebo::physics::Link_V& v, std::string  scope);
+
+protected:
+    // Inherited
+    void Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf);
+    // Inherited
+    virtual void UpdateChild();
+
+private:
+    gazebo::transport::NodePtr m_node;
+
+    gazebo::physics::ModelPtr       m_myModel;
+
+    std::string             m_modelScope;
+    gazebo::event::ConnectionPtr    m_updateConnection;
+
+    gazebo::transport::PublisherPtr m_visPub;
+    gazebo::msgs::Visual            m_visualMsg;
+
+    yarp::os::BufferedPort<yarp::os::Bottle> *m_comOutputPort;
+    
+};
 
 #endif

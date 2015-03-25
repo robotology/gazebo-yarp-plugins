@@ -85,6 +85,18 @@ void GazeboYarpObjects::cleanup()
     }
 }
 
+bool GazeboYarpObjects::deleteObject(const std::string& object_name)
+{
+    if (m_world->GetModel(object_name)!=NULL)
+    {
+        m_world->RemoveModel(object_name);
+        return true;
+    }
+    else
+        return false;
+}
+
+
 bool gazebo::GazeboYarpObjects::createSphere(const std::string& name, const double radius, const double mass)
 {
     /** Remove collision to facilitate hand:
@@ -136,6 +148,7 @@ bool gazebo::GazeboYarpObjects::createSphere(const std::string& name, const doub
 
 bool hasEnding (std::string const &fullString, std::string const &ending)
 {
+    std::cout<<fullString<<" "<<ending<<std::endl;
     if (fullString.length() >= ending.length()) {
         return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
     } else {
@@ -149,6 +162,7 @@ gazebo::physics::LinkPtr getLinkInModel(gazebo::physics::ModelPtr model, std::st
     for(int i=0; i < model_links.size(); i++ ) {
         std::string candidate_link = model_links[i]->GetScopedName();
         
+//         std::cout<<candidate_link<<std::endl;
         if( hasEnding(candidate_link,"::"+link_name) ) {
             return model_links[i];
         }
@@ -161,15 +175,17 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
 {
     physics::JointPtr joint;
     joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", m_model);
-
     if( !joint ) {
+        std::cout<<"could not create joint!!"<<std::endl;
         return false;
     }
-
+    joint->SetName(object_name+"_attached_joint");
+    joints_attached[object_name+"_attached_joint"]=joint;
     physics::ModelPtr object_model = m_world->GetModel(object_name);
 
     if( !object_model )
     {
+        std::cout<<"could not get the model for "<<object_name<<"!!"<<std::endl;
         return false;
     }
 
@@ -178,6 +194,7 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
 
     if( !object_link ||
         !parent_link ) {
+        std::cout<<"could not get the links for "<<object_link<<" and "<<parent_link<<std::endl;
         return false;
     }
 
@@ -193,5 +210,20 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
 
     return true;
 }
+
+bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
+{
+    physics::JointPtr joint;
+    joint=joints_attached[object_name+"_attached_joint"];
+
+    if( !joint ) {
+        return false;
+    }
+
+    //TODO add mutex
+    joint->Detach();
+    return true;
+}
+
 
 }

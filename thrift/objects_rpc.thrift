@@ -17,4 +17,18 @@ service ObjectsServer {
      */
     bool attach(1:string link_name, 2:string object_name);
 
+        /**
+     * Deletes an object in simulation
+     * @param name Name of the object
+     * @return true if success, false otherwise
+     */
+    bool deleteObject(1:string name);
+
+    /**
+     * Detaches an object to a link of the robot.
+     * @param object_name Name of the object
+     * @return true if success, false otherwise
+     */
+    bool detach(1:string object_name);
+
 }

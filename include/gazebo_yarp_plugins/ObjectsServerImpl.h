@@ -27,7 +27,18 @@ public:
     * @return true if success, false otherwise
     */
     virtual bool attach(const std::string& link_name, const std::string& object_name);
-
+    /**
+     * Deletes an object in simulation
+     * @param name Name of the object
+     * @return true if success, false otherwise
+     */
+    virtual bool deleteObject(const std::string& name);
+    /**
+     * Detach an object from the links it was attached to
+     * @param object_name Name of the object
+     * @return true if success, false otherwise
+     */
+    virtual bool detach(const std::string& object_name);
 private:
 
     GazeboYarpObjects& m_objects;

@@ -9,6 +9,7 @@
 
 #include <gazebo/common/Plugin.hh>
 #include <yarp/os/Network.h>
+#include <gazebo-4.1/gazebo/physics/PhysicsTypes.hh>
 
 namespace yarp {
     namespace os {
@@ -36,6 +37,10 @@ namespace gazebo
 
         virtual bool attach(const std::string& link_name, const std::string& object_name);
 
+        virtual bool deleteObject(const std::string& name);
+
+        virtual bool detach(const std::string& object_name);
+
     private:
         void cleanup();
 
@@ -50,6 +55,7 @@ namespace gazebo
         //RPC variables
         yarp::os::Port *m_rpcPort;
         ObjectsServer *m_clockServer;
+        std::map<std::string, physics::JointPtr> joints_attached;
 
     };
 }

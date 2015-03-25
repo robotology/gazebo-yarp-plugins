@@ -147,7 +147,8 @@ gazebo::physics::LinkPtr getLinkInModel(gazebo::physics::ModelPtr model, std::st
 {
     gazebo::physics::Link_V model_links = model->GetLinks();
     for(int i=0; i < model_links.size(); i++ ) {
-        std::string candidate_link = model_links[i]->GetName();
+        std::string candidate_link = model_links[i]->GetScopedName();
+        
         if( hasEnding(candidate_link,"::"+link_name) ) {
             return model_links[i];
         }

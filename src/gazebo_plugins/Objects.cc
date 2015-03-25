@@ -106,6 +106,12 @@ bool gazebo::GazeboYarpObjects::createSphere(const std::string& name, const doub
                   <sphere><radius>"<< radius << "</radius></sphere>\
                 </geometry>\
               </visual>\
+              <material>\
+              <script>\
+              <uri>file://media/materials/scripts/gazebo.material</uri>\
+              <name>Gazebo/Grey</name>\
+              </script>\
+              </material>\
                <inertial>\
                  <pose>0 0 0 0 0 0</pose>\
                  <mass>" << mass << "</mass>\

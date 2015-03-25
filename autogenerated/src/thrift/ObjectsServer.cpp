@@ -13,9 +13,24 @@ public:
   double radius;
   double mass;
   bool _return;
-  void init(const std::string& name, const double radius, const double mass);
-  virtual bool write(yarp::os::ConnectionWriter& connection);
-  virtual bool read(yarp::os::ConnectionReader& connection);
+  virtual bool write(yarp::os::ConnectionWriter& connection) {
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(4)) return false;
+    if (!writer.writeTag("createSphere",1,1)) return false;
+    if (!writer.writeString(name)) return false;
+    if (!writer.writeDouble(radius)) return false;
+    if (!writer.writeDouble(mass)) return false;
+    return true;
+  }
+  virtual bool read(yarp::os::ConnectionReader& connection) {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) return false;
+    if (!reader.readBool(_return)) {
+      reader.fail();
+      return false;
+    }
+    return true;
+  }
 };
 
 class ObjectsServer_attach : public yarp::os::Portable {
@@ -23,70 +38,75 @@ public:
   std::string link_name;
   std::string object_name;
   bool _return;
-  void init(const std::string& link_name, const std::string& object_name);
-  virtual bool write(yarp::os::ConnectionWriter& connection);
-  virtual bool read(yarp::os::ConnectionReader& connection);
+  virtual bool write(yarp::os::ConnectionWriter& connection) {
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeTag("attach",1,1)) return false;
+    if (!writer.writeString(link_name)) return false;
+    if (!writer.writeString(object_name)) return false;
+    return true;
+  }
+  virtual bool read(yarp::os::ConnectionReader& connection) {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) return false;
+    if (!reader.readBool(_return)) {
+      reader.fail();
+      return false;
+    }
+    return true;
+  }
 };
 
-bool ObjectsServer_createSphere::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(4)) return false;
-  if (!writer.writeTag("createSphere",1,1)) return false;
-  if (!writer.writeString(name)) return false;
-  if (!writer.writeDouble(radius)) return false;
-  if (!writer.writeDouble(mass)) return false;
-  return true;
-}
-
-bool ObjectsServer_createSphere::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
+class ObjectsServer_deleteObject : public yarp::os::Portable {
+public:
+  std::string name;
+  bool _return;
+  virtual bool write(yarp::os::ConnectionWriter& connection) {
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(2)) return false;
+    if (!writer.writeTag("deleteObject",1,1)) return false;
+    if (!writer.writeString(name)) return false;
+    return true;
   }
-  return true;
-}
-
-void ObjectsServer_createSphere::init(const std::string& name, const double radius, const double mass) {
-  _return = false;
-  this->name = name;
-  this->radius = radius;
-  this->mass = mass;
-}
-
-bool ObjectsServer_attach::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(3)) return false;
-  if (!writer.writeTag("attach",1,1)) return false;
-  if (!writer.writeString(link_name)) return false;
-  if (!writer.writeString(object_name)) return false;
-  return true;
-}
-
-bool ObjectsServer_attach::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
+  virtual bool read(yarp::os::ConnectionReader& connection) {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) return false;
+    if (!reader.readBool(_return)) {
+      reader.fail();
+      return false;
+    }
+    return true;
   }
-  return true;
-}
+};
 
-void ObjectsServer_attach::init(const std::string& link_name, const std::string& object_name) {
-  _return = false;
-  this->link_name = link_name;
-  this->object_name = object_name;
-}
+class ObjectsServer_detach : public yarp::os::Portable {
+public:
+  std::string object_name;
+  bool _return;
+  virtual bool write(yarp::os::ConnectionWriter& connection) {
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(2)) return false;
+    if (!writer.writeTag("detach",1,1)) return false;
+    if (!writer.writeString(object_name)) return false;
+    return true;
+  }
+  virtual bool read(yarp::os::ConnectionReader& connection) {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) return false;
+    if (!reader.readBool(_return)) {
+      reader.fail();
+      return false;
+    }
+    return true;
+  }
+};
 
-ObjectsServer::ObjectsServer() {
-  yarp().setOwner(*this);
-}
 bool ObjectsServer::createSphere(const std::string& name, const double radius, const double mass) {
   bool _return = false;
   ObjectsServer_createSphere helper;
-  helper.init(name,radius,mass);
+  helper.name = name;
+  helper.radius = radius;
+  helper.mass = mass;
   if (!yarp().canWrite()) {
     fprintf(stderr,"Missing server method '%s'?\n","bool ObjectsServer::createSphere(const std::string& name, const double radius, const double mass)");
   }
@@ -96,9 +116,30 @@ bool ObjectsServer::createSphere(const std::string& name, const double radius, c
 bool ObjectsServer::attach(const std::string& link_name, const std::string& object_name) {
   bool _return = false;
   ObjectsServer_attach helper;
-  helper.init(link_name,object_name);
+  helper.link_name = link_name;
+  helper.object_name = object_name;
   if (!yarp().canWrite()) {
     fprintf(stderr,"Missing server method '%s'?\n","bool ObjectsServer::attach(const std::string& link_name, const std::string& object_name)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool ObjectsServer::deleteObject(const std::string& name) {
+  bool _return = false;
+  ObjectsServer_deleteObject helper;
+  helper.name = name;
+  if (!yarp().canWrite()) {
+    fprintf(stderr,"Missing server method '%s'?\n","bool ObjectsServer::deleteObject(const std::string& name)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool ObjectsServer::detach(const std::string& object_name) {
+  bool _return = false;
+  ObjectsServer_detach helper;
+  helper.object_name = object_name;
+  if (!yarp().canWrite()) {
+    fprintf(stderr,"Missing server method '%s'?\n","bool ObjectsServer::detach(const std::string& object_name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -109,8 +150,6 @@ bool ObjectsServer::read(yarp::os::ConnectionReader& connection) {
   reader.expectAccept();
   if (!reader.readListHeader()) { reader.fail(); return false; }
   yarp::os::ConstString tag = reader.readTag();
-  bool direct = (tag=="__direct__");
-  if (direct) tag = reader.readTag();
   while (!reader.isError()) {
     // TODO: use quick lookup, this is just a test
     if (tag == "createSphere") {
@@ -160,6 +199,38 @@ bool ObjectsServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "deleteObject") {
+      std::string name;
+      if (!reader.readString(name)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = deleteObject(name);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "detach") {
+      std::string object_name;
+      if (!reader.readString(object_name)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = detach(object_name);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "help") {
       std::string functionName;
       if (!reader.readString(functionName)) {
@@ -196,6 +267,8 @@ std::vector<std::string> ObjectsServer::help(const std::string& functionName) {
     helpString.push_back("*** Available commands:");
     helpString.push_back("createSphere");
     helpString.push_back("attach");
+    helpString.push_back("deleteObject");
+    helpString.push_back("detach");
     helpString.push_back("help");
   }
   else {
@@ -208,6 +281,18 @@ std::vector<std::string> ObjectsServer::help(const std::string& functionName) {
       helpString.push_back("bool attach(const std::string& link_name, const std::string& object_name) ");
       helpString.push_back("Get attach an object to a link of the robot. ");
       helpString.push_back("@param link_name Name of the link ");
+      helpString.push_back("@param object_name Name of the object ");
+      helpString.push_back("@return true if success, false otherwise ");
+    }
+    if (functionName=="deleteObject") {
+      helpString.push_back("bool deleteObject(const std::string& name) ");
+      helpString.push_back("Deletes an object in simulation ");
+      helpString.push_back("@param name Name of the object ");
+      helpString.push_back("@return true if success, false otherwise ");
+    }
+    if (functionName=="detach") {
+      helpString.push_back("bool detach(const std::string& object_name) ");
+      helpString.push_back("Detaches an object to a link of the robot. ");
       helpString.push_back("@param object_name Name of the object ");
       helpString.push_back("@return true if success, false otherwise ");
     }

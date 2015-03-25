@@ -14,7 +14,7 @@ namespace gazebo {
 
 class gazebo::ObjectsServer : public yarp::os::Wire {
 public:
-  ObjectsServer();
+  ObjectsServer() { yarp().setOwner(*this); }
   /**
    * Create a sphere in simulation
    * @return true if success, false otherwise
@@ -27,6 +27,18 @@ public:
    * @return true if success, false otherwise
    */
   virtual bool attach(const std::string& link_name, const std::string& object_name);
+  /**
+   * Deletes an object in simulation
+   * @param name Name of the object
+   * @return true if success, false otherwise
+   */
+  virtual bool deleteObject(const std::string& name);
+  /**
+   * Detaches an object to a link of the robot.
+   * @param object_name Name of the object
+   * @return true if success, false otherwise
+   */
+  virtual bool detach(const std::string& object_name);
   virtual bool read(yarp::os::ConnectionReader& connection);
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };

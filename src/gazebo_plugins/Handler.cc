@@ -20,11 +20,12 @@ yarp::os::Semaphore& Handler::mutex()
     static yarp::os::Semaphore s_mutex(1);
     return s_mutex;
 }
-    
-Handler::Handler()
+
+Handler::Handler() : m_robotMap(), m_sensorsMap(), m_devicesMap()
 {
     m_robotMap.clear();
     m_sensorsMap.clear();
+    m_devicesMap.clear();
 }
 
 Handler* Handler::getHandler()
@@ -159,4 +160,68 @@ void Handler::removeSensor(const std::string& sensorName)
         std::cout << "Could not remove sensor " << sensorName << ". Sensor was not found" << std::endl;
     }
 }
+
+bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2add)
+{
+    bool ret = false;
+    DevicesMap::iterator device = m_devicesMap.find(deviceName);
+    if (device != m_devicesMap.end()) {
+        //device already exists. Increment reference counting
+        if(device->second.object() == device2add)
+        {
+            device->second.incrementCount();
+            std::cout << "Device already registered, pointers match." << std::endl;
+            ret = true;
+        }
+        else
+        {
+            std::cout << " Error in GazeboYarpPlugins::Handler while inserting a new yarp device pointer!" << std::endl;
+            std::cout << " The name of the device is already present but the pointer does not match with the one already registered!" << std::endl;
+            std::cout << " This should not happen, check the names are correct in your config file. Fatal error." << std::endl;
+        }
+    } else {
+        //device does not exists. Add to map
+        ReferenceCountingDevice countedDevice(device2add);
+        if (!m_devicesMap.insert(std::pair<std::string, ReferenceCountingDevice>(deviceName, countedDevice)).second) {
+            std::cout << " Error in GazeboYarpPlugins::Handler while inserting a new device pointer!" << std::endl;
+            ret = false;
+        } else {
+            ret = true;
+            std::cout << "Singleton: Added a new device " << deviceName << "." << std::endl;
+        }
+    }
+    return ret;
+}
+
+yarp::dev::PolyDriver* Handler::getDevice(const std::string& deviceName) const
+{
+    yarp::dev::PolyDriver* tmp = NULL;
+    std::cout << "Looking for device : " << deviceName << std::endl;
+
+    DevicesMap::const_iterator device = m_devicesMap.find(deviceName);
+    if (device != m_devicesMap.end()) {
+        std::cout << "Device " << deviceName << " was happily found!" << std::endl;
+        tmp = device->second.object();
+    } else {
+        std::cout << "Device was not found: " << deviceName << std::endl;
+        tmp = NULL;
+    }
+    return tmp;
+}
+
+void Handler::removeDevice(const std::string& deviceName)
+{
+    DevicesMap::iterator device = m_devicesMap.find(deviceName);
+    if (device != m_devicesMap.end()) {
+        device->second.decrementCount();
+        if (!device->second.count()) {
+            std::cout << "Removing device " << deviceName << std::endl;
+            m_devicesMap.erase(device);
+        }
+    } else {
+        std::cout << "Could not remove sensor " << deviceName << ". Sensor was not found" << std::endl;
+    }
+    return;
+}
+
 }

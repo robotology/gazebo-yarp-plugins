@@ -19,8 +19,8 @@ namespace gazebo
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
-    GazeboYarpControlBoard::GazeboYarpControlBoard()
-    : m_iWrap(0) {}
+    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(0), m_controlBoard(NULL)
+    {}
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
@@ -30,8 +30,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
         if (m_wrapper.isValid())
             m_wrapper.close();
-        if (m_controlBoard.isValid())
-            m_controlBoard.close();
+
+        if(m_controlBoard != NULL)
+        {
+            if (m_controlBoard->isValid())
+                m_controlBoard->close();
+            delete m_controlBoard;
+        }
+
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
         yarp::os::Network::fini();
         std::cout<<"Goodbye!"<<std::endl;
@@ -117,40 +123,59 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         for (int n = 0; n < netList->size(); n++)
         {
             yarp::os::ConstString driverName( netList->get(n).asString().c_str());
+            m_controlBoard = GazeboYarpPlugins::Handler::getHandler()->getDevice(driverName);
 
-            driver_group = m_parameters.findGroup(driverName.c_str());
-            if (driver_group.isNull()) {
-                printf("GazeboYarpControlBoard::Load  Error: [%s] group not found in config file\n", driverName.c_str());
-                return;
+            if(m_controlBoard != NULL)
+            {
+                // device already exists, use it, so skip everything and go to the push
             }
-
-            m_parameters.put("name", driverName.c_str());
-            m_parameters.fromString(driver_group.toString(), false);
-            m_parameters.put("robotScopedName", m_robotName);
-            std::cout << "GazeboYarpControlBoard: setting robotScopedName " << m_robotName << std::endl;
-             //std::cout << "before open: params are " << m_parameters.toString() << std::endl;
-
-            if (_sdf->HasElement("initialConfiguration")) {
-                //std::cout<<"Found initial Configuration: "<<std::endl;
-                std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
-                m_parameters.put("initialConfiguration", configuration_s.c_str());
-                //std::cout<<configuration_s<<std::endl;
-            }
-            m_controlBoard.open(m_parameters);
-
-            if (!m_controlBoard.isValid())
-                fprintf(stderr, "controlBoard did not open\n");
             else
-                printf("controlBoard opened correctly\n");
+            {
+                driver_group = m_parameters.findGroup(driverName.c_str());
+                if (driver_group.isNull()) {
+                    fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", driverName.c_str());
+                    m_wrapper.close();
+                    return;
+                }
 
-            p.push(&m_controlBoard, netList->get(n).asString().c_str());
+                m_parameters.put("name", driverName.c_str());
+                m_parameters.fromString(driver_group.toString(), false);
+                m_parameters.put("robotScopedName", m_robotName);
+                std::cout << "GazeboYarpControlBoard: setting robotScopedName " << m_robotName << std::endl;
+                 //std::cout << "before open: params are " << m_parameters.toString() << std::endl;
+
+                if (_sdf->HasElement("initialConfiguration")) {
+                    //std::cout<<"Found initial Configuration: "<<std::endl;
+                    std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
+                    m_parameters.put("initialConfiguration", configuration_s.c_str());
+                    //std::cout<<configuration_s<<std::endl;
+                }
+
+                m_controlBoard = new yarp::dev::PolyDriver;
+                if(!m_controlBoard->open(m_parameters) || !m_controlBoard->isValid())
+                {
+                    std::cerr << "controlBoard <" << driverName << "> did not open!!";
+                    for(int idx=0; idx<p.size(); idx++)
+                    {
+                        p[idx]->poly->close();
+                    }
+                    m_wrapper.close();
+                    return;
+                }
+                else
+                {
+                    printf("controlBoard %s opened correctly\n", driverName.c_str());
+                    GazeboYarpPlugins::Handler::getHandler()->setDevice(driverName, m_controlBoard);
+                }
+            }
+            p.push(m_controlBoard, netList->get(n).asString().c_str());
         }
 
         if (!m_iWrap || !m_iWrap->attachAll(p))
         {
             printf("GazeboYarpControlBoard: Error while attaching wrapper to device\n");
             m_wrapper.close();
-            m_controlBoard.close();
+            m_controlBoard->close();
             return;
         }
 

@@ -50,7 +50,7 @@ private:
 
     yarp::dev::PolyDriver m_wrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
-    yarp::dev::PolyDriver m_controlBoard;
+    yarp::dev::PolyDriver * m_controlBoard;
     yarp::os::Property m_parameters;
 
     std::string m_robotName;

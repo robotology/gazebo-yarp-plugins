@@ -196,8 +196,7 @@ gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, 
 }
 
 bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::string& object_name)
-{    std::cout<<"called"<<std::endl;
-    
+{
     if (joints_attached.count(object_name+"_attached_joint"))
     {
         std::cout<<"objects is already attached!!"<<std::endl;
@@ -246,8 +245,7 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
 }
 
 bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
-{    std::cout<<"called"<<std::endl;
-
+{
     physics::JointPtr joint;
     if (joints_attached.count(object_name+"_attached_joint"))
     {

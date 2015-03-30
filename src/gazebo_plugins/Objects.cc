@@ -172,22 +172,27 @@ gazebo::physics::LinkPtr getLinkInModel(gazebo::physics::ModelPtr model, std::st
 }
 
 gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, gazebo::math::Pose pose)
-{    std::cout<<"called"<<std::endl;
-    
+{
+    int index=-1;
+    double min_norm=100000;
     gazebo::physics::Link_V model_links = model->GetLinks();
     for(int i=0; i < model_links.size(); i++ ) 
     {
         std::string candidate_link = model_links[i]->GetScopedName();
         std::cout<<candidate_link<<std::endl;
         double norm = pose.pos.Distance(model_links[i]->GetWorldPose().pos);
-        if (norm<0.15)
+        if (norm<0.15 && norm<min_norm)
         {
+            double min_norm = norm;
+            index = i;
             //         std::string candidate_link = model_links[i]->GetScopedName();
             //         std::cout<<candidate_link<<std::endl;
-            return model_links[i];
         }
     }
-    return gazebo::physics::LinkPtr();
+    if (index>-1)
+        return model_links[index];
+    else
+        return gazebo::physics::LinkPtr();
 }
 
 bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::string& object_name)

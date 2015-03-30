@@ -171,16 +171,33 @@ gazebo::physics::LinkPtr getLinkInModel(gazebo::physics::ModelPtr model, std::st
     return gazebo::physics::LinkPtr();
 }
 
+gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, gazebo::math::Pose pose)
+{    std::cout<<"called"<<std::endl;
+    
+    gazebo::physics::Link_V model_links = model->GetLinks();
+    for(int i=0; i < model_links.size(); i++ ) 
+    {
+        std::string candidate_link = model_links[i]->GetScopedName();
+        std::cout<<candidate_link<<std::endl;
+        double norm = pose.pos.Distance(model_links[i]->GetWorldPose().pos);
+        if (norm<0.15)
+        {
+            //         std::string candidate_link = model_links[i]->GetScopedName();
+            //         std::cout<<candidate_link<<std::endl;
+            return model_links[i];
+        }
+    }
+    return gazebo::physics::LinkPtr();
+}
+
 bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::string& object_name)
-{
-    physics::JointPtr joint;
-    joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", m_model);
-    if( !joint ) {
-        std::cout<<"could not create joint!!"<<std::endl;
+{    std::cout<<"called"<<std::endl;
+    
+    if (joints_attached.count(object_name+"_attached_joint"))
+    {
+        std::cout<<"objects is already attached!!"<<std::endl;
         return false;
     }
-    joint->SetName(object_name+"_attached_joint");
-    joints_attached[object_name+"_attached_joint"]=joint;
     physics::ModelPtr object_model = m_world->GetModel(object_name);
 
     if( !object_model )
@@ -189,12 +206,16 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
         return false;
     }
 
-    physics::LinkPtr object_link = object_model->GetLink();
     physics::LinkPtr parent_link = getLinkInModel(m_model,link_name);
 
-    if( !object_link ||
-        !parent_link ) {
-        std::cout<<"could not get the links for "<<object_link<<" and "<<parent_link<<std::endl;
+    if( !parent_link ) {
+        std::cout<<"could not get the links for "<<parent_link<<std::endl;
+        return false;
+    }
+
+    physics::LinkPtr object_link = getClosestLinkInModel(object_model,parent_link->GetWorldCoGPose());
+    if( !object_link ) {
+        std::cout<<"could not get a link close enough (<5cm) to "<<parent_link<<" for object "<<object_name<<std::endl;
         return false;
     }
 
@@ -202,6 +223,14 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
     object_link->SetWorldPose(parent_link_pose);
 
     //TODO add mutex
+    physics::JointPtr joint;
+    joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", m_model);
+    if( !joint ) {
+        std::cout<<"could not create joint!!"<<std::endl;
+        return false;
+    }
+    joint->SetName(object_name+"_attached_joint");
+    joints_attached[object_name+"_attached_joint"]=joint;
     joint->Load(parent_link, object_link, math::Pose());
     joint->Attach(parent_link, object_link);
     joint->SetHighStop(0, 0);
@@ -212,7 +241,8 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
 }
 
 bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
-{
+{    std::cout<<"called"<<std::endl;
+    
     physics::JointPtr joint;
     joint=joints_attached[object_name+"_attached_joint"];
 
@@ -222,6 +252,7 @@ bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
 
     //TODO add mutex
     joint->Detach();
+    joints_attached.erase(object_name+"_attached_joint");
     return true;
 }
 

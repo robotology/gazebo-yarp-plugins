@@ -183,7 +183,7 @@ gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, 
         double norm = pose.pos.Distance(model_links[i]->GetWorldPose().pos);
         if (norm<0.15 && norm<min_norm)
         {
-            double min_norm = norm;
+            min_norm = norm;
             index = i;
             //         std::string candidate_link = model_links[i]->GetScopedName();
             //         std::cout<<candidate_link<<std::endl;

@@ -54,6 +54,7 @@ private:
     yarp::os::Property m_parameters;
 
     std::string m_robotName;
+    std::string m_driverName;
 };
 
 }

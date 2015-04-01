@@ -47,7 +47,7 @@ bool Handler::setRobot(gazebo::physics::Model* _model)
     bool ret = false;
     std::string scopedRobotName = _model->GetScopedName();
     std::cout << "GazeboYarpPlugins::Handler: Inserting Robot : " << scopedRobotName << std::endl;
-    
+
     RobotsMap::iterator robot = m_robotMap.find(scopedRobotName);
     if (robot != m_robotMap.end()) {
         //robot already exists. Increment reference counting
@@ -75,7 +75,7 @@ gazebo::physics::Model* Handler::getRobot(const std::string& robotName) const
 {
     gazebo::physics::Model* tmp = NULL;
     std::cout << "Looking for robot : " << robotName << std::endl;
-    
+
     RobotsMap::const_iterator robot = m_robotMap.find(robotName);
     if (robot != m_robotMap.end()) {
         std::cout << "Robot " << robotName << " was happily found!" << std::endl;
@@ -107,7 +107,7 @@ bool Handler::setSensor(gazebo::sensors::Sensor* _sensor)
     bool ret = false;
     std::string scopedSensorName = _sensor->GetScopedName();
     std::cout << "GazeboYarpPlugins::Handler: Inserting Sensor : " << scopedSensorName << std::endl;
-    
+
     SensorsMap::iterator sensor = m_sensorsMap.find(scopedSensorName);
     if (sensor != m_sensorsMap.end()) {
         //sensor already exists. Increment reference counting
@@ -129,13 +129,13 @@ bool Handler::setSensor(gazebo::sensors::Sensor* _sensor)
     }
     return ret;
 }
-    
+
 // return the sensor pointer given the sensor scoped namespac
 gazebo::sensors::Sensor* Handler::getSensor(const std::string& sensorScopedName) const
 {
     gazebo::sensors::Sensor* tmp = NULL;
     std::cout << "Looking for sensor : " << sensorScopedName << std::endl;
-    
+
     SensorsMap::const_iterator sensor = m_sensorsMap.find(sensorScopedName);
     if (sensor != m_sensorsMap.end()) {
         std::cout << "Sensor " << sensorScopedName << " was happily found!" << std::endl;
@@ -170,7 +170,7 @@ bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2ad
         if(device->second.object() == device2add)
         {
             device->second.incrementCount();
-            std::cout << "Device already registered, pointers match." << std::endl;
+            std::cout << "Device already registered, incrementing usage counter." << std::endl;
             ret = true;
         }
         else
@@ -218,8 +218,12 @@ void Handler::removeDevice(const std::string& deviceName)
             std::cout << "Removing device " << deviceName << std::endl;
             m_devicesMap.erase(device);
         }
+        else
+        {
+            std::cout << "Not removing device yet 'cause it is still used bu other guys" << deviceName << std::endl;
+        }
     } else {
-        std::cout << "Could not remove sensor " << deviceName << ". Sensor was not found" << std::endl;
+        std::cout << "Could not remove device " << deviceName << ". Device was not found" << std::endl;
     }
     return;
 }

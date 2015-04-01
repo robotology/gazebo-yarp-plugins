@@ -9,7 +9,7 @@
 
 #include <gazebo/common/Plugin.hh>
 #include <yarp/os/Network.h>
-#include <gazebo-4.1/gazebo/physics/PhysicsTypes.hh>
+#include <gazebo/physics/PhysicsTypes.hh>
 
 namespace yarp {
     namespace os {

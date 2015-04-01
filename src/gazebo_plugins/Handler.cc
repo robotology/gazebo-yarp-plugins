@@ -171,7 +171,7 @@ bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2ad
         if(device->second.object() == device2add)
         {
             device->second.incrementCount();
-            std::cout << "Device already registered, incrementing usage counter." << std::endl;
+            std::cout << "Device '" << deviceName << "' already registered, incrementing usage counter to " << device->second.count() << std::endl;
             ret = true;
         }
         else
@@ -204,7 +204,6 @@ yarp::dev::PolyDriver* Handler::getDevice(const std::string& deviceName) const
         std::cout << "Device " << deviceName << " was happily found!" << std::endl;
         tmp = device->second.object();
     } else {
-        std::cout << "Device was not found: " << deviceName << std::endl;
         tmp = NULL;
     }
     return tmp;
@@ -222,7 +221,7 @@ void Handler::removeDevice(const std::string& deviceName)
         }
         else
         {
-            std::cout << "Not removing device yet 'cause it is still used bu other guys" << deviceName << std::endl;
+            std::cout << "Not removing device '" << deviceName << "' yet because it is still used by other devices, Decremented counter to " << device->second.count() << std::endl;
         }
     } else {
         std::cout << "Could not remove device " << deviceName << ". Device was not found" << std::endl;

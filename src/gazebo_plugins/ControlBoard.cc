@@ -19,7 +19,7 @@ namespace gazebo
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
-    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(0), m_controlBoard(NULL)
+    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(0)
     {}
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
@@ -31,7 +31,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         if (m_wrapper.isValid())
             m_wrapper.close();
 
-        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_driverName);
+        for (int n = 0; n < m_controlBoards.size(); n++)
+            GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_controlBoards[n]->key.c_str());
 
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
         yarp::os::Network::fini();
@@ -112,29 +113,30 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
 
-        yarp::dev::PolyDriverList p;
-
         for (int n = 0; n < netList->size(); n++)
         {
-            m_driverName = netList->get(n).asString();
-            m_controlBoard = GazeboYarpPlugins::Handler::getHandler()->getDevice(m_driverName);
+            yarp::dev::PolyDriverDescriptor newPoly;
 
-            if(m_controlBoard != NULL)
+            newPoly.key = netList->get(n).asString();
+            newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(newPoly.key);
+
+            if( newPoly.poly != NULL)
             {
                 // device already exists, use it, setting it againg to increment the usage counter.
-                printf("controlBoard %s already opened\n", m_driverName.c_str());
+                printf("controlBoard %s already opened\n", newPoly.key.c_str());
 
             }
             else
             {
-                driver_group = m_parameters.findGroup(m_driverName.c_str());
+                std::cout << "Opening new device " << deviceName << std::endl;
+                driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
-                    fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", m_driverName.c_str());
+                    fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", newPoly.key.c_str());
                     m_wrapper.close();
                     return;
                 }
 
-                m_parameters.put("name", m_driverName.c_str());
+                m_parameters.put("name", newPoly.key.c_str());
                 m_parameters.fromString(driver_group.toString(), false);
                 m_parameters.put("robotScopedName", m_robotName);
                 std::cout << "GazeboYarpControlBoard: setting robotScopedName " << m_robotName << std::endl;
@@ -147,31 +149,32 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     //std::cout<<configuration_s<<std::endl;
                 }
 
-                m_controlBoard = new yarp::dev::PolyDriver;
-                if(!m_controlBoard->open(m_parameters) || !m_controlBoard->isValid())
+                 newPoly.poly = new yarp::dev::PolyDriver;
+                if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
                 {
-                    std::cerr << "controlBoard <" << m_driverName << "> did not open!!";
-                    for(int idx=0; idx<p.size(); idx++)
+                    std::cerr << "controlBoard <" << newPoly.key << "> did not open!!";
+                    for(int idx=0; idx<m_controlBoards.size(); idx++)
                     {
-                        p[idx]->poly->close();
+                        m_controlBoards[idx]->poly->close();
                     }
                     m_wrapper.close();
                     return;
                 }
                 else
                 {
-                    printf("controlBoard %s opened correctly\n", m_driverName.c_str());
+                    printf("controlBoard %s opened correctly\n", newPoly.key.c_str());
                 }
             }
-            GazeboYarpPlugins::Handler::getHandler()->setDevice(m_driverName, m_controlBoard);
-            p.push(m_controlBoard, netList->get(n).asString().c_str());
+            GazeboYarpPlugins::Handler::getHandler()->setDevice(newPoly.key, newPoly.poly);
+            m_controlBoards.push(newPoly);
         }
 
-        if (!m_iWrap || !m_iWrap->attachAll(p))
+        if (!m_iWrap || !m_iWrap->attachAll(m_controlBoards))
         {
             printf("GazeboYarpControlBoard: Error while attaching wrapper to device\n");
             m_wrapper.close();
-            m_controlBoard->close();
+            for (int n = 0; n < netList->size(); n++)
+                GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_controlBoards[n]->key.c_str());
             return;
         }
 

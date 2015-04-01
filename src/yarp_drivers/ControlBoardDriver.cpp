@@ -22,7 +22,7 @@ using namespace yarp::dev;
 
 const double RobotPositionTolerance = 0.9;
 
-GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() {}
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : deviceName("") {}
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
 
 bool GazeboYarpControlBoardDriver::gazebo_init()

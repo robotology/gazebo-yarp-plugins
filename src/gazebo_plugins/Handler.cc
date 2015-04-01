@@ -6,6 +6,7 @@
 
 #include "Handler.hh"
 
+#include <yarp/dev/PolyDriver.h>
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
 
@@ -216,6 +217,7 @@ void Handler::removeDevice(const std::string& deviceName)
         device->second.decrementCount();
         if (!device->second.count()) {
             std::cout << "Removing device " << deviceName << std::endl;
+            device->second.object()->close();
             m_devicesMap.erase(device);
         }
         else

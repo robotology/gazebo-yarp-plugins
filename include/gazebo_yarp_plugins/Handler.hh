@@ -90,18 +90,18 @@ public:
      *  If the device already exists and the pointer are the same return success, if pointers doesn't match returns error.
      * \param deviceName the name of the device to be added to the internal database
      * \param device the pointer of the device to be added to the internal database
-     * \return true if successfully added, or the model already exists. False otherwise.
+     * \return true if successfully added, or the device already exists. False otherwise.
      */
     bool setDevice(std::string deviceName, yarp::dev::PolyDriver* device2add);
 
-    /** Returns the  pointer to the sensor matching the sensor name
-     * \param deviceName sensor name to be looked for
+    /** Returns the pointer to the device matching the sensor name
+     * \param deviceName device name to be looked for
      * \return the pointer to the device
      */
     yarp::dev::PolyDriver* getDevice(const std::string& deviceName) const;
 
-    /** \brief Removes a sensor from the internal database
-     *  \param deviceName the name of the sensor to be removed
+    /** \brief Removes a device from the internal database
+     *  \param deviceName the name of the device to be removed
      */
     void removeDevice(const std::string& deviceName);
 

@@ -60,7 +60,7 @@ namespace gazebo
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        yarp::dev::PolyDriver m_forcetorqueWrapper;
+        yarp::dev::PolyDriver* m_forcetorqueWrapper;
         yarp::dev::IMultipleWrapper* m_iWrap;
         yarp::dev::PolyDriver m_forceTorqueDriver;
         

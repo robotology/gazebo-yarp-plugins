@@ -15,6 +15,7 @@
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
+#include <gazebo/physics/Collision.hh>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
@@ -179,8 +180,8 @@ gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, 
     for(int i=0; i < model_links.size(); i++ ) 
     {
         std::string candidate_link = model_links[i]->GetScopedName();
-        std::cout<<candidate_link<<std::endl;
         double norm = pose.pos.Distance(model_links[i]->GetWorldPose().pos);
+        std::cout<<candidate_link<<" "<<norm<<std::endl;
         if (norm<0.15 && norm<min_norm)
         {
             min_norm = norm;
@@ -225,7 +226,15 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
 
     math::Pose parent_link_pose = parent_link->GetWorldCoGPose();
     object_link->SetWorldPose(parent_link_pose);
-
+    gazebo::physics::Link_V model_links = object_model->GetLinks();
+    for(int i=0; i < model_links.size(); i++ ) 
+    {
+        gazebo::physics::Collision_V collisions= model_links[i]->GetCollisions();
+        for (int j=0;j<collisions.size();j++)
+        {
+            model_links[i]->RemoveCollision(collisions[j]->GetName());
+        }
+    }
     //TODO add mutex
     physics::JointPtr joint;
     joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", m_model);

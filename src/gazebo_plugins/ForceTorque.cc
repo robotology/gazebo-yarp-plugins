@@ -22,16 +22,21 @@ namespace gazebo {
 
 GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), m_iWrap(0)
 {
+    m_forcetorqueWrapper=new yarp::dev::PolyDriver();
 }
 
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
     std::cout<<"*** GazeboYarpForceTorque closing ***"<<std::endl;
     if(m_iWrap) { m_iWrap->detachAll(); m_iWrap = 0; }
-    if( m_forcetorqueWrapper.isValid() ) m_forcetorqueWrapper.close();
+    if( m_forcetorqueWrapper->isValid() )
+    {
+//         iDeviceDriver->close();
+        GazeboYarpPlugins::Handler::getHandler()->asyncCloseThisPolydriver(m_forcetorqueWrapper);
+    }
     if( m_forceTorqueDriver.isValid() ) m_forceTorqueDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
-    yarp::os::Network::fini();
+//     yarp::os::Network::fini();
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
@@ -90,7 +95,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Open the wrapper
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
     wrapper_properties.put("device","analogServer");
-    if( m_forcetorqueWrapper.open(wrapper_properties) ) {
+    if( m_forcetorqueWrapper->open(wrapper_properties) ) {
         std::cout<<"GazeboYarpForceTorque Plugin: correcly opened GazeboYarpForceTorqueDriver wrapper"<<std::endl;
     } else {
         std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper"<<std::endl;
@@ -110,7 +115,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
     
-    if( !m_forcetorqueWrapper.view(m_iWrap) ) {
+    if( !m_forcetorqueWrapper->view(m_iWrap) ) {
         std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
         return;
     }

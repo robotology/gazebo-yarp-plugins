@@ -20,20 +20,23 @@ namespace gazebo
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::GazeboYarpControlBoard()
-    : m_iWrap(0) {}
+    : m_iWrap(0) {
+        m_wrapper=new yarp::dev::PolyDriver();
+    }
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
         if (m_iWrap) {
-            m_iWrap->detachAll();
-            m_iWrap = 0;
+            GazeboYarpPlugins::Handler::getHandler()->asyncDetachAll(m_iWrap,m_wrapper);
         }
-        if (m_wrapper.isValid())
-            m_wrapper.close();
+        if (m_wrapper->isValid())
+        {
+//             m_wrapper.close();
+        }
         if (m_controlBoard.isValid())
             m_controlBoard.close();
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
-        yarp::os::Network::fini();
+//         yarp::os::Network::fini();
         std::cout<<"Goodbye!"<<std::endl;
     }
 
@@ -86,21 +89,21 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
 
-        m_wrapper.open(wrapper_group);
+        m_wrapper->open(wrapper_group);
     
-        if (!m_wrapper.isValid())
+        if (!m_wrapper->isValid())
             fprintf(stderr, "GazeboYarpControlBoard: wrapper did not open\n");
         else
             fprintf(stderr, "GazeboYarpControlBoard: wrapper opened correctly\n");
 
-        if (!m_wrapper.view(m_iWrap)) {
+        if (!m_wrapper->view(m_iWrap)) {
             printf("Wrapper interface not found\n");
         }
 
         yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
         if (netList->isNull()) {
             printf("GazeboYarpControlBoard ERROR, net list to attach to was not found, exiting\n");
-            m_wrapper.close();
+            m_wrapper->close();
             // m_controlBoard.close();
             return;
         }
@@ -142,7 +145,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         if (!m_iWrap || !m_iWrap->attachAll(p))
         {
             printf("GazeboYarpControlBoard: Error while attaching wrapper to device\n");
-            m_wrapper.close();
+            m_wrapper->close();
             m_controlBoard.close();
             return;
         }

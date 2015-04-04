@@ -20,6 +20,7 @@ namespace gazebo {
 
 GazeboYarpJointSensors::GazeboYarpJointSensors() : ModelPlugin(), m_iWrap(0)
 {
+    m_jointsensorsWrapper=new yarp::dev::PolyDriver();
 }
 
 GazeboYarpJointSensors::~GazeboYarpJointSensors()
@@ -29,12 +30,14 @@ GazeboYarpJointSensors::~GazeboYarpJointSensors()
         m_iWrap->detachAll();
         m_iWrap = 0;
     }
-    if (m_jointsensorsWrapper.isValid())
-        m_jointsensorsWrapper.close();
+    if (m_jointsensorsWrapper->isValid())
+    {
+        GazeboYarpPlugins::Handler::getHandler()->asyncCloseThisPolydriver(m_jointsensorsWrapper);
+    }
     if (m_jointsensorsDriver.isValid())
         m_jointsensorsDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
-    yarp::os::Network::fini();
+//     yarp::os::Network::fini();
 }
 
 void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
@@ -87,7 +90,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Open the wrapper
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
     wrapper_properties.put("device","analogServer");
-    if (m_jointsensorsWrapper.open(wrapper_properties)) {
+    if (m_jointsensorsWrapper->open(wrapper_properties)) {
         std::cout << "GazeboYarpJointSensors Plugin: correcly opened GazeboYarpJointSensorsDriver wrapper" << std::endl;
     } else {
         std::cout << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver wrapper" << std::endl;
@@ -107,7 +110,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
 
-    if (!m_jointsensorsWrapper.view(m_iWrap)) {
+    if (!m_jointsensorsWrapper->view(m_iWrap)) {
         std::cerr << "GazeboYarpJointSensors : error in loading wrapper" << std::endl;
         return;
     }

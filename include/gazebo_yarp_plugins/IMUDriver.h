@@ -71,6 +71,7 @@ private:
     yarp::sig::Vector m_imuData; //buffer for imu data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    bool closed;
     
     gazebo::sensors::ImuSensor* m_parentSensor;
     gazebo::event::ConnectionPtr m_updateConnection;

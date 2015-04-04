@@ -49,7 +49,7 @@ namespace gazebo
 
     private:
         yarp::os::Property m_parameters; 
-        yarp::dev::PolyDriver m_imuDriver;
+        yarp::dev::PolyDriver* m_imuDriver;
         std::string m_sensorName;
     };
 }

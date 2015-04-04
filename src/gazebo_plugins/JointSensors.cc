@@ -32,6 +32,7 @@ GazeboYarpJointSensors::~GazeboYarpJointSensors()
     }
     if (m_jointsensorsWrapper->isValid())
     {
+        GazeboYarpPlugins::Handler::getHandler()->asyncCloseThisPolydriver(m_jointsensorsWrapper);
     }
     if (m_jointsensorsDriver.isValid())
         m_jointsensorsDriver.close();

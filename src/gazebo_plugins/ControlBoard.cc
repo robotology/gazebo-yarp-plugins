@@ -27,8 +27,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
         if (m_iWrap) {
-            m_iWrap->detachAll();
-            m_iWrap = 0;
+            GazeboYarpPlugins::Handler::getHandler()->asyncDetachAll(m_iWrap,m_wrapper);
         }
         if (m_wrapper->isValid())
         {

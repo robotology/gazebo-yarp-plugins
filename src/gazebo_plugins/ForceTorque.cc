@@ -32,6 +32,7 @@ GazeboYarpForceTorque::~GazeboYarpForceTorque()
     if( m_forcetorqueWrapper->isValid() )
     {
 //         iDeviceDriver->close();
+        GazeboYarpPlugins::Handler::getHandler()->asyncCloseThisPolydriver(m_forcetorqueWrapper);
     }
     if( m_forceTorqueDriver.isValid() ) m_forceTorqueDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);

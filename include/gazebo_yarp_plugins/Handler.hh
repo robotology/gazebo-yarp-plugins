@@ -26,6 +26,13 @@ namespace sdf {
     typedef boost::shared_ptr<Element> ElementPtr;
 }
 
+namespace yarp{
+    namespace dev{
+        class PolyDriver;
+    class IMultipleWrapper;
+}
+}
+
 namespace GazeboYarpPlugins {
 
 /** \class Handler
@@ -59,6 +66,10 @@ public:
      *  \param robotName the name of the robot to be removed
      */
     void removeRobot(const std::string& robotName);
+
+    void asyncCloseThisPolydriver(yarp::dev::PolyDriver* driver);
+    void asyncDetachAll(yarp::dev::IMultipleWrapper* wrapper,yarp::dev::PolyDriver* driver);
+    void asyncCloseThisPolydriver(yarp::dev::PolyDriver* driver,std::string m_sensor_name);
     
     /** \brief Adds a new sensorPointer to the "database".
      *

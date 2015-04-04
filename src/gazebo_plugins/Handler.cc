@@ -8,13 +8,37 @@
 
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
-
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/GenericSensorInterfaces.h>
 using namespace gazebo;
 
 namespace GazeboYarpPlugins {
 
 Handler* Handler::s_handle = NULL;
 yarp::os::Semaphore Handler::s_mutex = 1;
+boost::mutex robotmap_mtx;
+
+void close_thread(yarp::dev::PolyDriver* driver)
+{
+    driver->close();
+}
+
+void close_thread_imu(yarp::dev::PolyDriver* driver,std::string m_sensorName)
+{
+    yarp::dev::IGenericSensor* iDeviceDriver;
+    driver->view(iDeviceDriver);
+    iDeviceDriver->calibrate(-1,1);//HACK: This will avoid gazebo Update from calling the IMU update in the next step, in order to avoid a segfault
+
+    driver->close();//this will block until gazebo next step Update is done
+    GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
+}
+
+void detach_thread(yarp::dev::IMultipleWrapper* wrapper,yarp::dev::PolyDriver* driver)
+{
+    wrapper->detachAll();
+    driver->close();
+}
 
 
 Handler::Handler()
@@ -37,12 +61,27 @@ Handler* Handler::getHandler()
     return s_handle;
 }
 
+void Handler::asyncCloseThisPolydriver(yarp::dev::PolyDriver* driver)
+{
+    boost::thread* serverThread= new boost::thread(boost::bind(&close_thread,driver));
+}
+
+void Handler::asyncCloseThisPolydriver(yarp::dev::PolyDriver* driver, std::string m_sensor_name)
+{
+    boost::thread* serverThread= new boost::thread(boost::bind(&close_thread_imu,driver,m_sensor_name));
+}
+
+void Handler::asyncDetachAll(yarp::dev::IMultipleWrapper* wrapper, yarp::dev::PolyDriver* driver)
+{
+    boost::thread* serverThread= new boost::thread(boost::bind(&detach_thread,wrapper,driver));
+}
+
 bool Handler::setRobot(gazebo::physics::Model* _model)
 {
     bool ret = false;
     std::string scopedRobotName = _model->GetScopedName();
     std::cout << "GazeboYarpPlugins::Handler: Inserting Robot : " << scopedRobotName << std::endl;
-    
+    robotmap_mtx.lock();
     RobotsMap::iterator robot = m_robotMap.find(scopedRobotName);
     if (robot != m_robotMap.end()) {
         //robot already exists. Increment reference counting
@@ -63,6 +102,7 @@ bool Handler::setRobot(gazebo::physics::Model* _model)
             std::cout << "Singleton: Added a new robot " << scopedRobotName << "." << std::endl;
         }
     }
+    robotmap_mtx.unlock();
     return ret;
 }
 
@@ -70,7 +110,7 @@ gazebo::physics::Model* Handler::getRobot(const std::string& robotName) const
 {
     gazebo::physics::Model* tmp = NULL;
     std::cout << "Looking for robot : " << robotName << std::endl;
-    
+    robotmap_mtx.lock();
     RobotsMap::const_iterator robot = m_robotMap.find(robotName);
     if (robot != m_robotMap.end()) {
         std::cout << "Robot " << robotName << " was happily found!" << std::endl;
@@ -80,11 +120,13 @@ gazebo::physics::Model* Handler::getRobot(const std::string& robotName) const
         std::cout << "Robot was not found: " << robotName << std::endl;
         tmp = NULL;
     }
+    robotmap_mtx.unlock();
     return tmp;
 }
 
 void Handler::removeRobot(const std::string& robotName)
 {
+    robotmap_mtx.lock();
     RobotsMap::iterator robot = m_robotMap.find(robotName);
     if (robot != m_robotMap.end()) {
         robot->second.decrementCount();
@@ -95,6 +137,7 @@ void Handler::removeRobot(const std::string& robotName)
     } else {
         std::cout << "Could not remove robot " << robotName << ". Robot was not found" << std::endl;
     }
+    robotmap_mtx.unlock();
 }
 
 bool Handler::setSensor(gazebo::sensors::Sensor* _sensor)
@@ -144,6 +187,7 @@ gazebo::sensors::Sensor* Handler::getSensor(const std::string& sensorScopedName)
 
 void Handler::removeSensor(const std::string& sensorName)
 {
+    robotmap_mtx.lock();
     SensorsMap::iterator sensor = m_sensorsMap.find(sensorName);
     if (sensor != m_sensorsMap.end()) {
         sensor->second.decrementCount();
@@ -154,5 +198,6 @@ void Handler::removeSensor(const std::string& sensorName)
     } else {
         std::cout << "Could not remove sensor " << sensorName << ". Sensor was not found" << std::endl;
     }
+    robotmap_mtx.unlock();
 }
 }

@@ -38,7 +38,7 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
-    yarp::dev::PolyDriver m_jointsensorsWrapper;
+    yarp::dev::PolyDriver* m_jointsensorsWrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
     yarp::dev::PolyDriver m_jointsensorsDriver;
 

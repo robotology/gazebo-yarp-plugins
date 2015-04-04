@@ -31,7 +31,7 @@ GazeboYarpForceTorque::~GazeboYarpForceTorque()
     if( m_forcetorqueWrapper.isValid() ) m_forcetorqueWrapper.close();
     if( m_forceTorqueDriver.isValid() ) m_forceTorqueDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
-    yarp::os::Network::fini();
+//     yarp::os::Network::fini();
 }
 
 void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)

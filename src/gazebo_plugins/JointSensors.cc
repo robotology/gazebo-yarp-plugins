@@ -34,7 +34,7 @@ GazeboYarpJointSensors::~GazeboYarpJointSensors()
     if (m_jointsensorsDriver.isValid())
         m_jointsensorsDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
-    yarp::os::Network::fini();
+//     yarp::os::Network::fini();
 }
 
 void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)

@@ -33,7 +33,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         if (m_controlBoard.isValid())
             m_controlBoard.close();
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
-        yarp::os::Network::fini();
+//         yarp::os::Network::fini();
         std::cout<<"Goodbye!"<<std::endl;
     }
 

@@ -182,7 +182,7 @@ gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, 
         std::string candidate_link = model_links[i]->GetScopedName();
         double norm = pose.pos.Distance(model_links[i]->GetWorldPose().pos);
         std::cout<<candidate_link<<" "<<norm<<std::endl;
-        if (norm<0.15 && norm<min_norm)
+        if (norm<0.25 && norm<min_norm)
         {
             min_norm = norm;
             index = i;
@@ -224,16 +224,16 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
         return false;
     }
 
-    math::Pose parent_link_pose = parent_link->GetWorldCoGPose();
-    object_link->SetWorldPose(parent_link_pose);
+    math::Pose parent_link_pose = parent_link->GetWorldPose();
     gazebo::physics::Link_V model_links = object_model->GetLinks();
     for(int i=0; i < model_links.size(); i++ ) 
     {
-        gazebo::physics::Collision_V collisions= model_links[i]->GetCollisions();
+        model_links[i]->SetCollideMode("none");
+        /*gazebo::physics::Collision_V collisions= model_links[i]->GetCollisions();
         for (int j=0;j<collisions.size();j++)
         {
             model_links[i]->RemoveCollision(collisions[j]->GetName());
-        }
+        }*/
     }
     //TODO add mutex
     physics::JointPtr joint;
@@ -244,6 +244,7 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
     }
     joint->SetName(object_name+"_attached_joint");
     joints_attached[object_name+"_attached_joint"]=joint;
+    object_link->SetWorldPose(parent_link_pose);
     joint->Load(parent_link, object_link, math::Pose());
     joint->Attach(parent_link, object_link);
     joint->SetHighStop(0, 0);
@@ -264,10 +265,20 @@ bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
     {
         return false;
     }
-
+    physics::ModelPtr object_model = m_world->GetModel(object_name);
+    if( !object_model )
+    {
+        std::cout<<"could not get the model for "<<object_name<<"!!"<<std::endl;
+        return false;
+    }
     //TODO add mutex
     joint->Detach();
     joints_attached.erase(object_name+"_attached_joint");
+    gazebo::physics::Link_V model_links = object_model->GetLinks();
+    for(int i=0; i < model_links.size(); i++ ) 
+    {
+        model_links[i]->SetCollideMode("all");
+    }
     return true;
 }
 

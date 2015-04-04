@@ -22,13 +22,14 @@ namespace gazebo {
     
 GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin()
 {
+    m_imuDriver=new yarp::dev::PolyDriver();
 }
 
 GazeboYarpIMU::~GazeboYarpIMU()
 {
     std::cout << "*** GazeboYarpIMU closing ***" << std::endl;
-    m_imuDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
+//     iDeviceDriver->close();
 //     yarp::os::Network::fini();
 }
 
@@ -79,7 +80,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     m_parameters.put(YarpIMUScopedName.c_str(), m_sensorName.c_str());
     
     //Open the driver
-    if (m_imuDriver.open(m_parameters)) {
+    if (m_imuDriver->open(m_parameters)) {
         std::cout << "Loaded GazeboYarpIMU Plugin correctly" << std::endl;
     } else {
         std::cout << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver" << std::endl;
@@ -88,7 +89,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     std::cout << "GazeboYarpIMU original parameters" << std::endl;
     std::cout << m_parameters.toString() << std::endl;
     std::cout << "GazeboYarpIMU getOptions" << std::endl;
-    std::cout << m_imuDriver.getOptions().toString() << std::endl;
+    std::cout << m_imuDriver->getOptions().toString() << std::endl;
 }
     
 }

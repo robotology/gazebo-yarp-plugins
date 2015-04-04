@@ -17,7 +17,7 @@ using namespace yarp::dev;
 const int YarpIMUChannelsNumber = 12; //The IMU has 12 fixed channels
 const std::string YarpIMUScopedName = "sensorScopedName";
 
-GazeboYarpIMUDriver::GazeboYarpIMUDriver() {}
+GazeboYarpIMUDriver::GazeboYarpIMUDriver() {closed=false;}
 GazeboYarpIMUDriver::~GazeboYarpIMUDriver() {}
 
 /**
@@ -95,6 +95,7 @@ bool GazeboYarpIMUDriver::close()
         gazebo::event::Events::DisconnectWorldUpdateBegin(this->m_updateConnection);
         this->m_updateConnection = gazebo::event::ConnectionPtr();
     }
+    closed=true;
     return true;
 }
     
@@ -104,6 +105,7 @@ bool GazeboYarpIMUDriver::read(yarp::sig::Vector &out)
     if ((int)m_imuData.size() != YarpIMUChannelsNumber ) {
         return false;
     }
+    if (closed) return false;
     
     //< \todo TODO this should be avoided by properly modifyng the wrapper
     if (out.size() != m_imuData.size()) {
@@ -126,6 +128,7 @@ bool GazeboYarpIMUDriver::getChannels(int *nc)
 
 bool GazeboYarpIMUDriver::calibrate(int ch, double v)
 {
+    if (ch==-1 && v==1) close();
     return true; //Calibration is not needed in simulation
 }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2015 Istituto Italiano di Tecnologia RBCS, ADVR & iCub Facility
- * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * Authors: Mirko Ferrati, Cheng Fang, Silvio Traversaro
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -16,7 +16,8 @@
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Collision.hh>
-
+#include <gazebo/physics/ContactManager.hh>
+#include <gazebo/math/Vector3.hh>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/os/Network.h>
@@ -27,7 +28,7 @@ GZ_REGISTER_MODEL_PLUGIN(gazebo::GazeboYarpObjects)
 
 namespace gazebo {
 
-GazeboYarpObjects::GazeboYarpObjects() : ModelPlugin(), m_network()
+GazeboYarpObjects::GazeboYarpObjects() : ModelPlugin(), m_network(),node(new transport::Node)
 {
 }
 
@@ -72,6 +73,9 @@ void GazeboYarpObjects::gazeboYarpObjectsLoad(physics::ModelPtr _parent, sdf::El
         cleanup();
         return;
     }
+    this->m_sdf=_sdf;
+    node->Init();
+    
 }
 
 void GazeboYarpObjects::cleanup()
@@ -86,70 +90,9 @@ void GazeboYarpObjects::cleanup()
     }
 }
 
-bool GazeboYarpObjects::deleteObject(const std::string& object_name)
-{
-    if (m_world->GetModel(object_name)!=NULL)
-    {
-        m_world->RemoveModel(object_name);
-        return true;
-    }
-    else
-        return false;
-}
-
-
-bool gazebo::GazeboYarpObjects::createSphere(const std::string& name, const double radius, const double mass)
-{
-    /** Remove collision to facilitate hand:
-     *    <collision name ='collision'>
-                <geometry>
-                  <sphere><radius>"<< radius << "</radius></sphere>
-                </geometry>
-              </collision> */
-
-    sdf::SDF sphereSDF;
-    std::stringstream ss;
-    ss << "<sdf version ='1.4'>\
-            <model name ='" << name << "'>\
-            <pose>1 0 0 0 0 0</pose>\
-            <link name ='" << name << "_link'>\
-              <pose>0 0 .5 0 0 0</pose>\
-              <visual name ='visual'>\
-                <geometry>\
-                  <sphere><radius>"<< radius << "</radius></sphere>\
-                </geometry>\
-              </visual>\
-              <material>\
-              <script>\
-              <uri>file://media/materials/scripts/gazebo.material</uri>\
-              <name>Gazebo/Grey</name>\
-              </script>\
-              </material>\
-               <inertial>\
-                 <pose>0 0 0 0 0 0</pose>\
-                 <mass>" << mass << "</mass>\
-                 <inertia>\
-                   <ixx>" << 2.0*radius*radius*mass/5.0 << "</ixx>\
-                   <ixy>0</ixy>\
-                   <ixz>0</ixz>\
-                   <iyy>" << 2.0*radius*radius*mass/5.0 << "</iyy>\
-                   <iyz>0</iyz>\
-                   <izz>"<< 2.0*radius*radius*mass/5.0 << "</izz>\
-                 </inertia>\
-               </inertial>\
-            </link>\
-          </model>\
-        </sdf>";
-    std::string sphereSDF_str = ss.str();
-    sphereSDF.SetFromString(sphereSDF_str);
-    m_world->InsertModelSDF(sphereSDF);
-
-    return true;
-}
-
 bool hasEnding (std::string const &fullString, std::string const &ending)
 {
-    std::cout<<fullString<<" "<<ending<<std::endl;
+//     std::cout<<fullString<<" "<<ending<<std::endl;
     if (fullString.length() >= ending.length()) {
         return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
     } else {
@@ -182,7 +125,7 @@ gazebo::physics::LinkPtr getClosestLinkInModel(gazebo::physics::ModelPtr model, 
         std::string candidate_link = model_links[i]->GetScopedName();
         double norm = pose.pos.Distance(model_links[i]->GetWorldPose().pos);
         std::cout<<candidate_link<<" "<<norm<<std::endl;
-        if (norm<0.25 && norm<min_norm)
+        if (/*norm<0.25 && */norm<min_norm)
         {
             min_norm = norm;
             index = i;
@@ -211,32 +154,62 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
         return false;
     }
 
-    physics::LinkPtr parent_link = getLinkInModel(m_model,link_name);
+    gazebo::physics::LinkPtr parent_link = getLinkInModel(m_model,link_name);
 
+    if (!parent_link)
+    {
+        std::cout<<"could not get the links for "<<parent_link<<std::endl;
+        return false;
+    }
+    link_object_map[link_name]=object_name;
+    
+    gazebo::physics::Collision_V collisions=  parent_link->GetCollisions();
+    for (int j=0;j<collisions.size();j++)
+    {
+        collisions_str.push_back(collisions[j]->GetScopedName());
+        std::cout<<collisions[j]->GetScopedName()<<std::endl;
+    }
+
+    //     collisions_str.push_back("bigman::LWrMot3::LWrMot3_collision_LWrMot3_1");
+    physics::ContactManager *mgr =
+    m_world->GetPhysicsEngine()->GetContactManager();
+    std::string topic = mgr->CreateFilter("objects_topic", collisions_str);
+    std::cout<<topic<<std::endl;
+//     if (!this->contactSub)
+//     {
+        contactSub = node->Subscribe(topic, &GazeboYarpObjects::OnContacts, this);
+//     }
+    
+    return true;
+}
+
+bool GazeboYarpObjects::attach_impl(std::string link_name,std::string object_name, math::Pose touch_point, math::Vector3 normal)
+{
+    physics::LinkPtr parent_link = getLinkInModel(m_model,link_name);
+    
     if( !parent_link ) {
         std::cout<<"could not get the links for "<<parent_link<<std::endl;
         return false;
     }
-
-    physics::LinkPtr object_link = getClosestLinkInModel(object_model,parent_link->GetWorldCoGPose());
-    if( !object_link ) {
-        std::cout<<"could not get a link close enough (<5cm) to "<<parent_link<<" for object "<<object_name<<std::endl;
+    math::Pose parent_link_pose = parent_link->GetWorldPose();
+    physics::ModelPtr object_model = m_world->GetModel(object_name);
+    
+    if( !object_model )
+    {
+        std::cout<<"could not get the model for "<<object_name<<"!!"<<std::endl;
         return false;
     }
-
-    math::Pose parent_link_pose = parent_link->GetWorldPose();
+    
     gazebo::physics::Link_V model_links = object_model->GetLinks();
     for(int i=0; i < model_links.size(); i++ ) 
     {
         model_links[i]->SetCollideMode("none");
-        /*gazebo::physics::Collision_V collisions= model_links[i]->GetCollisions();
-        for (int j=0;j<collisions.size();j++)
-        {
-            model_links[i]->RemoveCollision(collisions[j]->GetName());
-        }*/
     }
-    //TODO add mutex
+
     physics::JointPtr joint;
+    physics::LinkPtr link;
+    link = m_world->GetPhysicsEngine()->CreateLink(m_model);
+    link->
     joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", m_model);
     if( !joint ) {
         std::cout<<"could not create joint!!"<<std::endl;
@@ -244,15 +217,71 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
     }
     joint->SetName(object_name+"_attached_joint");
     joints_attached[object_name+"_attached_joint"]=joint;
-    object_link->SetWorldPose(parent_link_pose);
+    math::Pose offset(0,0,-0.15,0,0,0);
+    math::Pose offset_pose=parent_link_pose*offset;
+    
+    gazebo::physics::LinkPtr object_link = getClosestLinkInModel(object_model,parent_link_pose);
+    object_link->SetWorldPose(offset_pose);
     joint->Load(parent_link, object_link, math::Pose());
     joint->Attach(parent_link, object_link);
     joint->SetHighStop(0, 0);
     joint->SetLowStop(0, 0);
     //joint->SetParam("cfm", 0, 0);
-
+    link_object_map.erase(link_name);
+    collisions_str.clear();//TODO better
     return true;
 }
+
+void GazeboYarpObjects::OnContacts(ConstContactsPtr& iter)
+{
+    std::vector<std::string>::iterator collIter, objectIter;
+    std::string collision, object;
+    {
+        // Iterate over all the contacts in the message
+        for (int i = 0; i < (iter)->contact_size(); ++i)
+        {
+            collision = (iter)->contact(i).collision1();
+            // Try to find the first collision's name
+            collIter = std::find(this->collisions_str.begin(),
+                                this->collisions_str.end(), collision);
+            
+            // If unable to find the first collision's name, try the second
+            if (collIter == this->collisions_str.end())
+            {
+                object = (iter)->contact(i).collision1();
+                collision = (iter)->contact(i).collision2();
+                collIter = std::find(this->collisions_str.begin(),
+                                    this->collisions_str.end(), collision);
+            }
+            else
+            object = (iter)->contact(i).collision2();
+            // If this sensor is monitoring one of the collision's in the
+            // contact, then add the contact to our outgoing message.
+            if (collIter != this->collisions_str.end())
+            {
+                int count = (iter)->contact(i).position_size();
+
+                // Check to see if the contact arrays all have the same size.
+                if (count != (iter)->contact(i).normal_size() ||
+                    count != (iter)->contact(i).wrench_size() ||
+                    count != (iter)->contact(i).depth_size())
+                {
+                    gzerr << "Contact message has invalid array sizes\n";
+                    continue;
+                }
+                for (std::map<std::string,std::string>::iterator it=link_object_map.begin();it!=link_object_map.end();++it)
+                {
+                    if (object.find((it->second),0)==0)
+                    {
+                        std::cout<<(iter)->contact(i).position(0).x()<<(iter)->contact(i).position(0).y()<<(iter)->contact(i).position(0).z()<<std::endl;
+                        attach_impl(it->first,it->second);
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
 {

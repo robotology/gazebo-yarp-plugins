@@ -30,6 +30,9 @@ GazeboYarpIMU::~GazeboYarpIMU()
     std::cout << "*** GazeboYarpIMU closing ***" << std::endl;
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
 //     iDeviceDriver->close();
+    {
+        GazeboYarpPlugins::Handler::getHandler()->asyncCloseThisPolydriver(m_imuDriver,m_sensorName);
+    }
 //     yarp::os::Network::fini();
 }
 

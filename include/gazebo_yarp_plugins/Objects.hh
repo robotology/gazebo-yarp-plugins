@@ -33,11 +33,7 @@ namespace gazebo
 
         void gazeboYarpObjectsLoad(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
-        virtual bool createSphere(const std::string& name, const double radius, const double mass);
-
         virtual bool attach(const std::string& link_name, const std::string& object_name);
-
-        virtual bool deleteObject(const std::string& name);
 
         virtual bool detach(const std::string& object_name);
 

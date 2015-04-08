@@ -13,19 +13,9 @@ namespace gazebo {
     ObjectsServerImpl::ObjectsServerImpl(GazeboYarpObjects& objectsPlugin)
     : m_objects(objectsPlugin) {}
 
-bool ObjectsServerImpl::createSphere(const std::string& name, const double radius, const double mass)
-{
-    return m_objects.createSphere(name, radius, mass);
-}
-
 bool ObjectsServerImpl::attach(const std::string& link_name, const std::string& object_name)
 {
     return m_objects.attach(link_name, object_name);
-}
-
-bool ObjectsServerImpl::deleteObject(const std::string& name)
-{
-    return m_objects.deleteObject(name);
 }
 
 bool ObjectsServerImpl::detach(const std::string& object_name)

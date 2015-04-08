@@ -239,10 +239,13 @@ bool GazeboYarpObjects::attach_impl(std::string link_name,std::string object_nam
         return false;
     }
     
-    //TODO disable collisions on the hand, not on the object!!
-    gazebo::physics::Link_V model_links = object_model->GetLinks();
-    for(int i=0; i < model_links.size(); i++ ) 
-        model_links[i]->SetCollideMode("none");
+    //disable collisions on the hand, not on the object!!
+//     gazebo::physics::Link_V model_links = object_model->GetLinks();
+//     for(int i=0; i < model_links.size(); i++ ) 
+//         model_links[i]->SetCollideMode("none");
+        parent_link->SetCollideMode("none");
+        attached_links[object_name]=parent_link;
+        
 
 //     math::Pose handle_pose = Get_handle_pose(object_model, parent_link->GetWorldCoGPose(), link_name, width, height, length);
     
@@ -386,12 +389,12 @@ bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
     joints_attached.erase(object_name+"_attached_joint");
     handle_joint->Detach();
     joints_attached.erase(object_name+"_attached_handle_joint");
-    //TODO: enable collisions on the hand, not on the object
-    gazebo::physics::Link_V model_links = object_model->GetLinks();
-    for(int i=0; i < model_links.size(); i++ ) 
-    {
-        model_links[i]->SetCollideMode("all");
-    }
+    //enable collisions on the hand, not on the object
+//     gazebo::physics::Link_V model_links = object_model->GetLinks();
+//     for(int i=0; i < model_links.size(); i++ ) 
+//         model_links[i]->SetCollideMode("all");
+    if (attached_links.count(object_name))
+        attached_links[object_name]->SetCollideMode("all");
     return true;
 }
 

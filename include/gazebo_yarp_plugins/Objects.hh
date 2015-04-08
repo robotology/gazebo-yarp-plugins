@@ -63,6 +63,7 @@ namespace gazebo
         yarp::os::Port *m_rpcPort;
         ObjectsServer *m_clockServer;
         std::map<std::string, physics::JointPtr> joints_attached;
+        std::map<std::string, physics::LinkPtr> attached_links;
         sdf::ElementPtr m_sdf;
     };
 }

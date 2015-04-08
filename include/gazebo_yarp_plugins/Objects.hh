@@ -1,6 +1,6 @@
 /*
 * Copyright (C) 2007-2014 Istituto Italiano di Tecnologia RBCS, ADVR and iCub Facility
-* Authors: Silvio Traversaro and Francesco Romano
+* Authors: Mirko Ferrati, Cheng Fang, Silvio Traversaro
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 

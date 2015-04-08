@@ -9,6 +9,10 @@
 
 #include <gazebo/common/Plugin.hh>
 #include <yarp/os/Network.h>
+#include <gazebo/transport/TransportTypes.hh>
+#include <gazebo/transport/Subscriber.hh>
+#include <gazebo/transport/Node.hh>
+#include <gazebo/msgs/contacts.pb.h>
 #include <gazebo/physics/PhysicsTypes.hh>
 
 namespace yarp {
@@ -39,20 +43,27 @@ namespace gazebo
 
     private:
         void cleanup();
-
+        std::vector<std::string> collisions_str;
+        bool createHandle();
+        
+        /// \brief Callback for contact messages from the physics engine.
+        void OnContacts(ConstContactsPtr &_msg);
+        
         yarp::os::Network m_network;
         std::string m_portName;
 
         physics::ModelPtr m_model;
         physics::WorldPtr m_world;
-
-        //std::map< std::string , physics::LinkPtr > objects_link_map;
-
+        bool attach_impl(std::string link_name, std::string object_name, gazebo::math::Pose touch_point, gazebo::math::Vector3 normal);
+        
+        std::map< std::string,std::string> link_object_map;
+        transport::SubscriberPtr contactSub;
+        transport::NodePtr node;
         //RPC variables
         yarp::os::Port *m_rpcPort;
         ObjectsServer *m_clockServer;
         std::map<std::string, physics::JointPtr> joints_attached;
-
+        sdf::ElementPtr m_sdf;
     };
 }
 

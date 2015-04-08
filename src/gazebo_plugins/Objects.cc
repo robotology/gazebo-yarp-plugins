@@ -75,7 +75,46 @@ void GazeboYarpObjects::gazeboYarpObjectsLoad(physics::ModelPtr _parent, sdf::El
     }
     this->m_sdf=_sdf;
     node->Init();
+    createHandle();
+}
+
+
+bool gazebo::GazeboYarpObjects::createHandle()
+{
     
+    sdf::SDF handleSDF;
+    std::stringstream ss;
+    ss << "<sdf version ='1.4'>\
+    <model name ='object_handle'>\
+        <pose>0 0 0 0 0 0</pose>\
+        <link name ='object_handle_link'>\
+            <pose>0 0 0 0 0 0</pose>\
+            <collision name='collision'>\
+                <geometry>\
+                    <box>\
+                        <size>0.00001 0.00001 0.00001</size>\
+                    </box>\
+                </geometry>\
+            </collision>\
+            <inertial>\
+                <mass>0.00001</mass>\
+                <inertia>\
+                    <ixx>0.00001</ixx>\
+                    <ixy>0</ixy>\
+                    <ixz>0</ixz>\
+                    <iyy>0.00001</iyy>\
+                    <iyz>0</iyz>\
+                    <izz>0.00001</izz>\
+                </inertia>\
+            </inertial>\
+        </link>\
+    </model>\
+    </sdf>";
+    std::string handleSDF_str = ss.str();
+    handleSDF.SetFromString(handleSDF_str);
+    m_world->InsertModelSDF(handleSDF);
+    
+    return true;
 }
 
 void GazeboYarpObjects::cleanup()
@@ -183,7 +222,7 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
     return true;
 }
 
-bool GazeboYarpObjects::attach_impl(std::string link_name,std::string object_name, math::Pose touch_point, math::Vector3 normal)
+bool GazeboYarpObjects::attach_impl(std::string link_name,std::string object_name, math::Pose handle_pose, math::Vector3 normal)
 {
     physics::LinkPtr parent_link = getLinkInModel(m_model,link_name);
     
@@ -200,16 +239,41 @@ bool GazeboYarpObjects::attach_impl(std::string link_name,std::string object_nam
         return false;
     }
     
+    //TODO disable collisions on the hand, not on the object!!
     gazebo::physics::Link_V model_links = object_model->GetLinks();
     for(int i=0; i < model_links.size(); i++ ) 
-    {
         model_links[i]->SetCollideMode("none");
-    }
 
+//     math::Pose handle_pose = Get_handle_pose(object_model, parent_link->GetWorldCoGPose(), link_name, width, height, length);
+    
+//     if( handle_pose.pos.x == 0.0 && handle_pose.pos.y == 0.0 && handle_pose.pos.z == 0.0 && handle_pose.rot.GetRoll() == 0.0 && handle_pose.rot.GetPitch() == 0.0 && handle_pose.rot.GetYaw() == 0.0 ) {
+//         std::cout<<"The hand posture is NOT suitable to grasp the specified object" <<std::endl;
+//         return false;
+//     }
+    
+    physics::ModelPtr object_handle_model = m_world->GetModel("object_handle");
+    physics::LinkPtr object_handle_link = getLinkInModel(object_handle_model,"object_handle_link");
+    
+    object_handle_link->SetWorldPose(handle_pose);
+    
+    physics::JointPtr object_joint;
+    object_joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", object_model);
+    if( !object_joint ) {
+        std::cout<<"could not create joint for the object!!"<<std::endl;
+        return false;
+    }
+    
+    physics::LinkPtr object_link = getLinkInModel(object_model,"link");
+    
+    object_joint->SetName(object_name+"_attached_handle_joint");
+    joints_attached[object_name+"_attached_handle_joint"]=object_joint;
+    object_joint->Load(object_link, object_handle_link, math::Pose());
+    object_joint->Attach(object_link, object_handle_link);
+    object_joint->SetHighStop(0, 0);
+    object_joint->SetLowStop(0, 0);
+    
+    
     physics::JointPtr joint;
-    physics::LinkPtr link;
-    link = m_world->GetPhysicsEngine()->CreateLink(m_model);
-    link->
     joint = m_world->GetPhysicsEngine()->CreateJoint("revolute", m_model);
     if( !joint ) {
         std::cout<<"could not create joint!!"<<std::endl;
@@ -220,10 +284,10 @@ bool GazeboYarpObjects::attach_impl(std::string link_name,std::string object_nam
     math::Pose offset(0,0,-0.15,0,0,0);
     math::Pose offset_pose=parent_link_pose*offset;
     
-    gazebo::physics::LinkPtr object_link = getClosestLinkInModel(object_model,parent_link_pose);
-    object_link->SetWorldPose(offset_pose);
-    joint->Load(parent_link, object_link, math::Pose());
-    joint->Attach(parent_link, object_link);
+//     gazebo::physics::LinkPtr object_link = getClosestLinkInModel(object_model,parent_link_pose);
+    object_handle_link->SetWorldPose(offset_pose);
+    joint->Load(parent_link, object_handle_link, math::Pose());
+    joint->Attach(parent_link, object_handle_link);
     joint->SetHighStop(0, 0);
     joint->SetLowStop(0, 0);
     //joint->SetParam("cfm", 0, 0);
@@ -274,7 +338,15 @@ void GazeboYarpObjects::OnContacts(ConstContactsPtr& iter)
                     if (object.find((it->second),0)==0)
                     {
                         std::cout<<(iter)->contact(i).position(0).x()<<(iter)->contact(i).position(0).y()<<(iter)->contact(i).position(0).z()<<std::endl;
-                        attach_impl(it->first,it->second);
+                        gazebo::math::Pose touch_point;
+                        touch_point.pos.x=(iter)->contact(i).position(0).x();
+                        touch_point.pos.y=(iter)->contact(i).position(0).y();
+                        touch_point.pos.z=(iter)->contact(i).position(0).z();
+                        math::Vector3 normal;
+                        normal.x=(iter)->contact(i).position(0).x();
+                        normal.y=(iter)->contact(i).position(0).y();
+                        normal.z=(iter)->contact(i).position(0).z();
+                        attach_impl(it->first,it->second,touch_point,normal);
                     }
                 }
             }
@@ -285,10 +357,18 @@ void GazeboYarpObjects::OnContacts(ConstContactsPtr& iter)
 
 bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
 {
-    physics::JointPtr joint;
+    physics::JointPtr joint, handle_joint;
     if (joints_attached.count(object_name+"_attached_joint"))
     {
         joint=joints_attached[object_name+"_attached_joint"];
+    }
+    else
+    {
+        return false;
+    }
+    if (joints_attached.count(object_name+"_attached_handle_joint"))
+    {
+        handle_joint=joints_attached[object_name+"_attached_handle_joint"];
     }
     else
     {
@@ -300,9 +380,13 @@ bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
         std::cout<<"could not get the model for "<<object_name<<"!!"<<std::endl;
         return false;
     }
+
     //TODO add mutex
     joint->Detach();
     joints_attached.erase(object_name+"_attached_joint");
+    handle_joint->Detach();
+    joints_attached.erase(object_name+"_attached_handle_joint");
+    //TODO: enable collisions on the hand, not on the object
     gazebo::physics::Link_V model_links = object_model->GetLinks();
     for(int i=0; i < model_links.size(); i++ ) 
     {

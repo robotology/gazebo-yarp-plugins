@@ -474,8 +474,13 @@ bool gazebo::GazeboYarpObjects::attach(const std::string& link_name, const std::
             return false;
         }
 
+
+        parent_link->SetCollideMode("none");
+        attached_links[object_name]=parent_link;
+
         math::Pose hand_pose = parent_link->GetWorldCoGPose();
         object_handle_link->SetWorldPose(hand_pose);
+
 
         joint->SetName(object_name+"_attached_joint");
         joints_attached[object_name+"_attached_joint"]=joint;
@@ -517,6 +522,10 @@ bool gazebo::GazeboYarpObjects::detach(const std::string& object_name)
 
     handle_joint->Detach();
     joints_attached.erase(object_name+"_attached_handle_joint");
+
+    if (attached_links.count(object_name))
+        attached_links[object_name]->SetCollideMode("all");
+
     return true;
 }
 

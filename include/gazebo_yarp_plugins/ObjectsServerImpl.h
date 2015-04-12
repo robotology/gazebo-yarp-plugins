@@ -20,7 +20,8 @@ public:
     * @param object_name Name of the object
     * @return true if success, false otherwise
     */
-    virtual bool attach(const std::string& link_name, const std::string& object_name);
+    //virtual bool attach(const std::string& link_name, const std::string& object_name);
+    virtual bool attach(const std::string& link_name, const std::string& object_name, const double width, const double height, const double length);
 
     /**
      * Detach an object from the links it was attached to
@@ -28,6 +29,13 @@ public:
      * @return true if success, false otherwise
      */
     virtual bool detach(const std::string& object_name);
+
+    /**
+     * Delete an object from the Gazebo environment
+     * @param object_name Name of the object
+     * @return true if success, false otherwise
+     */
+    virtual bool deleteObject(const std::string& object_name);
 private:
 
     GazeboYarpObjects& m_objects;

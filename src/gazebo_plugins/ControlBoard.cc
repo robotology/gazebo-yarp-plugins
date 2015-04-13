@@ -128,7 +128,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             }
             else
             {
-                std::cout << "Opening new device " << deviceName << std::endl;
+                std::cout << "Opening new device " << newPoly.key.c_str() << std::endl;
                 driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
                     fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", newPoly.key.c_str());

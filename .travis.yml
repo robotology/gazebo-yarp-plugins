@@ -19,8 +19,8 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install cmake
   - sudo apt-get --force-yes install libace-dev
-  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
-  - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
+  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq --force-yes libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
+  - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq --force-yes gazebo libtinyxml-dev libboost-system-dev; fi
   # move to /home/travis/build/robotology/ directory
   - cd ..
   # install yarp

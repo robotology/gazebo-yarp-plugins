@@ -311,6 +311,7 @@ private:
         double max;
     };
 
+    std::string deviceName;
     gazebo::physics::Model* m_robot;
     gazebo::event::ConnectionPtr m_updateConnection;
 

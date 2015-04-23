@@ -36,6 +36,7 @@ class GazeboYarpPlugins < Formula
   ## Dependencies
   depends_on "cmake" => :build
   depends_on "pkg-config" => :build
+  option "without-yarp", "Don't use yarp from brew, but manually specify the location with YARP_DIR environment variable"
   depends_on "yarp" => :recommended
   depends_on "gazebo5"
 

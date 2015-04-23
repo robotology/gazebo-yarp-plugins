@@ -11,7 +11,7 @@ class GazeboYarpPlugins < Formula
   end
 
   head do
-    url "https://github.com/robotology/gazebo-yarp-plugins.git"
+    url "https://github.com/robotology/gazebo-yarp-plugins.git", :branch => "test/gazebo5"
   end
 
   # # Bottles are pre-built and added by the Homebrew maintainers for you.
@@ -56,6 +56,7 @@ class GazeboYarpPlugins < Formula
     # For Cmake, we have some necessary defaults in `std_cmake_args`:
     mkdir "build" do
       system "cmake", "..", *std_cmake_args
+      system "cmake", "."
       system "make", "install"
     end
 

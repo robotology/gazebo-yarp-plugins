@@ -5,7 +5,7 @@ matrix:
     - compiler: gcc
       env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_ONEDOTNINE=TRUE
     - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_FIVE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_THREE=TRUE
     - compiler: clang
       env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_THREE=TRUE
     - compiler: clang
@@ -19,9 +19,8 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install cmake
   - sudo apt-get --force-yes install libace-dev
-  - if [ $USE_GAZEBO_FIVE ]; then sudo apt-get install -qq --force-yes libgazebo5-dev libavcodec-dev libavformat-dev libswscale-dev; fi
-  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq --force-yes libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
-  - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq --force-yes gazebo libtinyxml-dev libboost-system-dev; fi
+  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
+  - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq gazebo libtinyxml-dev libboost-system-dev; fi
   # move to /home/travis/build/robotology/ directory
   - cd ..
   # install yarp
@@ -59,6 +58,7 @@ script:
   # test install/uninstall
   - sudo make install
   - sudo make uninstall
+
 notifications:
   email:
     - pegua1@gmail.com

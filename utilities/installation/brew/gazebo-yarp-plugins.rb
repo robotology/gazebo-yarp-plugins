@@ -1,7 +1,3 @@
-# TODO:
-# - yarp can be installed not through brew?
-# - which version of gazebo?
-
 class GazeboYarpPlugins < Formula
   homepage "https://github.com/robotology/gazebo-yarp-plugins"
 
@@ -78,7 +74,7 @@ class GazeboYarpPlugins < Formula
     # break if they remember that exact path. In contrast to that, the
     # `$(brew --prefix)/opt/formula` is the same path for all future
     # versions of the formula!
-    
+
     # A general note: The commands here are executed line by line, so if
     # you change some variable or call a method like ENV.deparallelize, it
     # only affects the lines after that command.

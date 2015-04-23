@@ -34,6 +34,7 @@ include(AddDebugMacro)
 # Enable all possible warning if CMAKE_BUILD_TYPE is debug
 include(AddDebugWarnings)
 
+message("-------- OGRE includes: ${OGRE_INCLUDE_DIRS}")
 include_directories(include/gazebo_yarp_plugins)
 include_directories(SYSTEM ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${OGRE_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})

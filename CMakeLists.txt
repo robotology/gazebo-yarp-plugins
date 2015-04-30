@@ -16,6 +16,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 find_package(Gazebo REQUIRED)
 
 find_package(Boost REQUIRED serialization system)
+find_package(OGRE)
 
 include (FindPkgConfig)
 if (PKG_CONFIG_FOUND)
@@ -34,7 +35,7 @@ include(AddDebugMacro)
 include(AddDebugWarnings)
 
 include_directories(include/gazebo_yarp_plugins)
-include_directories(SYSTEM ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS})
+include_directories(SYSTEM ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${OGRE_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
 set(commons_headers         include/gazebo_yarp_plugins/common.h)

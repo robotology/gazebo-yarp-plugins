@@ -16,7 +16,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 find_package(Gazebo REQUIRED)
 
 find_package(Boost REQUIRED serialization system)
-find_package(OGRE REQUIRED)
+find_package(OGRE)
 
 include (FindPkgConfig)
 if (PKG_CONFIG_FOUND)

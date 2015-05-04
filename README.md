@@ -52,26 +52,18 @@ You can then create a build directory inside it to hold all the compiled files:
 ```
 mkdir build
 ```
-You can use CMake to generate the necessary file for the compilation, and compile gazebo-yarp-plugins using make:
+You can use CMake to generate the necessary file for the compilation, and compile gazebo-yarp-plugins using make. The plugins should be install in the directory specified by `CMAKE_INSTALL_PREFIX` (by default `/usr/local`):
 ```
 cd build
-cmake ../
-make
+cmake ../ -DCMAKE_INSTALL_PREFIX=/path/to/the/install/folder
+make install
 ```
 
-To notify Gazebo of the new plugins compiled, it is necessary to modify the GAZEBO_PLUGIN_PATH enviroment variable:
+To notify Gazebo of the new plugins compiled, it is necessary to modify the GAZEBO_PLUGIN_PATH environment variable:
 ```
-export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/gazebo-yarp-plugins/build
+export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/the/install/folder/lib
 ```
-Where "/path/to/gazebo-yarp-plugins/build" is the path on your computer where you located the build directory.
-To avoid having to modify this enviroment variable each time, you can place this command in the .bashrc file in your home directory.
-
-You can decide to install the plugins by issuing a
-~~~
-sudo make install
-~~~
-
-at which point you need to update the GAZEBO_PLUGIN_PATH accordingly, if the installation path is not in the LD_LIBRARY_PATH of your system
+To avoid having to modify this environment variable each time, you can place this command in the `.bashrc` file in your home directory.
 
 Usage
 -----

@@ -14,8 +14,8 @@ target_link_libraries(gazebo_yarp_rpc_clock ${YARP_LIBRARIES})
 
 
 target_include_directories(gazebo_yarp_rpc_clock PUBLIC 
-                            "$<BUILD_INTERFACE:${CLOCKRPC_INCLUDES}"
-                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/gazebo")
+                            "$<BUILD_INTERFACE:${CLOCKRPC_INCLUDES}>"
+                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/gazebo>")
 
 set_property(TARGET gazebo_yarp_rpc_clock PROPERTY PUBLIC_HEADER ${CLOCKRPC_HEADERS})
 

@@ -6,7 +6,7 @@
 
 
 #include "ControlBoardDriver.h"
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 
 #include <gazebo/common/Events.hh>
 

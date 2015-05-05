@@ -6,7 +6,7 @@
 
 
 #include "JointSensorsDriver.h"
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
 using namespace yarp::dev;

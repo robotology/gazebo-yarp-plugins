@@ -1,5 +1,5 @@
 #clock module RPC server
-namespace yarp gazebo
+namespace yarp GazeboYarpPlugins
 
 service ClockServer {
     /** Pause the simulation if it was running

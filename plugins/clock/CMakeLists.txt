@@ -16,11 +16,11 @@ endif()
 
 add_gazebo_yarp_plugin_target(LIBRARY_NAME clock
                               INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                              INCLUDE_DIRS include/gazebo
+                              INCLUDE_DIRS include/gazebo include/GazeboYarpPlugins
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS} ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}
                               LINKED_LIBRARIES gazebo_yarp_rpc_clock ${LIB_COMMON_NAME} ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES}
                               HEADERS include/gazebo/Clock.hh 
-                                      include/gazebo/ClockServerImpl.h
+                                      include/GazeboYarpPlugins/ClockServerImpl.h
                               SOURCES src/Clock.cc 
                                       src/ClockServerImpl.cpp
                                  )

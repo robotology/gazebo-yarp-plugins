@@ -4,7 +4,7 @@
 #include <ClockServer.h>
 #include <yarp/os/idl/WireTypes.h>
 
-namespace gazebo {
+namespace GazeboYarpPlugins {
 
 
 class ClockServer_pauseSimulation : public yarp::os::Portable {

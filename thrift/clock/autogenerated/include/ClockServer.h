@@ -7,12 +7,12 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-namespace gazebo {
+namespace GazeboYarpPlugins {
   class ClockServer;
 }
 
 
-class gazebo::ClockServer : public yarp::os::Wire {
+class GazeboYarpPlugins::ClockServer : public yarp::os::Wire {
 public:
   ClockServer();
   /**

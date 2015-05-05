@@ -7,7 +7,7 @@
 #include "ControlBoard.hh"
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 
 
 #include <gazebo/physics/Model.hh>

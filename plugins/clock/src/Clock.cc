@@ -121,7 +121,7 @@ namespace gazebo
             return;
         }
         
-        m_clockServer = new ClockServerImpl(*this);
+        m_clockServer = new GazeboYarpPlugins::ClockServerImpl(*this);
         if (!m_clockServer) {
             std::cerr << "GazeboYarpClock: Could not create Clock Server." << std::endl;
             cleanup();

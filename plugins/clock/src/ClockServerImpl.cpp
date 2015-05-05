@@ -8,9 +8,9 @@
 #include "Clock.hh"
 #include <iostream>
 
-namespace gazebo {
+namespace GazeboYarpPlugins {
     
-    ClockServerImpl::ClockServerImpl(GazeboYarpClock& clockPlugin)
+    ClockServerImpl::ClockServerImpl(gazebo::GazeboYarpClock& clockPlugin)
     : m_clock(clockPlugin) {}
     
     void ClockServerImpl::pauseSimulation()

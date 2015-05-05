@@ -7,7 +7,7 @@
 
 #include "JointSensorsDriver.h"
 #include "JointSensors.hh"
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <yarp/dev/PolyDriver.h>

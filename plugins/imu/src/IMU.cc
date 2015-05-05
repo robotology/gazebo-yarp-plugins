@@ -7,7 +7,7 @@
 
 #include "IMU.hh"
 #include "IMUDriver.h"
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <gazebo/sensors/ImuSensor.hh>

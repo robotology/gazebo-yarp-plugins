@@ -7,7 +7,7 @@
 
 #include "Camera.hh"
 #include "CameraDriver.h"
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <gazebo/sensors/CameraSensor.hh>

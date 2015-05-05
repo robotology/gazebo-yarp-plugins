@@ -6,7 +6,7 @@
 
 
 #include "IMUDriver.h"
-#include <gazebo/Handler.hh>
+#include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <gazebo/math/Vector3.hh>

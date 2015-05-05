@@ -12,17 +12,14 @@ set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Finding dependencies
-find_package(Gazebo REQUIRED)
-
 find_package(Boost REQUIRED serialization system)
-find_package(OGRE)
+find_package(Protobuf REQUIRED)
+find_package(Gazebo   REQUIRED)
+find_package(SDFormat REQUIRED)
+find_package(OGRE QUIET)
 
-include (FindPkgConfig)
-if (PKG_CONFIG_FOUND)
-  pkg_check_modules(GAZEBO gazebo)
-  pkg_check_modules(SDFORMAT sdformat)
-  pkg_check_modules(PROTOBUF protobuf)
-endif()
+# Add Gazebo CXX flags, to support Gazebo 6 reckless dependency on C++11
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 # add local cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
@@ -38,6 +35,7 @@ include(AddDebugWarnings)
 
 #this is required for all plugins
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
+
 
 #build common libraries first
 add_subdirectory(libraries)

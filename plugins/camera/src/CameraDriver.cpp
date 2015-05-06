@@ -89,23 +89,14 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
 // IFRAMEGRABBER IMAGE
 bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _image)
 {
-    static int alive = 0;
-
      m_dataMutex.wait();
     _image.resize(_width, _height);
 
     unsigned char *pBuffer = _image.getRawImage();
 
-
     memcpy(pBuffer, imageBuffer, _bufferSize);
     m_dataMutex.post();
 
-    alive++;
-    if(alive >= 255)
-    {
-        std::cout << "GazeboYarpCamera getImage" << endl;
-        alive = 0;
-    }
     return true;
 }
 

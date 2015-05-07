@@ -18,8 +18,15 @@ using namespace yarp::dev;
 
 const std::string YarpScopedName = "sensorScopedName";
 
-GazeboYarpCameraDriver::GazeboYarpCameraDriver() {}
-GazeboYarpCameraDriver::~GazeboYarpCameraDriver() {}
+GazeboYarpCameraDriver::GazeboYarpCameraDriver()
+{
+    vertical_flip   = false;
+    horizontal_flip = false;
+}
+
+GazeboYarpCameraDriver::~GazeboYarpCameraDriver()
+{
+}
     
 //DEVICE DRIVER
 bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
@@ -35,6 +42,9 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
         std::cout << "GazeboYarpCameraDriver Error: camera sensor was not found" << std::endl;
         return false;
     }
+
+    if (config.check("vertical_flip")) vertical_flip =true;
+    if (config.check("horizonal_flip")) horizontal_flip =true;
 
     _camera = m_parentSensor->GetCamera();
     if(_camera == NULL)
@@ -93,8 +103,51 @@ bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _
     _image.resize(_width, _height);
 
     unsigned char *pBuffer = _image.getRawImage();
+    
+    if (vertical_flip==true && horizontal_flip==false)
+    {
+	int r=0;
+	int c=0;
+        for (int c=0; c<_width; c++)
+        for (int r=0; r<_height; r++)
+        {
+           unsigned char *pixel = _image.getPixelAddress(c,_height-r-1);
+           pixel[0] = *(imageBuffer+r*_width*3+c*3+0);
+           pixel[1] = *(imageBuffer+r*_width*3+c*3+1);
+           pixel[2] = *(imageBuffer+r*_width*3+c*3+2);       
+        }
+    }
+    else if (vertical_flip==false && horizontal_flip==true)
+    {
+	int r=0;
+	int c=0;
+        for (int c=0; c<_width; c++)
+        for (int r=0; r<_height; r++)
+        {
+           unsigned char *pixel = _image.getPixelAddress(_width-c-1,r);
+           pixel[0] = *(imageBuffer+r*_width*3+c*3+0);
+           pixel[1] = *(imageBuffer+r*_width*3+c*3+1);
+           pixel[2] = *(imageBuffer+r*_width*3+c*3+2);       
+        }
+    }
+    else if (vertical_flip==true && horizontal_flip==true)
+    {
+	int r=0;
+	int c=0;
+        for (int c=0; c<_width; c++)
+        for (int r=0; r<_height; r++)
+        {
+           unsigned char *pixel = _image.getPixelAddress(_width-c-1,_height-r-1);
+           pixel[0] = *(imageBuffer+r*_width*3+c*3+0);
+           pixel[1] = *(imageBuffer+r*_width*3+c*3+1);
+           pixel[2] = *(imageBuffer+r*_width*3+c*3+2);       
+        }
+    }
+    else 
+    {
+	memcpy(pBuffer, imageBuffer, _bufferSize);
+    }
 
-    memcpy(pBuffer, imageBuffer, _bufferSize);
     m_dataMutex.post();
 
     return true;

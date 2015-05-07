@@ -98,6 +98,8 @@ private:
     int _width;
     int _height;
     int _bufferSize;
+    bool vertical_flip;
+    bool horizontal_flip;
 
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data

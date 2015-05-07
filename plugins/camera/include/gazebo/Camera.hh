@@ -56,7 +56,6 @@ namespace gazebo
         std::string m_sensorName;
         sensors::CameraSensor *m_sensor;
 
-
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
     };
 }

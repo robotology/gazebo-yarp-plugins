@@ -48,7 +48,7 @@ public:
     GazeboYarpCameraDriver();
 
     virtual ~GazeboYarpCameraDriver();
-    
+
     /**
      * Yarp interfaces start here
      */
@@ -56,7 +56,7 @@ public:
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-    
+
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
@@ -95,19 +95,19 @@ public:
 
 private:
     // camera data here
-    int _width;
-    int _height;
-    int _bufferSize;
-    bool vertical_flip;
-    bool horizontal_flip;
+    int m_width;
+    int m_height;
+    int m_bufferSize;
+    bool m_vertical_flip;
+    bool m_horizontal_flip;
 
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
 
-    unsigned char *imageBuffer;
+    unsigned char *m_imageBuffer;
 
     gazebo::sensors::CameraSensor* m_parentSensor;
-    gazebo::rendering::CameraPtr _camera;
+    gazebo::rendering::CameraPtr m_camera;
     gazebo::event::ConnectionPtr m_updateConnection;
 
 };

@@ -20,21 +20,19 @@ const std::string YarpScopedName = "sensorScopedName";
 
 GazeboYarpCameraDriver::GazeboYarpCameraDriver()
 {
-    vertical_flip   = false;
-    horizontal_flip = false;
+    m_vertical_flip   = false;
+    m_horizontal_flip = false;
 }
 
 GazeboYarpCameraDriver::~GazeboYarpCameraDriver()
 {
 }
-    
+
 //DEVICE DRIVER
 bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
 {
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
-//    std::cout << "GazeboYarpCameraDriver is looking for sensor " << sensorScopedName << std::endl;
-//    std::cout << "GazeboYarpCameraDriver open parameters are " << config.toString() << std::endl;
 
 // TODO get parent sensor, if it make any sense
     m_parentSensor = (gazebo::sensors::CameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
@@ -43,30 +41,27 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (config.check("vertical_flip")) vertical_flip =true;
-    if (config.check("horizonal_flip")) horizontal_flip =true;
+    if (config.check("vertical_flip")) m_vertical_flip =true;
+    if (config.check("horizonal_flip")) m_horizontal_flip =true;
 
-    _camera = m_parentSensor->GetCamera();
-    if(_camera == NULL)
+    m_camera = m_parentSensor->GetCamera();
+    if(m_camera == NULL)
     {
         std::cout << "GazeboYarpCameraDriver Error: camera pointer not valid" << std::endl;
         return false;
     }
-    std::cout << " image size is: " << this->m_parentSensor->GetImageWidth() << "x" << this->m_parentSensor->GetImageHeight() << std::endl;
 
-    _camera->EnableSaveFrame(true);
-
-    _width  = 320;
-    _height = 240;
-    _bufferSize = 3*_width*_height;
+    m_width  = m_camera->GetImageWidth();
+    m_height = m_camera->GetImageHeight();
+    m_bufferSize = 3*m_width*m_height;
 
     m_dataMutex.wait();
-    imageBuffer = new unsigned char[3*_width*_height];
-    memset(imageBuffer, 0x00, 3*_width*_height);
+    m_imageBuffer = new unsigned char[3*m_width*m_height];
+    memset(m_imageBuffer, 0x00, 3*m_width*m_height);
     m_dataMutex.post();
 
     //Connect the driver to the gazebo simulation
-    this->m_updateConnection = _camera->ConnectNewImageFrame(boost::bind(&GazeboYarpCameraDriver::captureImage, this, _1, _2, _3, _4, _5));
+    this->m_updateConnection = m_camera->ConnectNewImageFrame(boost::bind(&GazeboYarpCameraDriver::captureImage, this, _1, _2, _3, _4, _5));
     return true;
 }
 
@@ -74,10 +69,14 @@ bool GazeboYarpCameraDriver::close()
 {
     if (this->m_updateConnection.get())
     {
-        _camera->DisconnectNewImageFrame(this->m_updateConnection);
+        m_camera->DisconnectNewImageFrame(this->m_updateConnection);
         this->m_updateConnection = gazebo::event::ConnectionPtr();
         m_parentSensor = NULL;
     }
+    
+    delete[] m_imageBuffer;
+    m_imageBuffer = 0;
+
     return true;
 }
 
@@ -90,7 +89,7 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
 {
     m_dataMutex.wait();
     if(m_parentSensor->IsActive())
-        memcpy(imageBuffer, m_parentSensor->GetImageData(), _bufferSize);
+        memcpy(m_imageBuffer, m_parentSensor->GetImageData(), m_bufferSize);
     m_dataMutex.post();
     return true;
 }
@@ -100,52 +99,52 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
 bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _image)
 {
      m_dataMutex.wait();
-    _image.resize(_width, _height);
+    _image.resize(m_width, m_height);
 
     unsigned char *pBuffer = _image.getRawImage();
-    
-    if (vertical_flip==true && horizontal_flip==false)
+
+    if (m_vertical_flip==true && m_horizontal_flip==false)
     {
-	int r=0;
-	int c=0;
-        for (int c=0; c<_width; c++)
-        for (int r=0; r<_height; r++)
+    int r=0;
+    int c=0;
+        for (int c=0; c<m_width; c++)
+        for (int r=0; r<m_height; r++)
         {
-           unsigned char *pixel = _image.getPixelAddress(c,_height-r-1);
-           pixel[0] = *(imageBuffer+r*_width*3+c*3+0);
-           pixel[1] = *(imageBuffer+r*_width*3+c*3+1);
-           pixel[2] = *(imageBuffer+r*_width*3+c*3+2);       
+           unsigned char *pixel = _image.getPixelAddress(c,m_height-r-1);
+           pixel[0] = *(m_imageBuffer+r*m_width*3+c*3+0);
+           pixel[1] = *(m_imageBuffer+r*m_width*3+c*3+1);
+           pixel[2] = *(m_imageBuffer+r*m_width*3+c*3+2);
         }
     }
-    else if (vertical_flip==false && horizontal_flip==true)
+    else if (m_vertical_flip==false && m_horizontal_flip==true)
     {
-	int r=0;
-	int c=0;
-        for (int c=0; c<_width; c++)
-        for (int r=0; r<_height; r++)
+    int r=0;
+    int c=0;
+        for (int c=0; c<m_width; c++)
+        for (int r=0; r<m_height; r++)
         {
-           unsigned char *pixel = _image.getPixelAddress(_width-c-1,r);
-           pixel[0] = *(imageBuffer+r*_width*3+c*3+0);
-           pixel[1] = *(imageBuffer+r*_width*3+c*3+1);
-           pixel[2] = *(imageBuffer+r*_width*3+c*3+2);       
+           unsigned char *pixel = _image.getPixelAddress(m_width-c-1,r);
+           pixel[0] = *(m_imageBuffer+r*m_width*3+c*3+0);
+           pixel[1] = *(m_imageBuffer+r*m_width*3+c*3+1);
+           pixel[2] = *(m_imageBuffer+r*m_width*3+c*3+2);
         }
     }
-    else if (vertical_flip==true && horizontal_flip==true)
+    else if (m_vertical_flip==true && m_horizontal_flip==true)
     {
-	int r=0;
-	int c=0;
-        for (int c=0; c<_width; c++)
-        for (int r=0; r<_height; r++)
+        int r=0;
+        int c=0;
+        for (int c=0; c<m_width; c++)
+        for (int r=0; r<m_height; r++)
         {
-           unsigned char *pixel = _image.getPixelAddress(_width-c-1,_height-r-1);
-           pixel[0] = *(imageBuffer+r*_width*3+c*3+0);
-           pixel[1] = *(imageBuffer+r*_width*3+c*3+1);
-           pixel[2] = *(imageBuffer+r*_width*3+c*3+2);       
+           unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
+           pixel[0] = *(m_imageBuffer+r*m_width*3+c*3+0);
+           pixel[1] = *(m_imageBuffer+r*m_width*3+c*3+1);
+           pixel[2] = *(m_imageBuffer+r*m_width*3+c*3+2);
         }
     }
-    else 
+    else
     {
-	memcpy(pBuffer, imageBuffer, _bufferSize);
+        memcpy(pBuffer, m_imageBuffer, m_bufferSize);
     }
 
     m_dataMutex.post();
@@ -155,14 +154,12 @@ bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _
 
 int GazeboYarpCameraDriver::height() const
 {
-    std::cout << "GazeboYarpCamera height" << endl;
-    return 0;
+    return m_height;
 }
 
 int GazeboYarpCameraDriver::width() const
 {
-    std::cout << "GazeboYarpCamera width" << endl;
-    return 0;
+    return m_width;
 }
 
 //PRECISELY TIMED
@@ -173,6 +170,6 @@ yarp::os::Stamp GazeboYarpCameraDriver::getLastInputStamp()
 
 int GazeboYarpCameraDriver::getRawBufferSize()
 {
-    return _bufferSize;
+    return m_bufferSize;
 }
 

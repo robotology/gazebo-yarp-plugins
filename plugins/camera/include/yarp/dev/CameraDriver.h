@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
- * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro, Alessandro Settimi and Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -12,6 +12,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
 
 #include <boost/shared_ptr.hpp>
 #include <gazebo/rendering/Camera.hh>
@@ -92,6 +93,7 @@ public:
                               unsigned int _depth, const std::string &_format);
 
     virtual int getRawBufferSize();
+    void print (unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size);
 
 private:
     // camera data here
@@ -100,15 +102,25 @@ private:
     int m_bufferSize;
     bool m_vertical_flip;
     bool m_horizontal_flip;
+    static double start_time;
+    bool m_display_time_box;
+    bool m_display_timestamp;
 
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
 
     unsigned char *m_imageBuffer;
+    int counter;
 
     gazebo::sensors::CameraSensor* m_parentSensor;
     gazebo::rendering::CameraPtr m_camera;
     gazebo::event::ConnectionPtr m_updateConnection;
+    
+    struct txt_type
+    {
+       char data[16];
+    };
+    txt_type num[12];
 
 };
 

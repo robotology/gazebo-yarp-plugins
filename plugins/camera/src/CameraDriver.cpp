@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
- * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
+ * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro, Alessandro Settimi and Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -17,12 +17,74 @@ using namespace std;
 using namespace yarp::dev;
 
 const std::string YarpScopedName = "sensorScopedName";
+double GazeboYarpCameraDriver::start_time =0;
+
+void GazeboYarpCameraDriver::print (unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
+{
+   int pixelsize =5;
+   for (int i=0;i<size;i++)   
+   {
+      char* num_p=0;
+      switch(s[i])
+      {
+	case '0' : num_p=num[0].data; break;
+	case '1' : num_p=num[1].data; break;
+	case '2' : num_p=num[2].data; break;
+	case '3' : num_p=num[3].data; break;
+	case '4' : num_p=num[4].data; break;
+	case '5' : num_p=num[5].data; break;
+	case '6' : num_p=num[6].data; break;
+	case '7' : num_p=num[7].data; break;
+	case '8' : num_p=num[8].data; break;
+	case '9' : num_p=num[9].data; break;
+	case ' ' : num_p=num[10].data; break;
+        case '.' : num_p=num[11].data; break;
+      }
+
+      for (int yi=0;yi<5;yi++)   
+      for (int xi=0;xi<3;xi++)
+      {
+         int ii=yi*3+xi;
+         if (num_p[ii]=='*')
+         {
+            for (int r=yi*pixelsize; r<yi*pixelsize+pixelsize; r++)
+	    {   
+                int off = i*(pixelsize+20);
+		for (int c=xi*pixelsize+off;  c<xi*pixelsize+pixelsize+off; c++)
+		{
+                    unsigned char *pixel = pixbuf + c*3 + r*(pixbuf_w*3);
+	   	    pixel[0] = 0;
+		    pixel[1] = 0;
+		    pixel[2] = 255;
+		}
+            }
+         }
+      }
+   }
+}
 
 GazeboYarpCameraDriver::GazeboYarpCameraDriver()
 {
-    m_vertical_flip   = false;
-    m_horizontal_flip = false;
+    m_vertical_flip     = false;
+    m_horizontal_flip   = false;
+    m_display_time_box  = false;
+    m_display_timestamp = false;
+    start_time = yarp::os::Time::now();
+    counter=0;
+    sprintf(num[0].data, "**** ** ** ****");
+    sprintf(num[1].data, " *  *  *  *  * ");
+    sprintf(num[2].data, "***  *****  ***");
+    sprintf(num[3].data, "***  ****  ****");
+    sprintf(num[4].data, "* ** ****  *  *");
+    sprintf(num[5].data, "****  ***  ****");
+    sprintf(num[6].data, "****  **** ****");
+    sprintf(num[7].data, "***  *  *  *  *");
+    sprintf(num[8].data, "**** ***** ****");
+    sprintf(num[9].data, "**** ****  ****");
+    sprintf(num[10].data,"               ");
+    sprintf(num[11].data,"          ** **");
 }
+
 
 GazeboYarpCameraDriver::~GazeboYarpCameraDriver()
 {
@@ -34,7 +96,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
 
-// TODO get parent sensor, if it make any sense
+    // TODO get parent sensor, if it make any sense
     m_parentSensor = (gazebo::sensors::CameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     if (!m_parentSensor) {
         std::cout << "GazeboYarpCameraDriver Error: camera sensor was not found" << std::endl;
@@ -43,6 +105,8 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
 
     if (config.check("vertical_flip")) m_vertical_flip =true;
     if (config.check("horizonal_flip")) m_horizontal_flip =true;
+    if (config.check("display_timestamp")) m_display_timestamp =true;
+    if (config.check("display_time_box")) m_display_time_box =true;
 
     m_camera = m_parentSensor->GetCamera();
     if(m_camera == NULL)
@@ -58,6 +122,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     m_dataMutex.wait();
     m_imageBuffer = new unsigned char[3*m_width*m_height];
     memset(m_imageBuffer, 0x00, 3*m_width*m_height);
+    m_lastTimestamp.update();
     m_dataMutex.post();
 
     //Connect the driver to the gazebo simulation
@@ -90,6 +155,18 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
     m_dataMutex.wait();
     if(m_parentSensor->IsActive())
         memcpy(m_imageBuffer, m_parentSensor->GetImageData(), m_bufferSize);
+
+    if (m_display_timestamp)
+    {
+	char txtbuf[1000];
+    	double time=yarp::os::Time::now()-start_time;
+	sprintf(txtbuf,"%.3f",time);
+	int len = strlen(txtbuf);
+   	if (len<20)
+    	print (m_imageBuffer,_width,_height,0,0,txtbuf, len);
+    }
+
+    m_lastTimestamp.update();
     m_dataMutex.post();
     return true;
 }
@@ -146,6 +223,26 @@ bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _
     {
         memcpy(pBuffer, m_imageBuffer, m_bufferSize);
     }
+
+    if (m_display_time_box)
+    {
+        counter++;
+        if (counter == 10) counter = 0; 
+        for (int c=0+counter*30; c<30+counter*30; c++)
+        for (int r=0; r<30; r++)
+        {
+           if (counter % 2 ==0)
+           {unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
+           pixel[0] = 255;
+           pixel[1] = 0;
+           pixel[2] = 0;}
+           else
+           {unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
+           pixel[0] = 0;
+           pixel[1] = 255;
+           pixel[2] = 0;}
+        }
+    } 
 
     m_dataMutex.post();
 

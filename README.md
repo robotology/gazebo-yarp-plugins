@@ -63,6 +63,8 @@ To notify Gazebo of the new plugins compiled, it is necessary to modify the GAZE
 ```
 export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/the/install/folder/lib
 ```
+where `/path/to/the/install/folder/lib` is the directory containing the `libgazebo_yarp_controlboard.so`, `libgazebo_yarp_forcetorque.so`... files.
+
 To avoid having to modify this environment variable each time, you can place this command in the `.bashrc` file in your home directory.
 
 Usage

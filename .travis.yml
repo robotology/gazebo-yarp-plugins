@@ -3,11 +3,11 @@ language: cpp
 matrix:
   include:
     - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_ONEDOTNINE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_ONEDOTNINE=TRUE 
     - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_THREE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_THREE=TRUE RUN_TESTS=TRUE
     - compiler: clang
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_THREE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_THREE=TRUE RUN_TESTS=TRUE
     - compiler: clang
       env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_ONEDOTNINE=TRUE
 
@@ -83,7 +83,11 @@ script:
   - sudo make install
   - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/usr/local/lib 
   # run tests
-  - testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml 
+  - if [ $RUN_TESTS ]; gzserver world/icub_fixed.world & ; fi
+  - sleep 10
+  - yarp name list 
+  - if [ $RUN_TESTS ]; pkill gzserver; fi
+  - if [ $RUN_TESTS ]; then testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml; fi
   - sudo make uninstall
   - pkill yarpserver
 

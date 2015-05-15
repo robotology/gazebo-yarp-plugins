@@ -83,10 +83,10 @@ script:
   - sudo make install
   - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/usr/local/lib 
   # run tests
-  - if [ $RUN_TESTS ]; gzserver world/icub_fixed.world & ; fi
+  - if [ $RUN_TESTS ]; then gzserver world/icub_fixed.world & ; fi
   - sleep 10
   - yarp name list 
-  - if [ $RUN_TESTS ]; pkill gzserver; fi
+  - if [ $RUN_TESTS ]; then pkill gzserver; fi
   - if [ $RUN_TESTS ]; then testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml; fi
   - sudo make uninstall
   - pkill yarpserver

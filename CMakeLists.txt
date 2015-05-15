@@ -8,9 +8,6 @@ PROJECT(GazeboYarpPlugins)
 
 find_package(YARP 2.3.63.2 REQUIRED)
 
-set(CMAKE_MACOSX_RPATH 1)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 # Finding dependencies
 find_package(Boost REQUIRED serialization system)
 find_package(Protobuf REQUIRED)
@@ -26,8 +23,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 #used for dir suffixes
 include(GNUInstallDirs)
-# hack: by default this would be 'lib/x86_64-linux-gnu' on linux
-set(CMAKE_INSTALL_LIBDIR lib)
+if (CMAKE_VERSION LESS 3.1)
+    # hack: by default this would be 'lib/x86_64-linux-gnu' on linux
+    set(CMAKE_INSTALL_LIBDIR lib)
+endif()
+
+OPTION(GAZEBO_YARP_PLUGINS_ENABLE_RPATH "Enable installation with RPATH" TRUE)
+include(AddInstallRPATHSupport)
+add_install_rpath_support(BIN_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}
+                          LIB_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+                          DEPENDS GAZEBO_YARP_PLUGINS_ENABLE_RPATH
+                          )
 
 # Define (depending on CMAKE_BUILD_TYPE) the DEBUG macro
 include(AddDebugMacro)

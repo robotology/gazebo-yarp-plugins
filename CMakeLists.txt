@@ -33,7 +33,7 @@ include(AddInstallRPATHSupport)
 add_install_rpath_support(BIN_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}
                           LIB_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
                           DEPENDS GAZEBO_YARP_PLUGINS_ENABLE_RPATH
-                          )
+                          USE_LINK_PATH)
 
 # Define (depending on CMAKE_BUILD_TYPE) the DEBUG macro
 include(AddDebugMacro)

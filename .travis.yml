@@ -82,8 +82,9 @@ script:
   # test install/uninstall
   - sudo make install
   - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/usr/local/lib 
+  - gzserver --verbose world/icub_fixed.world
   # run tests
-  - testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml 
+  #- testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml 
   - sudo make uninstall
   - pkill yarpserver
 

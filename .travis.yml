@@ -33,6 +33,10 @@ before_script:
   - sudo make install
   - sudo ldconfig
   - cd ../..
+  
+  # launch yarp while you install everything else
+  - yarpserver &
+  
   # install robot-testing framework
   - git clone https://github.com/robotology/robot-testing
   - cd robot-testing
@@ -41,6 +45,9 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DENABLE_MIDDLEWARE_PLUGINS:BOOL=ON ..
   - make 
   - sudo make install
+  # by default /usr/local/lib is not in the search path of dlopen
+  # so we add it to LD_LIBRARY_PATH
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
   - sudo ldconfig
   - cd ../..
   
@@ -51,7 +58,6 @@ before_script:
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
   - make 
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/travis/build/robotology/icub-tests/build/plugins
   - export YARP_DATA_DIRS=$YARP_DATA_DIRS:/home/travis/build/robotology/icub-tests/suit
   - sudo ldconfig
   - cd ../..
@@ -75,11 +81,10 @@ script:
   # test install/uninstall
   - sudo make install
   - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/usr/local/lib 
-  - yarpserver &
   # run tests
   - testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml 
   - sudo make uninstall
-  - pkill yarperver
+  - pkill yarpserver
 
 notifications:
   email:

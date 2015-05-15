@@ -41,6 +41,7 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DENABLE_MIDDLEWARE_PLUGINS:BOOL=ON ..
   - make 
   - sudo make install
+  - sudo ldconfig
   - cd ../..
   
   # install icub-tests 
@@ -52,6 +53,7 @@ before_script:
   - make 
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/travis/build/robotology/icub-tests/build/plugins
   - export YARP_DATA_DIRS=$YARP_DATA_DIRS:/home/travis/build/robotology/icub-tests/suit
+  - sudo ldconfig
   - cd ../..
   
   # install icub-gazebo (for testing)

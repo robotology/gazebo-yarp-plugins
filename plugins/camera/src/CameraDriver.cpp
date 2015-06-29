@@ -156,6 +156,8 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
     if(m_parentSensor->IsActive())
         memcpy(m_imageBuffer, m_parentSensor->GetImageData(), m_bufferSize);
 
+    m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
+
     if (m_display_timestamp)
     {
 	char txtbuf[1000];
@@ -166,7 +168,6 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
     	print (m_imageBuffer,_width,_height,0,0,txtbuf, len);
     }
 
-    m_lastTimestamp.update();
     m_dataMutex.post();
     return true;
 }

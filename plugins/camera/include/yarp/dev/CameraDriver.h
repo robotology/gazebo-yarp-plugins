@@ -42,8 +42,9 @@ namespace gazebo {
 extern const std::string YarpScopedName;
 
 class yarp::dev::GazeboYarpCameraDriver:
+    virtual public yarp::dev::DeviceDriver,
     virtual public yarp::dev::IFrameGrabberImage,
-    virtual public yarp::dev::DeviceDriver
+    virtual public yarp::dev::IPreciselyTimed
 {
 public:
     GazeboYarpCameraDriver();

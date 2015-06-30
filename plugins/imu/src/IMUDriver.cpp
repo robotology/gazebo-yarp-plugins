@@ -43,7 +43,7 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
     angular_velocity = this->m_parentSensor->GetAngularVelocity();
     
     /** \todo TODO ensure that the timestamp is the right one */
-    m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
+    m_lastTimestamp = this->m_parentSensor->GetLastUpdateTime().Double();
     
     m_dataMutex.wait();
     
@@ -130,5 +130,6 @@ bool GazeboYarpIMUDriver::calibrate(int /*ch*/, double /*v*/)
 //PRECISELY TIMED
 yarp::os::Stamp GazeboYarpIMUDriver::getLastInputStamp()
 {
-    return m_lastTimestamp;
+    m_lastStamp.update(m_lastTimestamp);
+    return m_lastStamp;
 }

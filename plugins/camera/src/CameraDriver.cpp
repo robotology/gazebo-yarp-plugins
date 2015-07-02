@@ -122,7 +122,8 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     m_dataMutex.wait();
     m_imageBuffer = new unsigned char[3*m_width*m_height];
     memset(m_imageBuffer, 0x00, 3*m_width*m_height);
-    m_lastTimestamp.update();
+    m_lastTimestamp = this->m_parentSensor->GetLastUpdateTime().Double();
+    m_lastStamp.update(m_lastTimestamp);
     m_dataMutex.post();
 
     //Connect the driver to the gazebo simulation
@@ -156,7 +157,7 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
     if(m_parentSensor->IsActive())
         memcpy(m_imageBuffer, m_parentSensor->GetImageData(), m_bufferSize);
 
-    m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
+    m_lastTimestamp = this->m_parentSensor->GetLastUpdateTime().Double();
 
     if (m_display_timestamp)
     {
@@ -263,7 +264,8 @@ int GazeboYarpCameraDriver::width() const
 //PRECISELY TIMED
 yarp::os::Stamp GazeboYarpCameraDriver::getLastInputStamp()
 {
-    return m_lastTimestamp;
+    m_lastStamp.update(m_lastTimestamp);
+    return m_lastStamp;
 }
 
 int GazeboYarpCameraDriver::getRawBufferSize()

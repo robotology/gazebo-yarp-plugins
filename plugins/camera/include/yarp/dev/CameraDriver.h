@@ -107,7 +107,8 @@ private:
     bool m_display_time_box;
     bool m_display_timestamp;
 
-    yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
+    double m_lastTimestamp;          //buffer for last timestamp data
+    yarp::os::Stamp m_lastStamp;     //timestamp updated for counting frames
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
 
     unsigned char *m_imageBuffer;

@@ -59,6 +59,7 @@ class GazeboYarpPlugins < Formula
     # To capture the output of a command, we use backtics:
     system 'sh', (testpath/"test.sh")
     shell_output("echo $?")
+    ohai "Success"
   end
 
 

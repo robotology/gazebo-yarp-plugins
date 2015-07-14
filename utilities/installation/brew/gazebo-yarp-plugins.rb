@@ -2,8 +2,8 @@ class GazeboYarpPlugins < Formula
   homepage "https://github.com/robotology/gazebo-yarp-plugins"
 
   stable do
-    url "https://github.com/robotology/gazebo-yarp-plugins/archive/v0.1.1.tar.gz"
-    sha256 "de2bbfc02e894c7bf235457ebb96931773af6e08297030a319d3ce9f166892a4"
+    url "https://github.com/robotology/gazebo-yarp-plugins/archive/v0.1.2.tar.gz"
+    sha256 "85fe3c1754b441c65e92f5c54149bc1dd1ed7c63365a413d2fad89236101d208"
   end
 
   head do

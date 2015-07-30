@@ -6,4 +6,6 @@ add_subdirectory(forcetorque)
 add_subdirectory(imu)
 add_subdirectory(jointsensors)
 add_subdirectory(showmodelcom)
+add_subdirectory(worldinterface)
+
 

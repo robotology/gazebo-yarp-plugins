@@ -7,38 +7,29 @@
 #include "gazebo/common/common.hh"
 #include "gazebo/gazebo.hh"
 
+#include "worldproxy.h"
+
 class WorldInterfaceServerImpl: public GazeboYarpPlugins::WorldInterfaceServer
 {
 private:
-  
-  class ObjectsList: public std::map<std::string, gazebo::physics::ModelPtr> 
-  {  };
-  typedef ObjectsList::iterator ObjectsListIt;
-  typedef ObjectsList::const_iterator ObjectsListConstIt;
-
-
-  gazebo::physics::WorldPtr world;
-  gazebo::physics::ModelPtr model;
-  ObjectsList objects;
-  
+  WorldProxy *proxy;
+   
 public:
+  WorldInterfaceServerImpl();
+  ~WorldInterfaceServerImpl();
+  
   virtual std::string makeSphere(const double x, const double y, const double z, const double radius, const int8_t r, const int8_t g, const int8_t b);
   virtual std::string makeBox(const double x, const double y, const double z, const double lx, const double ly, const double lz, const int8_t r, const int8_t g, const int8_t b);
   virtual std::string makeCyl(const double x, const double y, const double z, const double l, const double radius, const int8_t r, const int8_t g, const int8_t b);
-  virtual bool setPosition(const std::string& id, const std::vector<double> & pos);
+  virtual bool setPosition(const std::string& id, double x, double y, double z);
   virtual std::vector<double>  getPosition(const std::string& id);
   virtual bool deleteAll();
   virtual std::vector<std::string>  getList();
   
-  void attachWorldPointer(gazebo::physics::WorldPtr p)
+  void attachWorldProxy(WorldProxy *p)
   {
-    world=p;
-  }
-  
-  void attachModelPointer(gazebo::physics::ModelPtr p)
-  {
-    model=p;
-  }
+    proxy=p;    
+  } 
 };
 
 #endif

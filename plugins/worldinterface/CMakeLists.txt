@@ -8,7 +8,7 @@ PROJECT(Plugin_WorldInterface)
 
 include(AddGazeboYarpPluginTarget)
 
-set(worldinterface_source src/worldinterface.cpp src/worldinterfaceserverimpl.cpp )
+set(worldinterface_source src/worldinterface.cpp src/worldinterfaceserverimpl.cpp src/worldproxy.cpp)
                                            
 set(LIB_COMMON_NAME gazebo_yarp_lib_common)
 if(CMAKE_VERSION VERSION_LESS 3.0.0)
@@ -23,5 +23,6 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME worldinterface
                               LINKED_LIBRARIES gazebo_yarp_rpc_worldinterface ${LIB_COMMON_NAME} gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES}
                               HEADERS ${worldinterface_headers}
                                       src/worldinterfaceserverimpl.h
+                                      src/worldproxy.h
                               SOURCES ${worldinterface_source}
                             )

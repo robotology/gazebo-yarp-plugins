@@ -39,8 +39,12 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         return;
   }
   
-  m_wi_server.attachWorldPointer(_model->GetWorld());
-  m_wi_server.attachModelPointer(_model);
+  //setting up proxy
+  m_proxy.attachWorldPointer(_model->GetWorld());
+  m_proxy.attachModelPointer(_model);
+  
+  //pass reference to server
+  m_wi_server.attachWorldProxy(&m_proxy);
   
   //Getting .ini configuration file from sdf
   bool configuration_loaded = false;
@@ -59,7 +63,7 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     cerr << "WorldInterface::Load error could not load configuration file"<<std::endl;
     return;
   }
-    
+       
   std::string portname=m_parameters.find("name").asString();
     
   m_rpcport=new yarp::os::RpcServer();
@@ -67,4 +71,14 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   
   m_wi_server.yarp().attachAsServer(*m_rpcport);
   
+  // Listen to the update event. This event is broadcast every
+  // simulation iteration.
+  this->updateConnection = event::Events::ConnectWorldUpdateBegin(
+      boost::bind(&WorldInterface::OnUpdate, this, _1));
+  
+}
+
+void WorldInterface::OnUpdate(const common::UpdateInfo & _info)
+{
+  m_proxy.update(_info);
 }

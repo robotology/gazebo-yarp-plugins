@@ -1,22 +1,45 @@
-#ifndef YARPGAZEBO_WORLD_INTERFACESERVERIMPL
-#define YARPGAZEBO_WORLD_INTERFACESERVERIMPL
-
-#include <WorldInterfaceServer.h>
+#ifndef __WORLDPROXY__
+#define __WORLDPROXY__
 
 #include "gazebo/physics/physics.hh"
 #include "gazebo/common/common.hh"
 #include "gazebo/gazebo.hh"
 
-#include "worldproxy.h"
+#include "WorldInterfaceServer.h"
+#include <yarp/os/Mutex.h>
 
-class WorldInterfaceServerImpl: public GazeboYarpPlugins::WorldInterfaceServer
+#include <map>
+#include <queue>
+
+class WorldProxy:public GazeboYarpPlugins::WorldInterfaceServer
 {
-private:
-  WorldProxy *proxy;
-   
+  yarp::os::Mutex mutex;
+  
+  struct ObjectsList: public std::map<std::string, gazebo::physics::ModelPtr> 
+  {};
+  
+  typedef ObjectsList::iterator ObjectsListIt;
+  typedef ObjectsList::const_iterator ObjectsListConstIt;
+  
+  struct PoseCmd
+  {
+    //gazebo::physics::ModelPtr model;
+    std::string name;
+    gazebo::math::Pose pose;
+  };
+  
+  class PositionCmdList: public std::queue<PoseCmd> 
+  {};
+  
+  gazebo::physics::WorldPtr world;
+  gazebo::physics::ModelPtr model;
+  ObjectsList objects;
+  
+  PositionCmdList posecommands; 
+  
 public:
-  WorldInterfaceServerImpl();
-  ~WorldInterfaceServerImpl();
+  WorldProxy();
+  ~WorldProxy();
   
  /**
    * Make a shpere.
@@ -68,10 +91,18 @@ public:
   virtual std::vector<std::string>  getList();
 
   
-  void attachWorldProxy(WorldProxy *p)
+  void attachWorldPointer(gazebo::physics::WorldPtr p)
   {
-    proxy=p;    
-  } 
+    world=p;
+  }
+  
+  void attachModelPointer(gazebo::physics::ModelPtr p)
+  {
+    model=p;
+  }
+  
+  void update(const gazebo::common::UpdateInfo &);
+  
 };
 
 #endif

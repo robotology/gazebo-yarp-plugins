@@ -1,31 +1,30 @@
-#ifndef YARPGAZEBO_WORLD_INTERFACESERVERIMPL
-#define YARPGAZEBO_WORLD_INTERFACESERVERIMPL
+// This is an automatically-generated file.
+// It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <WorldInterfaceServer.h>
+#ifndef YARP_THRIFT_GENERATOR_WorldInterfaceServer
+#define YARP_THRIFT_GENERATOR_WorldInterfaceServer
 
-#include "gazebo/physics/physics.hh"
-#include "gazebo/common/common.hh"
-#include "gazebo/gazebo.hh"
+#include <yarp/os/Wire.h>
+#include <yarp/os/idl/WireTypes.h>
+#include <Color.h>
+#include <Pose.h>
 
-#include "worldproxy.h"
+namespace GazeboYarpPlugins {
+  class WorldInterfaceServer;
+}
 
-class WorldInterfaceServerImpl: public GazeboYarpPlugins::WorldInterfaceServer
-{
-private:
-  WorldProxy *proxy;
-   
+
+class GazeboYarpPlugins::WorldInterfaceServer : public yarp::os::Wire {
 public:
-  WorldInterfaceServerImpl();
-  ~WorldInterfaceServerImpl();
-  
- /**
+  WorldInterfaceServer();
+  /**
    * Make a shpere.
    * @param radius radius of the sphere [m]
    * @param pose pose of the sphere [m]
    * @param color color of the sphere
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeSphere(const double radius, const Pose& pose, const Color& color);
   /**
    * Make a shpere.
    * @param width box width [m]
@@ -35,7 +34,7 @@ public:
    * @param color color of the box
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeBox(const double width, const double height, const double thickness, const Pose& pose, const Color& color);
   /**
    * Make a cylinder.
    * @param radius radius of the cylinder [m]
@@ -44,19 +43,19 @@ public:
    * @param color color of the cylinder
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeCylinder(const double radius, const double length, const Pose& pose, const Color& color);
   /**
    * Set new object pose.
    * @param pose new pose
    * @return returns true or false on success failure
    */
-  virtual bool setPose(const GazeboYarpPlugins::Pose& pose);
+  virtual bool setPose(const Pose& pose);
   /**
    * Get object pose.
    * @param id string that identifies object in gazebo (returned after creation)
    * @return returns value of the pose
    */
-  virtual GazeboYarpPlugins::Pose getPose(const std::string& id);
+  virtual Pose getPose(const std::string& id);
   /**
    * Delete all objects in the world.
    */
@@ -66,12 +65,9 @@ public:
    * @return return a list of string containing the id of the objects
    */
   virtual std::vector<std::string>  getList();
-
-  
-  void attachWorldProxy(WorldProxy *p)
-  {
-    proxy=p;    
-  } 
+  virtual bool read(yarp::os::ConnectionReader& connection);
+  virtual std::vector<std::string> help(const std::string& functionName="--all");
 };
 
 #endif
+

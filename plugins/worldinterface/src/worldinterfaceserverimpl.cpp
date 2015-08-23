@@ -11,34 +11,34 @@ WorldInterfaceServerImpl::WorldInterfaceServerImpl()
 
 WorldInterfaceServerImpl::~WorldInterfaceServerImpl()
 {}
+
+std::string WorldInterfaceServerImpl::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const Color& color)
+{
+  return proxy->makeSphere(radius, pose, color);
   
-std::string WorldInterfaceServerImpl::makeSphere(const double x, const double y, const double z, const double radius, const int8_t r, const int8_t g, const int8_t b)
-{
-  return proxy->makeSphere(x, y, z, radius, r, g, b);
 }
 
-std::string WorldInterfaceServerImpl::makeBox(const double x, const double y, const double z, const double lx, const double ly, const double lz, const int8_t r, const int8_t g, const int8_t b)
+std::string WorldInterfaceServerImpl::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const Color& color)
 {
+  return proxy->makeBox(width, height, thickness, pose, color);
+}
+
+std::string WorldInterfaceServerImpl::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const Color& color)
+{
+  return proxy->makeCylinder(radius, length, pose, color);
+}
+
+bool WorldInterfaceServerImpl::setPose(const GazeboYarpPlugins::Pose& pose)
+{
+  return proxy->setPose(pose);
+}
+
+GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id)
+{
+  return proxy->getPose(id); 
+}
   
-  return proxy->makeBox(z, y, z, lx, ly, lz, r, g, b);
-}
-
-std::string WorldInterfaceServerImpl::makeCyl(const double x, const double y, const double z, const double l, const double radius, const int8_t r, const int8_t g, const int8_t b)
-{
-  return proxy->makeCyl(x, y, z, l, radius, r, g, b);
-}
-
-bool WorldInterfaceServerImpl::setPosition(const std::string& id, double x, double y, double z)
-{
-  return proxy->setPosition(id, x, y, z);
-}
-
-
-std::vector<double>  WorldInterfaceServerImpl::getPosition(const std::string& id)
-{
-  return proxy->getPosition(id);
-}
-
+  
 bool WorldInterfaceServerImpl::deleteAll()
 {
   return proxy->deleteAll();

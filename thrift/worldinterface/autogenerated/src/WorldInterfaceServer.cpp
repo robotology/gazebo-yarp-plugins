@@ -61,6 +61,15 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_loadModelFromFile : public yarp::os::Portable {
+public:
+  std::string filename;
+  bool _return;
+  void init(const std::string& filename);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class WorldInterfaceServer_deleteAll : public yarp::os::Portable {
 public:
   bool _return;
@@ -209,6 +218,29 @@ void WorldInterfaceServer_getPose::init(const std::string& id) {
   this->id = id;
 }
 
+bool WorldInterfaceServer_loadModelFromFile::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("loadModelFromFile",1,1)) return false;
+  if (!writer.writeString(filename)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_loadModelFromFile::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_loadModelFromFile::init(const std::string& filename) {
+  _return = false;
+  this->filename = filename;
+}
+
 bool WorldInterfaceServer_deleteAll::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -311,6 +343,16 @@ Pose WorldInterfaceServer::getPose(const std::string& id) {
   helper.init(id);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","Pose WorldInterfaceServer::getPose(const std::string& id)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::loadModelFromFile(const std::string& filename) {
+  bool _return = false;
+  WorldInterfaceServer_loadModelFromFile helper;
+  helper.init(filename);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::loadModelFromFile(const std::string& filename)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -470,6 +512,22 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "loadModelFromFile") {
+      std::string filename;
+      if (!reader.readString(filename)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = loadModelFromFile(filename);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "deleteAll") {
       bool _return;
       _return = deleteAll();
@@ -539,6 +597,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("makeCylinder");
     helpString.push_back("setPose");
     helpString.push_back("getPose");
+    helpString.push_back("loadModelFromFile");
     helpString.push_back("deleteAll");
     helpString.push_back("getList");
     helpString.push_back("help");
@@ -582,6 +641,12 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("Get object pose. ");
       helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
       helpString.push_back("@return returns value of the pose ");
+    }
+    if (functionName=="loadModelFromFile") {
+      helpString.push_back("bool loadModelFromFile(const std::string& filename) ");
+      helpString.push_back("Load a model from file. ");
+      helpString.push_back("@param id string that specifies the name of the model ");
+      helpString.push_back("@return returns true/false on success failure. ");
     }
     if (functionName=="deleteAll") {
       helpString.push_back("bool deleteAll() ");

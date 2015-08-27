@@ -16,6 +16,7 @@ m_rpcport(0)
 
 WorldInterface::~WorldInterface()
 {
+  //chck deadlocks, maybe we need to add timeouts to worldproxy waiting functions
   cout << "*** WorldInterface closing ***" << endl;
   if (m_rpcport)
   {

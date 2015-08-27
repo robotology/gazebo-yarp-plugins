@@ -57,6 +57,12 @@ public:
    */
   virtual Pose getPose(const std::string& id);
   /**
+   * Load a model from file.
+   * @param id string that specifies the name of the model
+   * @return returns true/false on success failure.
+   */
+  virtual bool loadModelFromFile(const std::string& filename);
+  /**
    * Delete all objects in the world.
    */
   virtual bool deleteAll();

@@ -63,6 +63,13 @@ service WorldInterfaceServer {
     * @return returns value of the pose
     */
     Pose getPose(1:string id);
+    
+    /**
+    * Load a model from file.
+    * @param id string that specifies the name of the model
+    * @return returns true/false on success failure.
+    */
+    bool loadModelFromFile(1:string filename);
       
     /**
     * Delete all objects in the world.

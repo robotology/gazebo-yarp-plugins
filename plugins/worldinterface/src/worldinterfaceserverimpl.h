@@ -57,6 +57,10 @@ public:
    * @return returns value of the pose
    */
   virtual GazeboYarpPlugins::Pose getPose(const std::string& id);
+  
+  virtual bool loadModelFromFile(const std::string& filename);
+
+    
   /**
    * Delete all objects in the world.
    */

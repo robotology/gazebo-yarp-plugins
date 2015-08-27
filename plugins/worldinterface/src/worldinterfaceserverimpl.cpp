@@ -12,18 +12,18 @@ WorldInterfaceServerImpl::WorldInterfaceServerImpl()
 WorldInterfaceServerImpl::~WorldInterfaceServerImpl()
 {}
 
-std::string WorldInterfaceServerImpl::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const Color& color)
+std::string WorldInterfaceServerImpl::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   return proxy->makeSphere(radius, pose, color);
   
 }
 
-std::string WorldInterfaceServerImpl::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const Color& color)
+std::string WorldInterfaceServerImpl::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   return proxy->makeBox(width, height, thickness, pose, color);
 }
 
-std::string WorldInterfaceServerImpl::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const Color& color)
+std::string WorldInterfaceServerImpl::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   return proxy->makeCylinder(radius, length, pose, color);
 }
@@ -38,6 +38,11 @@ GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id)
   return proxy->getPose(id); 
 }
   
+bool WorldInterfaceServerImpl::loadModelFromFile(const std::string& filename)
+{
+  return proxy->loadModelFromFile(filename);  
+}
+
   
 bool WorldInterfaceServerImpl::deleteAll()
 {

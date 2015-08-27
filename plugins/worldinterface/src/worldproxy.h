@@ -7,13 +7,49 @@
 
 #include "WorldInterfaceServer.h"
 #include <yarp/os/Mutex.h>
+#include <yarp/os/Semaphore.h>
 
 #include <map>
 #include <queue>
 
+
+class SynchronizationHelper
+{
+  yarp::os::Mutex mutex;
+  yarp::os::Semaphore semaphore;
+  int queued;
+public:
+  SynchronizationHelper():
+   semaphore(0),
+   queued(0)
+   {}
+  
+  void wait()
+  {
+    mutex.lock();
+    queued++;
+    mutex.unlock();
+  }
+ 
+  void signalAll()
+  {
+    int toBePosted;
+    mutex.lock();
+    toBePosted=queued;
+    queued=0;
+    mutex.unlock();
+    while(toBePosted--)
+    {
+      semaphore.post();      
+    }
+  }
+};
+
+
 class WorldProxy:public GazeboYarpPlugins::WorldInterfaceServer
 {
   yarp::os::Mutex mutex;
+  SynchronizationHelper synchHelper;
   
   struct ObjectsList: public std::map<std::string, gazebo::physics::ModelPtr> 
   {};
@@ -90,6 +126,13 @@ public:
    */
   virtual std::vector<std::string>  getList();
 
+  /**
+   * Load a model from file.
+   * @param id string that specifies the name of the model
+   * @return returns true/false on success failure.
+   */
+  virtual bool loadModelFromFile(const std::string& filename);
+
   
   void attachWorldPointer(gazebo::physics::WorldPtr p)
   {
@@ -103,6 +146,23 @@ public:
   
   void update(const gazebo::common::UpdateInfo &);
   
+  /**
+   * Wait for engine to perform update step
+   */
+  void waitForEngine();
+  
+  /**
+   * Signal engine has performed one step. Use internally within update
+   */
+  void signalEngine();
+  
+  /**
+   *  Check if we have need to sycnrhonize with the engine.
+   */
+  bool isSynchronous()
+  {
+    return true;    
+  }
 };
 
 #endif

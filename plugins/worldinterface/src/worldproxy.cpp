@@ -97,12 +97,12 @@ string WorldProxy::makeBox(const double width, const double height, const double
       <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
       <collision name ='collision'>\
         <geometry>\
-          <box><size>WIDTH HEIGHT THICKNESS</size></boxr>\
+          <box><size>WIDTH HEIGHT THICKNESS</size></box>\
         </geometry>\
       </collision>\
       <visual name='visual'>\
         <geometry>\
-          <box><size>WIDTH HEIGHT THICKNESS</size></boxr>\
+          <box><size>WIDTH HEIGHT THICKNESS</size></box>\
 	  </geometry>\
 	</visual>\
 	</link>\

@@ -45,9 +45,10 @@ public:
 
 class WorldInterfaceServer_setPose : public yarp::os::Portable {
 public:
+  std::string id;
   Pose pose;
   bool _return;
-  void init(const Pose& pose);
+  void init(const std::string& id, const Pose& pose);
   virtual bool write(yarp::os::ConnectionWriter& connection);
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
@@ -175,8 +176,9 @@ void WorldInterfaceServer_makeCylinder::init(const double radius, const double l
 
 bool WorldInterfaceServer_setPose::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(7)) return false;
+  if (!writer.writeListHeader(8)) return false;
   if (!writer.writeTag("setPose",1,1)) return false;
+  if (!writer.writeString(id)) return false;
   if (!writer.write(pose)) return false;
   return true;
 }
@@ -191,8 +193,9 @@ bool WorldInterfaceServer_setPose::read(yarp::os::ConnectionReader& connection) 
   return true;
 }
 
-void WorldInterfaceServer_setPose::init(const Pose& pose) {
+void WorldInterfaceServer_setPose::init(const std::string& id, const Pose& pose) {
   _return = false;
+  this->id = id;
   this->pose = pose;
 }
 
@@ -327,12 +330,12 @@ std::string WorldInterfaceServer::makeCylinder(const double radius, const double
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool WorldInterfaceServer::setPose(const Pose& pose) {
+bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose) {
   bool _return = false;
   WorldInterfaceServer_setPose helper;
-  helper.init(pose);
+  helper.init(id,pose);
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool WorldInterfaceServer::setPose(const Pose& pose)");
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -481,13 +484,18 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       return true;
     }
     if (tag == "setPose") {
+      std::string id;
       Pose pose;
+      if (!reader.readString(id)) {
+        reader.fail();
+        return false;
+      }
       if (!reader.read(pose)) {
         reader.fail();
         return false;
       }
       bool _return;
-      _return = setPose(pose);
+      _return = setPose(id,pose);
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
@@ -631,8 +639,9 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("@return returns a string that contains the name of the object in the world ");
     }
     if (functionName=="setPose") {
-      helpString.push_back("bool setPose(const Pose& pose) ");
+      helpString.push_back("bool setPose(const std::string& id, const Pose& pose) ");
       helpString.push_back("Set new object pose. ");
+      helpString.push_back("@param id object id ");
       helpString.push_back("@param pose new pose ");
       helpString.push_back("@return returns true or false on success failure ");
     }

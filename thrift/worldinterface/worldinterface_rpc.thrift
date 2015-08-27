@@ -52,10 +52,11 @@ service WorldInterfaceServer {
     
      /** 
     * Set new object pose.
+    * @param id object id
     * @param pose new pose
     * @return returns true or false on success failure
     */
-    bool setPose(1: Pose pose);
+    bool setPose(1: string id, 2: Pose pose);
     
      /** 
     * Get object pose.

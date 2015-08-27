@@ -28,9 +28,9 @@ std::string WorldInterfaceServerImpl::makeCylinder(const double radius, const do
   return proxy->makeCylinder(radius, length, pose, color);
 }
 
-bool WorldInterfaceServerImpl::setPose(const GazeboYarpPlugins::Pose& pose)
+bool WorldInterfaceServerImpl::setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose)
 {
-  return proxy->setPose(pose);
+  return proxy->setPose(id, pose);
 }
 
 GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id)

@@ -9,6 +9,8 @@
 using namespace std;
 using namespace gazebo;
 
+#include <yarp/os/Time.h>
+
 void replace(string &str, string key, double value)
 {
   ostringstream tmp;
@@ -89,7 +91,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
   string boxSDF_String=string(
     "<?xml version='1.0'?>\
 	<sdf version ='1.4'>\
-        <model name ='cylinder'>\
+        <model name ='box'>\
 	  <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
 	    <link name ='link'>\
       <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
@@ -197,9 +199,8 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   return objlabel.str();
 }
 
-bool WorldProxy::setPose(const GazeboYarpPlugins::Pose& pose)
+bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose)
 {
-  std::string id;
   physics::ModelPtr model=world->GetModel(id);
     if (!model)
     {

@@ -46,10 +46,11 @@ public:
   virtual std::string makeCylinder(const double radius, const double length, const Pose& pose, const Color& color);
   /**
    * Set new object pose.
+   * @param id object id
    * @param pose new pose
    * @return returns true or false on success failure
    */
-  virtual bool setPose(const Pose& pose);
+  virtual bool setPose(const std::string& id, const Pose& pose);
   /**
    * Get object pose.
    * @param id string that identifies object in gazebo (returned after creation)

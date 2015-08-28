@@ -24,7 +24,8 @@ void replace(string &str, string key, double value)
 }
 
 
-WorldProxy::WorldProxy()
+WorldProxy::WorldProxy():
+isSynchro(true)
 {}
 
 WorldProxy::~WorldProxy()
@@ -65,7 +66,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   
   sphereSDF.SetFromString(sphereSDF_string);
   
-  int nobjects=objects.size()+1;
+  int nobjects=++objects.count;
   ostringstream objlabel;
   objlabel << "sphere"<< nobjects;
   
@@ -124,7 +125,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
   
   boxSDF.SetFromString(boxSDF_String);
   
-  int nobjects=objects.size()+1;
+  int nobjects=++objects.count;
   ostringstream objlabel;
   objlabel << "box"<<nobjects;
   
@@ -180,7 +181,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   
   cylSDF.SetFromString(cylSDF_String);
   
-  int nobjects=objects.size()+1;
+  int nobjects=++objects.count;
   ostringstream objlabel;
   objlabel << "cylinder"<<nobjects;
   
@@ -259,8 +260,9 @@ bool WorldProxy::deleteAll()
   
   objects.clear();
   
-  if (isSynchronous())
-     waitForEngine();
+  // RemoveModel is blocking no need to synchronize
+  // if (isSynchronous())
+  //   waitForEngine();
   
   return true;
 }

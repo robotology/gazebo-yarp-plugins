@@ -51,9 +51,16 @@ class WorldProxy:public GazeboYarpPlugins::WorldInterfaceServer
 {
   yarp::os::Mutex mutex;
   SynchronizationHelper synchHelper;
+  bool isSynchro;
   
   struct ObjectsList: public std::map<std::string, gazebo::physics::ModelPtr> 
-  {};
+  {
+    int count; //* count number of objects inserted in the world //
+    
+    ObjectsList(): count(0)
+    {}
+    
+  };
   
   typedef ObjectsList::iterator ObjectsListIt;
   typedef ObjectsList::const_iterator ObjectsListConstIt;
@@ -163,7 +170,15 @@ public:
    */
   bool isSynchronous()
   {
-    return true;    
+    return isSynchro;    
+  }
+  
+  /**
+   *  Set if requests synchronize with the engine update or not.
+   */
+  void setSynchronousMode(bool f)
+  {
+    isSynchro=f;    
   }
 };
 

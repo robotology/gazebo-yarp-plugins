@@ -1,3 +1,7 @@
+# Copyright (C) 2015 iCub Facility
+# Authors: Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 #world interface RPC server
 namespace yarp GazeboYarpPlugins
 

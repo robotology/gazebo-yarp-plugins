@@ -174,7 +174,7 @@ public:
   void signalEngine();
   
   /**
-   *  Check if we have need to sycnrhonize with the engine.
+   *  Check if we have need to synchronize with the engine.
    */
   bool isSynchronous()
   {

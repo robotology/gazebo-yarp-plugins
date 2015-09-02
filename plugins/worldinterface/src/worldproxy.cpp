@@ -44,7 +44,8 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   sdf::SDF sphereSDF;
  
   string sphereSDF_string=string(
-       "<sdf version ='1.4'>\
+      "<?xml version='1.0'?>\
+       <sdf version ='1.4'>\
           <model name ='sphere'>\
             <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
             <link name ='link'>\
@@ -58,6 +59,10 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
                 <geometry>\
                   <sphere><radius>RADIUS</radius></sphere>\
                 </geometry>\
+                  <material>\
+                  <ambient>RED GREEN BLUE 1</ambient>\
+                  <diffuse>RED GREEN BLUE 1</diffuse>\
+                  </material>\
               </visual>\
             </link>\
           </model>\
@@ -71,6 +76,10 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   replace(sphereSDF_string, "ROLL", pose.roll);
   replace(sphereSDF_string, "PITCH", pose.pitch);
   replace(sphereSDF_string, "YAW", pose.yaw);
+  
+  replace(sphereSDF_string, "RED", color.r/255.0);
+  replace(sphereSDF_string, "GREEN", color.g/255.0);
+  replace(sphereSDF_string, "BLUE", color.b/255.0);
   
   sphereSDF.SetFromString(sphereSDF_string);
   
@@ -113,6 +122,10 @@ string WorldProxy::makeBox(const double width, const double height, const double
         <geometry>\
           <box><size>WIDTH HEIGHT THICKNESS</size></box>\
 	  </geometry>\
+	  <material>\
+                   <ambient>RED GREEN BLUE 1</ambient>\
+                   <diffuse>RED GREEN BLUE 1</diffuse>\
+          </material>\
 	</visual>\
 	</link>\
       </model>\
@@ -130,6 +143,9 @@ string WorldProxy::makeBox(const double width, const double height, const double
   replace(boxSDF_String, "HEIGHT", height);
   replace(boxSDF_String, "THICKNESS", thickness);
   
+  replace(boxSDF_String, "RED", color.r/255.0);
+  replace(boxSDF_String, "GREEN", color.g/255.0);
+  replace(boxSDF_String, "BLUE", color.b/255.0);
   
   boxSDF.SetFromString(boxSDF_String);
   
@@ -171,6 +187,10 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
         <geometry>\
           <cylinder><radius>RADIUS</radius><length>LENGTH</length></cylinder>\
 	  </geometry>\
+	  <material>\
+                   <ambient>RED GREEN BLUE 1</ambient>\
+                   <diffuse>RED GREEN BLUE 1</diffuse>\
+          </material>\
 	</visual>\
 	</link>\
       </model>\
@@ -186,6 +206,9 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   replace(cylSDF_String, "PITCH", pose.pitch);
   replace(cylSDF_String, "YAW", pose.yaw);
     
+  replace(cylSDF_String, "RED", color.r/255.0);
+  replace(cylSDF_String, "GREEN", color.g/255.0);
+  replace(cylSDF_String, "BLUE", color.b/255.0);
   
   cylSDF.SetFromString(cylSDF_String);
   

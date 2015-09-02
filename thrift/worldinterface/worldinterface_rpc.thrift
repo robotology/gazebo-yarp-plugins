@@ -15,9 +15,9 @@ struct Pose {
 }
 
 struct Color {
-1: byte r; /* red channel */
-2: byte g; /* green channel */
-3: byte b; /* blue channel */
+1: i16 r; /* red channel in the range [0-255] */
+2: i16 g; /* green channel in the range [0-255] */
+3: i16 b; /* blue channel in the range [0-255] */
 }
 
 

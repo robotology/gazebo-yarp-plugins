@@ -5,42 +5,42 @@
 
 namespace GazeboYarpPlugins {
 bool Color::read_r(yarp::os::idl::WireReader& reader) {
-  if (!reader.readByte(r)) {
+  if (!reader.readI16(r)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Color::nested_read_r(yarp::os::idl::WireReader& reader) {
-  if (!reader.readByte(r)) {
+  if (!reader.readI16(r)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Color::read_g(yarp::os::idl::WireReader& reader) {
-  if (!reader.readByte(g)) {
+  if (!reader.readI16(g)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Color::nested_read_g(yarp::os::idl::WireReader& reader) {
-  if (!reader.readByte(g)) {
+  if (!reader.readI16(g)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Color::read_b(yarp::os::idl::WireReader& reader) {
-  if (!reader.readByte(b)) {
+  if (!reader.readI16(b)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Color::nested_read_b(yarp::os::idl::WireReader& reader) {
-  if (!reader.readByte(b)) {
+  if (!reader.readI16(b)) {
     reader.fail();
     return false;
   }
@@ -60,27 +60,27 @@ bool Color::read(yarp::os::ConnectionReader& connection) {
 }
 
 bool Color::write_r(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeByte(r)) return false;
+  if (!writer.writeI16(r)) return false;
   return true;
 }
 bool Color::nested_write_r(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeByte(r)) return false;
+  if (!writer.writeI16(r)) return false;
   return true;
 }
 bool Color::write_g(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeByte(g)) return false;
+  if (!writer.writeI16(g)) return false;
   return true;
 }
 bool Color::nested_write_g(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeByte(g)) return false;
+  if (!writer.writeI16(g)) return false;
   return true;
 }
 bool Color::write_b(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeByte(b)) return false;
+  if (!writer.writeI16(b)) return false;
   return true;
 }
 bool Color::nested_write_b(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeByte(b)) return false;
+  if (!writer.writeI16(b)) return false;
   return true;
 }
 bool Color::write(yarp::os::idl::WireWriter& writer) {
@@ -145,15 +145,15 @@ bool Color::Editor::read(yarp::os::ConnectionReader& connection) {
       if (!reader.readString(field)) return false;
       if (field=="r") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("int8_t r")) return false;
+        if (!writer.writeString("int16_t r")) return false;
       }
       if (field=="g") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("int8_t g")) return false;
+        if (!writer.writeString("int16_t g")) return false;
       }
       if (field=="b") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("int8_t b")) return false;
+        if (!writer.writeString("int16_t b")) return false;
       }
     }
     if (!writer.writeListHeader(4)) return false;

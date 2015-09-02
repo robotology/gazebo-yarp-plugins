@@ -15,16 +15,16 @@ namespace GazeboYarpPlugins {
 class GazeboYarpPlugins::Color : public yarp::os::idl::WirePortable {
 public:
   // Fields
-  int8_t r;
-  int8_t g;
-  int8_t b;
+  int16_t r;
+  int16_t g;
+  int16_t b;
 
   // Default constructor
   Color() : r(0), g(0), b(0) {
   }
 
   // Constructor with field values
-  Color(const int8_t r,const int8_t g,const int8_t b) : r(r), g(g), b(b) {
+  Color(const int16_t r,const int16_t g,const int16_t b) : r(r), g(g), b(b) {
   }
 
   // Copy constructor
@@ -111,34 +111,34 @@ public:
       group--;
       if (group==0&&is_dirty) communicate();
     }
-    void set_r(const int8_t r) {
+    void set_r(const int16_t r) {
       will_set_r();
       obj->r = r;
       mark_dirty_r();
       communicate();
       did_set_r();
     }
-    void set_g(const int8_t g) {
+    void set_g(const int16_t g) {
       will_set_g();
       obj->g = g;
       mark_dirty_g();
       communicate();
       did_set_g();
     }
-    void set_b(const int8_t b) {
+    void set_b(const int16_t b) {
       will_set_b();
       obj->b = b;
       mark_dirty_b();
       communicate();
       did_set_b();
     }
-    int8_t get_r() {
+    int16_t get_r() {
       return obj->r;
     }
-    int8_t get_g() {
+    int16_t get_g() {
       return obj->g;
     }
-    int8_t get_b() {
+    int16_t get_b() {
       return obj->b;
     }
     virtual bool will_set_r() { return true; }

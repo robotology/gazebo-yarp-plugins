@@ -67,14 +67,20 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
             configuration_loaded = true;
         }
   }
-  
+    
   if (!configuration_loaded) {
     cerr << "WorldInterface::Load error could not load configuration file"<<std::endl;
     return;
   }
        
   std::string portname=m_parameters.find("name").asString();
-    
+  int synchronous=m_parameters.find("synchro").asInt();
+  
+  if (synchronous)
+     m_proxy.setSynchronousMode(true);
+  else
+     m_proxy.setSynchronousMode(false);
+  
   m_rpcport=new yarp::os::RpcServer();
   m_rpcport->open(portname);
   

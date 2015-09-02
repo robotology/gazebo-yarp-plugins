@@ -108,10 +108,10 @@ string WorldProxy::makeBox(const double width, const double height, const double
  
   string boxSDF_String=string(
     "<?xml version='1.0'?>\
-	<sdf version ='1.4'>\
+    <sdf version ='1.4'>\
         <model name ='box'>\
-	  <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
-	    <link name ='link'>\
+      <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
+      <link name ='link'>\
       <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
       <collision name ='collision'>\
         <geometry>\
@@ -121,13 +121,13 @@ string WorldProxy::makeBox(const double width, const double height, const double
       <visual name='visual'>\
         <geometry>\
           <box><size>WIDTH HEIGHT THICKNESS</size></box>\
-	  </geometry>\
-	  <material>\
+        </geometry>\
+        <material>\
                    <ambient>RED GREEN BLUE 1</ambient>\
                    <diffuse>RED GREEN BLUE 1</diffuse>\
-          </material>\
-	</visual>\
-	</link>\
+        </material>\
+    </visual>\
+    </link>\
       </model>\
   </sdf>");
 
@@ -173,10 +173,10 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
  
   string cylSDF_String=string(
     "<?xml version='1.0'?>\
-	<sdf version ='1.4'>\
+    <sdf version ='1.4'>\
         <model name ='cylinder'>\
-	  <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
-	    <link name ='link'>\
+      <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
+         <link name ='link'>\
       <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
       <collision name ='collision'>\
         <geometry>\
@@ -186,13 +186,13 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
       <visual name='visual'>\
         <geometry>\
           <cylinder><radius>RADIUS</radius><length>LENGTH</length></cylinder>\
-	  </geometry>\
-	  <material>\
+      </geometry>\
+      <material>\
                    <ambient>RED GREEN BLUE 1</ambient>\
                    <diffuse>RED GREEN BLUE 1</diffuse>\
           </material>\
-	</visual>\
-	</link>\
+    </visual>\
+    </link>\
       </model>\
   </sdf>");
 

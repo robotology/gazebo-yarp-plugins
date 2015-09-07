@@ -6,6 +6,10 @@ add_subdirectory(forcetorque)
 add_subdirectory(imu)
 add_subdirectory(jointsensors)
 add_subdirectory(showmodelcom)
-add_subdirectory(worldinterface)
+if( GAZEBO_VERSION VERSION_GREATER 3.9 )
+    add_subdirectory(worldinterface)
+else()
+    message(WARNING "Gazebo version is lower than 4.0, disabling worldinterface plugin.")
+endif()
 
 

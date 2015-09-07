@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /*
- * Copyright (C) 2015 iCub Facility 
+ * Copyright (C) 2015 iCub Facility
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
 
-#ifndef __WORLDPROXY__
-#define __WORLDPROXY__
+#ifndef GAZEBOYARP_WORLDPROXY_H
+#define GAZEBOYARP_WORLDPROXY_H
 
 #include "gazebo/physics/physics.hh"
 #include "gazebo/common/common.hh"
@@ -31,7 +31,7 @@ public:
    semaphore(0),
    queued(0)
    {}
-  
+
   void wait()
   {
     mutex.lock();
@@ -39,7 +39,7 @@ public:
     mutex.unlock();
     semaphore.wait();
   }
- 
+
   void signalAll()
   {
     int toBePosted;
@@ -49,7 +49,7 @@ public:
     mutex.unlock();
     while(toBePosted--)
     {
-       semaphore.post();      
+       semaphore.post();
     }
   }
 };
@@ -60,39 +60,39 @@ class WorldProxy:public GazeboYarpPlugins::WorldInterfaceServer
   yarp::os::Mutex mutex;
   SynchronizationHelper synchHelper;
   bool isSynchro;
-  
-  struct ObjectsList: public std::map<std::string, gazebo::physics::ModelPtr> 
+
+  struct ObjectsList: public std::map<std::string, gazebo::physics::ModelPtr>
   {
     int count; //* count number of objects inserted in the world //
-    
+
     ObjectsList(): count(0)
     {}
-    
+
   };
-  
+
   typedef ObjectsList::iterator ObjectsListIt;
   typedef ObjectsList::const_iterator ObjectsListConstIt;
-  
+
   struct PoseCmd
   {
     //gazebo::physics::ModelPtr model;
     std::string name;
     gazebo::math::Pose pose;
   };
-  
-  class PositionCmdList: public std::queue<PoseCmd> 
+
+  class PositionCmdList: public std::queue<PoseCmd>
   {};
-  
+
   gazebo::physics::WorldPtr world;
   gazebo::physics::ModelPtr model;
   ObjectsList objects;
-  
-  PositionCmdList posecommands; 
-  
+
+  PositionCmdList posecommands;
+
 public:
   WorldProxy();
   ~WorldProxy();
-  
+
  /**
    * Make a shpere.
    * @param radius radius of the sphere [m]
@@ -150,43 +150,43 @@ public:
    */
   virtual bool loadModelFromFile(const std::string& filename);
 
-  
+
   void attachWorldPointer(gazebo::physics::WorldPtr p)
   {
     world=p;
   }
-  
+
   void attachModelPointer(gazebo::physics::ModelPtr p)
   {
     model=p;
   }
-  
+
   void update(const gazebo::common::UpdateInfo &);
-  
+
   /**
    * Wait for engine to perform update step
    */
   void waitForEngine();
-  
+
   /**
    * Signal engine has performed one step. Use internally within update
    */
   void signalEngine();
-  
+
   /**
    *  Check if we have need to synchronize with the engine.
    */
   bool isSynchronous()
   {
-    return isSynchro;    
+    return isSynchro;
   }
-  
+
   /**
    *  Set if requests synchronize with the engine update or not.
    */
   void setSynchronousMode(bool f)
   {
-    isSynchro=f;    
+    isSynchro=f;
   }
 };
 

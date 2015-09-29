@@ -259,8 +259,6 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
 {
     yarp::os::Property prop;
     if (m_pluginParameters.check(pidGroupName.c_str())) {
-        std::cout<<"Found PID information in plugin parameters group " << pidGroupName << std::endl;
-
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             std::stringstream property_name;
             property_name<<"Pid";
@@ -281,9 +279,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
 
 
             pids.push_back(pidValue);
-            std::cout<<"  P: "<<pidValue.p<<" I: "<<pidValue.i<<" D: "<<pidValue.d<<" maxInt: "<<pidValue.maxInt<<" maxOut: "<<pidValue.maxOut<<std::endl;
         }
-        std::cout<<"OK!"<<std::endl;
     } else {
         double default_p = pidTerms & PIDFeedbackTermProportionalTerm ? 500.0 : 0;
         double default_i = pidTerms & PIDFeedbackTermIntegrativeTerm ? 0.1 : 0;

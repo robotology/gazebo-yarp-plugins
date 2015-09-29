@@ -155,7 +155,7 @@ public:
     virtual bool velocityMove(int j, double sp); //NOT TESTED
     virtual bool velocityMove(const double *sp); //NOT TESTED
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
-    
+
     virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
     virtual bool setVelPids(const yarp::dev::Pid *pids);
     virtual bool getVelPid(int j, yarp::dev::Pid *pid);
@@ -290,6 +290,21 @@ public:
 private:
 
     /* PID structures */
+
+    /**
+     * Internal PID gains structure used in
+     * GazeboYarpPlugins.
+     * The gains are stored in radians based units
+     * for joint whose configuration space is given
+     * by an anguar quantity, and meter based units
+     * for joints whose configuratios space is given
+     * by a linear quantity.
+     *
+     * \note The gains for angular quantities in YARP
+     *       are instead usually expressed in degrees-
+     *       based quantity, so an appropriate conversion
+     *       is used in the setPids/getPids functions.
+     */
     struct PID {
         double p;
         double i;
@@ -315,8 +330,8 @@ private:
     gazebo::physics::Model* m_robot;
     gazebo::event::ConnectionPtr m_updateConnection;
 
-    
-    
+
+
     yarp::os::Property m_pluginParameters; /**< Contains the parameters of the device contained in the yarpConfigurationFile .ini file */
 
     unsigned int m_robotRefreshPeriod; //ms

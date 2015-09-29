@@ -32,6 +32,20 @@ namespace GazeboYarpPlugins {
     double convertRadiansToDegrees(double radians);
 
     /**
+     * \brief convert a degrees-based gain to a radians-based gain
+     * \param gainsWrtDegrees degrees-based gain
+     * \return the gain converted in radians-based units
+     */
+    double convertDegreesGainsToRadiansGains(double gainsWrtDegrees);
+
+    /**
+     * \brief convert a radians-based gain to a degrees-based gain
+     * \param gainsWrtRadians radians-based gain
+     * \return the gain converted in degrees-based units
+     */
+    double convertRadiansGainsToDegreesGains(double gainsWrtRadians);
+
+    /**
      * \brief check if a string has a certaing ending
      * \param fullString the full string
      * \param ending the candidate ending
@@ -52,6 +66,17 @@ namespace GazeboYarpPlugins {
             return false;
         }
     }
+
+    inline double convertDegreesGainsToRadiansGains(double gainsWrtDegrees)
+    {
+        return gainsWrtDegrees * 180.0 / pi;
+    }
+
+    inline double convertRadiansGainsToDegreesGains(double gainsWrtRadians)
+    {
+        return gainsWrtRadians / 180.0 * pi;
+    }
+
 }
 
 

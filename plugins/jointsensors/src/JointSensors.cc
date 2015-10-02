@@ -9,6 +9,8 @@
 #include "JointSensors.hh"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/ConfHelpers.hh>
+
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
@@ -58,25 +60,16 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Getting .ini configuration file from sdf
     ::yarp::os::Property wrapper_properties;
     ::yarp::os::Property driver_properties;
-    bool configuration_loaded = false;
 
-    if (_sdf->HasElement("yarpConfigurationFile")) {
-        std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent,_sdf,driver_properties);
 
-        if (ini_file_path != "" && driver_properties.fromConfigFile(ini_file_path.c_str())) {
-            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
-            configuration_loaded = true;
-        }
-    }
+    if (!configuration_loaded) {
+        return;
+    };
 
     ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver
     wrapper_properties = driver_properties;
 
-    if (!configuration_loaded) {
-        std::cout << "File .ini not found, quitting\n" << std::endl;
-        return;
-    }
 
     m_robotName = _parent->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver

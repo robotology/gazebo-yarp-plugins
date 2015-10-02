@@ -47,7 +47,6 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
-
     yarp::dev::PolyDriver m_wrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
     yarp::dev::PolyDriverList m_controlBoards;

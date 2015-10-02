@@ -32,8 +32,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         if (m_wrapper.isValid())
             m_wrapper.close();
 
-        for (int n = 0; n < m_controlBoards.size(); n++)
-            GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_controlBoards[n]->key.c_str());
+        for (int n = 0; n < m_controlBoards.size(); n++) {
+            std::string scopedDeviceName = m_robotName + "::" + m_controlBoards[n]->key.c_str();
+            GazeboYarpPlugins::Handler::getHandler()->removeDevice(scopedDeviceName);
+        }
 
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
         yarp::os::Network::fini();
@@ -119,7 +121,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             yarp::dev::PolyDriverDescriptor newPoly;
 
             newPoly.key = netList->get(n).asString();
-            newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(newPoly.key);
+            std::string scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+            newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
 
             if( newPoly.poly != NULL)
             {
@@ -166,7 +169,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     printf("controlBoard %s opened correctly\n", newPoly.key.c_str());
                 }
             }
-            GazeboYarpPlugins::Handler::getHandler()->setDevice(newPoly.key, newPoly.poly);
+            GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly);
             m_controlBoards.push(newPoly);
         }
 
@@ -174,8 +177,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         {
             printf("GazeboYarpControlBoard: Error while attaching wrapper to device\n");
             m_wrapper.close();
-            for (int n = 0; n < netList->size(); n++)
-                GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_controlBoards[n]->key.c_str());
+            for (int n = 0; n < netList->size(); n++) {
+                std::string scopedDeviceName = m_robotName + "::" + m_controlBoards[n]->key.c_str();
+                GazeboYarpPlugins::Handler::getHandler()->removeDevice(scopedDeviceName);
+            }
             return;
         }
 

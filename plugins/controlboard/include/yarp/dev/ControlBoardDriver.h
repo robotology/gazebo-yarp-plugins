@@ -76,7 +76,8 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IPositionDirect,
     public IImpedanceControl,
     public IOpenLoopControl,
-    public IPidControl
+    public IPidControl,
+    public IAxisInfo
 {
 public:
 
@@ -92,6 +93,9 @@ public:
     /**
      * Yarp interfaces start here
      */
+
+    // AXIS IAxisInfo
+    virtual bool getAxisName(int axis, yarp::os::ConstString& name);
 
     //DEVICE DRIVER
     virtual bool open(yarp::os::Searchable& config);
@@ -368,6 +372,7 @@ private:
     yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
 
     std::vector<std::string> m_jointNames;
+    std::vector<std::string> controlboard_joint_names;
     std::vector<gazebo::physics::JointPtr> m_jointPointers; /* pointers for each joint, avoiding several calls to getJoint(joint_name) */
     gazebo::transport::NodePtr m_gazeboNode;
     gazebo::transport::PublisherPtr m_jointCommandPublisher;

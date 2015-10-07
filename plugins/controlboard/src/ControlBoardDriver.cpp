@@ -228,13 +228,14 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 
     const gazebo::physics::Joint_V & gazebo_models_joints = m_robot->GetJoints();
 
+    controlboard_joint_names.clear();
     for (unsigned int i = 0; i < m_jointNames.size(); i++) {
         bool joint_found = false;
-        std::string controlboard_joint_name(joint_names_bottle.get(i+1).asString().c_str());
+        controlboard_joint_names.push_back(joint_names_bottle.get(i+1).asString().c_str());
 
         for (unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++) {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
-            if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_name)) {
+            if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_names[i])) {
                 joint_found = true;
                 m_jointNames[i] = gazebo_joint_name;
                 m_jointPointers[i] = this->m_robot->GetJoint(gazebo_joint_name);

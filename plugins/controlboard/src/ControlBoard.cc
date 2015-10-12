@@ -136,8 +136,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 printf("controlBoard %s already opened\n", newPoly.key.c_str());
 
             }
-            else {
-                driver_group = m_parameters.findGroup(deviceName.c_str());
+            else 
+            {
+                driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
                     fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", newPoly.key.c_str());
                     m_wrapper.close();

@@ -10,11 +10,7 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
 {
-    char tmp[10];
-    sprintf(tmp, "%d", axis);
     name =  yarp::os::ConstString(controlboard_joint_names.at(axis));
-//     name = "Joint_" + yarp::os::ConstString(tmp);
-    std::cout << "getAxisName joint " << axis << " name is " << name.c_str() << std::endl;
     return true;
 }
 

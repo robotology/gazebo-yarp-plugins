@@ -10,6 +10,7 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
 {
+    if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
     name =  yarp::os::ConstString(controlboard_joint_names.at(axis));
     return true;
 }
@@ -17,6 +18,7 @@ bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& 
 // IControlLimits
 bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max) //WORKS
 {
+    if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
     if (!min || !max) return false;
     *min = m_jointLimits[axis].min;
     *max = m_jointLimits[axis].max;

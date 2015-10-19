@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia. RBCS Department.
  * Author: Jorhabib Eljaik
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
 #include "ApplyExternalWrench.hh"
@@ -54,20 +54,20 @@ void ApplyExternalWrench::UpdateChild()
       fullScopeLinkName = std::string ( this->m_modelScope + "::" + this->m_subscope + "::" + this->m_linkName );
       this->m_onLink  = m_myModel->GetLink ( fullScopeLinkName );
     } else {
-      this->m_onLink  = m_myModel->GetLink ( this->m_linkName );      
+      this->m_onLink  = m_myModel->GetLink ( this->m_linkName );
     }
-    
-//  This piece of code shows the full name (scoped name + link name) of every link in the current loaded model.   
+
+//  This piece of code shows the full name (scoped name + link name) of every link in the current loaded model.
 //     gazebo::physics::Link_V tmpLinksVector;
-//     tmpLinksVector = m_myModel->GetLinks();   
+//     tmpLinksVector = m_myModel->GetLinks();
 //     for (int i=0; i<tmpLinksVector.size(); i++)
 //       std::cout << tmpLinksVector[i]->GetName() << " ";
 //     std::cout << std::endl;
-    
+
     if ( !this->m_onLink ) {
         std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< "not found"<<std::endl;
         return;
-    } 
+    }
 
     // Get wrench duration
     this->m_duration = tmpBottle.get ( 7 ).asDouble();

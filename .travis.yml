@@ -1,26 +1,30 @@
 language: cpp
+sudo: required
+dist: trusty
 
 matrix:
   include:
     - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_ONEDOTNINE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_TWO=TRUE
     - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_THREE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_SIX=TRUE
     - compiler: clang
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_THREE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_SIX=TRUE
     - compiler: clang
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_ONEDOTNINE=TRUE
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_TWO=TRUE
+    - compiler: gcc
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_NIGHTLY=TRUE
+    - compiler: clang
+      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_NIGHTLY=TRUE
 
 
 before_script:
-  - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu precise main" > /etc/apt/sources.list.d/gazebo-latest.list'
+  - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu trusty main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-  - sudo add-apt-repository -y ppa:robotology/ppa
-  - sudo apt-get update
-  - sudo apt-get install cmake
   - sudo apt-get --force-yes install libace-dev
-  - if [ $USE_GAZEBO_THREE ]; then sudo apt-get install -qq --force-yes libgazebo-dev libavcodec-dev libavformat-dev libswscale-dev; fi
-  - if [ $USE_GAZEBO_ONEDOTNINE ]; then sudo apt-get install -qq --force-yes gazebo libtinyxml-dev libboost-system-dev; fi
+  - if [ $USE_GAZEBO_TWO ]; then sudo apt-get install -qq --force-yes gazebo2 libtinyxml-dev libboost-system-dev; fi
+  - if [ $USE_GAZEBO_SIX ]; then sudo apt-get install -qq --force-yes libgazebo6-dev libavcodec-dev libavformat-dev libswscale-dev; fi
+  - if [ $USE_GAZEBO_NIGHTLY ]; then sudo apt-get install -qq --force-yes libgazebo7-haptix-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   # move to /home/travis/build/robotology/ directory
   - cd ..
   # install yarp

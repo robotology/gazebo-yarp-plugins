@@ -1,3 +1,8 @@
+File automatically generated from git log.
+To generated this file run ./utilities/docs/updateAuthors.sh from the root folder.
+
+gazebo-yarp-plugins Rust was written by these fine people:
+
 Alberto Cardellino <alberto.cardellino@iit.it>
 Alessandro Settimi <ale.settimi@gmail.com>
 Alessio Rocchi <alessio.rocchi@iit.it>
@@ -10,5 +15,5 @@ Jorhabib Eljaik <jorhabib@gmail.com>
 Lorenzo Natale <lorenzo.natale@iit.it>
 Marco Randazzo <marco.randazzo@iit.it>
 Miguel Aragao <miguelaragao91@gmail.com>
-Mirko Ferrati <mirko8787@gmail.com>
+Mirko Ferrati <mirko.ferrati@gmail.com>
 Silvio Traversaro <silvio.traversaro@iit.it>

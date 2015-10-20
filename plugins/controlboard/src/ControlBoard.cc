@@ -8,7 +8,7 @@
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/Handler.hh>
-#include <GazeboYarpPlugins/ConfHelpers.hh>
+
 
 #include <gazebo/physics/Model.hh>
 #include <yarp/dev/Wrapper.h>
@@ -74,11 +74,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
             std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
 
-            GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent,_sdf,m_parameters);
-
-            bool wipe = false;
-            if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
-            {
+            if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str())) {
                 std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
                 m_parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
 
@@ -95,9 +91,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 }
                 configuration_loaded = true;
             }
-
         }
-
         if (!configuration_loaded) {
             std::cout << "GazeboYarpControlBoard: File .ini not found, quitting\n" << std::endl;
             return;
@@ -136,8 +130,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 printf("controlBoard %s already opened\n", newPoly.key.c_str());
 
             }
-            else {
-                driver_group = m_parameters.findGroup(deviceName.c_str());
+            else
+            {
+                std::cout << "Opening new device " << newPoly.key.c_str() << std::endl;
+                driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
                     fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", newPoly.key.c_str());
                     m_wrapper.close();

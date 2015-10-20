@@ -21,6 +21,7 @@ matrix:
 before_script:
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu trusty main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+  - sudo apt-get update
   - sudo apt-get --force-yes install libace-dev
   - if [ $USE_GAZEBO_TWO ]; then sudo apt-get install -qq --force-yes gazebo2 libtinyxml-dev libboost-system-dev; fi
   - if [ $USE_GAZEBO_SIX ]; then sudo apt-get install -qq --force-yes libgazebo6-dev libavcodec-dev libavformat-dev libswscale-dev; fi

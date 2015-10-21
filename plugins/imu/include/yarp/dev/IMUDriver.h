@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2007-2013 Istituto Italiano di Tecnologia ADVR & iCub Facility
- * Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro and Alessandro Settimi
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2013-2015 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
+ * Authors: see AUTHORS file.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
 #ifndef GAZEBOYARP_IMUDRIVER_H
@@ -47,7 +47,7 @@ public:
     GazeboYarpIMUDriver();
 
     virtual ~GazeboYarpIMUDriver();
-    
+
     void onUpdate(const gazebo::common::UpdateInfo&);
 
     /**
@@ -62,7 +62,7 @@ public:
     virtual bool read(yarp::sig::Vector& outVector);
     virtual bool getChannels(int* numberOfChannels);
     virtual bool calibrate(int channelIndex, double v);
-    
+
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
 
@@ -71,7 +71,7 @@ private:
     yarp::sig::Vector m_imuData; //buffer for imu data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
-    
+
     gazebo::sensors::ImuSensor* m_parentSensor;
     gazebo::event::ConnectionPtr m_updateConnection;
 

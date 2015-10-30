@@ -98,7 +98,11 @@ void ApplyExternalWrench::UpdateChild()
         math::Matrix4 rotation = math::Matrix4 ( newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1 );
         math::Quaternion forceOrientation = rotation.GetRotation();
         math::Pose linkCoGPose ( linkCoGPos - rotation*math::Vector3 ( 0,0,.15 ), forceOrientation );
+#if GAZEBO_MAJOR_VERSION >= 7
+        msgs::Set ( m_visualMsg.mutable_pose(), linkCoGPose.Ign() );
+#else
         msgs::Set ( m_visualMsg.mutable_pose(), linkCoGPose );
+#endif
         msgs::Set ( m_visualMsg.mutable_material()->mutable_ambient(),common::Color ( 1,0,0,0.3 ) );
         m_visualMsg.set_visible ( 1 );
         m_visPub->Publish ( m_visualMsg );

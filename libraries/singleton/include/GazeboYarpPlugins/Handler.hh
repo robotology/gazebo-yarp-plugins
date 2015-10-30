@@ -8,8 +8,10 @@
 #define GAZEBOYARP_HANDLER_HH
 
 #include <map>
+
+#include <sdf/Element.hh>
+
 #include <yarp/os/Semaphore.h>
-#include <boost/shared_ptr.hpp>
 
 namespace gazebo
 {
@@ -19,11 +21,6 @@ namespace gazebo
     namespace physics {
         class Model;
     }
-}
-
-namespace sdf {
-    class Element;
-    typedef boost::shared_ptr<Element> ElementPtr;
 }
 
 namespace yarp {

@@ -12,9 +12,17 @@
 #include <sdf/sdf_config.h>
 
 #if SDF_MAJOR_VERSION >= 3
+
 #include <sdf/Element.hh>
+
 #else
-#include <sdf/SDFImpl.hh>
+
+#include <boost/shared_ptr.hpp>
+namespace sdf {
+   class Element;
+   typedef boost::shared_ptr<Element> ElementPtr;
+}
+
 #endif
 
 #include <yarp/os/Semaphore.h>

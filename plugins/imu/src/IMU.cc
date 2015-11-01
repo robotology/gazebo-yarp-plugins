@@ -26,7 +26,6 @@ GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin()
 
 GazeboYarpIMU::~GazeboYarpIMU()
 {
-    std::cout << "*** GazeboYarpIMU closing ***" << std::endl;
     m_imuDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
     yarp::os::Network::fini();

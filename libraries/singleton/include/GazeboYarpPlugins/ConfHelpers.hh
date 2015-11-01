@@ -7,9 +7,13 @@
 #ifndef GAZEBOYARP_CONFIGURATION_HELPERS_HH
 #define GAZEBOYARP_CONFIGURATION_HELPERS_HH
 
-#include <yarp/os/Semaphore.h>
+#include <sdf/sdf_config.h>
 
+#if SDF_MAJOR_VERSION >= 3
 #include <sdf/Element.hh>
+#else
+#include <sdf/SDFImpl.hh>
+#endif
 
 #include <boost/shared_ptr.hpp>
 

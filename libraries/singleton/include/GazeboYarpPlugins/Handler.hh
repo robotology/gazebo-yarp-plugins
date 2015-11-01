@@ -9,7 +9,13 @@
 
 #include <map>
 
+#include <sdf/sdf_config.h>
+
+#if SDF_MAJOR_VERSION >= 3
 #include <sdf/Element.hh>
+#else
+#include <sdf/SDFImpl.hh>
+#endif
 
 #include <yarp/os/Semaphore.h>
 

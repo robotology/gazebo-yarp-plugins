@@ -74,7 +74,11 @@ namespace gazebo
         gazebo::math::Pose WorldCoGPose = gazebo::math::Pose::Zero;
         WorldCoGPose.pos = wordlCoGModel;
 
+#if GAZEBO_MAJOR_VERSION >= 7
+        msgs::Set(m_visualMsg.mutable_pose(), WorldCoGPose.Ign());
+#else
         msgs::Set(m_visualMsg.mutable_pose(), WorldCoGPose);
+#endif
         msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(),common::Color(1,0,0,0.3));
         m_visualMsg.set_visible(1);
         m_visPub->Publish(m_visualMsg);

@@ -19,10 +19,8 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     m_pluginParameters.fromString(config.toString().c_str());
 
     deviceName = m_pluginParameters.find("name").asString().c_str();
-    std::cout << "Opening  GazeboYarpControlBoardDriver named " << deviceName << std::endl;
 
     std::string robotName(m_pluginParameters.find("robotScopedName").asString().c_str());
-    std::cout << "DeviceDriver is looking for robot " << robotName << "..." << std::endl;
 
     m_robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(!m_robot) {
@@ -35,7 +33,6 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpControlBoardDriver::close()
 {
-    std::cout << "Closing device " << deviceName  << std::endl;
     //unbinding events
     if (this->m_updateConnection.get()) {
         gazebo::event::Events::DisconnectWorldUpdateBegin (this->m_updateConnection);

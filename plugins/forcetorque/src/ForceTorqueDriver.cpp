@@ -22,60 +22,56 @@ GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
 /**
  *
  * Export a force/torque sensor.
- * 
+ *
  * \todo check forcetorque data
  */
 void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
 {
     gazebo::math::Vector3 force;
     gazebo::math::Vector3 torque;
-    
+
     force = this->m_parentSensor->GetForce();
     torque = this->m_parentSensor->GetTorque();
-    
+
     /** \todo ensure that the timestamp is the right one */
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */
     m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
-    
+
     m_dataMutex.wait();
 
     for (unsigned i = 0; i < 3; i++) {
         m_forceTorqueData[0 + i] = force[i];
     }
-    
+
     for (unsigned i = 0; i < 3; i++) {
         m_forceTorqueData[3 + i] = torque[i];
     }
-    
+
     m_dataMutex.post();
     return;
 }
-    
+
 //DEVICE DRIVER
 bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 {
-    std::cout << "GazeboYarpForceTorqueDriver::open() called" << std::endl;
-  
     m_dataMutex.wait();
     m_forceTorqueData.resize(YarpForceTorqueChannelsNumber, 0.0);
     m_dataMutex.post();
-    
+
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
-    std::cout << "GazeboYarpForceTorqueDriver::open is looking for sensor " << sensorScopedName << "..." << std::endl;
-    
+
     m_parentSensor = dynamic_cast<gazebo::sensors::ForceTorqueSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
-    
+
     if (!m_parentSensor)
     {
         std::cout << "Error, ForceTorque sensor was not found" << std::endl;
         return AS_ERROR;
     }
-    
+
     //Connect the driver to the gazebo simulation
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpForceTorqueDriver::onUpdate, this, _1));
-  
-    std::cout << "GazeboYarpForceTorqueDriver::open() returning true" << std::endl;
+
     return true;
 }
 
@@ -87,7 +83,7 @@ bool GazeboYarpForceTorqueDriver::close()
     }
     return true;
 }
-    
+
 //ANALOG SENSOR
 int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector& out)
 {
@@ -98,19 +94,19 @@ int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector& out)
         return AS_ERROR;
     }
     */
-    
+
    if (m_forceTorqueData.size() != YarpForceTorqueChannelsNumber) {
         return AS_ERROR;
    }
-   
+
    if (out.size() != YarpForceTorqueChannelsNumber) {
        out.resize(YarpForceTorqueChannelsNumber);
    }
-    
+
     m_dataMutex.wait();
     out = m_forceTorqueData;
     m_dataMutex.post();
-    
+
     return AS_OK;
 }
 

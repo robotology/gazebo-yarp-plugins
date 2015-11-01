@@ -139,10 +139,8 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
         std::string iniRobotNamePath =  gazebo::common::SystemPaths::Instance()->FindFileURI ( iniRobotName );
 
         if ( iniRobotNamePath != "" && this->m_iniParams.fromConfigFile ( iniRobotNamePath.c_str() ) ) {
-            std::cout << "ApplyExternalWrench: Found robotNamefromConfigFile in "<< iniRobotNamePath << std::endl;
             yarp::os::Value robotNameParam = m_iniParams.find ( "gazeboYarpPluginsRobotName" );
             this->robotName = robotNameParam.asString();
-            printf ( "ApplyExternalWrench: robotName is %s \n",robotName.c_str() );
             m_rpcThread.setRobotName  ( robotName );
             m_rpcThread.setScopedName ( this->m_modelScope );
             gazebo::physics::Link_V links = _model->GetLinks();
@@ -154,9 +152,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
             return;
         }
     } else {
-            std::cout << "ApplyExternalWrench: robot name from sdf description will be used!"<<std::endl;
             this->robotName = _model->GetName();
-            printf ( "ApplyExternalWrench: robotName is %s \n",robotName.c_str() );
             m_rpcThread.setRobotName ( robotName );
             m_rpcThread.setScopedName ( this->m_modelScope );
             gazebo::physics::Link_V links = _model->GetLinks();
@@ -246,8 +242,6 @@ void RPCServerThread::setDefaultLink(const std::string &defaultLink)
 bool RPCServerThread::threadInit()
 {
 
-    printf ( "Starting RPCServerThread\n" );
-    printf ( "Opening rpc port\n" );
     if ( !m_rpcPort.open ( std::string ( "/"+m_robotName + "/applyExternalWrench/rpc:i" ).c_str() ) ) {
         printf ( "ERROR opening RPC port /applyExternalWrench\n" );
         return false;
@@ -307,7 +301,6 @@ void RPCServerThread::threadRelease()
 {
     yarp::os::Thread::threadRelease();
     m_rpcPort.close();
-    printf ( "Goodbye from RPC thread\n" );
 }
 yarp::os::Bottle RPCServerThread::getCmd()
 {

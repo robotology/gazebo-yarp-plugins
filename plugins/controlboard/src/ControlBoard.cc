@@ -52,7 +52,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;
         }
-        std::cout<<"*** GazeboYarpControlBoard plugin started ***"<<std::endl;
 
         if (!_parent) {
             gzerr << "GazeboYarpControlBoard plugin requires a parent.\n";
@@ -87,12 +86,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     printf("GazeboYarpControlBoard::Load  Error: [WRAPPER] group not found in config file\n");
                     return;
                 }
+
                 if(m_parameters.check("ROS"))
                 {
                     yarp::os::ConstString ROS;
                     ROS = yarp::os::ConstString ("(") + m_parameters.findGroup("ROS").toString() + yarp::os::ConstString (")");
                     wrapper_group.append(yarp::os::Bottle(ROS));
                 }
+
                 configuration_loaded = true;
             }
 
@@ -107,8 +108,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         if (!m_wrapper.isValid())
             fprintf(stderr, "GazeboYarpControlBoard: wrapper did not open\n");
-        else
-            fprintf(stderr, "GazeboYarpControlBoard: wrapper opened correctly\n");
 
         if (!m_wrapper.view(m_iWrap)) {
             printf("Wrapper interface not found\n");
@@ -136,7 +135,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 printf("controlBoard %s already opened\n", newPoly.key.c_str());
 
             }
-            else 
+            else
             {
                 driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
@@ -148,8 +147,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 m_parameters.put("name", newPoly.key.c_str());
                 m_parameters.fromString(driver_group.toString(), false);
                 m_parameters.put("robotScopedName", m_robotName);
-                std::cout << "GazeboYarpControlBoard: setting robotScopedName " << m_robotName << std::endl;
-                 //std::cout << "before open: params are " << m_parameters.toString() << std::endl;
 
                 if (_sdf->HasElement("initialConfiguration")) {
                     //std::cout<<"Found initial Configuration: "<<std::endl;
@@ -169,10 +166,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     m_wrapper.close();
                     return;
                 }
-                else
-                {
-                    printf("controlBoard %s opened correctly\n", newPoly.key.c_str());
-                }
             }
             GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly);
             m_controlBoards.push(newPoly);
@@ -188,9 +181,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             }
             return;
         }
-
-        printf("Device initialized correctly, now sitting and waiting cause I am just the main of the yarp device, and the robot is linked to the onUpdate event of gazebo\n");
-        std::cout<<"Loaded GazeboYarpControlBoard Plugin"<<std::endl;
     }
 
 }

@@ -33,10 +33,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     assert(m_robot);
     if (!m_robot) return false;
 
-    std::cout<<"Robot Name: "<<m_robot->GetName() <<std::endl;
-    std::cout<<"# Joints: "<<m_robot->GetJoints().size() <<std::endl;
-    std::cout<<"# Links: "<<m_robot->GetLinks().size() <<std::endl;
-
     this->m_robotRefreshPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     if (!setJointNames()) return false;
 
@@ -85,8 +81,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_controlMode[j] = VOCAB_CM_POSITION;
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
         m_interactionMode[j] = VOCAB_IM_STIFF;
-
-    std::cout << "gazebo_init set pid done!" << std::endl;
 
     this->m_updateConnection =
     gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,

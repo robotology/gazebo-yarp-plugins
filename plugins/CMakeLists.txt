@@ -1,6 +1,7 @@
 add_subdirectory(camera)
 add_subdirectory(clock)
 add_subdirectory(controlboard)
+add_subdirectory(depthCamera)
 add_subdirectory(externalwrench)
 add_subdirectory(forcetorque)
 add_subdirectory(imu)
@@ -12,5 +13,3 @@ if( GAZEBO_VERSION VERSION_GREATER 3.9 )
 else()
     message(WARNING "Gazebo version is lower than 4.0, disabling worldinterface plugin.")
 endif()
-
-

@@ -70,6 +70,16 @@ GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
     m_horizontal_flip   = false;
     m_display_time_box  = false;
     m_display_timestamp = false;
+
+    m_imageCameraSensorPtr = 0;
+    m_imageCameraPtr       = 0;
+    m_depthCameraSensorPtr = 0;
+    m_depthCameraPtr       = 0;
+
+    m_updateDepthFrame_Connection = 0;
+    m_updateRGBPointCloud_Connection = 0;
+    m_updateImageFrame_Connection = 0;
+
     start_time = yarp::os::Time::now();
     counter=0;
     sprintf(num[0].data, "**** ** ** ****");

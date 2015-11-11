@@ -277,9 +277,9 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
         }
 
         if (!joint_found) {
-            yError() << "GazeboYarpControlBoardDriver::setJointNames(): cannot find joint " << m_jointNames[i]
-                     << " ( " << i << " of " << nr_of_joints << " ) " << "\n";
-            yError() << "jointNames is " << joint_names_bottle.toString() << "\n";
+            yError() << "GazeboYarpControlBoardDriver::setJointNames(): cannot find joint '" << controlboard_joint_names[i]
+                     << "' (" << i+1 << " of " << nr_of_joints << ") " << "\n";
+            yError() << "jointNames are " << joint_names_bottle.toString() << "\n";
             m_jointNames.resize(0);
             m_jointPointers.resize(0);
             return false;

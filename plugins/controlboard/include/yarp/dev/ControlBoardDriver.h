@@ -24,6 +24,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <gazebo/math/Angle.hh>
+
 extern const double RobotPositionTolerance;
 
 namespace yarp {
@@ -324,6 +326,13 @@ private:
         PIDFeedbackTermAllTerms = PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm | PIDFeedbackTermDerivativeTerm
     };
 
+    enum JointType
+    {
+        JointType_Unknown = 0,
+        JointType_Revolute,
+        JointType_Prismatic
+    };
+
     struct Range {
         Range() : min(0), max(0){}
         double min;
@@ -355,6 +364,7 @@ private:
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
 
     yarp::sig::Vector amp;
+    yarp::sig::VectorOf<JointType> m_jointTypes;
 
     //Desired Control variables
     yarp::sig::Vector m_referencePositions; /**< desired reference positions.
@@ -397,6 +407,7 @@ private:
     /**
      * Private methods
      */
+    bool configureJointType();
     void setMinMaxPos();  //NOT TESTED
     bool setJointNames();  //WORKS
     void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
@@ -416,6 +427,30 @@ private:
     void computeTrajectory(const int j);
     void prepareResetJointMsg(int j);
 
+    /**
+     * \brief convert data read from Gazebo to user unit sistem,
+     *  e.g. degrees for revolute joints and meters for prismatic joints
+     * \param joint joint number
+     * \param value Raw value read from Gazebo function like 'GetAngle'
+     * \return value in user units
+     */
+    double convertGazeboToUser(int joint, gazebo::math::Angle value);
+    double convertGazeboToUser(int joint, double value);
+    double *convertGazeboToUser(double *values);
+    double convertGazeboGainToUserGain(int joint, double value);
+
+    /**
+     * \brief convert data read from user unit sistem to Gazebo one
+     *  e.g. radiants for revolute joints and meters for prismatic joints
+     * \param joint joint number
+     * \param value Raw value read from Gazebo function like 'GetAngle'
+     * \return value in Gazebo units (SI)
+     */
+    double convertUserToGazebo(int joint, double value);
+    double convertUserGainToGazeboGain(int joint, double value);
+
+    double convertUserToGazebo(double value);
+    double *convertUserToGazebo(double *values);
 };
 
 #endif //GAZEBOYARP_CONTROLBOARDDRIVER_HH

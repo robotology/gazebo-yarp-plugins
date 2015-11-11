@@ -15,9 +15,9 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::setPid (int j, const Pid &pid)
         {
             // Converting all gains for degrees-based unit to radians-based
-            m_positionPIDs[j].p = GazeboYarpPlugins::convertDegreesGainsToRadiansGains(pid.kp);
-            m_positionPIDs[j].i = GazeboYarpPlugins::convertDegreesGainsToRadiansGains(pid.ki);
-            m_positionPIDs[j].d = GazeboYarpPlugins::convertDegreesGainsToRadiansGains(pid.kd);
+            m_positionPIDs[j].p = convertUserGainToGazeboGain(j, pid.kp);
+            m_positionPIDs[j].i = convertUserGainToGazeboGain(j, pid.ki);
+            m_positionPIDs[j].d = convertUserGainToGazeboGain(j, pid.kd);
             // The output limits are only related to the output, so they don't need to be converted
             m_positionPIDs[j].maxInt = pid.max_int;
             m_positionPIDs[j].maxOut = pid.max_output;
@@ -40,9 +40,9 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getPid (int j, Pid *pid)
         {
             // Converting all gains for degrees-based unit to radians-based
-            pid->kp = GazeboYarpPlugins::convertRadiansGainsToDegreesGains(m_positionPIDs[j].p);
-            pid->ki = GazeboYarpPlugins::convertRadiansGainsToDegreesGains(m_positionPIDs[j].i);
-            pid->kd = GazeboYarpPlugins::convertRadiansGainsToDegreesGains(m_positionPIDs[j].d);
+            pid->kp = convertGazeboGainToUserGain(j, m_positionPIDs[j].p);
+            pid->ki = convertGazeboGainToUserGain(j, m_positionPIDs[j].i);
+            pid->kd = convertGazeboGainToUserGain(j, m_positionPIDs[j].d);
 
             // The output limits are only related to the output, so they don't need to be converted
             pid->max_int = m_positionPIDs[j].maxInt;

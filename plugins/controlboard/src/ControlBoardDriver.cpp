@@ -33,6 +33,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     assert(m_robot);
     if (!m_robot) return false;
 
+    // this function also fills in the m_jointPointers vector
     this->m_robotRefreshPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     if (!setJointNames()) return false;
 
@@ -57,6 +58,10 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_maxStiffness.resize(m_numberOfJoints, 1000.0);
     m_minDamping.resize(m_numberOfJoints, 0.0);
     m_maxDamping.resize(m_numberOfJoints, 100.0);
+    m_jointTypes.resize(m_numberOfJoints);
+
+    if(!configureJointType() )
+        return false;
 
     setMinMaxPos();
     setMinMaxImpedance();
@@ -103,9 +108,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 break;
             }
             initial_config[counter-1] = tmp;
-            m_trajectoryGenerationReferencePosition[counter - 1] = GazeboYarpPlugins::convertRadiansToDegrees(tmp);
-            m_referencePositions[counter - 1] = GazeboYarpPlugins::convertRadiansToDegrees(tmp);
-            m_positions[counter - 1] = GazeboYarpPlugins::convertRadiansToDegrees(tmp);
+            m_trajectoryGenerationReferencePosition[counter - 1] = convertGazeboToUser(counter-1, tmp);
+            m_referencePositions[counter - 1] = convertGazeboToUser(counter-1, tmp);
+            m_positions[counter - 1] = convertGazeboToUser(counter-1, tmp);
             counter++;
         }
         std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
@@ -121,6 +126,40 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         }
     }
     return true;
+}
+
+bool GazeboYarpControlBoardDriver::configureJointType()
+{
+    bool ret = true;
+    //////// determine the type of joint (rotational or prismatic)
+    for(int i=0; i< m_numberOfJoints; i++)
+    {
+        switch( m_jointPointers[i]->GetType())
+        {
+            case ( gazebo::physics::Entity::HINGE_JOINT  |  gazebo::physics::Entity::JOINT):
+            {
+                std::cout << "Joint type is HINGE_JOINT  (should correspond to revolute in the SDF)" << std::endl;
+                m_jointTypes[i] = JointType_Revolute;
+                break;
+            }
+
+            case ( gazebo::physics::Entity::SLIDER_JOINT |  gazebo::physics::Entity::JOINT):
+            {
+                std::cout << "Joint type is SLIDER_JOINT (should correspond to prismatic in the SDF)" << std::endl;
+                m_jointTypes[i] = JointType_Prismatic;
+                break;
+            }
+
+            default:
+            {
+                std::cout << "Error, joint type is not supported by Gazebo YARP plugin now. Supported joint types are 'revolute' and 'prismatic' \n\t(GEARBOX_JOINT and SLIDER_JOINT using Gazebo enums defined into gazebo/physic/base.hh include file, GetType() returns " << m_jointPointers[i]->GetType() << std::endl;
+                m_jointTypes[i] = JointType_Unknown;
+                ret = false;
+                break;
+            }
+        }
+    }
+    return ret;
 }
 
 void GazeboYarpControlBoardDriver::computeTrajectory(const int j)
@@ -151,9 +190,9 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 
     // Sensing position & torque
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
-//TODO: consider multi-dof joint ?
-        m_positions[jnt_cnt] = m_jointPointers[jnt_cnt]->GetAngle (0).Degree();
-        m_velocities[jnt_cnt] = GazeboYarpPlugins::convertRadiansToDegrees(m_jointPointers[jnt_cnt]->GetVelocity(0));
+        //TODO: consider multi-dof joint ?
+        m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
+        m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
         m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
 
@@ -200,9 +239,10 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 
 void GazeboYarpControlBoardDriver::setMinMaxPos()
 {
-    for(unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_jointLimits[i].max = m_jointPointers[i]->GetUpperLimit(0).Degree();
-        m_jointLimits[i].min = m_jointPointers[i]->GetLowerLimit(0).Degree();
+    for(unsigned int i = 0; i < m_numberOfJoints; ++i)
+    {
+        m_jointLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));
+        m_jointLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));
     }
 }
 
@@ -375,7 +415,7 @@ void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd
     GazeboYarpControlBoardDriver::PID positionPID = m_positionPIDs[joint_index];
 
     j_cmd.set_name(m_jointPointers[joint_index]->GetScopedName());
-    j_cmd.mutable_position()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
+    j_cmd.mutable_position()->set_target(convertUserToGazebo(joint_index, ref));
     j_cmd.mutable_position()->set_p_gain(positionPID.p);
     j_cmd.mutable_position()->set_i_gain(positionPID.i);
     j_cmd.mutable_position()->set_d_gain(positionPID.d);
@@ -464,4 +504,100 @@ void GazeboYarpControlBoardDriver::sendImpPositionsToGazebo ( Vector &dess )
 {
     for(unsigned int i = 0; i < m_numberOfJoints; ++i)
         sendImpPositionToGazebo(i, dess[i]);
+}
+
+
+double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, gazebo::math::Angle value)
+{
+    double newValue = 0;
+    switch(m_jointTypes[joint])
+    {
+        case JointType_Revolute:
+        {
+            newValue = value.Degree();
+            break;
+        }
+
+        case JointType_Prismatic:
+        {
+            // For prismatic joints there is no getMeter() or something like that. The only way is to use .radiant() to get internal
+            // value without changes
+            newValue = value.Radian();
+            break;
+        }
+
+        default:
+        {
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            break;
+        }
+    }
+    return newValue;
+}
+
+double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, double value)
+{
+    double newValue = 0;
+    switch(m_jointTypes[joint])
+    {
+        case JointType_Revolute:
+        {
+            newValue = GazeboYarpPlugins::convertRadiansToDegrees(value);
+            break;
+        }
+
+        case JointType_Prismatic:
+        {
+            // For prismatic joints internal representation is already meter, nothing to do here.
+            newValue = value;
+            break;
+        }
+
+        default:
+        {
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            break;
+        }
+    }
+    return newValue;
+}
+
+double * GazeboYarpControlBoardDriver::convertGazeboToUser(double *values)
+{
+    for(int i=0; i<m_numberOfJoints; i++)
+        values[i] = convertGazeboToUser(i, values[i]);
+    return values;
+}
+
+double GazeboYarpControlBoardDriver::convertUserToGazebo(int joint, double value)
+{
+    double newValue = 0;
+    switch(m_jointTypes[joint])
+    {
+        case JointType_Revolute:
+        {
+            newValue = GazeboYarpPlugins::convertDegreesToRadians(value);
+            break;
+        }
+
+        case JointType_Prismatic:
+        {
+            newValue = value;
+            break;
+        }
+
+        default:
+        {
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            break;
+        }
+    }
+    return newValue;
+}
+
+double * GazeboYarpControlBoardDriver::convertUserToGazebo(double *values)
+{
+    for(int i=0; i<m_numberOfJoints; i++)
+        values[i] = convertGazeboToUser(i, values[i]);
+    return values;
 }

@@ -66,17 +66,6 @@ namespace GazeboYarpPlugins {
             return false;
         }
     }
-
-    inline double convertDegreesGainsToRadiansGains(double gainsWrtDegrees)
-    {
-        return gainsWrtDegrees * 180.0 / pi;
-    }
-
-    inline double convertRadiansGainsToDegreesGains(double gainsWrtRadians)
-    {
-        return gainsWrtRadians / 180.0 * pi;
-    }
-
 }
 
 

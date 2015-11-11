@@ -454,7 +454,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     j_cmd.mutable_velocity()->set_i_min(-velocityPID.maxInt);
     j_cmd.mutable_velocity()->set_limit(velocityPID.maxOut);
 
-    j_cmd.mutable_velocity()->set_target(GazeboYarpPlugins::convertDegreesToRadians(ref));
+    j_cmd.mutable_velocity()->set_target(convertUserToGazebo(j, ref));
 }
 
 bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED

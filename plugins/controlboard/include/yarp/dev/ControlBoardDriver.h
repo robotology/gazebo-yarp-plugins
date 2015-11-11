@@ -437,6 +437,7 @@ private:
     double convertGazeboToUser(int joint, gazebo::math::Angle value);
     double convertGazeboToUser(int joint, double value);
     double *convertGazeboToUser(double *values);
+    double convertGazeboGainToUserGain(int joint, double value);
 
     /**
      * \brief convert data read from user unit sistem to Gazebo one
@@ -446,6 +447,7 @@ private:
      * \return value in Gazebo units (SI)
      */
     double convertUserToGazebo(int joint, double value);
+    double convertUserGainToGazeboGain(int joint, double value);
 
     double convertUserToGazebo(double value);
     double *convertUserToGazebo(double *values);

@@ -601,3 +601,55 @@ double * GazeboYarpControlBoardDriver::convertUserToGazebo(double *values)
         values[i] = convertGazeboToUser(i, values[i]);
     return values;
 }
+
+double GazeboYarpControlBoardDriver::convertUserGainToGazeboGain(int joint, double value)
+{
+    double newValue = 0;
+    switch(m_jointTypes[joint])
+    {
+        case JointType_Revolute:
+        {
+            newValue = GazeboYarpPlugins::convertRadiansToDegrees(value);
+            break;
+        }
+
+        case JointType_Prismatic:
+        {
+            newValue = value;
+            break;
+        }
+
+        default:
+        {
+            yError() << "Cannot convert measure from User to Gazebo units, type of joint not supported";
+            break;
+        }
+    }
+    return newValue;
+}
+
+double GazeboYarpControlBoardDriver::convertGazeboGainToUserGain(int joint, double value)
+{
+    double newValue = 0;
+    switch(m_jointTypes[joint])
+    {
+        case JointType_Revolute:
+        {
+            newValue = GazeboYarpPlugins::convertDegreesToRadians(value);
+            break;
+        }
+
+        case JointType_Prismatic:
+        {
+            newValue = value;
+            break;
+        }
+
+        default:
+        {
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            break;
+        }
+    }
+    return newValue;
+}

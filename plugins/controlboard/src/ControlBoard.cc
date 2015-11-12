@@ -39,7 +39,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
         yarp::os::Network::fini();
-        std::cout<<"Goodbye!"<<std::endl;
     }
 
     /**
@@ -48,6 +47,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
     void GazeboYarpControlBoard::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
         yarp::os::Network::init();
+
         if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
             std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;

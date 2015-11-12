@@ -32,20 +32,6 @@ namespace GazeboYarpPlugins {
     double convertRadiansToDegrees(double radians);
 
     /**
-     * \brief convert a degrees-based gain to a radians-based gain
-     * \param gainsWrtDegrees degrees-based gain
-     * \return the gain converted in radians-based units
-     */
-    double convertDegreesGainsToRadiansGains(double gainsWrtDegrees);
-
-    /**
-     * \brief convert a radians-based gain to a degrees-based gain
-     * \param gainsWrtRadians radians-based gain
-     * \return the gain converted in degrees-based units
-     */
-    double convertRadiansGainsToDegreesGains(double gainsWrtRadians);
-
-    /**
      * \brief check if a string has a certaing ending
      * \param fullString the full string
      * \param ending the candidate ending
@@ -53,10 +39,15 @@ namespace GazeboYarpPlugins {
      */
     bool hasEnding (std::string const &fullString, std::string const &ending);
 
+    inline double convertDegreesToRadians(double degrees)
+    {
+        return degrees / 180.0 * pi;
+    }
 
-    inline double convertDegreesToRadians(double degrees) { return degrees / 180.0 * pi; }
-
-    inline double convertRadiansToDegrees(double radians) { return radians * 180.0 / pi; }
+    inline double convertRadiansToDegrees(double radians)
+    {
+        return radians * 180.0 / pi;
+    }
 
     inline bool hasEnding (std::string const &fullString, std::string const &ending)
     {

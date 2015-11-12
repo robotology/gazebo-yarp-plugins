@@ -138,14 +138,12 @@ bool GazeboYarpControlBoardDriver::configureJointType()
         {
             case ( gazebo::physics::Entity::HINGE_JOINT  |  gazebo::physics::Entity::JOINT):
             {
-                std::cout << "Joint type is HINGE_JOINT  (should correspond to revolute in the SDF)" << std::endl;
                 m_jointTypes[i] = JointType_Revolute;
                 break;
             }
 
             case ( gazebo::physics::Entity::SLIDER_JOINT |  gazebo::physics::Entity::JOINT):
             {
-                std::cout << "Joint type is SLIDER_JOINT (should correspond to prismatic in the SDF)" << std::endl;
                 m_jointTypes[i] = JointType_Prismatic;
                 break;
             }

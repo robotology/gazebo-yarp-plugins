@@ -20,11 +20,8 @@ ApplyExternalWrench::ApplyExternalWrench()
 }
 ApplyExternalWrench::~ApplyExternalWrench()
 {
-    printf ( "*** GazeboYarpApplyExternalWrench closing ***\n" );
-    printf ( "Trying to stop rpcThread in ApplyExternalWrench plugin\n" );
     m_rpcThread.stop();
     gazebo::event::Events::DisconnectWorldUpdateBegin ( this->m_updateConnection );
-    printf ( "Goodbye from ApplyExternalWrench plugin\n" );
 }
 
 void ApplyExternalWrench::UpdateChild()
@@ -126,7 +123,6 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 
     // What is the parent name??
     this->m_modelScope = _model->GetScopedName();
-    printf ( "Scoped name: %s\n",this->m_modelScope.c_str() );
 
     // Copy the pointer to the model to access later from UpdateChild
     this->m_myModel = _model;

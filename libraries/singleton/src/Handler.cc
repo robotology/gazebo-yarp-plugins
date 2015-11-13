@@ -142,7 +142,6 @@ void Handler::removeSensor(const std::string& sensorName)
     if (sensor != m_sensorsMap.end()) {
         sensor->second.decrementCount();
         if (!sensor->second.count()) {
-            std::cout << "Removing sensor " << sensorName << std::endl;
             m_sensorsMap.erase(sensor);
         }
     } else {

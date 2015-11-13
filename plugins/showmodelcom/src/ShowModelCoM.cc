@@ -31,7 +31,6 @@ namespace gazebo
 
     ShowModelCoM::~ShowModelCoM()
     {
-        printf("*** GazeboYarpShowModelCoM closing ***\n");
         if (m_comOutputPort) {
             m_comOutputPort->interrupt();
             m_comOutputPort->close();
@@ -39,7 +38,6 @@ namespace gazebo
             m_comOutputPort = 0;
         }
         gazebo::event::Events::DisconnectWorldUpdateBegin(this->m_updateConnection);
-        printf("Goodbye from ShowModelCoM plugin\n");
         yarp::os::Network::fini();
     }
 
@@ -94,7 +92,6 @@ namespace gazebo
 
         // What is the parent name??
         this->m_modelScope = _model->GetScopedName();
-        printf("Scoped name: %s\n",this->m_modelScope.c_str());
 
         std::string port_name = "/" + this->m_modelScope + "/CoMInWorld:o";
         m_comOutputPort = new yarp::os::BufferedPort<yarp::os::Bottle>();

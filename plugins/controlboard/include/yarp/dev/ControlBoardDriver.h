@@ -389,6 +389,7 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> m_positionPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
+    std::vector<GazeboYarpControlBoardDriver::PID> m_torquePIDs;
 
     yarp::sig::Vector m_torqueOffsett;
     yarp::sig::Vector m_minStiffness;

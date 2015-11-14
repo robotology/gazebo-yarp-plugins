@@ -53,6 +53,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_positionPIDs.reserve(m_numberOfJoints);
     m_velocityPIDs.reserve(m_numberOfJoints);
     m_impedancePosPDs.reserve(m_numberOfJoints);
+    m_torquePIDs.resize(m_numberOfJoints);
     m_torqueOffsett.resize(m_numberOfJoints);
     m_minStiffness.resize(m_numberOfJoints, 0.0);
     m_maxStiffness.resize(m_numberOfJoints, 1000.0);

@@ -34,11 +34,11 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     assert(m_robot);
     if (!m_robot) return false;
 
-    // this function also fills in the m_jointPointers vector
     this->m_robotRefreshPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
-    if (!setJointNames()) return false;
+    if (!setJointNames()) return false;      // this function also fills in the m_jointPointers vector
 
     m_numberOfJoints = m_jointNames.size();
+
     m_positions.resize(m_numberOfJoints);
     m_zeroPosition.resize(m_numberOfJoints);
     m_referenceVelocities.resize(m_numberOfJoints);
@@ -116,8 +116,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     _T_controller = 1;
 
-    std::stringstream ss(m_pluginParameters.find("initialConfiguration").toString());
-    if (!(m_pluginParameters.find("initialConfiguration") == "")) {
+    if(m_pluginParameters.check("initialConfiguration") )
+    {
+        std::stringstream ss(m_pluginParameters.find("initialConfiguration").toString());
         double tmp = 0.0;
         yarp::sig::Vector initial_config(m_numberOfJoints);
         unsigned int counter = 1;
@@ -562,7 +563,8 @@ double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, gazebo::math
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported for axes " <<
+                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
             break;
         }
     }
@@ -589,7 +591,8 @@ double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, double value
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported for axes " <<
+                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
             break;
         }
     }
@@ -622,7 +625,7 @@ double GazeboYarpControlBoardDriver::convertUserToGazebo(int joint, double value
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from User to Gazebo units, type of joint not supported";
             break;
         }
     }
@@ -681,7 +684,8 @@ double GazeboYarpControlBoardDriver::convertGazeboGainToUserGain(int joint, doub
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from Gazebo gains to User gain units, type of joint not supported for axes " <<
+                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
             break;
         }
     }

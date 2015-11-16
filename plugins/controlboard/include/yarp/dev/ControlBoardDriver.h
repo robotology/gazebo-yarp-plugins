@@ -372,6 +372,8 @@ private:
                                                  they can be set directly or indirectly
                                                  through the trajectory generator.
                                                  [Degrees] */
+    yarp::sig::Vector m_oldReferencePositions; // used to store last reference and check if a new ref has been commanded
+    yarp::sig::Vector m_positionThreshold;  // Threshold under which trajectory generator stops computing new values
 
     yarp::sig::Vector m_referenceTorques; /**< desired reference torques for torque control mode [NetwonMeters] */
     yarp::sig::Vector m_referenceVelocities; /**< desired reference velocities for velocity control mode [Degrees/Seconds] */

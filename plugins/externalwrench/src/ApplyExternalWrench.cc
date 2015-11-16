@@ -15,8 +15,9 @@ ApplyExternalWrench::ApplyExternalWrench()
 {
     this->m_wrenchToApply.force.resize ( 3,0 );
     this->m_wrenchToApply.torque.resize ( 3,0 );
-    this->m_duration = 0;
+    this->m_wrenchToApply.duration = 0.0;
     timeIni = 0;
+    m_newCommand = false;
 }
 ApplyExternalWrench::~ApplyExternalWrench()
 {
@@ -32,6 +33,14 @@ void ApplyExternalWrench::UpdateChild()
     // Copying command
     this->m_lock.lock();
     tmpBottle = this->m_rpcThread.getCmd();
+    if ( tmpBottle.get( 8 ).asInt() == 1 )
+    {
+        // If this is a new command
+        m_newCommand = true;
+        this->m_rpcThread.setNewCommandFlag( 0 );
+    } else {
+        m_newCommand = false;
+    }
     this->m_lock.unlock();
 
     // initialCmdBottle will contain the initial bottle in RPCServerThread
@@ -62,12 +71,12 @@ void ApplyExternalWrench::UpdateChild()
 //     std::cout << std::endl;
 
     if ( !this->m_onLink ) {
-        std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< "not found"<<std::endl;
+        std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< " not found"<<std::endl;
         return;
     }
 
     // Get wrench duration
-    this->m_duration = tmpBottle.get ( 7 ).asDouble();
+    this->m_wrenchToApply.duration = tmpBottle.get ( 7 ).asDouble();
 
     // Copying command to force and torque Vector3 variables
     math::Vector3 force ( this->m_wrenchToApply.force[0], this->m_wrenchToApply.force[1], this->m_wrenchToApply.force[2] );
@@ -75,16 +84,17 @@ void ApplyExternalWrench::UpdateChild()
 
     // Taking duration of the applied force into account
     static bool applying_force_flag = 0;
-    // If the rpc command changed update initial time to check duration
-    if ( prevCmdBottle != tmpBottle ) {
+
+    double time_current = yarp::os::Time::now();
+    
+    if ( m_newCommand )
+    {
         timeIni = yarp::os::Time::now();
-        prevCmdBottle = tmpBottle;
         applying_force_flag = 1;
     }
 
-    double time_current = yarp::os::Time::now();
     // This has to be done during the specified duration
-    if ( applying_force_flag && ( time_current - timeIni ) < this->m_duration ) {
+    if ( applying_force_flag && ( time_current - timeIni ) < m_wrenchToApply.duration ) {
 //         printf ( "Applying external force on the robot for %f seconds...\n", this->m_duration );
         this->m_onLink->AddForce ( force );
         this->m_onLink->AddTorque ( torque );
@@ -105,7 +115,7 @@ void ApplyExternalWrench::UpdateChild()
         m_visPub->Publish ( m_visualMsg );
     }
 
-    if ( applying_force_flag && ( time_current - timeIni ) > this->m_duration ) {
+    if ( applying_force_flag && ( time_current - timeIni ) > m_wrenchToApply.duration ) {
         applying_force_flag = 0;
         m_visualMsg.set_visible ( 0 );
         m_visPub->Publish ( m_visualMsg );
@@ -281,6 +291,9 @@ void RPCServerThread::run()
                 this->m_reply.addString ( "[ACK] Correct command format" );
                 this->m_rpcPort.reply ( m_reply );
                 m_lock.lock();
+                std::cout << "[DEBUG] Command Read: " << command.toString() << std::endl;
+                // New command flag
+                command.addInt(1);
                 m_cmd = command;
                 m_lock.unlock();
             } else {
@@ -301,6 +314,11 @@ void RPCServerThread::threadRelease()
 yarp::os::Bottle RPCServerThread::getCmd()
 {
     return m_cmd;
+}
+
+void RPCServerThread::setNewCommandFlag(int flag)
+{
+    m_cmd.get( 8 ) = flag;
 }
 
 void RPCServerThread::onStop()

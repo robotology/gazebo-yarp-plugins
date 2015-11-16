@@ -29,6 +29,7 @@ public:
     void                setDefaultLink(const std::string& defaultLink);
     void                setDurationBuffer(double d);
     double              getDurationBuffer();
+    void                setNewCommandFlag(int flag);
     virtual void        onStop();
 private:
     yarp::os::RpcServer m_rpcPort;
@@ -58,6 +59,7 @@ public:
     struct wrench {
         yarp::sig::Vector force;
         yarp::sig::Vector torque;
+        double            duration;
     };
     
     /// \brief Robot name that will be used to open rpc port
@@ -97,7 +99,7 @@ private:
     transport::PublisherPtr m_visPub;
     msgs::Visual            m_visualMsg;
     
-    double                  m_duration;
+    bool                    m_newCommand;
 
 };
 

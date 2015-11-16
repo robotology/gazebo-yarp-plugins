@@ -150,7 +150,8 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
             m_rpcThread.setRobotName  ( robotName );
             m_rpcThread.setScopedName ( this->m_modelScope );
             gazebo::physics::Link_V links = _model->GetLinks();
-            m_rpcThread.setDefaultLink("root_link");
+            std::string defaultLink = links[0]->GetName();
+            m_rpcThread.setDefaultLink(defaultLink);
 	    this->m_subscope = retrieveSubscope(links, m_modelScope);
             configuration_loaded = true;
         } else {
@@ -291,8 +292,7 @@ void RPCServerThread::run()
                 this->m_reply.addString ( "[ACK] Correct command format" );
                 this->m_rpcPort.reply ( m_reply );
                 m_lock.lock();
-                std::cout << "[DEBUG] Command Read: " << command.toString() << std::endl;
-                // New command flag
+                // new-command flag
                 command.addInt(1);
                 m_cmd = command;
                 m_lock.unlock();

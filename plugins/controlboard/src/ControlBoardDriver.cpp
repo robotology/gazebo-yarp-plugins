@@ -20,7 +20,8 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-const double RobotPositionTolerance = 0.9;
+const double RobotPositionTolerance_revolute = 0.9;      // Degrees
+const double RobotPositionTolerance_linear   = 0.004;    // Meters
 
 GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : deviceName("") {}
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
@@ -33,11 +34,11 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     assert(m_robot);
     if (!m_robot) return false;
 
-    // this function also fills in the m_jointPointers vector
     this->m_robotRefreshPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
-    if (!setJointNames()) return false;
+    if (!setJointNames()) return false;      // this function also fills in the m_jointPointers vector
 
     m_numberOfJoints = m_jointNames.size();
+
     m_positions.resize(m_numberOfJoints);
     m_zeroPosition.resize(m_numberOfJoints);
     m_referenceVelocities.resize(m_numberOfJoints);
@@ -46,6 +47,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_torques.resize(m_numberOfJoints); m_torques.zero();
     m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_referencePositions.resize(m_numberOfJoints);
+    m_oldReferencePositions.resize(m_numberOfJoints);
     m_trajectoryGenerationReferencePosition.resize(m_numberOfJoints);
     m_trajectoryGenerationReferenceAcceleraton.resize(m_numberOfJoints);
     m_referenceTorques.resize(m_numberOfJoints);
@@ -60,13 +62,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_minDamping.resize(m_numberOfJoints, 0.0);
     m_maxDamping.resize(m_numberOfJoints, 100.0);
     m_jointTypes.resize(m_numberOfJoints);
+    m_positionThreshold.resize(m_numberOfJoints);
 
-    if(!configureJointType() )
-        return false;
-
-    setMinMaxPos();
-    setMinMaxImpedance();
-    setPIDs();
+    // Initial zeroing of all vectors
     m_positions.zero();
     m_zeroPosition.zero();
     m_referenceVelocities.zero();
@@ -77,16 +75,37 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_trajectoryGenerationReferenceAcceleraton.zero();
     m_referenceTorques.zero();
     amp = 1; // initially on - ok for simulator
-    started = false;
     m_controlMode = new int[m_numberOfJoints];
     m_interactionMode = new int[m_numberOfJoints];
     m_isMotionDone = new bool[m_numberOfJoints];
     m_clock = 0;
     m_torqueOffsett = 0;
+
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
         m_controlMode[j] = VOCAB_CM_POSITION;
-    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
         m_interactionMode[j] = VOCAB_IM_STIFF;
+        m_jointTypes[j] = JointType_Unknown;
+        m_isMotionDone[j] = true;
+        // Set an old reference value surely out of range. This will force the setting of initial reference at startup
+        m_oldReferencePositions[j] = m_jointLimits[j].max *2;
+    }
+    // End zeroing of vectors
+
+    // This must be after zeroing of vectors
+    if(!configureJointType() )
+        return false;
+
+    setMinMaxPos();
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+        // Set an old reference value surely out of range. This will force the setting of initial reference at startup
+        // NOTE: This has to be after setMinMaxPos function
+        m_oldReferencePositions[j] = m_jointLimits[j].max *2;
+    }
+
+    setMinMaxImpedance();
+    setPIDs();
 
     this->m_updateConnection =
     gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,
@@ -98,8 +117,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     _T_controller = 1;
 
-    std::stringstream ss(m_pluginParameters.find("initialConfiguration").toString());
-    if (!(m_pluginParameters.find("initialConfiguration") == "")) {
+    if(m_pluginParameters.check("initialConfiguration") )
+    {
+        std::stringstream ss(m_pluginParameters.find("initialConfiguration").toString());
         double tmp = 0.0;
         yarp::sig::Vector initial_config(m_numberOfJoints);
         unsigned int counter = 1;
@@ -116,6 +136,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         }
         std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
 
+        // Set initial reference
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
 #if GAZEBO_MAJOR_VERSION >= 4
             m_jointPointers[i]->SetPosition(0,initial_config[i]);
@@ -140,12 +161,14 @@ bool GazeboYarpControlBoardDriver::configureJointType()
             case ( gazebo::physics::Entity::HINGE_JOINT  |  gazebo::physics::Entity::JOINT):
             {
                 m_jointTypes[i] = JointType_Revolute;
+                m_positionThreshold[i] = RobotPositionTolerance_revolute;
                 break;
             }
 
             case ( gazebo::physics::Entity::SLIDER_JOINT |  gazebo::physics::Entity::JOINT):
             {
                 m_jointTypes[i] = JointType_Prismatic;
+                m_positionThreshold[i] = RobotPositionTolerance_linear;
                 break;
             }
 
@@ -163,17 +186,34 @@ bool GazeboYarpControlBoardDriver::configureJointType()
 
 void GazeboYarpControlBoardDriver::computeTrajectory(const int j)
 {
-    if ((m_referencePositions[j] - m_trajectoryGenerationReferencePosition[j]) < -RobotPositionTolerance) {
-        if (m_trajectoryGenerationReferenceSpeed[j] !=0)
-            m_referencePositions[j] += (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
-        m_isMotionDone[j] = false;
-    } else if ((m_referencePositions[j] - m_trajectoryGenerationReferencePosition[j]) > RobotPositionTolerance) {
-        if (m_trajectoryGenerationReferenceSpeed[j] != 0)
-            m_referencePositions[j]-= (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
-        m_isMotionDone[j] = false;
-    } else {
-        m_referencePositions[j] = m_trajectoryGenerationReferencePosition[j];
-        m_isMotionDone[j] = true;
+
+    double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
+    double error_abs = fabs(m_referencePositions[j] - m_trajectoryGenerationReferencePosition[j]);
+
+    // if delta is bigger then threshold, in some cases this will never converge to an end.
+    // Check to prevent those cases
+    if(error_abs)
+    {
+        // Watch out for problem
+        if((error_abs < m_positionThreshold[j]) || ( error_abs < step) )    // This id both 'normal ending condition' and safe procedure when step > threshold causing infinite oscillation around final position
+        {
+            // Just go to final position
+            m_referencePositions[j] = m_trajectoryGenerationReferencePosition[j];
+            m_isMotionDone[j] = true;
+            return;
+        }
+
+        if (m_trajectoryGenerationReferencePosition[j] > m_referencePositions[j])
+        {
+            m_referencePositions[j] += step;
+            m_isMotionDone[j] = false;
+        }
+        else
+        {
+            m_referencePositions[j] -= step;
+            m_isMotionDone[j] = false;
+        }
+
     }
 }
 
@@ -181,11 +221,6 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 {
     m_clock++;
 
-    if (!started) {//This is a simple way to start with the robot in standing position
-        started = true;
-        for (unsigned int j = 0; j < m_numberOfJoints; ++j)
-            sendPositionToGazebo (j, m_positions[j]);
-    }
 
     // Sensing position & torque
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
@@ -403,9 +438,15 @@ bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(Vector &refs)
 bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 {
     gazebo::msgs::JointCmd j_cmd;
-    prepareJointMsg(j_cmd,j,ref);
-    m_jointCommandPublisher->WaitForConnection();
-    m_jointCommandPublisher->Publish(j_cmd);
+
+    if(ref != m_oldReferencePositions[j])
+    {
+        // std::cout << "Sending new command: new ref is " << ref << "; old ref was " << m_oldReferencePositions[j] << std::endl;
+        prepareJointMsg(j_cmd,j,ref);
+        m_jointCommandPublisher->WaitForConnection();
+        m_jointCommandPublisher->Publish(j_cmd);
+        m_oldReferencePositions[j] = ref;
+    }
     return true;
 }
 
@@ -527,7 +568,8 @@ double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, gazebo::math
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported for axes " <<
+                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
             break;
         }
     }
@@ -554,7 +596,8 @@ double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, double value
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported for axes " <<
+                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
             break;
         }
     }
@@ -587,7 +630,7 @@ double GazeboYarpControlBoardDriver::convertUserToGazebo(int joint, double value
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from User to Gazebo units, type of joint not supported";
             break;
         }
     }
@@ -646,7 +689,8 @@ double GazeboYarpControlBoardDriver::convertGazeboGainToUserGain(int joint, doub
 
         default:
         {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported";
+            yError() << "Cannot convert measure from Gazebo gains to User gain units, type of joint not supported for axes " <<
+                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
             break;
         }
     }

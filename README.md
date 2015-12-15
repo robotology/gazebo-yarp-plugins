@@ -3,6 +3,19 @@ gazebo-yarp-plugins [![Build Status](https://travis-ci.org/robotology/gazebo-yar
 
 Plugins for exposing [Yarp](http://yarp.it/) interfaces on [Gazebo simulator](http://gazebosim.org/) models.
 
+Plugin List
+------------
+
+- [`Camera`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/camera)
+- [`Clock`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/clock) allows to synchronize the simulation with an external controller.
+- [`Controlboard`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/controlboard)
+- [`External Wrench`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/externalwrench)
+- [`Force Torque`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/forcetorque)
+- [`IMU`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/imu)
+- [`Joint Sensors`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/jointsensors)
+- [`Show Model CoM`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/showmodelcom)
+- [`World Interface`](https://github.com/robotology/gazebo-yarp-plugins/tree/master/plugins/worldinterface)
+
 Installation
 ------------
 ### Dependencies

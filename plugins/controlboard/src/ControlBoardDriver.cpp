@@ -353,7 +353,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
         double default_p = pidTerms & PIDFeedbackTermProportionalTerm ? 500.0 : 0;
         double default_i = pidTerms & PIDFeedbackTermIntegrativeTerm ? 0.1 : 0;
         double default_d = pidTerms & PIDFeedbackTermDerivativeTerm ? 1.0 : 0;
-        std::cout<<"PID gain information not found in plugin parameters, using default gains ( "
+        std::cout<<"PID gain information not found in group " << pidGroupName << ", using default gains ( "
         <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             GazeboYarpControlBoardDriver::PID pid = {500, 0.1, 1.0, -1, -1};

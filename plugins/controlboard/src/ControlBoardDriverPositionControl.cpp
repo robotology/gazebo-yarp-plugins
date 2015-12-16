@@ -6,6 +6,7 @@
 
 #include "ControlBoardDriver.h"
 
+#include <GazeboYarpPlugins/log.h>
 
 using namespace yarp::dev;
 
@@ -278,8 +279,8 @@ bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
             return true;
         }
     } else {
-        std::cerr << "[WARN] gazebo_yarp_controlboard: you tried to call setPosition" << std::endl;
-        std::cerr << "[WARN] for a joint that is not in POSITION_DIRECT control mode." << std::endl;
+        GYPWARN << "[WARN] gazebo_yarp_controlboard: you tried to call setPosition" << std::endl;
+        GYPWARN << "[WARN] for a joint that is not in POSITION_DIRECT control mode." << std::endl;
     }
     return false;
 }

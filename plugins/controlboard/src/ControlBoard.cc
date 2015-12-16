@@ -7,6 +7,7 @@
 #include "ControlBoard.hh"
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
@@ -49,12 +50,12 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         yarp::os::Network::init();
 
         if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-            std::cerr << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+            GYPERR << "GazeboYarpControlBoard::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
             return;
         }
 
         if (!_parent) {
-            gzerr << "GazeboYarpControlBoard plugin requires a parent.\n";
+            GYPERR << "GazeboYarpControlBoard plugin requires a parent.\n";
             return;
         }
 
@@ -78,12 +79,11 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             bool wipe = false;
             if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
             {
-                std::cout << "GazeboYarpControlBoard: Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
                 m_parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
 
                 wrapper_group = m_parameters.findGroup("WRAPPER");
                 if(wrapper_group.isNull()) {
-                    printf("GazeboYarpControlBoard::Load  Error: [WRAPPER] group not found in config file\n");
+                    GYPERR << "GazeboYarpControlBoard::Load  Error: [WRAPPER] group not found in config file\n";
                     return;
                 }
 
@@ -100,9 +100,13 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
 
         if (!configuration_loaded) {
-            std::cout << "GazeboYarpControlBoard: File .ini not found, quitting\n" << std::endl;
+            GYPERR << "GazeboYarpControlBoard: File .ini not found, quitting\n" << std::endl;
             return;
         }
+
+        // Configure verbosity based on parameters and
+        // check if gazebo was launched with --verbose flag
+        GazeboYarpPlugins::initGazeboYarpPluginVerbosity(m_parameters);
 
         m_wrapper.open(wrapper_group);
 
@@ -132,14 +136,12 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             if( newPoly.poly != NULL)
             {
                 // device already exists, use it, setting it againg to increment the usage counter.
-                printf("controlBoard %s already opened\n", newPoly.key.c_str());
-
             }
             else
             {
                 driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
-                    fprintf(stderr, "GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper \n", newPoly.key.c_str());
+                    GYPERR << "GazeboYarpControlBoard::Load  Error: [" << newPoly.key.c_str() << "] group not found in config file. Closing wrapper \n";
                     m_wrapper.close();
                     return;
                 }
@@ -149,16 +151,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 m_parameters.put("robotScopedName", m_robotName);
 
                 if (_sdf->HasElement("initialConfiguration")) {
-                    //std::cout<<"Found initial Configuration: "<<std::endl;
                     std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
                     m_parameters.put("initialConfiguration", configuration_s.c_str());
-                    //std::cout<<configuration_s<<std::endl;
                 }
 
                  newPoly.poly = new yarp::dev::PolyDriver;
                 if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
                 {
-                    std::cerr << "controlBoard <" << newPoly.key << "> did not open!!";
+                    GYPERR << "controlBoard <" << newPoly.key << "> did not open!!";
                     for(int idx=0; idx<m_controlBoards.size(); idx++)
                     {
                         m_controlBoards[idx]->poly->close();

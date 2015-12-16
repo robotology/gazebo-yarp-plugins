@@ -6,6 +6,8 @@
 
 #include "ApplyExternalWrench.hh"
 
+#include <GazeboYarpPlugins/log.h>
+
 namespace gazebo
 {
 
@@ -63,15 +65,8 @@ void ApplyExternalWrench::UpdateChild()
       this->m_onLink  = m_myModel->GetLink ( this->m_linkName );
     }
 
-//  This piece of code shows the full name (scoped name + link name) of every link in the current loaded model.
-//     gazebo::physics::Link_V tmpLinksVector;
-//     tmpLinksVector = m_myModel->GetLinks();
-//     for (int i=0; i<tmpLinksVector.size(); i++)
-//       std::cout << tmpLinksVector[i]->GetName() << " ";
-//     std::cout << std::endl;
-
     if ( !this->m_onLink ) {
-        std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< " not found"<<std::endl;
+        GYPERR << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< " not found"<<std::endl;
         return;
     }
 

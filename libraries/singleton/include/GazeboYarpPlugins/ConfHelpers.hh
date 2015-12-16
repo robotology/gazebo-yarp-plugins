@@ -103,6 +103,25 @@ bool loadConfigSensorPlugin(gazebo::sensors::SensorPtr _sensor,
 bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
                                           sdf::ElementPtr _sdf,
                                           yarp::os::Property & plugin_parameters);
+/**
+ * Setup verbosity of a gazebo yarp plugin.
+ *
+ * The verbosity is turned on if:
+ *  * a `verbose` parameters is found in the .ini configuration file
+ *  or
+ *  * gazebo::common::Console::GetQuiet() return false (this means
+ *    that gazebo has been launched with --verbose option.
+ *
+ * If verbosity is turned off, yarp::NetworkBase::setVerbosity(-1) will be called.
+ * Note that this disable all the yarp prints on all the plugins,
+ * not just in this one.
+ *
+ * This function is usually called in the loadConfig** helper functions.
+ *
+ * @param plugin_parameters Property containing the parameters for this plugin.
+ * @return true if verbosity was enabled, false otherwise.
+ */
+bool initGazeboYarpPluginVerbosity(const yarp::os::Property & plugin_parameters);
 
 
 

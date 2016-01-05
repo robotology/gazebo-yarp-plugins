@@ -12,6 +12,7 @@
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/CameraSensor.hh>
+#include <yarp/os/Value.h>
 
 using namespace std;
 using namespace yarp::dev;

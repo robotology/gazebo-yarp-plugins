@@ -7,6 +7,7 @@
 
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 
 #include <cstdio>
 #include <gazebo/physics/physics.hh>
@@ -28,8 +29,6 @@ GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
 
 bool GazeboYarpControlBoardDriver::gazebo_init()
 {
-    //m_robot = gazebo_pointer_wrapper::getModel();
-    // std::cout<<"if this message is the last one you read, m_robot has not been set"<<std::endl;
     //assert is a NOP in release mode. We should change the error handling either with an exception or something else
     assert(m_robot);
     if (!m_robot) return false;
@@ -125,7 +124,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         unsigned int counter = 1;
         while (ss >> tmp) {
             if(counter > m_numberOfJoints) {
-                std::cout<<"To many element in initial configuration, stopping at element "<<counter<<std::endl;
+                GYPWARN <<"To many element in initial configuration, stopping at element "<<counter<<std::endl;
                 break;
             }
             initial_config[counter-1] = tmp;
@@ -134,7 +133,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             m_positions[counter - 1] = convertGazeboToUser(counter-1, tmp);
             counter++;
         }
-        std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
 
         // Set initial reference
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
@@ -174,7 +172,7 @@ bool GazeboYarpControlBoardDriver::configureJointType()
 
             default:
             {
-                std::cout << "Error, joint type is not supported by Gazebo YARP plugin now. Supported joint types are 'revolute' and 'prismatic' \n\t(GEARBOX_JOINT and SLIDER_JOINT using Gazebo enums defined into gazebo/physic/base.hh include file, GetType() returns " << m_jointPointers[i]->GetType() << std::endl;
+                GYPERR << "Error, joint type is not supported by Gazebo YARP plugin now. Supported joint types are 'revolute' and 'prismatic' \n\t(GEARBOX_JOINT and SLIDER_JOINT using Gazebo enums defined into gazebo/physic/base.hh include file, GetType() returns " << m_jointPointers[i]->GetType() << std::endl;
                 m_jointTypes[i] = JointType_Unknown;
                 ret = false;
                 break;
@@ -289,7 +287,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
     yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
 
     if (joint_names_bottle.isNull()) {
-        std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." << std::endl;
+        GYPERR << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." << std::endl;
         return false;
     }
 
@@ -357,7 +355,7 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
         double default_p = pidTerms & PIDFeedbackTermProportionalTerm ? 500.0 : 0;
         double default_i = pidTerms & PIDFeedbackTermIntegrativeTerm ? 0.1 : 0;
         double default_d = pidTerms & PIDFeedbackTermDerivativeTerm ? 1.0 : 0;
-        std::cout<<"PID gain information not found in group " << pidGroupName << ", using default gains ( "
+        GYPWARN<<"PID gain information not found in group " << pidGroupName << ", using default gains ( "
         <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             GazeboYarpControlBoardDriver::PID pid = {500, 0.1, 1.0, -1, -1};
@@ -374,54 +372,45 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
 
     yarp::os::Bottle& kin_chain_bot = m_pluginParameters.findGroup(name);
     if (kin_chain_bot.check("min_stiffness")) {
-        std::cout<<"min_stiffness param found!"<<std::endl;
         yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
         if(min_stiff_bot.size()-1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_minStiffness[i] = min_stiff_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            GYPERR <<"Invalid number of params"<<std::endl;
     } else
-        std::cout<<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
+        GYPWARN <<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
 
     if (kin_chain_bot.check("max_stiffness")) {
-        std::cout<<"max_stiffness param found!"<<std::endl;
         yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
         if (max_stiff_bot.size()-1 == m_numberOfJoints) {
             for (unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_maxStiffness[i] = max_stiff_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            GYPERR<<"Invalid number of params"<<std::endl;
     }
     else
-        std::cout<<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
+        GYPWARN <<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
 
     if (kin_chain_bot.check("min_damping")) {
-        std::cout<<"min_damping param found!"<<std::endl;
         yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
         if(min_damping_bot.size()-1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_minDamping[i] = min_damping_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            GYPERR<<"Invalid number of params"<<std::endl;
     } else
-        std::cout<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
+        GYPWARN<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
 
     if(kin_chain_bot.check("max_damping")) {
-        std::cout<<"max_damping param found!"<<std::endl;
         yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
         if (max_damping_bot.size() - 1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_maxDamping[i] = max_damping_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            GYPERR <<"Invalid number of params"<<std::endl;
     } else
-        std::cout<<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
-
-    std::cout<<"min_stiffness: [ "<<m_minStiffness.toString()<<" ]"<<std::endl;
-    std::cout<<"max_stiffness: [ "<<m_maxStiffness.toString()<<" ]"<<std::endl;
-    std::cout<<"min_damping: [ "<<m_minDamping.toString()<<" ]"<<std::endl;
-    std::cout<<"max_damping: [ "<<m_maxDamping.toString()<<" ]"<<std::endl;
+        GYPWARN <<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
 }
 
 void GazeboYarpControlBoardDriver::setPIDs()
@@ -537,7 +526,6 @@ void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const 
          Here joint positions and speeds are in [deg] and [deg/sec].
          Therefore also stiffness and damping has to be [Nm/deg] and [Nm*sec/deg].
          */
-        //std::cout<<"m_velocities"<<j<<" : "<<m_velocities[j]<<std::endl;
         double q = m_positions[j] - m_zeroPosition[j];
         double t_ref = -m_impedancePosPDs[j].p * (q - des) - m_impedancePosPDs[j].d * m_velocities[j] + m_torqueOffsett[j];
         sendTorqueToGazebo(j, t_ref);

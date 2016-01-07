@@ -8,6 +8,7 @@
 #include "IMUDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
 
@@ -40,7 +41,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     }
 
     if (!_sensor) {
-        gzerr << "GazeboYarpIMU plugin requires a IMUSensor." << std::endl;
+        GYPERR << "GazeboYarpIMU plugin requires a IMUSensor." << std::endl;
         return;
     }
 
@@ -65,7 +66,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     //Open the driver
     if (m_imuDriver.open(m_parameters)) {
     } else {
-        std::cout << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver" << std::endl;
+        GYPERR << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver" << std::endl;
     }
 }
 

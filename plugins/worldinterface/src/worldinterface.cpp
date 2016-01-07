@@ -11,6 +11,7 @@
 #include <yarp/os/Network.h>
 
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 
 using namespace gazebo;
 using namespace std;
@@ -42,7 +43,7 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   m_network=new yarp::os::Network();
 
   if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-        cerr << "WorldInterface::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+        GYPERR << "WorldInterface::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
         return;
   }
 
@@ -61,7 +62,6 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
 
         if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str())) {
-            std::cout << "Found yarpConfigurationFile: loading from " << ini_file_path << std::endl;
             configuration_loaded = true;
         }
   }

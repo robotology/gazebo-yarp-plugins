@@ -7,6 +7,8 @@
 
 #include "ControlBoardDriver.h"
 
+#include <GazeboYarpPlugins/log.h>
+
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
@@ -97,16 +99,16 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_OPENLOOP
           || mode == VOCAB_CM_IDLE
           || mode == VOCAB_CM_FORCE_IDLE)) {
-        std::cerr << "[WARN] request control mode "
+        GYPWARN << "[WARN] request control mode "
                   << yarp::os::Vocab::decode(mode) << " that is not supported by "
                   << " gazebo_yarp_controlboard plugin." << std::endl;
         return false;
     }
-    
-    
+
+
     int desired_mode = mode;
-    
-    // Convert VOCAB_CM_FORCE_IDLE (that as a special meaning in real robots 
+
+    // Convert VOCAB_CM_FORCE_IDLE (that as a special meaning in real robots
     //   subjects to hardware fault) to VOCAB_CM_IDLE
     // This is necessary for having a working "idle" button in the robotMotorGui
     if (mode == VOCAB_CM_FORCE_IDLE) {

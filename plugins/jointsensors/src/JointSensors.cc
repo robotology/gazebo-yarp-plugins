@@ -9,6 +9,7 @@
 #include "JointSensors.hh"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
 
@@ -47,7 +48,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     }
 
     if (!_parent) {
-        gzerr << "GazeboYarpJointSensors plugin requires a parent.\n";
+        GYPERR << "GazeboYarpJointSensors plugin requires a parent.\n";
         return;
     }
 
@@ -79,7 +80,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
     wrapper_properties.put("device","analogServer");
     if (!m_jointsensorsWrapper.open(wrapper_properties)) {
-        std::cout << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver wrapper" << std::endl;
+        GYPERR << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver wrapper" << std::endl;
         return;
     }
 
@@ -87,7 +88,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Force the device to be of type "gazebo_jointsensors" (it make sense? probably yes)
     driver_properties.put("device","gazebo_jointsensors");
     if (!m_jointsensorsDriver.open(driver_properties)) {
-        std::cout << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver" << std::endl;
+        GYPERR << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver" << std::endl;
         return;
     }
 
@@ -95,7 +96,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     ::yarp::dev::PolyDriverList driver_list;
 
     if (!m_jointsensorsWrapper.view(m_iWrap)) {
-        std::cerr << "GazeboYarpJointSensors : error in loading wrapper" << std::endl;
+        GYPERR << "GazeboYarpJointSensors : error in loading wrapper" << std::endl;
         return;
     }
 
@@ -103,7 +104,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
 
     if (m_iWrap->attachAll(driver_list)) {
     } else {
-        std::cerr << "GazeboYarpJointSensors : error in connecting wrapper and device " << std::endl;
+        GYPERR << "GazeboYarpJointSensors : error in connecting wrapper and device " << std::endl;
     }
 
 }

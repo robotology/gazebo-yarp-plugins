@@ -6,6 +6,8 @@
 
 #include "ConfHelpers.hh"
 
+#include <GazeboYarpPlugins/log.h>
+
 #include <yarp/dev/PolyDriver.h>
 
 #include <gazebo/physics/Entity.hh>
@@ -69,7 +71,7 @@ bool loadConfigModelPlugin(physics::ModelPtr _model,
         if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe)) {
             return true;
         } else {
-            std::cerr << "GazeboYarpPlugins error: failure in loading configuration for model " << _model->GetName() << std::endl
+            GYPERR    << "GazeboYarpPlugins error: failure in loading configuration for model " << _model->GetName() << std::endl
                       << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << std::endl
                       << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path << std::endl;
             return false;
@@ -96,8 +98,8 @@ bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
     // worldName::modelName::linkOrJointName::sensorName
     if( explodedScopedSensorName.size() < 3 )
     {
-        std::cerr << "GazeboYarpPlugins warning: unexpected scopedSensorName " << scopedSensorName << std::endl;
-        std::cerr << "GazeboYarpPlugins warning: gazeboYarpPluginsRobotName not set in sensor " << gazeboYarpPluginsSensorName << std::endl;
+        GYPERR << "GazeboYarpPlugins warning: unexpected scopedSensorName " << scopedSensorName << std::endl;
+        GYPERR << "GazeboYarpPlugins warning: gazeboYarpPluginsRobotName not set in sensor " << gazeboYarpPluginsSensorName << std::endl;
         return false;
     }
 
@@ -121,12 +123,38 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
         if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe)) {
             return true;
         } else {
-            std::cerr << "GazeboYarpPlugins error: failure in loading configuration for sensor " << _sensor->GetName() << std::endl
+            GYPERR    << "GazeboYarpPlugins error: failure in loading configuration for sensor " << _sensor->GetName() << std::endl
                       << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << std::endl
                       << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path << std::endl;
             return false;
         }
     }
+
+    // Initialize verbosity options
+    initGazeboYarpPluginVerbosity(plugin_parameters);
+}
+
+bool initGazeboYarpPluginVerbosity(const yarp::os::Property& plugin_parameters)
+{
+    bool verbose = false;
+
+    // First sufficient condition to enable verbosity:
+    // gazebo launched with --verbose option
+    if( !gazebo::common::Console::GetQuiet() ) {
+        verbose = true;
+    }
+
+    if( plugin_parameters.check("verbose") )
+    {
+        verbose = true;
+    }
+
+    if( !verbose )
+    {
+        yarp::os::Network::setVerbosity(-1);
+    }
+
+    return verbose;
 }
 
 

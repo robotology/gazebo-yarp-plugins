@@ -9,6 +9,7 @@
 
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/CameraSensor.hh>
@@ -23,7 +24,7 @@ double GazeboYarpCameraDriver::start_time =0;
 void GazeboYarpCameraDriver::print (unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
 {
    int pixelsize =5;
-   for (int i=0;i<size;i++)   
+   for (int i=0;i<size;i++)
    {
       char* num_p=0;
       switch(s[i])
@@ -42,14 +43,14 @@ void GazeboYarpCameraDriver::print (unsigned char* pixbuf, int pixbuf_w, int pix
         case '.' : num_p=num[11].data; break;
       }
 
-      for (int yi=0;yi<5;yi++)   
+      for (int yi=0;yi<5;yi++)
       for (int xi=0;xi<3;xi++)
       {
          int ii=yi*3+xi;
          if (num_p[ii]=='*')
          {
             for (int r=yi*pixelsize; r<yi*pixelsize+pixelsize; r++)
-	    {   
+	    {
                 int off = i*(pixelsize+20);
 		for (int c=xi*pixelsize+off;  c<xi*pixelsize+pixelsize+off; c++)
 		{
@@ -100,7 +101,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     // TODO get parent sensor, if it make any sense
     m_parentSensor = (gazebo::sensors::CameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     if (!m_parentSensor) {
-        std::cout << "GazeboYarpCameraDriver Error: camera sensor was not found" << std::endl;
+        GYPERR << "GazeboYarpCameraDriver Error: camera sensor was not found" << std::endl;
         return false;
     }
 
@@ -112,7 +113,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     m_camera = m_parentSensor->GetCamera();
     if(m_camera == NULL)
     {
-        std::cout << "GazeboYarpCameraDriver Error: camera pointer not valid" << std::endl;
+        GYPERR << "GazeboYarpCameraDriver Error: camera pointer not valid" << std::endl;
         return false;
     }
 
@@ -139,7 +140,7 @@ bool GazeboYarpCameraDriver::close()
         this->m_updateConnection = gazebo::event::ConnectionPtr();
         m_parentSensor = NULL;
     }
-    
+
     delete[] m_imageBuffer;
     m_imageBuffer = 0;
 
@@ -229,7 +230,7 @@ bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _
     if (m_display_time_box)
     {
         counter++;
-        if (counter == 10) counter = 0; 
+        if (counter == 10) counter = 0;
         for (int c=0+counter*30; c<30+counter*30; c++)
         for (int r=0; r<30; r++)
         {
@@ -244,7 +245,7 @@ bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _
            pixel[1] = 255;
            pixel[2] = 0;}
         }
-    } 
+    }
 
     m_dataMutex.post();
 

@@ -9,6 +9,7 @@
 #include "ForceTorqueDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/log.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
 #include <gazebo/sensors/ForceTorqueSensor.hh>
@@ -44,7 +45,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if (!_sensor)
     {
-        gzerr << "GazeboYarpForceTorque plugin requires a ForceTorqueSensor.\n";
+        GYPERR << "GazeboYarpForceTorque plugin requires a ForceTorqueSensor.\n";
         return;
     }
 
@@ -83,7 +84,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     wrapper_properties.put("device","analogServer");
     if( m_forcetorqueWrapper.open(wrapper_properties) ) {
     } else {
-        std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper"<<std::endl;
+        GYPERR <<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper"<<std::endl;
         return;
     }
 
@@ -92,7 +93,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     driver_properties.put("device","gazebo_forcetorque");
     if( m_forceTorqueDriver.open(driver_properties) ) {
     } else {
-        std::cout<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver"<<std::endl;
+        GYPERR <<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver"<<std::endl;
         return;
     }
 
@@ -100,7 +101,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     ::yarp::dev::PolyDriverList driver_list;
 
     if( !m_forcetorqueWrapper.view(m_iWrap) ) {
-        std::cerr << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
+        GYPERR << "GazeboYarpForceTorque : error in loading wrapper" << std::endl;
         return;
     }
 
@@ -108,7 +109,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if( m_iWrap->attachAll(driver_list) ) {
     } else {
-        std::cerr << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
+        GYPERR << "GazeboYarpForceTorque : error in connecting wrapper and device " << std::endl;
     }
 
 }

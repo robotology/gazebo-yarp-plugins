@@ -253,6 +253,10 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
+        } else if (m_controlMode[j] == VOCAB_CM_IDLE) {
+            if (m_clock % _T_controller == 0) {
+                sendTorqueToGazebo(j, 0.0);
+            }
         } else if (m_controlMode[j] == VOCAB_CM_OPENLOOP) {
             //OpenLoop control sends torques to gazebo at this moment.
             //Check if gazebo implements a "motor" entity and change the code accordingly.

@@ -45,6 +45,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_velocities.resize(m_numberOfJoints);
     amp.resize(m_numberOfJoints);
     m_torques.resize(m_numberOfJoints); m_torques.zero();
+    m_maxTorques.resize(m_numberOfJoints, 200.0);
     m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_referencePositions.resize(m_numberOfJoints);
     m_oldReferencePositions.resize(m_numberOfJoints);
@@ -230,6 +231,15 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
 
+    // check measured torque for hw fault
+    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
+      if (m_controlMode[jnt_cnt]!=VOCAB_CM_HW_FAULT && fabs(m_torques[jnt_cnt])>m_maxTorques[jnt_cnt])
+      {
+        m_controlMode[jnt_cnt]=VOCAB_CM_HW_FAULT;
+        yError() << "An hardware fault occurred on joint "<< jnt_cnt << " torque too big! ( " << m_torques[jnt_cnt] << " )";
+      }
+    }
+
     // Updating timestamp
     m_lastTimestamp.update(_info.simTime.Double());
 
@@ -254,6 +264,10 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
         } else if (m_controlMode[j] == VOCAB_CM_IDLE) {
+            if (m_clock % _T_controller == 0) {
+                sendTorqueToGazebo(j, 0.0);
+            }
+        } else if (m_controlMode[j] == VOCAB_CM_HW_FAULT) {
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, 0.0);
             }

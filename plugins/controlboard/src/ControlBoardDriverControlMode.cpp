@@ -106,12 +106,18 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
     
     int desired_mode = mode;
     
-    // Convert VOCAB_CM_FORCE_IDLE (that as a special meaning in real robots 
-    //   subjects to hardware fault) to VOCAB_CM_IDLE
-    // This is necessary for having a working "idle" button in the robotMotorGui
-    if (mode == VOCAB_CM_FORCE_IDLE) {
+    //if joint is in hw fault, only a force idle command can recover it
+    if (m_controlMode[j] == VOCAB_CM_HW_FAULT && mode != VOCAB_CM_FORCE_IDLE)
+    {
+      return true;
+    }
+
+    if (mode == VOCAB_CM_FORCE_IDLE)
+    {
+        //clean the fault status (missing) and set control mode to idle
         desired_mode = VOCAB_CM_IDLE;
     }
+
     // If the joint is already in the selected control mode
     // don't perform switch specific actions
     if (m_controlMode[j] == desired_mode) return true;
@@ -132,6 +138,9 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
         case VOCAB_CM_TORQUE :
         case VOCAB_CM_OPENLOOP :
             m_referenceTorques[j] = m_torques[j];
+        break;
+        case VOCAB_CM_IDLE:
+            m_referenceTorques[j] = 0.0;
         break;
         default :
         break;

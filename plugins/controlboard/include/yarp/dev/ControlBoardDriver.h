@@ -360,6 +360,7 @@ private:
     yarp::sig::Vector m_positions; /**< joint positions [Degrees] */
     yarp::sig::Vector m_velocities; /**< joint velocities [Degrees/Seconds] */
     yarp::sig::Vector m_torques; /**< joint torques [Netwon Meters] */
+    yarp::sig::Vector m_maxTorques; /**< joint torques [Netwon Meters] */
 
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
 

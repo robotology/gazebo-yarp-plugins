@@ -45,7 +45,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_velocities.resize(m_numberOfJoints);
     amp.resize(m_numberOfJoints);
     m_torques.resize(m_numberOfJoints); m_torques.zero();
-    m_maxTorques.resize(m_numberOfJoints, 200.0);
+    m_maxTorques.resize(m_numberOfJoints, 2000.0);
     m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_referencePositions.resize(m_numberOfJoints);
     m_oldReferencePositions.resize(m_numberOfJoints);

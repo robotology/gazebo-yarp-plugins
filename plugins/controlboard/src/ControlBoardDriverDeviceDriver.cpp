@@ -7,7 +7,7 @@
 
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
-
+#include <yarp/os/LogStream.h>
 #include <gazebo/common/Events.hh>
 
 using namespace yarp::dev;
@@ -24,7 +24,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 
     m_robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(!m_robot) {
-        std::cout << "GazeboYarpControlBoardDriver error: robot was not found" << std::endl;
+        yError() << "GazeboYarpControlBoardDriver error: robot was not found";
         return false;
     }
 

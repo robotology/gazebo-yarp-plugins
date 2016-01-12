@@ -26,10 +26,29 @@ const double RobotPositionTolerance_linear   = 0.004;    // Meters
 GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : deviceName("") {}
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
 
+//generic function that check is key1 is present in input bottle and that the result has size elements
+// return true/false
+bool validate(Bottle &input, Bottle &out, const std::string &key1, const std::string &txt, int size)
+{
+    Bottle &tmp=input.findGroup(key1.c_str(), txt.c_str());
+    if (tmp.isNull())
+    {
+        yError("%s not found\n", key1.c_str());
+        return false;
+    }
+    if(tmp.size()!=size)
+    {
+        yError("%s incorrect number of entries\n", key1.c_str());
+        return false;
+    }
+    out=tmp;
+    return true;
+}
+
 bool GazeboYarpControlBoardDriver::gazebo_init()
 {
     //m_robot = gazebo_pointer_wrapper::getModel();
-    // std::cout<<"if this message is the last one you read, m_robot has not been set"<<std::endl;
+    // yDebug()<<"if this message is the last one you read, m_robot has not been set";
     //assert is a NOP in release mode. We should change the error handling either with an exception or something else
     assert(m_robot);
     if (!m_robot) return false;
@@ -105,8 +124,17 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_oldReferencePositions[j] = m_jointLimits[j].max *2;
     }
 
-    setMinMaxImpedance();
-    setPIDs();
+    if (!setMinMaxImpedance())
+    {
+      yError()<<"Failed Impedance initialization";
+      return false;
+    }
+    
+    if (!setPIDs())
+    {
+      yError()<<"Failed PID initialization";
+      return false;
+    }
 
     this->m_updateConnection =
     gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,
@@ -126,7 +154,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         unsigned int counter = 1;
         while (ss >> tmp) {
             if(counter > m_numberOfJoints) {
-                std::cout<<"To many element in initial configuration, stopping at element "<<counter<<std::endl;
+                yError()<<"Too many element in initial configuration, stopping at element "<<counter;
                 break;
             }
             initial_config[counter-1] = tmp;
@@ -135,7 +163,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             m_positions[counter - 1] = convertGazeboToUser(counter-1, tmp);
             counter++;
         }
-        std::cout<<"INITIAL CONFIGURATION IS: "<<initial_config.toString()<<std::endl;
+        yDebug()<<"INITIAL CONFIGURATION IS: "<<initial_config.toString();
 
         // Set initial reference
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
@@ -175,7 +203,7 @@ bool GazeboYarpControlBoardDriver::configureJointType()
 
             default:
             {
-                std::cout << "Error, joint type is not supported by Gazebo YARP plugin now. Supported joint types are 'revolute' and 'prismatic' \n\t(GEARBOX_JOINT and SLIDER_JOINT using Gazebo enums defined into gazebo/physic/base.hh include file, GetType() returns " << m_jointPointers[i]->GetType() << std::endl;
+                yError() << "joint type is not supported by Gazebo YARP plugin now. Supported joint types are 'revolute' and 'prismatic' \n\t(GEARBOX_JOINT and SLIDER_JOINT using Gazebo enums defined into gazebo/physic/base.hh include file, GetType() returns " << m_jointPointers[i]->GetType() ;
                 m_jointTypes[i] = JointType_Unknown;
                 ret = false;
                 break;
@@ -303,7 +331,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
     yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
 
     if (joint_names_bottle.isNull()) {
-        std::cout << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." << std::endl;
+        yError() << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." ;
         return false;
     }
 
@@ -340,13 +368,15 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
     return true;
 }
 
-void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
+bool GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
                                                    std::vector<GazeboYarpControlBoardDriver::PID>& pids,
                                                    enum PIDFeedbackTerm pidTerms)
 {
     yarp::os::Property prop;
-    if (m_pluginParameters.check(pidGroupName.c_str())) {
-        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+    if (m_pluginParameters.check(pidGroupName.c_str()))
+    {
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+        {
             std::stringstream property_name;
             property_name<<"Pid";
             property_name<<i;
@@ -367,20 +397,288 @@ void GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
 
             pids.push_back(pidValue);
         }
-    } else {
-        double default_p = pidTerms & PIDFeedbackTermProportionalTerm ? 500.0 : 0;
-        double default_i = pidTerms & PIDFeedbackTermIntegrativeTerm ? 0.1 : 0;
-        double default_d = pidTerms & PIDFeedbackTermDerivativeTerm ? 1.0 : 0;
-        std::cout<<"PID gain information not found in group " << pidGroupName << ", using default gains ( "
-        <<"P " << default_p << " I " << default_i << " D " << default_d << " )" <<std::endl;
-        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-            GazeboYarpControlBoardDriver::PID pid = {500, 0.1, 1.0, -1, -1};
-            pids.push_back(pid);
+    } 
+    else 
+    {
+      GazeboYarpControlBoardDriver::PID pidValue = {0, 0, 0, -1, -1};
+      pids.push_back(pidValue);
+      yError() << pidGroupName << " section missing. Setting PID = 0";
+      return false;
+    }
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<GazeboYarpControlBoardDriver::PID>& pids )
+{
+    yarp::os::Property prop;
+    if (m_pluginParameters.check("POSITION_CONTROL"))
+    {
+        Bottle xtmp;
+        Bottle pidGroup = m_pluginParameters.findGroup("POSITION_CONTROL");
+
+        //control units block
+        enum units_type {metric=0, si=1} c_units=metric;
+        xtmp = pidGroup.findGroup("controlUnits"); 
+        if (!xtmp.isNull())
+        {  
+            if      (xtmp.get(1).asString()==std::string("metric_units"))  {c_units=metric;}
+            else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+            else    {yError() << "invalid controlUnits value"; return false;}
         }
+        else
+        {
+            yError ("POSITION_CONTROL: 'controlUnits' param missing. Cannot continue");
+            return false;
+        }
+     
+        //control law block
+        xtmp = pidGroup.findGroup("controlLaw"); 
+        if (!xtmp.isNull())
+        {    
+            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))  {}
+            else    {yError() << "invalid controlLaw value"; return false;}
+        }
+        else
+        {
+            yError ("POSITION_CONTROL: 'controlLaw' param missing. Cannot continue");
+            return false;
+        }
+        
+        yarp::dev::Pid* yarpPid;
+        yarpPid = new yarp::dev::Pid[m_numberOfJoints];
+        bool error=false;
+        unsigned int j=0;
+        
+        //control parameters
+        if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "stictionUp", "Pid stictionUp", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].stiction_up_val = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "stictionDwn", "Pid stictionDwn", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].stiction_down_val = xtmp.get(j+1).asDouble();}
+        
+        if (error)
+        {
+           delete [] yarpPid;
+           return false;
+        }
+        else
+        {
+          for (j = 0; j < m_numberOfJoints; ++j)
+          {
+              if (c_units==metric)
+              {
+                GazeboYarpControlBoardDriver::PID pidValue;
+                pidValue.p=convertUserGainToGazeboGain(j,yarpPid[j].kp)/pow(2,yarpPid[j].scale);
+                pidValue.i=convertUserGainToGazeboGain(j,yarpPid[j].ki)/pow(2,yarpPid[j].scale);
+                pidValue.d=convertUserGainToGazeboGain(j,yarpPid[j].kd)/pow(2,yarpPid[j].scale);
+                pidValue.maxInt=yarpPid[j].max_int;
+                pidValue.maxOut=yarpPid[j].max_output;
+                pids.push_back(pidValue);
+              }
+              else if (c_units==si)
+              {
+                GazeboYarpControlBoardDriver::PID pidValue;
+                pidValue.p=yarpPid[j].kp/pow(2,yarpPid[j].scale);
+                pidValue.i=yarpPid[j].ki/pow(2,yarpPid[j].scale);
+                pidValue.d=yarpPid[j].kd/pow(2,yarpPid[j].scale);
+                pidValue.maxInt=yarpPid[j].max_int;
+                pidValue.maxOut=yarpPid[j].max_output;
+                pids.push_back(pidValue);
+              }
+          }   
+        }
+        
+        return true;
+    } 
+    else
+    {
+      return false;
     }
 }
 
-void GazeboYarpControlBoardDriver::setMinMaxImpedance()
+bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<GazeboYarpControlBoardDriver::PID>& pids )
+{
+    yarp::os::Property prop;
+    if (m_pluginParameters.check("VELOCITY_CONTROL"))
+    {
+        Bottle xtmp;
+        Bottle pidGroup = m_pluginParameters.findGroup("VELOCITY_CONTROL");
+
+        //control units block
+        enum units_type {metric=0, si=1} c_units=metric;
+        xtmp = pidGroup.findGroup("controlUnits"); 
+        if (!xtmp.isNull())
+        {    
+            if      (xtmp.get(1).asString()==std::string("metric_units"))  {c_units=metric;}
+            else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+            else    {yError() << "invalid controlUnits value"; return false;}
+        }
+        else
+        {
+            yError ("VELOCITY_CONTROL: 'controlUnits' param missing. Cannot continue");
+            return false;
+        }
+     
+        //control law block
+        xtmp = pidGroup.findGroup("controlLaw"); 
+        if (!xtmp.isNull())
+        {    
+            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))  {}
+            else    {yError() << "invalid controlLaw value"; return false;}
+        }
+        else
+        {
+            yError ("VELOCITY_CONTROL: 'controlLaw' param missing. Cannot continue");
+            return false;
+        }
+        
+        yarp::dev::Pid* yarpPid;
+        yarpPid = new yarp::dev::Pid[m_numberOfJoints];
+        bool error=false;
+        unsigned int j=0;
+        
+        //control parameters
+        if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asDouble();}
+          
+        if (error)
+        {
+           delete [] yarpPid;
+           return false;
+        }
+        else
+        {
+          for (j = 0; j < m_numberOfJoints; ++j)
+          {
+              if (c_units==metric)
+              {
+                GazeboYarpControlBoardDriver::PID pidValue;
+                pidValue.p=convertUserGainToGazeboGain(j,yarpPid[j].kp)/pow(2,yarpPid[j].scale);
+                pidValue.i=convertUserGainToGazeboGain(j,yarpPid[j].ki)/pow(2,yarpPid[j].scale);
+                pidValue.d=convertUserGainToGazeboGain(j,yarpPid[j].kd)/pow(2,yarpPid[j].scale);
+                pidValue.maxInt=yarpPid[j].max_int;
+                pidValue.maxOut=yarpPid[j].max_output;
+                pids.push_back(pidValue);
+              }
+              else if (c_units==si)
+              {
+                GazeboYarpControlBoardDriver::PID pidValue;
+                pidValue.p=yarpPid[j].kp/pow(2,yarpPid[j].scale);
+                pidValue.i=yarpPid[j].ki/pow(2,yarpPid[j].scale);
+                pidValue.d=yarpPid[j].kd/pow(2,yarpPid[j].scale);
+                pidValue.maxInt=yarpPid[j].max_int;
+                pidValue.maxOut=yarpPid[j].max_output;
+                pids.push_back(pidValue);
+              }
+          }   
+        }
+        
+        return true;
+    } 
+    else
+    {
+      return false;
+    }
+}
+
+bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<GazeboYarpControlBoardDriver::PID>& pids )
+{
+    yarp::os::Property prop;
+    if (m_pluginParameters.check("IMPEDANCE_CONTROL"))
+    {
+        Bottle xtmp;
+        Bottle pidGroup = m_pluginParameters.findGroup("IMPEDANCE_CONTROL");
+        
+        //control units block
+        enum units_type {metric=0, si=1} c_units=metric;
+        xtmp = pidGroup.findGroup("controlUnits"); 
+        if (!xtmp.isNull())
+        {    
+            if      (xtmp.get(1).asString()==std::string("metric_units"))  {c_units=metric;}
+            else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+            else    {yError() << "invalid controlUnits value"; return false;}
+        }
+        else
+        {
+            yError ("IMPEDANCE_CONTROL: 'controlUnits' param missing. Cannot continue");
+            return false;
+        }
+     
+        //control law block
+        xtmp = pidGroup.findGroup("controlLaw"); 
+        if (!xtmp.isNull())
+        {    
+            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))  {}
+            else    {yError() << "invalid controlLaw value"; return false;}
+        }
+        else
+        {
+            yError ("IMPEDANCE_CONTROL: 'controlLaw' param missing. Cannot continue");
+            return false;
+        }
+        
+        double* stiffness;
+        double* damping;
+        stiffness = new double[m_numberOfJoints];
+        damping   = new double[m_numberOfJoints];
+        bool error=false;
+        unsigned int j=0;
+        
+        //control parameters
+        if (!validate(pidGroup, xtmp, "stiffness", "stiffness", m_numberOfJoints+1))    {error=true;} else {for (j=0; j<m_numberOfJoints; j++) stiffness[j] = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "damping", "damping", m_numberOfJoints+1))        {error=true;} else {for (j=0; j<m_numberOfJoints; j++) damping[j] = xtmp.get(j+1).asDouble();}
+         
+        if (error)
+        {
+           delete [] stiffness;
+           delete [] damping;
+           return false;
+        }
+        else
+        {
+          for (j = 0; j < m_numberOfJoints; ++j)
+          {
+              if (c_units==metric)
+              {
+                GazeboYarpControlBoardDriver::PID pidValue;
+                pidValue.p=convertUserGainToGazeboGain(j,stiffness[j]);
+                pidValue.i=0;
+                pidValue.d=convertUserGainToGazeboGain(j,damping[j]);
+                pidValue.maxInt=0;
+                pidValue.maxOut=0;
+                pids.push_back(pidValue);
+              }
+              else if (c_units==si)
+              {
+                GazeboYarpControlBoardDriver::PID pidValue;
+                pidValue.p=j,stiffness[j];
+                pidValue.i=0;
+                pidValue.d=j,damping[j];
+                pidValue.maxInt=0;
+                pidValue.maxOut=0;
+                pids.push_back(pidValue);
+              }
+          }   
+        }
+        
+        return true;
+    } 
+    else
+    {
+      return false;
+    }
+}
+
+bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
 {
 
     yarp::os::Bottle& name_bot = m_pluginParameters.findGroup("WRAPPER").findGroup("networks");
@@ -388,61 +686,129 @@ void GazeboYarpControlBoardDriver::setMinMaxImpedance()
 
     yarp::os::Bottle& kin_chain_bot = m_pluginParameters.findGroup(name);
     if (kin_chain_bot.check("min_stiffness")) {
-        std::cout<<"min_stiffness param found!"<<std::endl;
+        yInfo()<<"min_stiffness param found!";
         yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
         if(min_stiff_bot.size()-1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_minStiffness[i] = min_stiff_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            yError()<<"Invalid number of params";
     } else
-        std::cout<<"No minimum stiffness value found in ini file, default one will be used!"<<std::endl;
+        yWarning()<<"No minimum stiffness value found in ini file, default one will be used!";
 
     if (kin_chain_bot.check("max_stiffness")) {
-        std::cout<<"max_stiffness param found!"<<std::endl;
+        yInfo()<<"max_stiffness param found!";
         yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
         if (max_stiff_bot.size()-1 == m_numberOfJoints) {
             for (unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_maxStiffness[i] = max_stiff_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            yError()<<"Invalid number of params";
     }
     else
-        std::cout<<"No maximum stiffness value found in ini file, default one will be used!"<<std::endl;
+        yWarning()<<"No maximum stiffness value found in ini file, default one will be used!";
 
     if (kin_chain_bot.check("min_damping")) {
-        std::cout<<"min_damping param found!"<<std::endl;
+        yInfo()<<"min_damping param found!";
         yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
         if(min_damping_bot.size()-1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_minDamping[i] = min_damping_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            yError()<<"Invalid number of params";
     } else
-        std::cout<<"No minimum dampings value found in ini file, default one will be used!"<<std::endl;
+        yWarning()<<"No minimum dampings value found in ini file, default one will be used!";
 
     if(kin_chain_bot.check("max_damping")) {
-        std::cout<<"max_damping param found!"<<std::endl;
+        yInfo()<<"max_damping param found!";
         yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
         if (max_damping_bot.size() - 1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
                 m_maxDamping[i] = max_damping_bot.get(i+1).asDouble();
         } else
-            std::cout<<"Invalid number of params"<<std::endl;
+            yError()<<"Invalid number of params";
     } else
-        std::cout<<"No maximum damping value found in ini file, default one will be used!"<<std::endl;
+        yWarning()<<"No maximum damping value found in ini file, default one will be used!";
 
-    std::cout<<"min_stiffness: [ "<<m_minStiffness.toString()<<" ]"<<std::endl;
-    std::cout<<"max_stiffness: [ "<<m_maxStiffness.toString()<<" ]"<<std::endl;
-    std::cout<<"min_damping: [ "<<m_minDamping.toString()<<" ]"<<std::endl;
-    std::cout<<"max_damping: [ "<<m_maxDamping.toString()<<" ]"<<std::endl;
+    yDebug()<<"min_stiffness: [ "<<m_minStiffness.toString()<<" ]";
+    yDebug()<<"max_stiffness: [ "<<m_maxStiffness.toString()<<" ]";
+    yDebug()<<"min_damping: [ "<<m_minDamping.toString()<<" ]";
+    yDebug()<<"max_damping: [ "<<m_maxDamping.toString()<<" ]";
+    return true;
 }
 
-void GazeboYarpControlBoardDriver::setPIDs()
+bool GazeboYarpControlBoardDriver::setPIDs()
 {
-    setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
-    setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
-    setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", m_impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
+    //POSITION PARAMETERS
+    if (m_pluginParameters.check("POSITION_CONTROL"))
+    {   
+        if (setPIDsForGroup_POSITION(m_positionPIDs))
+        {
+        }
+        else
+        {
+           yError() << "Error in one parameter of POSITION_CONTROL section";
+           return false;
+        }
+    }
+    else if (m_pluginParameters.check("GAZEBO_PIDS"))
+    {
+        yWarning ("'POSITION_CONTROL' group not found. Using DEPRECATED GAZEBO_PIDS section");
+        setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
+    }
+    else
+    {
+      yError() << "Unable to find a valid section containing position control gains";
+      return false;
+    }
+
+    //VELOCITY PARAMETERS
+    if (m_pluginParameters.check("VELOCITY_CONTROL"))
+    {
+        if (setPIDsForGroup_VELOCITY(m_velocityPIDs))
+        {
+        }
+        else
+        {
+           yError() << "Error in one parameter of VELOCITY_CONTROL section";
+           return false;
+        }
+    }
+    else if (m_pluginParameters.check("GAZEBO_VELOCITY_PIDS"))
+    {
+        yWarning ("'VELOCITY_CONTROL' group not found. Using DEPRECATED GAZEBO_PIDS section");
+        setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+    }
+    else
+    {
+      yError() << "Unable to find a valid section containing velocity control gains";
+      return false;
+    }
+    
+    //IMPEDANCE PARAMETERS
+    if (m_pluginParameters.check("IMPEDANCE_CONTROL"))
+    {
+        if (setPIDsForGroup_IMPEDANCE(m_impedancePosPDs))
+        {
+        }
+        else
+        {
+           yError() << "Error in one parameter of IMPEDANCE section";
+           return false;
+        }
+    }
+    else if (m_pluginParameters.check("GAZEBO_IMPEDANCE_POSITION_PIDS"))
+    {
+        yWarning ("'IMPEDANCE' group not found. Using DEPRECATED GAZEBO_PIDS section");
+        setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", m_impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));     
+    }
+    else
+    {
+      yError() << "Unable to find a valid section containing impedance control gains";
+      return false;
+    }
+    
+    return true;
 }
 
 bool GazeboYarpControlBoardDriver::sendPositionsToGazebo(Vector &refs)
@@ -459,7 +825,7 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 
     if(ref != m_oldReferencePositions[j])
     {
-        // std::cout << "Sending new command: new ref is " << ref << "; old ref was " << m_oldReferencePositions[j] << std::endl;
+        // yDebug() << "Sending new command: new ref is " << ref << "; old ref was " << m_oldReferencePositions[j] ;
         prepareJointMsg(j_cmd,j,ref);
         m_jointCommandPublisher->WaitForConnection();
         m_jointCommandPublisher->Publish(j_cmd);
@@ -551,7 +917,7 @@ void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const 
          Here joint positions and speeds are in [deg] and [deg/sec].
          Therefore also stiffness and damping has to be [Nm/deg] and [Nm*sec/deg].
          */
-        //std::cout<<"m_velocities"<<j<<" : "<<m_velocities[j]<<std::endl;
+        //yDebug()<<"m_velocities"<<j<<" : "<<m_velocities[j];
         double q = m_positions[j] - m_zeroPosition[j];
         double t_ref = -m_impedancePosPDs[j].p * (q - des) - m_impedancePosPDs[j].d * m_velocities[j] + m_torqueOffsett[j];
         sendTorqueToGazebo(j, t_ref);

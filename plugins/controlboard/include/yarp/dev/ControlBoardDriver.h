@@ -414,9 +414,12 @@ private:
     bool configureJointType();
     void setMinMaxPos();  //NOT TESTED
     bool setJointNames();  //WORKS
-    void setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
-    void setMinMaxImpedance();
-    void setPIDs(); //WORKS
+    bool setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
+    bool setPIDsForGroup_POSITION(  std::vector<GazeboYarpControlBoardDriver::PID>&);
+    bool setPIDsForGroup_VELOCITY(  std::vector<GazeboYarpControlBoardDriver::PID>&);
+    bool setPIDsForGroup_IMPEDANCE( std::vector<GazeboYarpControlBoardDriver::PID>&);
+    bool setMinMaxImpedance();
+    bool setPIDs(); //WORKS
     bool sendPositionsToGazebo(yarp::sig::Vector& refs);
     bool sendPositionToGazebo(int j,double ref);
     void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref);  //WORKS

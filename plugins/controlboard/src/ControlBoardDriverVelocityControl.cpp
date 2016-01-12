@@ -50,9 +50,15 @@ bool GazeboYarpControlBoardDriver::velocityMove(const int n_joint, const int *jo
 
 bool GazeboYarpControlBoardDriver::setVelPid(int j, const yarp::dev::Pid &pid)
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
-        PID newPid = { pid.kp, pid.ki, pid.kd, pid.max_int, pid.max_output };
-        m_velocityPIDs[j] = newPid;
+    if (j >= 0 && j < (int)m_numberOfJoints)
+    {
+        // Converting all gains for degrees-based unit to radians-based
+        m_velocityPIDs[j].p = convertUserGainToGazeboGain(j, pid.kp);
+        m_velocityPIDs[j].i = convertUserGainToGazeboGain(j, pid.ki);
+        m_velocityPIDs[j].d = convertUserGainToGazeboGain(j, pid.kd);
+        // The output limits are only related to the output, so they don't need to be converted
+        m_velocityPIDs[j].maxInt = pid.max_int;
+        m_velocityPIDs[j].maxOut = pid.max_output;    
         return true;
     }
     return false;
@@ -61,24 +67,28 @@ bool GazeboYarpControlBoardDriver::setVelPid(int j, const yarp::dev::Pid &pid)
 bool GazeboYarpControlBoardDriver::setVelPids(const yarp::dev::Pid *pids)
 {
     if (!pids) return false;
-    for (unsigned j = 0; j < m_numberOfJoints; j++) {
-        PID newPid = { pids[j].kp, pids[j].ki, pids[j].kd, pids[j].max_int, pids[j].max_output };
-        m_velocityPIDs[j] = newPid;
+    bool b = true;
+    for (unsigned j = 0; j < m_numberOfJoints; j++)
+    {
+        b &=setVelPid (j,pids[j]);
     }
-    return true;
+    return b;
 }
 
 bool GazeboYarpControlBoardDriver::getVelPid(int j, yarp::dev::Pid *pid)
 {
     if (!pid) return false;
-    if (j >= 0 && j < (int)m_numberOfJoints) {
-        PID currentPID = m_velocityPIDs[j];
-        pid->kp = currentPID.p;
-        pid->ki = currentPID.i;
-        pid->kd = currentPID.d;
-        pid->max_int = currentPID.maxInt;
-        pid->max_output = currentPID.maxOut;
-        return true;
+    if (j >= 0 && j < (int)m_numberOfJoints)
+    {
+      // Converting all gains for degrees-based unit to radians-based
+      pid->kp = convertGazeboGainToUserGain(j, m_velocityPIDs[j].p);
+      pid->ki = convertGazeboGainToUserGain(j, m_velocityPIDs[j].i);
+      pid->kd = convertGazeboGainToUserGain(j, m_velocityPIDs[j].d);
+
+      // The output limits are only related to the output, so they don't need to be converted
+      pid->max_int = m_positionPIDs[j].maxInt;
+      pid->max_output = m_positionPIDs[j].maxOut;
+      return true;
     }
     return false;
 }
@@ -86,13 +96,10 @@ bool GazeboYarpControlBoardDriver::getVelPid(int j, yarp::dev::Pid *pid)
 bool GazeboYarpControlBoardDriver::getVelPids(yarp::dev::Pid *pids)
 {
     if (!pids) return false;
-    for (unsigned j = 0; j < m_numberOfJoints; j++) {
-        PID currentPID = m_velocityPIDs[j];
-        pids[j].kp = currentPID.p;
-        pids[j].ki = currentPID.i;
-        pids[j].kd = currentPID.d;
-        pids[j].max_int = currentPID.maxInt;
-        pids[j].max_output = currentPID.maxOut;
+    bool b = true;
+    for (unsigned j = 0; j < m_numberOfJoints; j++)
+    {
+        b &=getVelPid (j,&pids[j]);
     }
     return true;
 }

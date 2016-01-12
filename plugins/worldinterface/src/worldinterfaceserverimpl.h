@@ -1,11 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /*
- * Copyright (C) 2015 iCub Facility 
+ * Copyright (C) 2015 iCub Facility
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  *
  */
- 
+
 #ifndef YARPGAZEBO_WORLD_INTERFACESERVERIMPL
 #define YARPGAZEBO_WORLD_INTERFACESERVERIMPL
 
@@ -21,11 +21,11 @@ class WorldInterfaceServerImpl: public GazeboYarpPlugins::WorldInterfaceServer
 {
 private:
   WorldProxy *proxy;
-   
+
 public:
   WorldInterfaceServerImpl();
   ~WorldInterfaceServerImpl();
-  
+
  /**
    * Make a shpere.
    * @param radius radius of the sphere [m]
@@ -66,10 +66,10 @@ public:
    * @return returns value of the pose
    */
   virtual GazeboYarpPlugins::Pose getPose(const std::string& id);
-  
+
   virtual bool loadModelFromFile(const std::string& filename);
 
-    
+
   /**
    * Delete all objects in the world.
    */
@@ -80,11 +80,11 @@ public:
    */
   virtual std::vector<std::string>  getList();
 
-  
+
   void attachWorldProxy(WorldProxy *p)
   {
-    proxy=p;    
-  } 
+    proxy=p;
+  }
 };
 
 #endif

@@ -6,6 +6,7 @@
 
 
 #include "DepthCameraDriver.h"
+#include <yarp/os/Value.h>
 
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
@@ -18,51 +19,6 @@ using namespace std;
 using namespace yarp::dev;
 
 const std::string YarpScopedName = "sensorScopedName";
-double GazeboYarpDepthCameraDriver::start_time =0;
-
-void GazeboYarpDepthCameraDriver::print (unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
-{
-   int pixelsize =5;
-   for (int i=0;i<size;i++)   
-   {
-      char* num_p=0;
-      switch(s[i])
-      {
-	case '0' : num_p=num[0].data; break;
-	case '1' : num_p=num[1].data; break;
-	case '2' : num_p=num[2].data; break;
-	case '3' : num_p=num[3].data; break;
-	case '4' : num_p=num[4].data; break;
-	case '5' : num_p=num[5].data; break;
-	case '6' : num_p=num[6].data; break;
-	case '7' : num_p=num[7].data; break;
-	case '8' : num_p=num[8].data; break;
-	case '9' : num_p=num[9].data; break;
-	case ' ' : num_p=num[10].data; break;
-        case '.' : num_p=num[11].data; break;
-      }
-
-      for (int yi=0;yi<5;yi++)   
-      for (int xi=0;xi<3;xi++)
-      {
-         int ii=yi*3+xi;
-         if (num_p[ii]=='*')
-         {
-            for (int r=yi*pixelsize; r<yi*pixelsize+pixelsize; r++)
-	    {   
-                int off = i*(pixelsize+20);
-		for (int c=xi*pixelsize+off;  c<xi*pixelsize+pixelsize+off; c++)
-		{
-                    unsigned char *pixel = pixbuf + c*3 + r*(pixbuf_w*3);
-	   	    pixel[0] = 0;
-		    pixel[1] = 0;
-		    pixel[2] = 255;
-		}
-            }
-         }
-      }
-   }
-}
 
 GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
 {
@@ -80,20 +36,7 @@ GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
     m_updateRGBPointCloud_Connection = 0;
     m_updateImageFrame_Connection = 0;
 
-    start_time = yarp::os::Time::now();
     counter=0;
-    sprintf(num[0].data, "**** ** ** ****");
-    sprintf(num[1].data, " *  *  *  *  * ");
-    sprintf(num[2].data, "***  *****  ***");
-    sprintf(num[3].data, "***  ****  ****");
-    sprintf(num[4].data, "* ** ****  *  *");
-    sprintf(num[5].data, "****  ***  ****");
-    sprintf(num[6].data, "****  **** ****");
-    sprintf(num[7].data, "***  *  *  *  *");
-    sprintf(num[8].data, "**** ***** ****");
-    sprintf(num[9].data, "**** ****  ****");
-    sprintf(num[10].data,"               ");
-    sprintf(num[11].data,"          ** **");
 }
 
 
@@ -215,11 +158,11 @@ bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
                           unsigned int _depth, const std::string &_format)
 {
 
-    std::cout << "OnNewImageFrame: " <<
-                    "\n\t_width is " << _width    <<
-                    "\n\t_height is " << _height   <<
-                    "\n\t_depth is " << _depth     <<
-                    "\n\t_format is " << _format   << std::endl;
+//     std::cout << "OnNewImageFrame: " <<
+//                     "\n\t_width is " << _width    <<
+//                     "\n\t_height is " << _height   <<
+//                     "\n\t_depth is " << _depth     <<
+//                     "\n\t_format is " << _format   << std::endl;
 
     m_dataMutex.wait();
 
@@ -228,15 +171,6 @@ bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
 
     m_lastTimestamp.update(this->m_imageCameraSensorPtr->GetLastUpdateTime().Double());
 
-    if (m_display_timestamp)
-    {
-        char txtbuf[1000];
-            double time=yarp::os::Time::now()-start_time;
-        sprintf(txtbuf,"%.3f",time);
-        int len = strlen(txtbuf);
-        if (len<20)
-            print (m_imageFrame_Buffer,_width,_height,0,0,txtbuf, len);
-    }
 
     m_dataMutex.post();
     return true;
@@ -249,11 +183,12 @@ void GazeboYarpDepthCameraDriver::OnNewRGBPointCloud(const float * /*_pcd*/,
                 unsigned int _width, unsigned int _height,
                 unsigned int _depth, const std::string &_format)
 {
-    std::cout << "OnNewRGBPointCloud: " <<
-                "\n\t_width is " << _width    <<
-                "\n\t_height is " << _height   <<
-                "\n\t_depth is " << _depth     <<
-                "\n\t_format is " << _format   << std::endl;
+//     std::cout << "OnNewRGBPointCloud: " <<
+//                 "\n\t_width is " << _width    <<
+//                 "\n\t_height is " << _height   <<
+//                 "\n\t_depth is " << _depth     <<
+//                 "\n\t_format is " << _format   << std::endl;
+    return;
 }
 
 /////////////////////////////////////////////////
@@ -267,11 +202,12 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float * /*_image*/,
     this->height, this->depth, this->format,
     "/tmp/depthCamera/me.jpg");  */
 
-    std::cout << "OnNewDepthFrame: " <<
-                "\n\t_width is " << _width    <<
-                "\n\t_height is " << _height   <<
-                "\n\t_depth is " << _depth     <<
-                "\n\t_format is " << _format   << std::endl;
+//     std::cout << "OnNewDepthFrame: " <<
+//                 "\n\t_width is " << _width    <<
+//                 "\n\t_height is " << _height   <<
+//                 "\n\t_depth is " << _depth     <<
+//                 "\n\t_format is " << _format   << std::endl;
+//
 
     // for depth camera
     if(m_depthCameraSensorPtr->IsActive())
@@ -339,15 +275,19 @@ bool GazeboYarpDepthCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRg
         for (int r=0; r<30; r++)
         {
            if (counter % 2 ==0)
-           {unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
-           pixel[0] = 255;
-           pixel[1] = 0;
-           pixel[2] = 0;}
+           {
+                unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
+                pixel[0] = 255;
+                pixel[1] = 0;
+                pixel[2] = 0;
+            }
            else
-           {unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
-           pixel[0] = 0;
-           pixel[1] = 255;
-           pixel[2] = 0;}
+           {
+                unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
+                pixel[0] = 0;
+                pixel[1] = 255;
+                pixel[2] = 0;
+            }
         }
     } 
 

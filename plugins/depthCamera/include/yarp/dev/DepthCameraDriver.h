@@ -103,7 +103,6 @@ public:
                                 unsigned int /*_depth*/,
                                 const std::string &/*_format*/);
     virtual int getRawBufferSize();
-    void print (unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size);
 
 private:
     // camera data here
@@ -137,12 +136,6 @@ private:
     gazebo::event::ConnectionPtr m_updateDepthFrame_Connection;
     gazebo::event::ConnectionPtr m_updateRGBPointCloud_Connection;
     gazebo::event::ConnectionPtr m_updateImageFrame_Connection;
-
-    struct txt_type
-    {
-       char data[16];
-    };
-    txt_type num[12];
 
 };
 

@@ -27,11 +27,14 @@ GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
  */
 void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
 {
-    gazebo::math::Vector3 force;
-    gazebo::math::Vector3 torque;
 
-    force = this->m_parentSensor->GetForce();
-    torque = this->m_parentSensor->GetTorque();
+#if GAZEBO_MAJOR_VERSION >= 6
+    ignition::math::Vector3d force = this->m_parentSensor->Force();
+    ignition::math::Vector3d torque = this->m_parentSensor->Torque();
+#else
+    gazebo::math::Vector3 force = this->m_parentSensor->GetForce();
+    gazebo::math::Vector3 torque = this->m_parentSensor->GetTorque();
+#endif
 
     /** \todo ensure that the timestamp is the right one */
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */

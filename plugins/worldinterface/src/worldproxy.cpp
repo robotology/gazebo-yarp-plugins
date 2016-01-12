@@ -1,12 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /*
- * Copyright (C) 2015 iCub Facility 
+ * Copyright (C) 2015 iCub Facility
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  *
  */
- 
+
  #include "worldproxy.h"
+#include <GazeboYarpPlugins/ConfHelpers.hh>
 
 #include <math.h>
 
@@ -39,10 +40,20 @@ isSynchro(true)
 WorldProxy::~WorldProxy()
 {}
 
+
+sdf::ElementPtr getSDFRoot(sdf::SDF &sdfObj)
+{
+#if SDF_MAJOR_VERSION >= 3
+  return sdfObj.Root();
+#else
+  return sdfObj.root;
+#endif
+}
+
 std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   sdf::SDF sphereSDF;
- 
+
   string sphereSDF_string=string(
       "<?xml version='1.0'?>\
        <sdf version ='1.4'>\
@@ -72,40 +83,40 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   replace(sphereSDF_string, "POSEY", pose.y);
   replace(sphereSDF_string, "POSEZ", pose.z);
   replace(sphereSDF_string, "RADIUS", radius);
-  
+
   replace(sphereSDF_string, "ROLL", pose.roll);
   replace(sphereSDF_string, "PITCH", pose.pitch);
   replace(sphereSDF_string, "YAW", pose.yaw);
-  
+
   replace(sphereSDF_string, "RED", color.r/255.0);
   replace(sphereSDF_string, "GREEN", color.g/255.0);
   replace(sphereSDF_string, "BLUE", color.b/255.0);
-  
+
   sphereSDF.SetFromString(sphereSDF_string);
-  
+
   int nobjects=++objects.count;
   ostringstream objlabel;
   objlabel << "sphere"<< nobjects;
-  
-  sdf::ElementPtr model = sphereSDF.root->GetElement("model");
+
+  sdf::ElementPtr model = getSDFRoot(sphereSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
-  
+
   world->InsertModelSDF(sphereSDF);
-  
+
   physics::ModelPtr tmp=world->GetModel(objlabel.str());
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return objlabel.str();
 }
 
 string WorldProxy::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   sdf::SDF boxSDF;
- 
+
   string boxSDF_String=string(
     "<?xml version='1.0'?>\
     <sdf version ='1.4'>\
@@ -134,43 +145,43 @@ string WorldProxy::makeBox(const double width, const double height, const double
   replace(boxSDF_String, "POSEX", pose.x);
   replace(boxSDF_String, "POSEY", pose.y);
   replace(boxSDF_String, "POSEZ", pose.z);
-  
+
   replace(boxSDF_String, "ROLL", pose.roll);
   replace(boxSDF_String, "PITCH", pose.pitch);
   replace(boxSDF_String, "YAW", pose.yaw);
-  
+
   replace(boxSDF_String, "WIDTH", width);
   replace(boxSDF_String, "HEIGHT", height);
   replace(boxSDF_String, "THICKNESS", thickness);
-  
+
   replace(boxSDF_String, "RED", color.r/255.0);
   replace(boxSDF_String, "GREEN", color.g/255.0);
   replace(boxSDF_String, "BLUE", color.b/255.0);
-  
+
   boxSDF.SetFromString(boxSDF_String);
-  
+
   int nobjects=++objects.count;
   ostringstream objlabel;
   objlabel << "box"<<nobjects;
-  
-  sdf::ElementPtr model = boxSDF.root->GetElement("model");
-  
+
+  sdf::ElementPtr model = getSDFRoot(boxSDF)->GetElement("model");
+
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(boxSDF);
- 
+
   physics::ModelPtr tmp=world->GetModel(objlabel.str());
   objects.insert(std::pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return objlabel.str();
 }
- 
+
 string WorldProxy::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   sdf::SDF cylSDF;
- 
+
   string cylSDF_String=string(
     "<?xml version='1.0'?>\
     <sdf version ='1.4'>\
@@ -201,33 +212,33 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   replace(cylSDF_String, "POSEZ", pose.z);
   replace(cylSDF_String, "RADIUS", radius);
   replace(cylSDF_String, "LENGTH", length);
-  
+
   replace(cylSDF_String, "ROLL", pose.roll);
   replace(cylSDF_String, "PITCH", pose.pitch);
   replace(cylSDF_String, "YAW", pose.yaw);
-    
+
   replace(cylSDF_String, "RED", color.r/255.0);
   replace(cylSDF_String, "GREEN", color.g/255.0);
   replace(cylSDF_String, "BLUE", color.b/255.0);
-  
+
   cylSDF.SetFromString(cylSDF_String);
-  
+
   int nobjects=++objects.count;
   ostringstream objlabel;
   objlabel << "cylinder"<<nobjects;
-  
-  sdf::ElementPtr model = cylSDF.root->GetElement("model");
-  
- 
+
+  sdf::ElementPtr model = getSDFRoot(cylSDF)->GetElement("model");
+
+
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(cylSDF);
- 
+
   physics::ModelPtr tmp=world->GetModel(objlabel.str());
   objects.insert(std::pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return objlabel.str();
 }
 
@@ -239,19 +250,19 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
       cerr<<"Object " << id << " does not exist in gazebo\n";
       return false;
     }
-  
+
   PoseCmd cmd;
   cmd.name=id;
 
-  
+
   cmd.pose=math::Pose(pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw);
   mutex.lock();
-  posecommands.push(cmd);  
-  mutex.unlock();  
-  
+  posecommands.push(cmd);
+  mutex.unlock();
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return true;
 }
 
@@ -259,17 +270,17 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
 GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {
   GazeboYarpPlugins::Pose ret;
-    
+
   physics::ModelPtr model=world->GetModel(id);
     if (!model)
     {
       cerr<<"Object " << id << " does not exist in gazebo\n";
       return ret;
     }
-  
-  
+
+
   math::Pose p=model->GetWorldPose();
-  
+
   ret.x=p.pos[0];
   ret.y=p.pos[1];
   ret.z=p.pos[2];
@@ -288,27 +299,27 @@ bool WorldProxy::deleteAll()
     world->RemoveModel(it->first);
     it++;
   }
-  
+
   objects.clear();
-  
+
   // RemoveModel is blocking no need to synchronize
   // if (isSynchronous())
   //   waitForEngine();
-  
+
   return true;
 }
 
 std::vector<std::string> WorldProxy::getList()
 {
   vector<std::string> ret;
-  
+
   ObjectsListIt it=objects.begin();
   while(it!=objects.end())
   {
     ret.push_back(it->first);
     it++;
   }
-  
+
   return ret;
 }
 
@@ -321,28 +332,28 @@ bool WorldProxy::loadModelFromFile(const std::string& filename)
 void WorldProxy::update(const common::UpdateInfo & _info)
 {
   mutex.lock();
-    
+
   while(!posecommands.empty())
   {
     PoseCmd cmd=posecommands.front();
-      
+
     physics::ModelPtr model=world->GetModel(cmd.name);
     if (!model)
     {
       cerr<<"Object " << cmd.name << " does not exist in gazebo\n";
     }
-    
-    model->SetWorldPose(cmd.pose);  
-    
+
+    model->SetWorldPose(cmd.pose);
+
     posecommands.pop();
   }
-  
+
   mutex.unlock();
-  
+
   synchHelper.signalAll();
 }
 
 void WorldProxy::waitForEngine()
 {
-  synchHelper.wait();  
+  synchHelper.wait();
 }

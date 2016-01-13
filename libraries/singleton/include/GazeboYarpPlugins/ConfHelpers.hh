@@ -9,6 +9,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <gazebo/gazebo_config.h>
 #include <sdf/sdf_config.h>
 
 #if SDF_MAJOR_VERSION >= 3
@@ -29,7 +30,11 @@ namespace gazebo
 {
     namespace sensors {
         class Sensor;
+#if GAZEBO_MAJOR_VERSION >= 7
+        typedef std::shared_ptr<Sensor> SensorPtr;
+#else
         typedef boost::shared_ptr<Sensor> SensorPtr;
+#endif
     }
     namespace physics {
         class Model;

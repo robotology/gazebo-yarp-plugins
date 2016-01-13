@@ -7,7 +7,6 @@
 #ifndef GAZEBOYARP_CONFIGURATION_HELPERS_HH
 #define GAZEBOYARP_CONFIGURATION_HELPERS_HH
 
-#include <boost/shared_ptr.hpp>
 
 #include <sdf/sdf_config.h>
 
@@ -17,6 +16,8 @@
 
 #else
 
+#include <boost/shared_ptr.hpp>
+
 namespace sdf {
    class Element;
    typedef boost::shared_ptr<Element> ElementPtr;
@@ -24,18 +25,8 @@ namespace sdf {
 
 #endif
 
-
-namespace gazebo
-{
-    namespace sensors {
-        class Sensor;
-        typedef boost::shared_ptr<Sensor> SensorPtr;
-    }
-    namespace physics {
-        class Model;
-        typedef boost::shared_ptr<Model> ModelPtr;
-    }
-}
+#include <gazebo/sensors/SensorTypes.hh>
+#include <gazebo/physics/PhysicsTypes.hh>
 
 namespace yarp {
     namespace os {

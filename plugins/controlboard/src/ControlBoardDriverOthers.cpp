@@ -15,6 +15,20 @@ bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& 
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::getJointType(int axis, yarp::dev::JointTypeEnum& type)
+{
+    if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
+    if (this->m_jointTypes[axis] == JointType::JointType_Revolute    ) {type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;}
+    else if (this->m_jointTypes[axis] == JointType::JointType_Prismatic ) {type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC;}
+    else
+    {
+      yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN;
+    }
+    
+    yarp::os::ConstString(controlboard_joint_names.at(axis));
+    return true;
+}
+
 // IControlLimits
 bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max) //WORKS
 {

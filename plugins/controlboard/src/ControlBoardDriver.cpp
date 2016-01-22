@@ -71,7 +71,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_trajectoryGenerationReferencePosition.resize(m_numberOfJoints);
     m_trajectoryGenerationReferenceAcceleraton.resize(m_numberOfJoints);
     m_referenceTorques.resize(m_numberOfJoints);
-    m_jointLimits.resize(m_numberOfJoints);
+    m_jointPosLimits.resize(m_numberOfJoints);
+    m_jointVelLimits.resize(m_numberOfJoints);
     m_positionPIDs.reserve(m_numberOfJoints);
     m_velocityPIDs.reserve(m_numberOfJoints);
     m_impedancePosPDs.reserve(m_numberOfJoints);
@@ -108,7 +109,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_jointTypes[j] = JointType_Unknown;
         m_isMotionDone[j] = true;
         // Set an old reference value surely out of range. This will force the setting of initial reference at startup
-        m_oldReferencePositions[j] = m_jointLimits[j].max *2;
+        m_oldReferencePositions[j] = m_jointPosLimits[j].max *2;
     }
     // End zeroing of vectors
 
@@ -116,14 +117,16 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     if(!configureJointType() )
         return false;
 
-    setMinMaxPos();
+    setMinMaxPos();  
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
         // Set an old reference value surely out of range. This will force the setting of initial reference at startup
         // NOTE: This has to be after setMinMaxPos function
-        m_oldReferencePositions[j] = m_jointLimits[j].max *2;
+        m_oldReferencePositions[j] = m_jointPosLimits[j].max *2;
     }
 
+    setMinMaxVel();
+        
     if (!setMinMaxImpedance())
     {
       yError()<<"Failed Impedance initialization";
@@ -317,13 +320,44 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 }
 
-void GazeboYarpControlBoardDriver::setMinMaxPos()
+bool GazeboYarpControlBoardDriver::setMinMaxPos()
 {
     for(unsigned int i = 0; i < m_numberOfJoints; ++i)
     {
-        m_jointLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));
-        m_jointLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));
+        m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));
+        m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));
     }
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setMinMaxVel()
+{
+    //first check in gazebo...
+    for(unsigned int i = 0; i < m_numberOfJoints; ++i)
+    {
+        m_jointVelLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetVelocityLimit(0));
+        m_jointVelLimits[i].min = 0;
+    }
+    
+    //...if the yarp plugin configuration file specifies a different velocity, override it...
+    yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
+    if (!limits_bottle.isNull())
+    {
+       yarp::os::Bottle& vel_limits = limits_bottle.findGroup("JntVelocityMax");
+       if (!vel_limits.isNull())
+       {
+           for(unsigned int i = 0; i < m_numberOfJoints; ++i)
+           { 
+             m_jointVelLimits[i].max = vel_limits.get(i+1).asDouble();
+             m_jointVelLimits[i].min = 0;             
+           }
+       }
+    }
+    else
+    {
+       yWarning() << "Missing LIMITS section";
+    }
+    return true;
 }
 
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS

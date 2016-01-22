@@ -35,28 +35,35 @@ bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max)
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
     if (!min || !max) return false;
-    *min = m_jointLimits[axis].min;
-    *max = m_jointLimits[axis].max;
+    *min = m_jointPosLimits[axis].min;
+    *max = m_jointPosLimits[axis].max;
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //WORKS
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
-    m_jointLimits[axis].max = max;
-    m_jointLimits[axis].min = min;
+    m_jointPosLimits[axis].max = max;
+    m_jointPosLimits[axis].min = min;
     return true;
 }
 
 // IControlLimits2
-bool GazeboYarpControlBoardDriver::getVelLimits(int axis, double* min, double* max) //NOT TESTED
+bool GazeboYarpControlBoardDriver::getVelLimits(int axis, double* min, double* max) //WORKS
 {
-    return false;
+    if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
+    if (!min || !max) return false;
+    *min = m_jointVelLimits[axis].min;
+    *max = m_jointVelLimits[axis].max;
+    return true;
 }
 
-bool GazeboYarpControlBoardDriver::setVelLimits(int axis, double min, double max) //NOT TESTED
+bool GazeboYarpControlBoardDriver::setVelLimits(int axis, double min, double max) //WORKS
 {
-    return false;
+    if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
+    m_jointVelLimits[axis].max = max;
+    m_jointVelLimits[axis].min = min;
+    return true;
 }
 
 //Amplifiers
@@ -126,12 +133,12 @@ bool GazeboYarpControlBoardDriver::getAmpStatus(int, int *v) //NOT IMPLEMENTED
 
 bool GazeboYarpControlBoardDriver::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
 {
-    fprintf(stderr, "fakebot: calibrating joint %d with parameters %u %f %f %f\n", j, iv, v1, v2, v3);
+    yDebug("fakebot: calibrating joint %d with parameters %u %f %f %f\n", j, iv, v1, v2, v3);
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::done(int j) // NOT IMPLEMENTED
 {
-    fprintf(stderr , "fakebot: calibration done on joint %d.\n", j);
+    yDebug("fakebot: calibration done on joint %d.\n", j);
     return true;
 }

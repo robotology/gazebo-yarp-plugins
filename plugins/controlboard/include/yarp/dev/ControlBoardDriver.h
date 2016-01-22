@@ -350,7 +350,8 @@ private:
 
     unsigned int m_robotRefreshPeriod; //ms
     unsigned int m_numberOfJoints; /**< number of joints controlled by the control board */
-    std::vector<Range> m_jointLimits;
+    std::vector<Range> m_jointPosLimits;
+    std::vector<Range> m_jointVelLimits;
 
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
@@ -413,7 +414,8 @@ private:
      * Private methods
      */
     bool configureJointType();
-    void setMinMaxPos();  //NOT TESTED
+    bool setMinMaxPos();  //NOT TESTED
+    bool setMinMaxVel();
     bool setJointNames();  //WORKS
     bool setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
     bool setPIDsForGroup_POSITION(  std::vector<GazeboYarpControlBoardDriver::PID>&);

@@ -301,3 +301,34 @@ bool GazeboYarpControlBoardDriver::setPositions(const double *refs)
     }
     return ret;
 }
+
+bool GazeboYarpControlBoardDriver::getTargetPosition(const int joint, double *ref)
+{
+    if (ref && joint >= 0 && joint < (int)m_numberOfJoints)
+    {
+      *ref = m_trajectoryGenerationReferencePosition[joint];
+      return true;
+    }
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::getTargetPositions(double *refs)
+{
+    if (!refs) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < this->m_numberOfJoints && ret; i++) {
+        ret = getTargetPosition(i, &refs[i]);
+    }
+    return ret;
+}
+
+bool GazeboYarpControlBoardDriver::getTargetPositions(const int n_joint, const int *joints, double *refs)
+{
+    if (!joints || !refs) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getTargetPosition(joints[i], &refs[i]);
+    }
+    return ret;
+}
+    

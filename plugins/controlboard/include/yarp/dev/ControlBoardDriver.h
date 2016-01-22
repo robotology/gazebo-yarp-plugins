@@ -148,6 +148,10 @@ public:
     virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds);
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
     virtual bool stop(const int n_joint, const int *joints);
+    virtual bool getTargetPosition(const int joint, double *ref);
+    virtual bool getTargetPositions(double *refs);
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+        
 
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
@@ -167,6 +171,9 @@ public:
     virtual bool setVelPids(const yarp::dev::Pid *pids);
     virtual bool getVelPid(int j, yarp::dev::Pid *pid);
     virtual bool getVelPids(yarp::dev::Pid *pids);
+    virtual bool getRefVelocity(const int joint, double *vel);
+    virtual bool getRefVelocities(double *vels);
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
 
     //CONTROL MODE
     virtual bool setPositionMode(int j); //WORKS
@@ -271,15 +278,16 @@ public:
     virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
     virtual bool done(int j); // NOT IMPLEMENTED
 
-    // CONTROL LIMITS2 (inside comanOthers.cpp)
-    bool getLimits(int axis, double *min, double *max); //WORKS
-    bool setLimits(int axis, double min, double max); //WORKS
-    bool getVelLimits(int axis, double *min, double *max); //NOT IMPLEMENTED
-    bool setVelLimits(int axis, double min, double max); //NOT IMPLEMENTED
     /*
      * End of useless stuff
      */
 
+    // CONTROL LIMITS2 (inside comanOthers.cpp)
+    bool getLimits(int axis, double *min, double *max);
+    bool setLimits(int axis, double min, double max);
+    bool getVelLimits(int axis, double *min, double *max); 
+    bool setVelLimits(int axis, double min, double max);
+    
     // IPOSITION DIRECT
     bool setPositionDirectMode();
     bool setPosition(int j, double ref);

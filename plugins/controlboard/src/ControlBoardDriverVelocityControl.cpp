@@ -103,3 +103,34 @@ bool GazeboYarpControlBoardDriver::getVelPids(yarp::dev::Pid *pids)
     }
     return true;
 }
+
+bool GazeboYarpControlBoardDriver::getRefVelocity(const int joint, double *vel) 
+{
+    if (vel && joint >= 0 && joint < (int)m_numberOfJoints)
+    {
+      *vel = m_referenceVelocities[joint];
+      return true;
+    }
+    return false;
+  
+}
+
+bool GazeboYarpControlBoardDriver::getRefVelocities(double *vels) 
+{
+     if (!vels) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < this->m_numberOfJoints && ret; i++) {
+        ret = getRefVelocity(i, &vels[i]);
+    }
+    return ret; 
+}
+
+bool GazeboYarpControlBoardDriver::getRefVelocities(const int n_joint, const int *joints, double *vels) 
+{
+    if (!joints || !vels) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getRefVelocity(joints[i], &vels[i]);
+    }
+    return ret;
+}

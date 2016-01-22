@@ -88,10 +88,10 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     // Initial zeroing of all vectors
     m_positions.zero();
     m_zeroPosition.zero();
-    m_referenceVelocities.zero();
     m_velocities.zero();
     m_trajectoryGenerationReferenceSpeed.zero();
     m_referencePositions.zero();
+    m_referenceVelocities.zero();
     m_trajectoryGenerationReferencePosition.zero();
     m_trajectoryGenerationReferenceAcceleraton.zero();
     m_referenceTorques.zero();
@@ -108,8 +108,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_interactionMode[j] = VOCAB_IM_STIFF;
         m_jointTypes[j] = JointType_Unknown;
         m_isMotionDone[j] = true;
-        // Set an old reference value surely out of range. This will force the setting of initial reference at startup
-        m_oldReferencePositions[j] = m_jointPosLimits[j].max *2;
     }
     // End zeroing of vectors
 
@@ -117,7 +115,11 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     if(!configureJointType() )
         return false;
 
-    setMinMaxPos();  
+    if (!setMinMaxPos())
+    {
+      yError()<<"Failed to get joint limits";
+      return false;
+    }
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
         // Set an old reference value surely out of range. This will force the setting of initial reference at startup
@@ -125,8 +127,20 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_oldReferencePositions[j] = m_jointPosLimits[j].max *2;
     }
 
-    setMinMaxVel();
-        
+    if (!setMinMaxVel())
+    {
+      yError()<<"Failed to get Velocity Limits";
+      //return false; //to be added soon
+    }
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+        // NOTE: This has to be after setMinMaxVel function
+        m_trajectoryGenerationReferenceSpeed[j]=0.0;
+        if      (m_jointTypes[j]==JointType_Revolute)  m_trajectoryGenerationReferenceSpeed[j] = 10.0; //deg/s
+        else if (m_jointTypes[j]==JointType_Prismatic) m_trajectoryGenerationReferenceSpeed[j] = 0.010; //m/s
+        if (m_trajectoryGenerationReferenceSpeed[j] >  m_jointVelLimits[j].max) m_trajectoryGenerationReferenceSpeed[j]= m_jointVelLimits[j].max/10;
+    }
+    
     if (!setMinMaxImpedance())
     {
       yError()<<"Failed Impedance initialization";

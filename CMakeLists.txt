@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.7)
 
 PROJECT(GazeboYarpPlugins)
 
-find_package(YARP 2.3.63.2 REQUIRED)
+find_package(YARP 2.3.64.13 REQUIRED)
 
 # Finding dependencies
 find_package(Boost REQUIRED serialization system)

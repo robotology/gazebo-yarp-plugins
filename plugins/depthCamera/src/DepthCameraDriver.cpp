@@ -355,12 +355,12 @@ bool GazeboYarpDepthCameraDriver::setHorizontalScanLimits(double min, double max
     return false;
 }
 
-bool GazeboYarpDepthCameraDriver::getverticalScanLimits(double *min, double *max)
+bool GazeboYarpDepthCameraDriver::getVerticalScanLimits(double *min, double *max)
 {
     return false;
 }
 
-bool GazeboYarpDepthCameraDriver::setverticalScanLimits(double min, double max)
+bool GazeboYarpDepthCameraDriver::setVerticalScanLimits(double min, double max)
 {
     return false;
 }

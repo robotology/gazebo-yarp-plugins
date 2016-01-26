@@ -74,7 +74,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     m_sensorName = _sensor->GetScopedName();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
-    GazeboYarpPlugins::Handler::getHandler()->setSensor(boost::get_pointer(_sensor));
+    GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
     driver_properties.put(YarpForceTorqueScopedName.c_str(), m_sensorName.c_str());
 

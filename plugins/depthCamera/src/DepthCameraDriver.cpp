@@ -65,7 +65,11 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
         std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
         return false;
     }
-    m_depthCameraPtr = this->m_depthCameraSensorPtr->GetDepthCamera();
+    #if GAZEBO_MAJOR_VERSION >= 7
+        m_depthCameraPtr = this->m_depthCameraSensorPtr->DepthCamera();
+    #else
+        m_depthCameraPtr = this->m_depthCameraSensorPtr->GetDepthCamera();
+    #endif
 
     // What they are for? Can be removed?
     if (config.check("vertical_flip")) m_vertical_flip =true;

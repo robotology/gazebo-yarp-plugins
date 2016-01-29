@@ -36,6 +36,7 @@ namespace yarp {
 
             m_jointCommandPublisher->WaitForConnection();
             m_jointCommandPublisher->Publish(j_cmd);
+            return true;
         }
 
         bool GazeboYarpControlBoardDriver::setPids (const Pid *pids)

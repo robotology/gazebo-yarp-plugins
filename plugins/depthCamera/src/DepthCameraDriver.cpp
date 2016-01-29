@@ -215,7 +215,11 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float * /*_image*/,
     m_depthFrameMutex.wait();
     // for depth camera
     if(m_depthCameraSensorPtr->IsActive())
+    #if GAZEBO_MAJOR_VERSION >= 7
+        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);   // change from sensor pointer to device pointer ... check carefully
+    #else
         memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);   // change from sensor pointer to device pointer ... check carefully
+    #endif
 
 //     std::cout << m_depthFrame_Buffer[320+(640*250)] << "\t" << std::flush;
     m_depthFrameMutex.post();

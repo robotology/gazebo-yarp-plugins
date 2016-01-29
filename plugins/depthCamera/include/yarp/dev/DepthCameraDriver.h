@@ -14,6 +14,8 @@
 #include <yarp/os/Time.h>
 
 #include <boost/shared_ptr.hpp>
+#include <gazebo/rendering/Camera.hh>
+#include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/rendering/DepthCamera.hh>
 #include <gazebo/sensors/DepthCameraSensor.hh>
 

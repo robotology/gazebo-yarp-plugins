@@ -13,4 +13,8 @@ else()
     message(WARNING "Gazebo version is lower than 4.0, disabling worldinterface plugin.")
 endif()
 
-
+if( NOT (GAZEBO_VERSION VERSION_LESS 6) )
+    add_subdirectory(depthCamera)
+else()
+    message(WARNING "Gazebo version is lower than 6, disabling depthCamera plugin.")
+endif()

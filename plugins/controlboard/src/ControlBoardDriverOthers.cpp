@@ -5,6 +5,7 @@
  */
 
 #include "ControlBoardDriver.h"
+#include <gazebo/physics/physics.hh>
 
 using namespace yarp::dev;
 
@@ -142,3 +143,63 @@ bool GazeboYarpControlBoardDriver::done(int j) // NOT IMPLEMENTED
     yDebug("fakebot: calibration done on joint %d.\n", j);
     return true;
 }
+
+bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+{
+    listOfKeys->clear();
+    listOfKeys->addString("hardwareDamping");
+    listOfKeys->addString("hardwareEffortLimit");
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val)
+{
+    val.clear();
+    if (key == "hardwareDamping")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = m_jointPointers[i]->GetDamping(0);  r.addDouble(tmp); }
+        return true;
+    }
+    if (key == "hardwareEffortLimit")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = m_jointPointers[i]->GetEffortLimit(0);  r.addDouble(tmp); }
+        return true;
+    }
+    yWarning("getRemoteVariable(): Unknown variable %s", key.c_str());
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
+{
+    std::string s1 = val.toString();
+    yarp::os::Bottle* bval = val.get(0).asList();
+    if (bval == 0)
+    {
+        yWarning("setRemoteVariable(): Protocol error %s", s1.c_str());
+        return false;
+    }
+
+    std::string s2 = bval->toString();
+
+    if (key == "hardwareDamping")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asInt();
+            m_jointPointers[i]->SetDamping(0,value);
+        }
+        return true;
+    }
+    if (key == "hardwareEffortLimit")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asInt();
+            m_jointPointers[i]->SetEffortLimit(0,value);
+        }
+        return true;
+    }
+    yWarning("setRemoteVariable(): Unknown variable %s", key.c_str());
+    return false;
+}
+

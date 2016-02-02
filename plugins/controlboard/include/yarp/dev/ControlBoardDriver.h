@@ -15,6 +15,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode2.h>
 #include <yarp/dev/IInteractionMode.h>
+#include <yarp/dev/IRemoteVariables.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
@@ -79,6 +80,7 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public IImpedanceControl,
     public IOpenLoopControl,
     public IPidControl,
+    public IRemoteVariables,
     public IAxisInfo
 {
 public:
@@ -282,25 +284,30 @@ public:
      * End of useless stuff
      */
 
+    // RemoteVariables Interface
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
+    
     // CONTROL LIMITS2 (inside comanOthers.cpp)
-    bool getLimits(int axis, double *min, double *max);
-    bool setLimits(int axis, double min, double max);
-    bool getVelLimits(int axis, double *min, double *max); 
-    bool setVelLimits(int axis, double min, double max);
+    virtual bool getLimits(int axis, double *min, double *max);
+    virtual bool setLimits(int axis, double min, double max);
+    virtual bool getVelLimits(int axis, double *min, double *max); 
+    virtual bool setVelLimits(int axis, double min, double max);
     
     // IPOSITION DIRECT
-    bool setPositionDirectMode();
-    bool setPosition(int j, double ref);
-    bool setPositions(const int n_joint, const int *joints, double *refs);
-    bool setPositions(const double *refs);
+    virtual bool setPositionDirectMode();
+    virtual bool setPosition(int j, double ref);
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositions(const double *refs);
 
     // INTERACTION MODE interface
-    bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
-    bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
-    bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
-    bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
-    bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
+    virtual bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode);
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode);
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
 private:
 

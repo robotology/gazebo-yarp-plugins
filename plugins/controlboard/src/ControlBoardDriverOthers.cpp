@@ -149,6 +149,12 @@ bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* list
     listOfKeys->clear();
     listOfKeys->addString("hardwareDamping");
     listOfKeys->addString("hardwareEffortLimit");
+    listOfKeys->addString("hardwareVelocityLimit");
+    listOfKeys->addString("yarp_jntMaxVel");
+    listOfKeys->addString("SHORTCUT_all_pos_kp");
+    listOfKeys->addString("SHORTCUT_all_pos_kd");
+    listOfKeys->addString("SHORTCUT_all_pos_ki");
+        
     return true;
 }
 
@@ -163,6 +169,31 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     if (key == "hardwareEffortLimit")
     {
         yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = m_jointPointers[i]->GetEffortLimit(0);  r.addDouble(tmp); }
+        return true;
+    }
+    if (key == "hardwareVelocityLimit")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = m_jointPointers[i]->GetVelocityLimit(0);  r.addDouble(tmp); }
+        return true;
+    }
+    if (key == "yarp_jntMaxVel")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp_min,tmp_max; getVelLimits(i,&tmp_min,&tmp_max);  r.addDouble(tmp_max); }
+        return true;
+    }
+    if (key == "SHORTCUT_all_pos_kp")
+    {   
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.kp); }
+        return true;
+    }
+    if (key == "SHORTCUT_all_pos_kd")
+    {   
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.kd); }
+        return true;
+    }
+    if (key == "SHORTCUT_all_pos_ki")
+    {   
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.ki); }
         return true;
     }
     yWarning("getRemoteVariable(): Unknown variable %s", key.c_str());
@@ -196,6 +227,57 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         {
             double value = bval->get(i).asInt();
             m_jointPointers[i]->SetEffortLimit(0,value);
+        }
+        return true;
+    }
+    if (key == "hardwareVelocityLimit")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asInt();
+            m_jointPointers[i]->SetVelocityLimit(0,value);
+        }
+        return true;
+    }
+    if (key == "yarp_jntMaxVel")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asInt();
+            setVelLimits(i,0,value);
+        }
+        return true;
+    }
+    if (key == "SHORTCUT_all_pos_kp")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            yarp::dev::Pid tmp_pid;
+            getPid(i,&tmp_pid);
+            tmp_pid.kp = bval->get(i).asInt();
+            setPid(i,tmp_pid);
+        }
+        return true;
+    }
+    if (key == "SHORTCUT_all_pos_kd")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            yarp::dev::Pid tmp_pid;
+            getPid(i,&tmp_pid);
+            tmp_pid.kd = bval->get(i).asInt();
+            setPid(i,tmp_pid);
+        }
+        return true;
+    }
+    if (key == "SHORTCUT_all_pos_ki")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            yarp::dev::Pid tmp_pid;
+            getPid(i,&tmp_pid);
+            tmp_pid.ki = bval->get(i).asInt();
+            setPid(i,tmp_pid);
         }
         return true;
     }

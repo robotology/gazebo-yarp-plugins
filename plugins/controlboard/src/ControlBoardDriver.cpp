@@ -357,7 +357,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
     yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
     if (!limits_bottle.isNull())
     {
-       yarp::os::Bottle& vel_limits = limits_bottle.findGroup("JntVelocityMax");
+       yarp::os::Bottle& vel_limits = limits_bottle.findGroup("jntVelMax");
        if (!vel_limits.isNull())
        {
            for(unsigned int i = 0; i < m_numberOfJoints; ++i)

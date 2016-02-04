@@ -216,7 +216,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
     {
         for (int i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asInt();
+            double value = bval->get(i).asDouble();
             m_jointPointers[i]->SetDamping(0,value);
         }
         return true;
@@ -225,7 +225,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
     {
         for (int i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asInt();
+            double value = bval->get(i).asDouble();
             m_jointPointers[i]->SetEffortLimit(0,value);
         }
         return true;
@@ -234,7 +234,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
     {
         for (int i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asInt();
+            double value = bval->get(i).asDouble();
             m_jointPointers[i]->SetVelocityLimit(0,value);
         }
         return true;
@@ -243,7 +243,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
     {
         for (int i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asInt();
+            double value = bval->get(i).asDouble();
             setVelLimits(i,0,value);
         }
         return true;
@@ -254,7 +254,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         {
             yarp::dev::Pid tmp_pid;
             getPid(i,&tmp_pid);
-            tmp_pid.kp = bval->get(i).asInt();
+            tmp_pid.kp = bval->get(i).asDouble();
             setPid(i,tmp_pid);
         }
         return true;
@@ -265,7 +265,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         {
             yarp::dev::Pid tmp_pid;
             getPid(i,&tmp_pid);
-            tmp_pid.kd = bval->get(i).asInt();
+            tmp_pid.kd = bval->get(i).asDouble();
             setPid(i,tmp_pid);
         }
         return true;
@@ -276,7 +276,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         {
             yarp::dev::Pid tmp_pid;
             getPid(i,&tmp_pid);
-            tmp_pid.ki = bval->get(i).asInt();
+            tmp_pid.ki = bval->get(i).asDouble();
             setPid(i,tmp_pid);
         }
         return true;

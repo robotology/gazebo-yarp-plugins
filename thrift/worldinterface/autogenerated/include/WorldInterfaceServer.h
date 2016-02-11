@@ -52,6 +52,13 @@ public:
    */
   virtual bool setPose(const std::string& id, const Pose& pose);
   /**
+   * Enable/disables gravity for an object
+   * @param id object id
+   * @param enable 1 to enable gravity, 0 otherwise
+   * @return returns true or false on success failure
+   */
+  virtual bool enableGravity(const std::string& id, const bool enable);
+  /**
    * Get object pose.
    * @param id string that identifies object in gazebo (returned after creation)
    * @return returns value of the pose
@@ -77,4 +84,3 @@ public:
 };
 
 #endif
-

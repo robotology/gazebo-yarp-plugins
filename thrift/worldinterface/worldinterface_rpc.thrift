@@ -63,6 +63,14 @@ service WorldInterfaceServer {
     bool setPose(1: string id, 2: Pose pose);
     
      /** 
+    * Enable/disables gravity for an object
+    * @param id object id
+    * @param enable 1 to enable gravity, 0 otherwise
+    * @return returns true or false on success failure
+    */
+    bool enableGravity (1: string id, 2: bool enable);
+
+     /** 
     * Get object pose.
     * @param id string that identifies object in gazebo (returned after creation)
     * @return returns value of the pose

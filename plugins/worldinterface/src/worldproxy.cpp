@@ -19,6 +19,8 @@ using namespace std;
 using namespace gazebo;
 
 #include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 void replace(string &str, string key, double value)
 {
@@ -75,6 +77,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
                   <diffuse>RED GREEN BLUE 1</diffuse>\
                   </material>\
               </visual>\
+              <gravity>GRAVITY</gravity>\
             </link>\
           </model>\
         </sdf>");
@@ -83,7 +86,8 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   replace(sphereSDF_string, "POSEY", pose.y);
   replace(sphereSDF_string, "POSEZ", pose.z);
   replace(sphereSDF_string, "RADIUS", radius);
-
+  replace(sphereSDF_string, "GRAVITY", 0);
+    
   replace(sphereSDF_string, "ROLL", pose.roll);
   replace(sphereSDF_string, "PITCH", pose.pitch);
   replace(sphereSDF_string, "YAW", pose.yaw);
@@ -137,8 +141,9 @@ string WorldProxy::makeBox(const double width, const double height, const double
                    <ambient>RED GREEN BLUE 1</ambient>\
                    <diffuse>RED GREEN BLUE 1</diffuse>\
         </material>\
-    </visual>\
-    </link>\
+       </visual>\
+       <gravity>GRAVITY</gravity>\
+       </link>\
       </model>\
   </sdf>");
 
@@ -157,6 +162,8 @@ string WorldProxy::makeBox(const double width, const double height, const double
   replace(boxSDF_String, "RED", color.r/255.0);
   replace(boxSDF_String, "GREEN", color.g/255.0);
   replace(boxSDF_String, "BLUE", color.b/255.0);
+  
+  replace(boxSDF_String, "GRAVITY", 0);
 
   boxSDF.SetFromString(boxSDF_String);
 
@@ -203,6 +210,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
                    <diffuse>RED GREEN BLUE 1</diffuse>\
           </material>\
     </visual>\
+    <gravity>GRAVITY</gravity>\
     </link>\
       </model>\
   </sdf>");
@@ -220,6 +228,8 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   replace(cylSDF_String, "RED", color.r/255.0);
   replace(cylSDF_String, "GREEN", color.g/255.0);
   replace(cylSDF_String, "BLUE", color.b/255.0);
+  
+  replace(cylSDF_String, "GRAVITY", 0);
 
   cylSDF.SetFromString(cylSDF_String);
 
@@ -266,6 +276,24 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
   return true;
 }
 
+bool WorldProxy::enableGravity(const std::string& id, const bool enable)
+{
+  physics::ModelPtr model=world->GetModel(id);
+    if (!model)
+    {
+      yError() <<"Object " << id << " does not exist in gazebo";
+      return false;
+    }
+
+  model->SetGravityMode(enable);
+  if (enable==true) yInfo("Gravity enabled for model %s", id.c_str());
+  else yInfo("Gravity disabled for model %s", id.c_str());
+    
+  if (isSynchronous())
+     waitForEngine();
+
+  return true;
+}
 
 GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {

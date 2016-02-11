@@ -46,6 +46,11 @@ GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id)
   return proxy->getPose(id); 
 }
   
+bool WorldInterfaceServerImpl::enableGravity(const std::string& id, const bool enable)
+{                              
+  return proxy->enableGravity(id, enable);
+}
+
 bool WorldInterfaceServerImpl::loadModelFromFile(const std::string& filename)
 {
   return proxy->loadModelFromFile(filename);  

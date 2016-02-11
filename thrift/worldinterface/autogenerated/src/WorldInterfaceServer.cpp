@@ -53,6 +53,16 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_enableGravity : public yarp::os::Portable {
+public:
+  std::string id;
+  bool enable;
+  bool _return;
+  void init(const std::string& id, const bool enable);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class WorldInterfaceServer_getPose : public yarp::os::Portable {
 public:
   std::string id;
@@ -199,6 +209,31 @@ void WorldInterfaceServer_setPose::init(const std::string& id, const Pose& pose)
   this->pose = pose;
 }
 
+bool WorldInterfaceServer_enableGravity::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("enableGravity",1,1)) return false;
+  if (!writer.writeString(id)) return false;
+  if (!writer.writeBool(enable)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_enableGravity::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_enableGravity::init(const std::string& id, const bool enable) {
+  _return = false;
+  this->id = id;
+  this->enable = enable;
+}
+
 bool WorldInterfaceServer_getPose::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
@@ -336,6 +371,16 @@ bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose) {
   helper.init(id,pose);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::enableGravity(const std::string& id, const bool enable) {
+  bool _return = false;
+  WorldInterfaceServer_enableGravity helper;
+  helper.init(id,enable);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::enableGravity(const std::string& id, const bool enable)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -504,6 +549,27 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "enableGravity") {
+      std::string id;
+      bool enable;
+      if (!reader.readString(id)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readBool(enable)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = enableGravity(id,enable);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "getPose") {
       std::string id;
       if (!reader.readString(id)) {
@@ -604,6 +670,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("makeBox");
     helpString.push_back("makeCylinder");
     helpString.push_back("setPose");
+    helpString.push_back("enableGravity");
     helpString.push_back("getPose");
     helpString.push_back("loadModelFromFile");
     helpString.push_back("deleteAll");
@@ -643,6 +710,13 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("Set new object pose. ");
       helpString.push_back("@param id object id ");
       helpString.push_back("@param pose new pose ");
+      helpString.push_back("@return returns true or false on success failure ");
+    }
+    if (functionName=="enableGravity") {
+      helpString.push_back("bool enableGravity(const std::string& id, const bool enable) ");
+      helpString.push_back("Enable/disables gravity for an object ");
+      helpString.push_back("@param id object id ");
+      helpString.push_back("@param enable 1 to enable gravity, 0 otherwise ");
       helpString.push_back("@return returns true or false on success failure ");
     }
     if (functionName=="getPose") {

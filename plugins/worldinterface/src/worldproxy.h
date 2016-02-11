@@ -133,6 +133,13 @@ public:
    * @return returns value of the pose
    */
   virtual GazeboYarpPlugins::Pose getPose(const std::string& id);
+    /**
+   * Enable/disables gravity for an object
+   * @param id object id
+   * @param enable n1 to enable gravity, 0 otherwise
+   * @return returns true or false on success failure
+   */
+  virtual bool enableGravity(const std::string& id, const bool enable);
   /**
    * Delete all objects in the world.
    */

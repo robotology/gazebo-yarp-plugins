@@ -6,6 +6,7 @@ add_subdirectory(forcetorque)
 add_subdirectory(imu)
 add_subdirectory(jointsensors)
 add_subdirectory(showmodelcom)
+add_subdirectory(videotexture)
 
 if( GAZEBO_VERSION VERSION_GREATER 3.9 )
     add_subdirectory(worldinterface)

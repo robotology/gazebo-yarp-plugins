@@ -91,5 +91,9 @@ bool WorldInterfaceServerImpl:: attach(const std::string& id, const std::string&
   return proxy->attach(id,link_name);
 }
 
+bool WorldInterfaceServerImpl:: detach(const std::string& id)
+{
+  return proxy->detach(id);
+}
 
   

@@ -403,7 +403,6 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
                   <diffuse>1 0 0 1</diffuse>\
                   </material>\
               </visual>\
-              <gravity>GRAVITY</gravity>\
             \
              <visual name='visual_ball'>\
              <pose>0 0 0 0 0 0</pose>\
@@ -415,7 +414,10 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
                 <diffuse>RED GREEN BLUE 1</diffuse>\
                </material>\
             </visual>\
-            <gravity>GRAVITY</gravity>\
+            <gravity>0</gravity>\
+            <inertial>\
+                <mass>1e-21</mass>\
+            </inertial>\
             \
             </link>\
           </model>\
@@ -428,7 +430,6 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   replace(frameSDF_string, "LENGHT", size);
   replace(frameSDF_string, "BRADIUS", 0.06);
   replace(frameSDF_string, "RADIUS", 0.04);
-  replace(frameSDF_string, "GRAVITY", 0);
     
   replace(frameSDF_string, "ROLL", pose.roll);
   replace(frameSDF_string, "PITCH", pose.pitch);
@@ -532,15 +533,15 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
     }
     
     physics::JointPtr joint;
-    joint = world->GetPhysicsEngine()->CreateJoint("revolute", object_model_2);
+    joint = world->GetPhysicsEngine()->CreateJoint("revolute", object_model_1);
     if( !joint )
     {
         yError() << "Unable to create joint";
         return false;
     }
 
-    physics::LinkPtr object_link = object_model_1->GetLink();
-    physics::LinkPtr parent_link = HELPER_getLinkInModel(object_model_2,link_name);
+    physics::LinkPtr parent_link = object_model_1->GetLink();
+    physics::LinkPtr object_link = HELPER_getLinkInModel(object_model_2,link_name);
 
     if( !object_link )
     {
@@ -557,14 +558,40 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
     //object_link->SetWorldPose(parent_link_pose);
 
     //TODO add mutex
+    joint->SetName("magnet_joint");
+    joint->SetModel(object_model_1);
     joint->Load(parent_link, object_link, gazebo::math::Pose());
     joint->Attach(parent_link, object_link);
     joint->SetHighStop(0, 0);
     joint->SetLowStop(0, 0);
+     object_model_1->LoadJoints();
+     object_model_2->LoadJoints();
     //joint->SetParam("cfm", 0, 0);
+        yDebug() << object_model_1->GetJointCount() << object_model_2->GetJointCount();
 
     return true;
 }
+
+bool WorldProxy::detach(const std::string& id)
+{
+    physics::ModelPtr object_model=world->GetModel(id);
+    if (!object_model)
+    {
+      yError() <<"Object " << id << " does not exist in gazebo";
+      return false;
+    }
+    
+    yError() << "^^" << object_model->GetJointCount();
+    physics::JointPtr joint = object_model->GetJoint ("magnet_joint");
+    if (!joint)
+    {
+      yError() <<"Joint not found";
+      return false;
+    }
+    
+    return true;
+}
+
 
 GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {

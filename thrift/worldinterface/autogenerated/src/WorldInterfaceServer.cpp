@@ -147,6 +147,15 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_detach : public yarp::os::Portable {
+public:
+  std::string id;
+  bool _return;
+  void init(const std::string& id);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(11)) return false;
@@ -507,6 +516,29 @@ void WorldInterfaceServer_attach::init(const std::string& id, const std::string&
   this->link_name = link_name;
 }
 
+bool WorldInterfaceServer_detach::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("detach",1,1)) return false;
+  if (!writer.writeString(id)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_detach::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_detach::init(const std::string& id) {
+  _return = false;
+  this->id = id;
+}
+
 WorldInterfaceServer::WorldInterfaceServer() {
   yarp().setOwner(*this);
 }
@@ -646,6 +678,16 @@ bool WorldInterfaceServer::attach(const std::string& id, const std::string& link
   helper.init(id,link_name);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","bool WorldInterfaceServer::attach(const std::string& id, const std::string& link_name)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::detach(const std::string& id) {
+  bool _return = false;
+  WorldInterfaceServer_detach helper;
+  helper.init(id);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::detach(const std::string& id)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -962,6 +1004,22 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "detach") {
+      std::string id;
+      if (!reader.readString(id)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = detach(id);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "help") {
       std::string functionName;
       if (!reader.readString(functionName)) {
@@ -1010,6 +1068,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("deleteAll");
     helpString.push_back("getList");
     helpString.push_back("attach");
+    helpString.push_back("detach");
     helpString.push_back("help");
   }
   else {
@@ -1105,9 +1164,15 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     }
     if (functionName=="attach") {
       helpString.push_back("bool attach(const std::string& id, const std::string& link_name) ");
-      helpString.push_back("Get attach an object to a link of the robot. ");
+      helpString.push_back("Attach an object to a link of the robot. ");
       helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
       helpString.push_back("@param link_name name of a link of the robot ");
+      helpString.push_back("@return true if success, false otherwise ");
+    }
+    if (functionName=="detach") {
+      helpString.push_back("bool detach(const std::string& id) ");
+      helpString.push_back("Detach a previously attached object. ");
+      helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
       helpString.push_back("@return true if success, false otherwise ");
     }
     if (functionName=="help") {

@@ -125,6 +125,13 @@ public:
    */
   virtual bool attach(const std::string& id, const std::string& link_name);
   
+   /**
+   * Detach a previously attached object.
+   * @param id string that identifies object in gazebo (returned after creation)
+   * @return true if success, false otherwise
+   */
+  virtual bool detach(const std::string& id);
+  
   void attachWorldProxy(WorldProxy *p)
   {
     proxy=p;

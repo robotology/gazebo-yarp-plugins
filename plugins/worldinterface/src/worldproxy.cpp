@@ -337,6 +337,27 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
   return ret;
 }
 
+bool WorldProxy::deleteObject(const std::string& id)
+{
+  ObjectsListIt it=objects.begin();
+  while(it!=objects.end())
+  {
+    string obj=it->first;
+    physics::ModelPtr model=world->GetModel(obj);
+    if (model)
+    {
+      world->RemoveModel(obj);
+      objects.erase(it);
+      return true;
+    }
+    else
+    {
+      it++;
+    }
+  }
+  return false;
+}
+
 bool WorldProxy::deleteAll()
 {
   ObjectsListIt it=objects.begin();

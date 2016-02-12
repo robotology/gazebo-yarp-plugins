@@ -61,7 +61,11 @@ bool WorldInterfaceServerImpl::loadModelFromFile(const std::string& filename)
   return proxy->loadModelFromFile(filename);  
 }
 
-  
+bool WorldInterfaceServerImpl::deleteObject(const std::string& id)
+{
+  return proxy->deleteObject(id);
+}
+
 bool WorldInterfaceServerImpl::deleteAll()
 {
   return proxy->deleteAll();

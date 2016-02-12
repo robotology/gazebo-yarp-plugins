@@ -91,6 +91,15 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_deleteObject : public yarp::os::Portable {
+public:
+  std::string id;
+  bool _return;
+  void init(const std::string& id);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class WorldInterfaceServer_deleteAll : public yarp::os::Portable {
 public:
   bool _return;
@@ -314,6 +323,29 @@ void WorldInterfaceServer_loadModelFromFile::init(const std::string& filename) {
   this->filename = filename;
 }
 
+bool WorldInterfaceServer_deleteObject::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("deleteObject",1,1)) return false;
+  if (!writer.writeString(id)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_deleteObject::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_deleteObject::init(const std::string& id) {
+  _return = false;
+  this->id = id;
+}
+
 bool WorldInterfaceServer_deleteAll::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -446,6 +478,16 @@ bool WorldInterfaceServer::loadModelFromFile(const std::string& filename) {
   helper.init(filename);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","bool WorldInterfaceServer::loadModelFromFile(const std::string& filename)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::deleteObject(const std::string& id) {
+  bool _return = false;
+  WorldInterfaceServer_deleteObject helper;
+  helper.init(id);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::deleteObject(const std::string& id)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -668,6 +710,22 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "deleteObject") {
+      std::string id;
+      if (!reader.readString(id)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = deleteObject(id);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "deleteAll") {
       bool _return;
       _return = deleteAll();
@@ -740,6 +798,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("enableCollision");
     helpString.push_back("getPose");
     helpString.push_back("loadModelFromFile");
+    helpString.push_back("deleteObject");
     helpString.push_back("deleteAll");
     helpString.push_back("getList");
     helpString.push_back("help");
@@ -803,6 +862,12 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("bool loadModelFromFile(const std::string& filename) ");
       helpString.push_back("Load a model from file. ");
       helpString.push_back("@param id string that specifies the name of the model ");
+      helpString.push_back("@return returns true/false on success failure. ");
+    }
+    if (functionName=="deleteObject") {
+      helpString.push_back("bool deleteObject(const std::string& id) ");
+      helpString.push_back("Delete an object. ");
+      helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
       helpString.push_back("@return returns true/false on success failure. ");
     }
     if (functionName=="deleteAll") {

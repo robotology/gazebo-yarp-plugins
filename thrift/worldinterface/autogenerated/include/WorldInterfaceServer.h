@@ -78,6 +78,12 @@ public:
    */
   virtual bool loadModelFromFile(const std::string& filename);
   /**
+   * Delete an object.
+   * @param id string that identifies object in gazebo (returned after creation)
+   * @return returns true/false on success failure.
+   */
+  virtual bool deleteObject(const std::string& id);
+  /**
    * Delete all objects in the world.
    */
   virtual bool deleteAll();

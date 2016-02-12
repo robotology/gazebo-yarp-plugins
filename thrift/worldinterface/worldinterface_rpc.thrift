@@ -91,7 +91,14 @@ service WorldInterfaceServer {
     * @return returns true/false on success failure.
     */
     bool loadModelFromFile(1:string filename);
-      
+    
+     /** 
+    * Delete an object.
+    * @param id string that identifies object in gazebo (returned after creation)
+    * @return returns true/false on success failure.
+    */
+    bool deleteObject(1:string id);
+  
     /**
     * Delete all objects in the world.
     */

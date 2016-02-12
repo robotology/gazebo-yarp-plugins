@@ -71,6 +71,16 @@ bool WorldInterfaceServerImpl::deleteAll()
   return proxy->deleteAll();
 }
 
+std::string WorldInterfaceServerImpl::makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
+{
+  return proxy->makeFrame(size, pose, color);
+}
+
+bool WorldInterfaceServerImpl::changeColor(const std::string& id, const GazeboYarpPlugins::Color& color)
+{
+  return proxy->changeColor(id, color);
+}
+  
 std::vector<std::string> WorldInterfaceServerImpl::getList()
 {
   return proxy->getList();

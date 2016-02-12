@@ -62,7 +62,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
           <model name ='sphere'>\
             <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
             <link name ='link'>\
-              <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
+              <pose>0 0 0 0 0 0</pose>\
               <collision name ='collision'>\
                 <geometry>\
                   <sphere><radius>RADIUS</radius></sphere>\
@@ -127,7 +127,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
         <model name ='box'>\
       <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
       <link name ='link'>\
-      <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
+      <pose>0 0 0 0 0 0</pose>\
       <collision name ='collision'>\
         <geometry>\
           <box><size>WIDTH HEIGHT THICKNESS</size></box>\
@@ -195,7 +195,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
         <model name ='cylinder'>\
       <pose>POSEX POSEY POSEZ  ROLL PITCH YAW</pose>\
          <link name ='link'>\
-      <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
+      <pose>0 0 0 0 0 0</pose>\
       <collision name ='collision'>\
         <geometry>\
           <cylinder><radius>RADIUS</radius><length>LENGTH</length></cylinder>\
@@ -295,6 +295,127 @@ bool WorldProxy::enableGravity(const std::string& id, const bool enable)
   return true;
 }
 
+
+std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
+{
+  sdf::SDF frameSDF;
+
+  string frameSDF_string=string(
+      "<?xml version='1.0'?>\
+       <sdf version ='1.4'>\
+          <model name ='frame'>\
+            <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
+            \
+            <link name ='link_z'>\
+              <pose>0 0 HLENGHT 0 0 0</pose>\
+              <visual name ='visual'>\
+                <geometry>\
+                   <cylinder><radius>RADIUS</radius><length>LENGHT</length></cylinder>\
+                </geometry>\
+                  <material>\
+                  <ambient>0 0 1 1</ambient>\
+                  <diffuse>0 0 1 1</diffuse>\
+                  </material>\
+              </visual>\
+              <gravity>GRAVITY</gravity>\
+            </link>\
+            \
+            <link name ='link_y'>\
+              <pose>0 HLENGHT 0 1.5707 0 0</pose>\
+              <visual name ='visual'>\
+                <geometry>\
+                   <cylinder><radius>RADIUS</radius><length>LENGHT</length></cylinder>\
+                </geometry>\
+                  <material>\
+                  <ambient>0 1 0 1</ambient>\
+                  <diffuse>0 1 0 1</diffuse>\
+                  </material>\
+              </visual>\
+              <gravity>GRAVITY</gravity>\
+            </link>\
+            \
+            <link name ='link_x'>\
+              <pose>HLENGHT 0 0 0 1.5707 0</pose>\
+              <visual name ='visual'>\
+                <geometry>\
+                   <cylinder><radius>RADIUS</radius><length>LENGHT</length></cylinder>\
+                </geometry>\
+                  <material>\
+                  <ambient>1 0 0 1</ambient>\
+                  <diffuse>1 0 0 1</diffuse>\
+                  </material>\
+              </visual>\
+              <gravity>GRAVITY</gravity>\
+            </link>\
+            <link name ='ball'>\
+      <pose>0 0 0 0 0 0</pose>\
+      <visual name='visual'>\
+        <geometry>\
+                  <sphere><radius>BRADIUS</radius></sphere>\
+        </geometry>\
+        <material>\
+                   <ambient>RED GREEN BLUE 1</ambient>\
+                   <diffuse>RED GREEN BLUE 1</diffuse>\
+        </material>\
+       </visual>\
+       <gravity>GRAVITY</gravity>\
+       </link>\
+          </model>\
+        </sdf>");
+
+  replace(frameSDF_string, "POSEX", pose.x);
+  replace(frameSDF_string, "POSEY", pose.y);
+  replace(frameSDF_string, "POSEZ", pose.z);
+  replace(frameSDF_string, "HLENGHT", size/2);
+  replace(frameSDF_string, "LENGHT", size);
+  replace(frameSDF_string, "BRADIUS", 0.06);
+  replace(frameSDF_string, "RADIUS", 0.04);
+  replace(frameSDF_string, "GRAVITY", 0);
+    
+  replace(frameSDF_string, "ROLL", pose.roll);
+  replace(frameSDF_string, "PITCH", pose.pitch);
+  replace(frameSDF_string, "YAW", pose.yaw);
+
+  replace(frameSDF_string, "RED", color.r/255.0);
+  replace(frameSDF_string, "GREEN", color.g/255.0);
+  replace(frameSDF_string, "BLUE", color.b/255.0);
+
+  frameSDF.SetFromString(frameSDF_string);
+
+  int nobjects=++objects.count;
+  ostringstream objlabel;
+  objlabel << "frame"<< nobjects;
+
+  sdf::ElementPtr model = getSDFRoot(frameSDF)->GetElement("model");
+
+  model->GetAttribute("name")->SetFromString(objlabel.str());
+
+  world->InsertModelSDF(frameSDF);
+
+  physics::ModelPtr tmp=world->GetModel(objlabel.str());
+  objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
+
+  if (isSynchronous())
+     waitForEngine();
+
+  return objlabel.str();
+}
+
+bool WorldProxy::changeColor(const std::string& id, const GazeboYarpPlugins::Color& color)
+{
+  physics::ModelPtr model=world->GetModel(id);
+    if (!model)
+    {
+      yError() <<"Object " << id << " does not exist in gazebo";
+      return false;
+    }
+    
+  if (isSynchronous())
+     waitForEngine();
+
+  return true;
+}
+  
 bool WorldProxy::enableCollision(const std::string& id, const bool enable)
 {
   physics::ModelPtr model=world->GetModel(id);

@@ -54,6 +54,23 @@ service WorldInterfaceServer {
     */
     string makeCylinder (1: double radius, 2: double length, 3: Pose pose, 4: Color color);
     
+    /** 
+    * Make a reference frame.
+    * @param size size of the frame [m]
+    * @param pose pose of the frame [m]
+    * @param color color of the frame
+    * @return returns a string that contains the name of the object in the world
+    */
+    string makeFrame (1: double size, 2: Pose pose, 3: Color color);
+    
+    /** 
+    * Change the color of an object
+    * @param id object id
+    * @param color color of the frame
+    * @return returns true or false on success failure
+    */
+    bool changeColor (1: string id, 2: Color color);
+    
      /** 
     * Set new object pose.
     * @param id object id
@@ -77,7 +94,7 @@ service WorldInterfaceServer {
     * @return returns true or false on success failure
     */
     bool enableCollision (1: string id, 2: bool enable);
-
+    
      /** 
     * Get object pose.
     * @param id string that identifies object in gazebo (returned after creation)

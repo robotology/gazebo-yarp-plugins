@@ -153,6 +153,23 @@ public:
    * @return returns true/false on success failure.
    */
   virtual bool deleteObject(const std::string& id);
+  
+    /**
+   * Make a reference frame.
+   * @param size size of the frame [m]
+   * @param pose pose of the frame [m]
+   * @param color color of the frame
+   * @return returns a string that contains the name of the object in the world
+   */
+  virtual std::string makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  /**
+   * Change the color of an object
+   * @param id object id
+   * @param color color of the frame
+   * @return returns true or false on success failure
+   */
+  virtual bool changeColor(const std::string& id, const GazeboYarpPlugins::Color& color);
+  
   /**
    * Delete all objects in the world.
    */

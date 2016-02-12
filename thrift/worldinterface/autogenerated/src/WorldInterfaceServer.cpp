@@ -43,6 +43,27 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_makeFrame : public yarp::os::Portable {
+public:
+  double size;
+  Pose pose;
+  Color color;
+  std::string _return;
+  void init(const double size, const Pose& pose, const Color& color);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class WorldInterfaceServer_changeColor : public yarp::os::Portable {
+public:
+  std::string id;
+  Color color;
+  bool _return;
+  void init(const std::string& id, const Color& color);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class WorldInterfaceServer_setPose : public yarp::os::Portable {
 public:
   std::string id;
@@ -200,6 +221,58 @@ void WorldInterfaceServer_makeCylinder::init(const double radius, const double l
   this->radius = radius;
   this->length = length;
   this->pose = pose;
+  this->color = color;
+}
+
+bool WorldInterfaceServer_makeFrame::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(11)) return false;
+  if (!writer.writeTag("makeFrame",1,1)) return false;
+  if (!writer.writeDouble(size)) return false;
+  if (!writer.write(pose)) return false;
+  if (!writer.write(color)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_makeFrame::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readString(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_makeFrame::init(const double size, const Pose& pose, const Color& color) {
+  _return = "";
+  this->size = size;
+  this->pose = pose;
+  this->color = color;
+}
+
+bool WorldInterfaceServer_changeColor::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(5)) return false;
+  if (!writer.writeTag("changeColor",1,1)) return false;
+  if (!writer.writeString(id)) return false;
+  if (!writer.write(color)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_changeColor::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_changeColor::init(const std::string& id, const Color& color) {
+  _return = false;
+  this->id = id;
   this->color = color;
 }
 
@@ -432,6 +505,26 @@ std::string WorldInterfaceServer::makeCylinder(const double radius, const double
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
+std::string WorldInterfaceServer::makeFrame(const double size, const Pose& pose, const Color& color) {
+  std::string _return = "";
+  WorldInterfaceServer_makeFrame helper;
+  helper.init(size,pose,color);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","std::string WorldInterfaceServer::makeFrame(const double size, const Pose& pose, const Color& color)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::changeColor(const std::string& id, const Color& color) {
+  bool _return = false;
+  WorldInterfaceServer_changeColor helper;
+  helper.init(id,color);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::changeColor(const std::string& id, const Color& color)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
 bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose) {
   bool _return = false;
   WorldInterfaceServer_setPose helper;
@@ -615,6 +708,53 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "makeFrame") {
+      double size;
+      Pose pose;
+      Color color;
+      if (!reader.readDouble(size)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.read(pose)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.read(color)) {
+        reader.fail();
+        return false;
+      }
+      std::string _return;
+      _return = makeFrame(size,pose,color);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "changeColor") {
+      std::string id;
+      Color color;
+      if (!reader.readString(id)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.read(color)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = changeColor(id,color);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "setPose") {
       std::string id;
       Pose pose;
@@ -793,6 +933,8 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("makeSphere");
     helpString.push_back("makeBox");
     helpString.push_back("makeCylinder");
+    helpString.push_back("makeFrame");
+    helpString.push_back("changeColor");
     helpString.push_back("setPose");
     helpString.push_back("enableGravity");
     helpString.push_back("enableCollision");
@@ -830,6 +972,21 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("@param pose pose of the cylinder [m] ");
       helpString.push_back("@param color color of the cylinder ");
       helpString.push_back("@return returns a string that contains the name of the object in the world ");
+    }
+    if (functionName=="makeFrame") {
+      helpString.push_back("std::string makeFrame(const double size, const Pose& pose, const Color& color) ");
+      helpString.push_back("Make a reference frame. ");
+      helpString.push_back("@param size size of the frame [m] ");
+      helpString.push_back("@param pose pose of the frame [m] ");
+      helpString.push_back("@param color color of the frame ");
+      helpString.push_back("@return returns a string that contains the name of the object in the world ");
+    }
+    if (functionName=="changeColor") {
+      helpString.push_back("bool changeColor(const std::string& id, const Color& color) ");
+      helpString.push_back("Change the color of an object ");
+      helpString.push_back("@param id object id ");
+      helpString.push_back("@param color color of the frame ");
+      helpString.push_back("@return returns true or false on success failure ");
     }
     if (functionName=="setPose") {
       helpString.push_back("bool setPose(const std::string& id, const Pose& pose) ");

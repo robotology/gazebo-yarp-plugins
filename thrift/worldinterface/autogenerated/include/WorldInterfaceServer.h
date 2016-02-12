@@ -45,6 +45,21 @@ public:
    */
   virtual std::string makeCylinder(const double radius, const double length, const Pose& pose, const Color& color);
   /**
+   * Make a reference frame.
+   * @param size size of the frame [m]
+   * @param pose pose of the frame [m]
+   * @param color color of the frame
+   * @return returns a string that contains the name of the object in the world
+   */
+  virtual std::string makeFrame(const double size, const Pose& pose, const Color& color);
+  /**
+   * Change the color of an object
+   * @param id object id
+   * @param color color of the frame
+   * @return returns true or false on success failure
+   */
+  virtual bool changeColor(const std::string& id, const Color& color);
+  /**
    * Set new object pose.
    * @param id object id
    * @param pose new pose

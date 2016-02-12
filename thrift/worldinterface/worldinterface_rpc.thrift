@@ -71,6 +71,14 @@ service WorldInterfaceServer {
     bool enableGravity (1: string id, 2: bool enable);
 
      /** 
+    * Enable/disables collision detection for an object
+    * @param id object id
+    * @param enable 1 to enable collision detection, 0 otherwise
+    * @return returns true or false on success failure
+    */
+    bool enableCollision (1: string id, 2: bool enable);
+
+     /** 
     * Get object pose.
     * @param id string that identifies object in gazebo (returned after creation)
     * @return returns value of the pose

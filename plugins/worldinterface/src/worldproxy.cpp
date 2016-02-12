@@ -295,6 +295,24 @@ bool WorldProxy::enableGravity(const std::string& id, const bool enable)
   return true;
 }
 
+bool WorldProxy::enableCollision(const std::string& id, const bool enable)
+{
+  physics::ModelPtr model=world->GetModel(id);
+    if (!model)
+    {
+      yError() <<"Object " << id << " does not exist in gazebo";
+      return false;
+    }
+
+  if (enable==true) {model->SetCollideMode("all");yInfo("Collision detection enabled for model %s", id.c_str());}
+  else {model->SetCollideMode("none");yInfo("Collision detection disabled for model %s", id.c_str());}
+    
+  if (isSynchronous())
+     waitForEngine();
+
+  return true;
+}
+
 GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {
   GazeboYarpPlugins::Pose ret;
@@ -339,15 +357,32 @@ bool WorldProxy::deleteAll()
 
 std::vector<std::string> WorldProxy::getList()
 {
-  vector<std::string> ret;
-
   ObjectsListIt it=objects.begin();
+
+  //first update the list because objects can be removed from the gui too...
   while(it!=objects.end())
   {
-    ret.push_back(it->first);
-    it++;
+    string obj=it->first;
+    physics::ModelPtr model=world->GetModel(obj);
+    if (!model)
+    {
+      it=objects.erase(it);
+    }
+    else
+    {
+      it++;
+    }
   }
 
+  //...then fill the return vector
+  vector<std::string> ret;
+  it=objects.begin();
+  while(it!=objects.end())
+  {
+     ret.push_back(it->first);
+     it++;  
+  }
+  
   return ret;
 }
 

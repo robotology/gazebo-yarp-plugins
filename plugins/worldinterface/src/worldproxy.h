@@ -136,10 +136,17 @@ public:
     /**
    * Enable/disables gravity for an object
    * @param id object id
-   * @param enable n1 to enable gravity, 0 otherwise
+   * @param enable 1 to enable gravity, 0 otherwise
    * @return returns true or false on success failure
    */
   virtual bool enableGravity(const std::string& id, const bool enable);
+    /**
+   * Enable/disables collision detection for an object
+   * @param id object id
+   * @param enable 1 to enable collision detection, 0 otherwise
+   * @return returns true or false on success failure
+   */
+  virtual bool enableCollision(const std::string& id, const bool enable);
   /**
    * Delete all objects in the world.
    */

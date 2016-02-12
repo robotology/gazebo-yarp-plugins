@@ -51,6 +51,11 @@ bool WorldInterfaceServerImpl::enableGravity(const std::string& id, const bool e
   return proxy->enableGravity(id, enable);
 }
 
+bool WorldInterfaceServerImpl::enableCollision(const std::string& id, const bool enable)
+{                              
+  return proxy->enableCollision(id, enable);
+}
+
 bool WorldInterfaceServerImpl::loadModelFromFile(const std::string& filename)
 {
   return proxy->loadModelFromFile(filename);  

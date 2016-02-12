@@ -86,5 +86,10 @@ std::vector<std::string> WorldInterfaceServerImpl::getList()
   return proxy->getList();
 }
 
+bool WorldInterfaceServerImpl:: attach(const std::string& id, const std::string& link_name)
+{
+  return proxy->attach(id,link_name);
+}
+
 
   

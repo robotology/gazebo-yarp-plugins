@@ -127,4 +127,12 @@ service WorldInterfaceServer {
     */
     list<string> getList();
     
+    /**
+    * Get attach an object to a link of the robot.
+    * @param id string that identifies object in gazebo (returned after creation)
+    * @param link_name name of a link of the robot
+    * @return true if success, false otherwise
+    */
+    bool attach(1:string id, 2:string link_name);
+    
 }

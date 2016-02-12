@@ -137,6 +137,16 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_attach : public yarp::os::Portable {
+public:
+  std::string id;
+  std::string link_name;
+  bool _return;
+  void init(const std::string& id, const std::string& link_name);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(11)) return false;
@@ -472,6 +482,31 @@ bool WorldInterfaceServer_getList::read(yarp::os::ConnectionReader& connection) 
 void WorldInterfaceServer_getList::init() {
 }
 
+bool WorldInterfaceServer_attach::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("attach",1,1)) return false;
+  if (!writer.writeString(id)) return false;
+  if (!writer.writeString(link_name)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_attach::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_attach::init(const std::string& id, const std::string& link_name) {
+  _return = false;
+  this->id = id;
+  this->link_name = link_name;
+}
+
 WorldInterfaceServer::WorldInterfaceServer() {
   yarp().setOwner(*this);
 }
@@ -601,6 +636,16 @@ std::vector<std::string>  WorldInterfaceServer::getList() {
   helper.init();
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","std::vector<std::string>  WorldInterfaceServer::getList()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::attach(const std::string& id, const std::string& link_name) {
+  bool _return = false;
+  WorldInterfaceServer_attach helper;
+  helper.init(id,link_name);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::attach(const std::string& id, const std::string& link_name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -896,6 +941,27 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "attach") {
+      std::string id;
+      std::string link_name;
+      if (!reader.readString(id)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readString(link_name)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = attach(id,link_name);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "help") {
       std::string functionName;
       if (!reader.readString(functionName)) {
@@ -943,6 +1009,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("deleteObject");
     helpString.push_back("deleteAll");
     helpString.push_back("getList");
+    helpString.push_back("attach");
     helpString.push_back("help");
   }
   else {
@@ -1035,6 +1102,13 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("std::vector<std::string>  getList() ");
       helpString.push_back("List id of all objects that have been added to the world. ");
       helpString.push_back("@return return a list of string containing the id of the objects ");
+    }
+    if (functionName=="attach") {
+      helpString.push_back("bool attach(const std::string& id, const std::string& link_name) ");
+      helpString.push_back("Get attach an object to a link of the robot. ");
+      helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
+      helpString.push_back("@param link_name name of a link of the robot ");
+      helpString.push_back("@return true if success, false otherwise ");
     }
     if (functionName=="help") {
       helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");

@@ -187,7 +187,14 @@ public:
    */
   virtual bool loadModelFromFile(const std::string& filename);
 
-
+  /**
+   * Get attach an object to a link of the robot.
+   * @param id string that identifies object in gazebo (returned after creation)
+   * @param link_name name of a link of the robot
+   * @return true if success, false otherwise
+   */
+  virtual bool attach(const std::string& id, const std::string& link_name);
+  
   void attachWorldPointer(gazebo::physics::WorldPtr p)
   {
     world=p;
@@ -225,6 +232,9 @@ public:
   {
     isSynchro=f;
   }
+  
+  gazebo::physics::LinkPtr HELPER_getLinkInModel(gazebo::physics::ModelPtr model, std::string link_name);
+  bool HELPER_hasEnding (std::string const &fullString, std::string const &ending);
 };
 
 #endif

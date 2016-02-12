@@ -107,6 +107,13 @@ public:
    * @return return a list of string containing the id of the objects
    */
   virtual std::vector<std::string>  getList();
+  /**
+   * Get attach an object to a link of the robot.
+   * @param id string that identifies object in gazebo (returned after creation)
+   * @param link_name name of a link of the robot
+   * @return true if success, false otherwise
+   */
+  virtual bool attach(const std::string& id, const std::string& link_name);
   virtual bool read(yarp::os::ConnectionReader& connection);
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };

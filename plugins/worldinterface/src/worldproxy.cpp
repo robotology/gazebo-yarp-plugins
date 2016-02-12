@@ -257,7 +257,7 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
   physics::ModelPtr model=world->GetModel(id);
     if (!model)
     {
-      cerr<<"Object " << id << " does not exist in gazebo\n";
+      yError()<<"Object " << id << " does not exist in gazebo\n";
       return false;
     }
 
@@ -299,8 +299,8 @@ bool WorldProxy::enableGravity(const std::string& id, const bool enable)
 std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
 {
   sdf::SDF frameSDF;
-
-  string frameSDF_string=string(
+/*
+    string frameSDF_string=string(
       "<?xml version='1.0'?>\
        <sdf version ='1.4'>\
           <model name ='frame'>\
@@ -360,6 +360,64 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
        </visual>\
        <gravity>GRAVITY</gravity>\
        </link>\
+          </model>\
+        </sdf>");
+    */
+  string frameSDF_string=string(
+      "<?xml version='1.0'?>\
+       <sdf version ='1.4'>\
+          <model name ='frame'>\
+            <pose>POSEX POSEY POSEZ ROLL PITCH YAW</pose>\
+            \
+            <link name ='link'>\
+             \
+              <visual name ='visual_z'>\
+                <pose>0 0 HLENGHT 0 0 0</pose>\
+                <geometry>\
+                   <cylinder><radius>RADIUS</radius><length>LENGHT</length></cylinder>\
+                </geometry>\
+                  <material>\
+                  <ambient>0 0 1 1</ambient>\
+                  <diffuse>0 0 1 1</diffuse>\
+                  </material>\
+              </visual>\
+              \
+              <visual name ='visual_y'>\
+              <pose>0 HLENGHT 0 1.5707 0 0</pose>\
+                <geometry>\
+                   <cylinder><radius>RADIUS</radius><length>LENGHT</length></cylinder>\
+                </geometry>\
+                  <material>\
+                  <ambient>0 1 0 1</ambient>\
+                  <diffuse>0 1 0 1</diffuse>\
+                  </material>\
+              </visual>\
+              \
+              <visual name ='visual_x'>\
+              <pose>HLENGHT 0 0 0 1.5707 0</pose>\
+                <geometry>\
+                   <cylinder><radius>RADIUS</radius><length>LENGHT</length></cylinder>\
+                </geometry>\
+                  <material>\
+                  <ambient>1 0 0 1</ambient>\
+                  <diffuse>1 0 0 1</diffuse>\
+                  </material>\
+              </visual>\
+              <gravity>GRAVITY</gravity>\
+            \
+             <visual name='visual_ball'>\
+             <pose>0 0 0 0 0 0</pose>\
+             <geometry>\
+               <sphere><radius>BRADIUS</radius></sphere>\
+              </geometry>\
+             <material>\
+               <ambient>RED GREEN BLUE 1</ambient>\
+                <diffuse>RED GREEN BLUE 1</diffuse>\
+               </material>\
+            </visual>\
+            <gravity>GRAVITY</gravity>\
+            \
+            </link>\
           </model>\
         </sdf>");
 
@@ -434,6 +492,80 @@ bool WorldProxy::enableCollision(const std::string& id, const bool enable)
   return true;
 }
 
+gazebo::physics::LinkPtr WorldProxy::HELPER_getLinkInModel(gazebo::physics::ModelPtr model, std::string link_name)
+{
+    gazebo::physics::Link_V model_links = model->GetLinks();
+    for(int i=0; i < model_links.size(); i++ )
+    {
+        std::string candidate_link = model_links[i]->GetScopedName();
+        if( HELPER_hasEnding(candidate_link,"::"+link_name) )
+	{
+            return model_links[i];
+        }
+    }
+    return gazebo::physics::LinkPtr();
+}
+
+bool WorldProxy::HELPER_hasEnding (std::string const &fullString, std::string const &ending)
+{
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
+
+bool WorldProxy::attach(const std::string& id, const std::string& link_name)
+{
+    physics::ModelPtr object_model_1=world->GetModel(id);
+    if (!object_model_1)
+    {
+      yError() <<"Object " << id << " does not exist in gazebo";
+      return false;
+    }
+    
+    physics::ModelPtr object_model_2=world->GetModel("SIM_CER_ROBOT");
+    if (!object_model_2)
+    {
+      yError() <<"Object " << "SIM_CER_ROBOT" << " does not exist in gazebo";
+      return false;
+    }
+    
+    physics::JointPtr joint;
+    joint = world->GetPhysicsEngine()->CreateJoint("revolute", object_model_2);
+    if( !joint )
+    {
+        yError() << "Unable to create joint";
+        return false;
+    }
+
+    physics::LinkPtr object_link = object_model_1->GetLink();
+    physics::LinkPtr parent_link = HELPER_getLinkInModel(object_model_2,link_name);
+
+    if( !object_link )
+    {
+        yError() << "Unable to get object_link";
+        return false;
+    }
+    if( !parent_link )
+    {
+        yError() << "Unable to get parent link";
+        return false;
+    }
+    
+    //math::Pose parent_link_pose = parent_link->GetWorldCoGPose();
+    //object_link->SetWorldPose(parent_link_pose);
+
+    //TODO add mutex
+    joint->Load(parent_link, object_link, gazebo::math::Pose());
+    joint->Attach(parent_link, object_link);
+    joint->SetHighStop(0, 0);
+    joint->SetLowStop(0, 0);
+    //joint->SetParam("cfm", 0, 0);
+
+    return true;
+}
+
 GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {
   GazeboYarpPlugins::Pose ret;
@@ -441,7 +573,7 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
   physics::ModelPtr model=world->GetModel(id);
     if (!model)
     {
-      cerr<<"Object " << id << " does not exist in gazebo\n";
+      yError()<<"Object " << id << " does not exist in gazebo\n";
       return ret;
     }
 
@@ -530,7 +662,7 @@ std::vector<std::string> WorldProxy::getList()
 
 bool WorldProxy::loadModelFromFile(const std::string& filename)
 {
-  cerr<<"loadFromModelFile not yet implemented\n";
+  yError()<<"loadFromModelFile not yet implemented\n";
   return false;
 }
 
@@ -545,7 +677,7 @@ void WorldProxy::update(const common::UpdateInfo & _info)
     physics::ModelPtr model=world->GetModel(cmd.name);
     if (!model)
     {
-      cerr<<"Object " << cmd.name << " does not exist in gazebo\n";
+      yError()<<"Object " << cmd.name << " does not exist in gazebo\n";
     }
 
     model->SetWorldPose(cmd.pose);

@@ -6,7 +6,15 @@ add_subdirectory(forcetorque)
 add_subdirectory(imu)
 add_subdirectory(jointsensors)
 add_subdirectory(showmodelcom)
-add_subdirectory(videotexture)
+
+find_package(OpenCV QUIET)
+option(GAZEBO_YARP_PLUGINS_HAS_OPENCV "Compile plugins that depend on OpenCV" ${OpenCV_FOUND})
+
+if(GAZEBO_YARP_PLUGINS_HAS_OPENCV)
+    add_subdirectory(videotexture)
+else()
+    message(WARNING "GAZEBO_YARP_PLUGINS_HAS_OPENCV CMake option set to off, disabling videotexture plugin.")
+endif()
 
 if( GAZEBO_VERSION VERSION_GREATER 3.9 )
     add_subdirectory(worldinterface)

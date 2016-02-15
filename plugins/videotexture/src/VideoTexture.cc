@@ -68,7 +68,7 @@ namespace gazebo
 
   void VideoVisual::onRead(ImageType &img)
   {
-    cv::Mat matimage = cv::Mat( static_cast<IplImage*>(img.getIplImage()) ); 
+    cv::Mat matimage = cv::cvarrToMat( static_cast<IplImage*>(img.getIplImage()) ); 
     this->render(matimage);
     matimage.release();
   }

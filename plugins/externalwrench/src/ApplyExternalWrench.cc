@@ -71,7 +71,7 @@ void ApplyExternalWrench::UpdateChild()
 //     std::cout << std::endl;
 
     if ( !this->m_onLink ) {
-        std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< " not found"<<std::endl;
+        //std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< " not found"<<std::endl;
         return;
     }
 
@@ -86,7 +86,7 @@ void ApplyExternalWrench::UpdateChild()
     static bool applying_force_flag = 0;
 
     double time_current = yarp::os::Time::now();
-    
+
     if ( m_newCommand )
     {
         timeIni = yarp::os::Time::now();

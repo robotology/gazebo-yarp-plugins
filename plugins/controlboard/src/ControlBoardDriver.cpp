@@ -24,7 +24,9 @@ const double RobotPositionTolerance_revolute = 0.9;      // Degrees
 const double RobotPositionTolerance_linear   = 0.004;    // Meters
 
 GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : deviceName("") {}
+
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
+
 
 //generic function that check is key1 is present in input bottle and that the result has size elements
 // return true/false
@@ -102,6 +104,17 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_clock = 0;
     m_torqueOffsett = 0;
 
+    m_trajectory_generator  = new TrajectoryGenerator*[m_numberOfJoints];
+    m_trajectory_generator_type = new int[m_numberOfJoints];
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+      m_trajectory_generator_type[j] = 0;//@@@
+      if (m_trajectory_generator_type[j]==1)
+         {m_trajectory_generator[j] = new MinJerkTrajectoryGenerator(m_robot);}
+      else
+         {m_trajectory_generator[j] = new ConstSpeedTrajectoryGenerator(m_robot);}
+    }
+    
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
         m_controlMode[j] = VOCAB_CM_POSITION;
@@ -230,39 +243,6 @@ bool GazeboYarpControlBoardDriver::configureJointType()
     return ret;
 }
 
-void GazeboYarpControlBoardDriver::computeTrajectory(const int j)
-{
-
-    double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
-    double error_abs = fabs(m_referencePositions[j] - m_trajectoryGenerationReferencePosition[j]);
-
-    // if delta is bigger then threshold, in some cases this will never converge to an end.
-    // Check to prevent those cases
-    if(error_abs)
-    {
-        // Watch out for problem
-        if((error_abs < m_positionThreshold[j]) || ( error_abs < step) )    // This id both 'normal ending condition' and safe procedure when step > threshold causing infinite oscillation around final position
-        {
-            // Just go to final position
-            m_referencePositions[j] = m_trajectoryGenerationReferencePosition[j];
-            m_isMotionDone[j] = true;
-            return;
-        }
-
-        if (m_trajectoryGenerationReferencePosition[j] > m_referencePositions[j])
-        {
-            m_referencePositions[j] += step;
-            m_isMotionDone[j] = false;
-        }
-        else
-        {
-            m_referencePositions[j] -= step;
-            m_isMotionDone[j] = false;
-        }
-
-    }
-}
-
 void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
     m_clock++;
@@ -292,11 +272,14 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
         //set pos joint value, set m_referenceVelocities joint value
-        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
-            && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
-            if (m_clock % _T_controller == 0) {
-                if (m_controlMode[j] == VOCAB_CM_POSITION) {
-                    computeTrajectory(j);
+        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+        {
+            if (m_clock % _T_controller == 0)
+            {
+                if (m_controlMode[j] == VOCAB_CM_POSITION)
+                {
+                    m_referencePositions[j] = m_trajectory_generator[j]->computeTrajectory();
+                    m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
                 }
                 sendPositionToGazebo(j, m_referencePositions[j]);
             }
@@ -322,11 +305,14 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
             }
-        } else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT)
-            && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
-            if (m_clock % _T_controller == 0) {
-                if (m_controlMode[j] == VOCAB_CM_POSITION) {
-                    computeTrajectory(j);
+        } else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
+        {
+            if (m_clock % _T_controller == 0)
+            {
+                if (m_controlMode[j] == VOCAB_CM_POSITION)
+                {
+                    m_referencePositions[j] = m_trajectory_generator[j]->computeTrajectory();
+                    m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
                 }
                 sendImpPositionToGazebo(j, m_referencePositions[j]);
             }

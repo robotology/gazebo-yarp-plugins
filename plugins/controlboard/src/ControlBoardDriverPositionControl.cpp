@@ -12,8 +12,10 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
+    if (j >= 0 && j < (int)m_numberOfJoints)
+    {
         m_trajectoryGenerationReferencePosition[j] = ref; //we will use this m_trajectoryGenerationReferencePosition in the next simulation onUpdate call to ask gazebo to set PIDs m_trajectoryGenerationReferencePosition to this value
+        m_trajectory_generator[j]->initTrajectory (m_positions[j], m_trajectoryGenerationReferencePosition[j], m_trajectoryGenerationReferenceSpeed[j]);
         return true;
     }
     return false;
@@ -36,8 +38,9 @@ bool GazeboYarpControlBoardDriver::stop() //WORKS
 
 bool GazeboYarpControlBoardDriver::positionMove(const double *refs) //WORKS
 {
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_trajectoryGenerationReferencePosition[i] = refs[i];
+    for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+    {
+	positionMove(i,refs[i]);
     }
     return true;
 }
@@ -51,7 +54,8 @@ bool GazeboYarpControlBoardDriver::getAxes(int *ax) // WORKS
 
 bool GazeboYarpControlBoardDriver::setRefSpeed(int j, double sp) //WORKS
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
+    if (j >= 0 && j < (int)m_numberOfJoints)
+    {
         m_trajectoryGenerationReferenceSpeed[j] = sp;
         return true;
     }
@@ -89,8 +93,9 @@ bool GazeboYarpControlBoardDriver::relativeMove(int j, double delta) //NOT TESTE
 
 bool GazeboYarpControlBoardDriver::relativeMove(const double *deltas) //NOT TESTED
 {
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_trajectoryGenerationReferencePosition[i] = m_positions[i]+ deltas[i]; //TODO check if this is ok or m_trajectoryGenerationReferencePosition=m_trajectoryGenerationReferencePosition+delta!!!
+    for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+    {
+        relativeMove(i,deltas[i]);
     }
     return true;
 }
@@ -175,7 +180,8 @@ bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *jo
 {
     if (!joints || !refs) return false;
     bool ret = true;
-    for (int i = 0; i < n_joint && ret; i++) {
+    for (int i = 0; i < n_joint && ret; i++)
+    {
         ret = positionMove(joints[i], refs[i]);
     }
     return ret;
@@ -185,7 +191,8 @@ bool GazeboYarpControlBoardDriver::relativeMove(const int n_joint, const int *jo
 {
     if (!joints || !deltas) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < n_joint && ret; i++) {
+    for (int i = 0; i < n_joint && ret; i++)
+    {
         ret = relativeMove(joints[i], deltas[i]);
     }
     return ret;

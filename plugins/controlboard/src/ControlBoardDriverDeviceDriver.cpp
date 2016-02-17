@@ -42,5 +42,17 @@ bool GazeboYarpControlBoardDriver::close()
     delete [] m_controlMode;
     delete [] m_interactionMode;
     delete [] m_isMotionDone;
+    delete [] m_trajectory_generator_type;
+    
+    for (unsigned int i=0; i< m_numberOfJoints; i++)
+    {
+      if (m_trajectory_generator[i]!=0)
+       {
+         delete m_trajectory_generator[i];
+         m_trajectory_generator[i] =0;
+       }
+    }
+    delete [] m_trajectory_generator;
+    
     return true;
 }

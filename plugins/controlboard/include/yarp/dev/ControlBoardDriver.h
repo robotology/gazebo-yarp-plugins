@@ -24,7 +24,7 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-
+#include <ControlBoardDriverTrajectory.h>
 #include <gazebo/math/Angle.hh>
 
 extern const double RobotPositionTolerance;
@@ -397,6 +397,9 @@ private:
     yarp::sig::Vector m_referenceVelocities; /**< desired reference velocities for velocity control mode [Degrees/Seconds] */
 
     //trajectory generator
+    int* m_trajectory_generator_type;
+    TrajectoryGenerator** m_trajectory_generator;
+    
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/
     yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
@@ -449,9 +452,8 @@ private:
     void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
     void sendImpPositionToGazebo ( const int j, const double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
-    void computeTrajectory(const int j);
     void prepareResetJointMsg(int j);
-
+    
     /**
      * \brief convert data read from Gazebo to user unit sistem,
      *  e.g. degrees for revolute joints and meters for prismatic joints

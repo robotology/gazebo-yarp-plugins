@@ -1,0 +1,71 @@
+<!-- <?xml version="1.0" ?> -->
+<!-- Example modified from rrbot example -->
+<robot name="single_pendulum">
+  <!-- Use a dummy "base_link" as in REP-120 models -->
+  <link name="base_link"/>
+  <joint name="fake_base_fixed_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base"/>
+  </joint>
+  
+  <!-- Base Link -->
+  <link name="base">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.15 0.15 2.15"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.15 0.15 2.15"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <mass value="100"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="upper_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="upper_link"/>
+    <origin rpy="-1.5708 0 0" xyz="0.15 0 2"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" velocity="100.0" lower="-5" upper="5" />
+  </joint>
+
+
+  <!-- Upper link -->
+  <link name="upper_link">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.40"/>
+      <geometry>
+        <box size="0.15 0.15 0.90"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.375"/>
+      <geometry>
+        <box size="0.15 0.15 0.90"/>
+      </geometry>
+    </visual>    
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.40"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+  
+  <gazebo>
+    <plugin name="controlboard" filename="libgazebo_yarp_controlboard.so">
+        <yarpConfigurationFile>model://single_pendulum/conf/gazebo_controlboard.ini</yarpConfigurationFile>
+        <initialConfiguration>0.0 0.0</initialConfiguration>
+    </plugin>
+  </gazebo>
+
+</robot>

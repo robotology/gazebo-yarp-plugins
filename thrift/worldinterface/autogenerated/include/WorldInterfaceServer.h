@@ -18,40 +18,56 @@ class GazeboYarpPlugins::WorldInterfaceServer : public yarp::os::Wire {
 public:
   WorldInterfaceServer();
   /**
-   * Make a shpere.
+   * Make a sphere.
    * @param radius radius of the sphere [m]
    * @param pose pose of the sphere [m]
    * @param color color of the sphere
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
+   * @param object_name (optional) assigns a name to the object.
+   * @param gravity_enable (optional) enables gravity (default false)
+   * @param collision_enable (optional) enables collision (default true)
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeSphere(const double radius, const Pose& pose, const Color& color);
+  virtual std::string makeSphere(const double radius, const Pose& pose, const Color& color, const std::string& frame_name = "", const std::string& object_name = "", const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
-   * Make a shpere.
+   * Make a box.
    * @param width box width [m]
    * @param height box height[m]
    * @param thickness box thickness [m]
    * @param pose pose of the box [m]
    * @param color color of the box
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
+   * @param object_name (optional) assigns a name to the object.
+   * @param gravity_enable (optional) enables gravity (default false)
+   * @param collision_enable (optional) enables collision (default true)
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeBox(const double width, const double height, const double thickness, const Pose& pose, const Color& color);
+  virtual std::string makeBox(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name = "", const std::string& object_name = "", const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
    * Make a cylinder.
    * @param radius radius of the cylinder [m]
    * @param length lenght of the cylinder [m]
    * @param pose pose of the cylinder [m]
    * @param color color of the cylinder
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
+   * @param object_name (optional) assigns a name to the object.
+   * @param gravity_enable (optional) enables gravity (default false)
+   * @param collision_enable (optional) enables collision (default true)
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeCylinder(const double radius, const double length, const Pose& pose, const Color& color);
+  virtual std::string makeCylinder(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name = "", const std::string& object_name = "", const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
    * Make a reference frame.
    * @param size size of the frame [m]
    * @param pose pose of the frame [m]
    * @param color color of the frame
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
+   * @param object_name (optional) assigns a name to the object.
+   * @param gravity_enable (optional) enables gravity (default false)
+   * @param collision_enable (optional) enables collision (default true)
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeFrame(const double size, const Pose& pose, const Color& color);
+  virtual std::string makeFrame(const double size, const Pose& pose, const Color& color, const std::string& frame_name = "", const std::string& object_name = "", const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
    * Change the color of an object
    * @param id object id
@@ -63,9 +79,10 @@ public:
    * Set new object pose.
    * @param id object id
    * @param pose new pose
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
    * @return returns true or false on success failure
    */
-  virtual bool setPose(const std::string& id, const Pose& pose);
+  virtual bool setPose(const std::string& id, const Pose& pose, const std::string& frame_name = "");
   /**
    * Enable/disables gravity for an object
    * @param id object id
@@ -83,7 +100,7 @@ public:
   /**
    * Get object pose.
    * @param id string that identifies object in gazebo (returned after creation)
-   * @return returns value of the pose
+   * @return returns value of the pose in the world reference frame
    */
   virtual Pose getPose(const std::string& id);
   /**

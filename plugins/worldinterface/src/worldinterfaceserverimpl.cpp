@@ -20,25 +20,25 @@ WorldInterfaceServerImpl::WorldInterfaceServerImpl()
 WorldInterfaceServerImpl::~WorldInterfaceServerImpl()
 {}
 
-std::string WorldInterfaceServerImpl::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
+std::string WorldInterfaceServerImpl::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color,const std::string& frame_name , const std::string& object_name,const bool gravity_enable , const bool collision_enable )
 {
-  return proxy->makeSphere(radius, pose, color);
+  return proxy->makeSphere(radius, pose, color,frame_name,object_name,gravity_enable, collision_enable);
   
 }
 
-std::string WorldInterfaceServerImpl::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
+std::string WorldInterfaceServerImpl::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color,const std::string& frame_name , const std::string& object_name,const bool gravity_enable , const bool collision_enable )
 {
-  return proxy->makeBox(width, height, thickness, pose, color);
+  return proxy->makeBox(width, height, thickness, pose, color,frame_name,object_name,gravity_enable, collision_enable);
 }
 
-std::string WorldInterfaceServerImpl::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
+std::string WorldInterfaceServerImpl::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color,const std::string& frame_name , const std::string& object_name,const bool gravity_enable , const bool collision_enable )
 {
-  return proxy->makeCylinder(radius, length, pose, color);
+  return proxy->makeCylinder(radius, length, pose, color,frame_name,object_name,gravity_enable, collision_enable);
 }
 
-bool WorldInterfaceServerImpl::setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose)
+bool WorldInterfaceServerImpl::setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose, const std::string& frame_name)
 {
-  return proxy->setPose(id, pose);
+  return proxy->setPose(id, pose, frame_name);
 }
 
 GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id)
@@ -71,9 +71,9 @@ bool WorldInterfaceServerImpl::deleteAll()
   return proxy->deleteAll();
 }
 
-std::string WorldInterfaceServerImpl::makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color)
+std::string WorldInterfaceServerImpl::makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color,const std::string& frame_name, const std::string& object_name,const bool gravity_enable , const bool collision_enable)
 {
-  return proxy->makeFrame(size, pose, color);
+  return proxy->makeFrame(size, pose, color,frame_name,object_name,gravity_enable, collision_enable);
 }
 
 bool WorldInterfaceServerImpl::changeColor(const std::string& id, const GazeboYarpPlugins::Color& color)

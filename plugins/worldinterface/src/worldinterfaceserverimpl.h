@@ -33,7 +33,7 @@ public:
    * @param color color of the sphere
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "",const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
    * Make a shpere.
    * @param width box width [m]
@@ -43,7 +43,7 @@ public:
    * @param color color of the box
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "",const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
    * Make a cylinder.
    * @param radius radius of the cylinder [m]
@@ -52,18 +52,19 @@ public:
    * @param color color of the cylinder
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "",const bool gravity_enable = 0, const bool collision_enable = 1);
   /**
    * Set new object pose.
    * @param id object id
    * @param pose new pose
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
    * @return returns true or false on success failure
    */
-  virtual bool setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose);
+  virtual bool setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose, const std::string& frame_name = "");
   /**
    * Get object pose.
    * @param id string that identifies object in gazebo (returned after creation)
-   * @return returns value of the pose
+   * @return returns value of the pose in the world reference frame
    */
   virtual GazeboYarpPlugins::Pose getPose(const std::string& id);
 
@@ -92,7 +93,8 @@ public:
    * @param color color of the frame
    * @return returns a string that contains the name of the object in the world
    */
-  virtual std::string makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color);
+  virtual std::string makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "", const bool gravity_enable = 0, const bool collision_enable = 1);
+  /**);
   /**
    * Change the color of an object
    * @param id object id

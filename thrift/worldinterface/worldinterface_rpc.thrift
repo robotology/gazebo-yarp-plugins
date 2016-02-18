@@ -24,25 +24,33 @@ struct Color {
 service WorldInterfaceServer {
 
     /** 
-    * Make a shpere.
+    * Make a sphere.
     * @param radius radius of the sphere [m]
     * @param pose pose of the sphere [m]
     * @param color color of the sphere
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. 
+    * @param object_name (optional) assigns a name to the object. 
+    * @param gravity_enable (optional) enables gravity (default false)
+    * @param collision_enable (optional) enables collision (default true)
     * @return returns a string that contains the name of the object in the world
     */ 
-    string makeSphere (1: double radius, 2: Pose pose, 3: Color color);
+    string makeSphere (1: double radius, 2: Pose pose, 3: Color color, 4: string frame_name="", 5: string object_name="", 6: bool gravity_enable=0, 7: bool collision_enable=1);
     
     
     /** 
-    * Make a shpere.
+    * Make a box.
     * @param width box width [m]
     * @param height box height[m]
     * @param thickness box thickness [m]
     * @param pose pose of the box [m]
     * @param color color of the box
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. 
+    * @param object_name (optional) assigns a name to the object. 
+    * @param gravity_enable (optional) enables gravity (default false)
+    * @param collision_enable (optional) enables collision (default true)
     * @return returns a string that contains the name of the object in the world
     */
-    string makeBox (1: double width, 2: double height, 3: double thickness, 4: Pose pose, 5: Color color);
+    string makeBox (1: double width, 2: double height, 3: double thickness, 4: Pose pose, 5: Color color, 6: string frame_name="", 7: string object_name="", 8: bool gravity_enable=0, 9: bool collision_enable=1);
     
     /** 
     * Make a cylinder.
@@ -50,18 +58,26 @@ service WorldInterfaceServer {
     * @param length lenght of the cylinder [m]
     * @param pose pose of the cylinder [m]
     * @param color color of the cylinder
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. 
+    * @param object_name (optional) assigns a name to the object. 
+    * @param gravity_enable (optional) enables gravity (default false)
+    * @param collision_enable (optional) enables collision (default true)
     * @return returns a string that contains the name of the object in the world
     */
-    string makeCylinder (1: double radius, 2: double length, 3: Pose pose, 4: Color color);
+    string makeCylinder (1: double radius, 2: double length, 3: Pose pose, 4: Color color, 5: string frame_name="", 6: string object_name="", 7: bool gravity_enable=0, 8: bool collision_enable=1);
     
     /** 
     * Make a reference frame.
     * @param size size of the frame [m]
     * @param pose pose of the frame [m]
     * @param color color of the frame
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. 
+    * @param object_name (optional) assigns a name to the object. 
+    * @param gravity_enable (optional) enables gravity (default false)
+    * @param collision_enable (optional) enables collision (default true)
     * @return returns a string that contains the name of the object in the world
     */
-    string makeFrame (1: double size, 2: Pose pose, 3: Color color);
+    string makeFrame (1: double size, 2: Pose pose, 3: Color color, 4: string frame_name="", 5: string object_name="", 6: bool gravity_enable=0, 7: bool collision_enable=1);
     
     /** 
     * Change the color of an object
@@ -75,9 +91,10 @@ service WorldInterfaceServer {
     * Set new object pose.
     * @param id object id
     * @param pose new pose
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. 
     * @return returns true or false on success failure
     */
-    bool setPose(1: string id, 2: Pose pose);
+    bool setPose(1: string id, 2: Pose pose, 3: string frame_name="");
     
      /** 
     * Enable/disables gravity for an object
@@ -98,7 +115,7 @@ service WorldInterfaceServer {
      /** 
     * Get object pose.
     * @param id string that identifies object in gazebo (returned after creation)
-    * @return returns value of the pose
+    * @return returns value of the pose in the world reference frame
     */
     Pose getPose(1:string id);
     

@@ -3,7 +3,7 @@
   <model name="double_pendulum">
     <link name="base">
       <inertial>
-        <mass>100</mass>
+        <mass>1000</mass>
       </inertial>
       <visual name="vis_plate_on_ground">
         <pose>0 0 0.01  0 0 0</pose>

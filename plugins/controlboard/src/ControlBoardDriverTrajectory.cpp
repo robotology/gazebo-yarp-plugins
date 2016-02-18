@@ -99,7 +99,7 @@ bool  MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fin
 
   //double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
     
-  m_tf = (100 * fabs(m_xf - m_x0) / speedf) / double (1.0);
+  m_tf = (1000 * fabs(m_xf - m_x0) / speedf) / double (m_controllerPeriod);
   m_dx0 = m_dx0 * m_tf;
 
   dx0  = m_dx0;

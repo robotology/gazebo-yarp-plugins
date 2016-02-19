@@ -96,4 +96,8 @@ bool WorldInterfaceServerImpl:: detach(const std::string& id)
   return proxy->detach(id);
 }
 
-  
+bool WorldInterfaceServerImpl:: rename(const std::string& old_name, const std::string& new_name )
+{
+  return proxy->rename(old_name, new_name);
+}
+

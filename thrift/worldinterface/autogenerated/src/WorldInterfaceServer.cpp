@@ -173,6 +173,16 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_rename : public yarp::os::Portable {
+public:
+  std::string old_name;
+  std::string new_name;
+  bool _return;
+  void init(const std::string& old_name, const std::string& new_name);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(15)) return false;
@@ -590,6 +600,31 @@ void WorldInterfaceServer_detach::init(const std::string& id) {
   this->id = id;
 }
 
+bool WorldInterfaceServer_rename::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("rename",1,1)) return false;
+  if (!writer.writeString(old_name)) return false;
+  if (!writer.writeString(new_name)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_rename::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_rename::init(const std::string& old_name, const std::string& new_name) {
+  _return = false;
+  this->old_name = old_name;
+  this->new_name = new_name;
+}
+
 WorldInterfaceServer::WorldInterfaceServer() {
   yarp().setOwner(*this);
 }
@@ -739,6 +774,16 @@ bool WorldInterfaceServer::detach(const std::string& id) {
   helper.init(id);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","bool WorldInterfaceServer::detach(const std::string& id)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::rename(const std::string& old_name, const std::string& new_name) {
+  bool _return = false;
+  WorldInterfaceServer_rename helper;
+  helper.init(old_name,new_name);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::rename(const std::string& old_name, const std::string& new_name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -1139,6 +1184,27 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "rename") {
+      std::string old_name;
+      std::string new_name;
+      if (!reader.readString(old_name)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readString(new_name)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = rename(old_name,new_name);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "help") {
       std::string functionName;
       if (!reader.readString(functionName)) {
@@ -1188,6 +1254,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("getList");
     helpString.push_back("attach");
     helpString.push_back("detach");
+    helpString.push_back("rename");
     helpString.push_back("help");
   }
   else {
@@ -1309,6 +1376,13 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("bool detach(const std::string& id) ");
       helpString.push_back("Detach a previously attached object. ");
       helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
+      helpString.push_back("@return true if success, false otherwise ");
+    }
+    if (functionName=="rename") {
+      helpString.push_back("bool rename(const std::string& old_name, const std::string& new_name) ");
+      helpString.push_back("Change the names of an object. ");
+      helpString.push_back("@param old_name string that identifies object in gazebo ");
+      helpString.push_back("@param new_name string that will be used as new name ");
       helpString.push_back("@return true if success, false otherwise ");
     }
     if (functionName=="help") {

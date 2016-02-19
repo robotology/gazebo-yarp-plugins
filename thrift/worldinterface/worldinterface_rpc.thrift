@@ -158,4 +158,12 @@ service WorldInterfaceServer {
     * @return true if success, false otherwise
     */
     bool detach(1:string id);
+    
+    /**
+    * Change the names of an object.
+    * @param old_name string that identifies object in gazebo 
+    * @param new_name string that will be used as new name
+    * @return true if success, false otherwise
+    */
+    bool rename(1:string old_name, 2:string new_name);
 }

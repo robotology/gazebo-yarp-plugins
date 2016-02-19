@@ -91,7 +91,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
       yError() << "Unable to find specified link";
       return "";
     }
-    relative_link_pose = relative_link->GetWorldCoGPose();
+    relative_link_pose = relative_link->GetWorldPose();
   }
   math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
@@ -180,7 +180,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
       yError() << "Unable to find specified link";
       return "";
     }
-    relative_link_pose = relative_link->GetWorldCoGPose();
+    relative_link_pose = relative_link->GetWorldPose();
   }
   math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
@@ -280,7 +280,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
       yError() << "Unable to find specified link";
       return "";
     }
-    relative_link_pose = relative_link->GetWorldCoGPose();
+    relative_link_pose = relative_link->GetWorldPose();
   }
   math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
@@ -359,7 +359,7 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
       yError() << "Unable to find specified link";
       return false;
     }
-    relative_link_pose = relative_link->GetWorldCoGPose();
+    relative_link_pose = relative_link->GetWorldPose();
   }
   math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
@@ -468,7 +468,7 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
       yError() << "Unable to find specified link";
       return "";
     }
-    relative_link_pose = relative_link->GetWorldCoGPose();
+    relative_link_pose = relative_link->GetWorldPose();
   }
   math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
@@ -621,6 +621,66 @@ bool WorldProxy::HELPER_hasEnding (std::string const &fullString, std::string co
     }
 }
 
+bool WorldProxy::rename(const std::string& old_name, const std::string& new_name)
+{
+    physics::ModelPtr object_model_1=world->GetModel(old_name);
+    if (!object_model_1)
+    {
+      yError() <<"Object " << old_name << " does not exist in gazebo";
+      return false;
+    }
+    physics::ModelPtr object_model_2=world->GetModel(new_name);
+    if (object_model_2)
+    {
+      yError() <<"Object " << new_name << " already exists in gazebo";
+      return false;
+    }
+    
+    ObjectsListIt old_it=objects.begin();
+    bool found_old = false;
+    ObjectsListIt new_it=objects.begin();
+    bool found_new = false;
+    
+    while(old_it!=objects.end())
+    {
+       string obj=old_it->first;
+       if (obj==old_name)
+       {
+         found_old = true;
+         break;
+       }
+       old_it++;
+    }
+    if (!found_old)
+    {
+       yError() <<"Object " << old_name << " not found in objects list";
+       return false;
+    }
+    while(new_it!=objects.end())
+    {
+       string obj=new_it->first;
+       if (obj==new_name)
+       {
+         found_new= true;
+         break;
+       }
+       new_it++;
+    }
+    if (found_new)
+    {
+       yError() <<"Object " << new_name << " already exists in objects list";
+       return false;
+    }
+    
+    yWarning()<<"model->setName() not fully implemented by gazebo";
+    object_model_1->SetName(new_name);
+    objects.erase(old_it);
+    objects.insert(pair<string,physics::ModelPtr>(new_name, object_model_1));
+               
+    yInfo() << "Object "<< old_name << " renamed to: " << new_name;
+    return true;
+}
+
 bool WorldProxy::attach(const std::string& id, const std::string& link_name)
 {
     physics::ModelPtr object_model_1=world->GetModel(id);
@@ -668,7 +728,7 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
         return false;
     }
     
-    //math::Pose parent_link_pose = parent_link->GetWorldCoGPose();
+    //math::Pose parent_link_pose = parent_link->GetWorldPose();
     //object_link->SetWorldPose(parent_link_pose);
 
     //TODO add mutex

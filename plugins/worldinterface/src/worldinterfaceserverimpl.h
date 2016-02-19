@@ -134,6 +134,14 @@ public:
    */
   virtual bool detach(const std::string& id);
   
+   /**
+   * Change the names of an object.
+   * @param old_name string that identifies object in gazebo 
+   * @param new_name string that will be used as new name
+   * @return true if success, false otherwise
+   */
+  virtual bool rename(const std::string& old_name, const std::string& new_name);
+  
   void attachWorldProxy(WorldProxy *p)
   {
     proxy=p;

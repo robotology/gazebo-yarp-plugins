@@ -291,23 +291,49 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_lastTimestamp.update(_info.simTime.Double());
 
     //logger.log(m_velocities[2]);
-
-    for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
-        //set pos joint value, set m_referenceVelocities joint value
-        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+    
+    //update Trajectories
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+        if (m_controlMode[j] == VOCAB_CM_POSITION)
         {
             if (m_clock % _T_controller == 0)
             {
-                if (m_controlMode[j] == VOCAB_CM_POSITION)
-                {
-                    m_referencePositions[j] = m_trajectory_generator[j]->computeTrajectory();
-                    m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
-                }
+                m_referencePositions[j] = m_trajectory_generator[j]->computeTrajectory();
+                m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
+            }
+        }
+    }
+    
+    //update References
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+        //set pos joint value, set m_referenceVelocities joint value
+        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
+            if (m_clock % _T_controller == 0) {
                 sendPositionToGazebo(j, m_referencePositions[j]);
+            }
+        } else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
+            if (m_clock % _T_controller == 0) {
+                sendImpPositionToGazebo(j, m_referencePositions[j]);
             }
         } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {//set vmo joint value
             if (m_clock % _T_controller == 0) {
                 sendVelocityToGazebo(j, m_referenceVelocities[j]);
+            }
+        } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
+            if (m_clock % _T_controller == 0) {
+                yWarning("Compliant velocity control not yet implemented");
+                sendVelocityToGazebo(j, m_referenceVelocities[j]);
+            }
+        } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
+            if (m_clock % _T_controller == 0) {
+                yWarning("mixed control not yet implemented");
+                sendPositionToGazebo(j, m_referencePositions[j]);
+            }
+        } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
+            if (m_clock % _T_controller == 0) {
+                yWarning("mixed control not yet implemented");
+                sendImpPositionToGazebo(j, m_referencePositions[j]);
             }
         } else if (m_controlMode[j] == VOCAB_CM_TORQUE) {
             if (m_clock % _T_controller == 0) {
@@ -326,17 +352,6 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             //Check if gazebo implements a "motor" entity and change the code accordingly.
             if (m_clock % _T_controller == 0) {
                 sendTorqueToGazebo(j, m_referenceTorques[j]);
-            }
-        } else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
-        {
-            if (m_clock % _T_controller == 0)
-            {
-                if (m_controlMode[j] == VOCAB_CM_POSITION)
-                {
-                    m_referencePositions[j] = m_trajectory_generator[j]->computeTrajectory();
-                    m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
-                }
-                sendImpPositionToGazebo(j, m_referencePositions[j]);
             }
         }
     }

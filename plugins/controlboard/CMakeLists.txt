@@ -22,11 +22,13 @@ set(controlBoard_source     src/ControlBoard.cc
                             src/ControlBoardDriverImpedancePositionControl.cpp
                             src/ControlBoardDriverOpenLoop.cpp
                             src/ControlBoardDriverPidControl.cpp
-                            src/ControlBoardDriverTrajectory.cpp)
+                            src/ControlBoardDriverTrajectory.cpp
+                            src/ControlBoardDriverCoupling.cpp)
 
 set(controlBoard_headers    include/gazebo/ControlBoard.hh
                             include/yarp/dev/ControlBoardDriver.h
-                            include/yarp/dev/ControlBoardDriverTrajectory.h )
+                            include/yarp/dev/ControlBoardDriverTrajectory.h
+                            include/yarp/dev/ControlBoardDriverCoupling.h)
                             
                             
 set(LIB_COMMON_NAME gazebo_yarp_lib_common)

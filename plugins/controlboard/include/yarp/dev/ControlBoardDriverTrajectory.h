@@ -29,7 +29,7 @@ protected:
   double m_speed;
   double m_computed_reference;
   unsigned int m_controllerPeriod;
-  TrajectoryGenerator(gazebo::physics::Model* model) {m_robot = model; m_trajectory_complete=true;}
+  TrajectoryGenerator(gazebo::physics::Model* model) {m_robot = model; m_trajectory_complete=true; m_speed=0;}
   
 public:
   virtual bool initTrajectory (double current_pos, double final_pos, double speed)=0;

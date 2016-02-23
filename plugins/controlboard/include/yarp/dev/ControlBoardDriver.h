@@ -25,6 +25,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <ControlBoardDriverTrajectory.h>
+#include <ControlBoardDriverCoupling.h>
 #include <gazebo/math/Angle.hh>
 
 extern const double RobotPositionTolerance;
@@ -399,6 +400,7 @@ private:
     //trajectory generator
     int* m_trajectory_generator_type;
     TrajectoryGenerator** m_trajectory_generator;
+    BaseCouplingHandler** m_coupling_handler;
     
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/

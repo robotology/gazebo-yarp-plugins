@@ -105,6 +105,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_torqueOffsett = 0;
 
     m_trajectory_generator  = new TrajectoryGenerator*[m_numberOfJoints];
+    m_coupling_handler  = new BaseCouplingHandler*[m_numberOfJoints];
     m_trajectory_generator_type = new int[m_numberOfJoints];
     
     yarp::os::Bottle& traj_bottle = m_pluginParameters.findGroup("TRAJECTORY_GENERATION");
@@ -135,6 +136,14 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
          {m_trajectory_generator[j] = new MinJerkTrajectoryGenerator(m_robot);}
       else
          {m_trajectory_generator[j] = new ConstSpeedTrajectoryGenerator(m_robot);}
+    }
+    
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+      if (1)
+         {m_coupling_handler[j] = 0;}
+      else
+         {m_coupling_handler[j] = new EyesCouplingHandler(m_robot);}
     }
     
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
@@ -227,6 +236,20 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             m_jointPointers[i]->SetAngle(0,a);
 #endif
         }
+        
+        yDebug() << "Initializing Trajectory Generator with default values";
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+            m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+        }
+    }
+    else
+    {
+        yDebug() << "Initializing Trajectory Generator with current values";
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+        {
+            m_positions[i] = convertGazeboToUser(i, m_jointPointers[i]->GetAngle(0));
+            m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+        }
     }
     return true;
 }
@@ -270,14 +293,27 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_clock++;
 
 
-    // Sensing position & torque
-    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
+    // measurements acquisition
+    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
+    {
         //TODO: consider multi-dof joint ?
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
         m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
         m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
 
+    //measurements decoupling
+    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
+    {
+      if (m_coupling_handler[jnt_cnt])
+      {
+        m_coupling_handler[jnt_cnt]->decouplePos(m_positions);
+        m_coupling_handler[jnt_cnt]->decoupleVel(m_velocities);
+        //m_coupling_handler[jnt_cnt]->decoupleAcc(m_accelerations); //missing
+        m_coupling_handler[jnt_cnt]->decoupleTrq(m_torques);
+      }
+    }
+    
     // check measured torque for hw fault
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
       if (m_controlMode[jnt_cnt]!=VOCAB_CM_HW_FAULT && fabs(m_torques[jnt_cnt])>m_maxTorques[jnt_cnt])
@@ -303,6 +339,18 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
             }
         }
+    }
+    
+    //references decoupling
+    for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
+    {
+      if (m_coupling_handler[jnt_cnt])
+      {
+     //   m_coupling_handler[jnt_cnt]->decouplePos(m_positions);
+     //   m_coupling_handler[jnt_cnt]->decoupleVel(m_velocities);
+        //m_coupling_handler[jnt_cnt]->decoupleAcc(m_accelerations); //missing
+      //  m_coupling_handler[jnt_cnt]->decoupleTrq(m_torques);
+      }
     }
     
     //update References

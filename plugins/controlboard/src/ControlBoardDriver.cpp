@@ -115,18 +115,18 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
        {
            if       (traj_type.get(1).asString()=="minimum_jerk")   {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
            else if  (traj_type.get(1).asString()=="constant_speed") {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
-           else                                                     {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
+           else                                                     {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
        }
        else 
        {
-         yWarning() << "Missing TRAJECTORY_GENERATION group. Missing trajectory_type param. Assuming minimum_jerk";
-         {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
+         yWarning() << "Missing TRAJECTORY_GENERATION group. Missing trajectory_type param. Assuming constant_speed";
+         {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
        }
     }
     else
     {
        yWarning() << "Missing trajectory_type param. Assuming minimum_jerk";
-       {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
+       {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {m_trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
     }
        
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)

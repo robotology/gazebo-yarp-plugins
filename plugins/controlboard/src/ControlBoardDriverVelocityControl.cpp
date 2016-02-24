@@ -117,7 +117,7 @@ bool GazeboYarpControlBoardDriver::getRefVelocity(const int joint, double *vel)
 
 bool GazeboYarpControlBoardDriver::getRefVelocities(double *vels) 
 {
-     if (!vels) return false; //check or not check?
+    if (!vels) return false; //check or not check?
     bool ret = true;
     for (int i = 0; i < this->m_numberOfJoints && ret; i++) {
         ret = getRefVelocity(i, &vels[i]);

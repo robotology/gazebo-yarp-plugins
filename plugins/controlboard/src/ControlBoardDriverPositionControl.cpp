@@ -139,37 +139,37 @@ bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 }
 
 
-bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) 
 {
     if (j >= 0 && j < (int)m_numberOfJoints) {
-        m_trajectoryGenerationReferenceAcceleraton[j] = acc;
+        m_trajectoryGenerationReferenceAcceleration[j] = acc;
         return true;
     }
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs) 
 {
     for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_trajectoryGenerationReferenceAcceleraton[i] = accs[i];
+        m_trajectoryGenerationReferenceAcceleration[i] = accs[i];
     }
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) 
 {
     if (acc && j >= 0 && j < (int)m_numberOfJoints) {
-        *acc = m_trajectoryGenerationReferenceAcceleraton[j];
+        *acc = m_trajectoryGenerationReferenceAcceleration[j];
         return true;
     }
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) 
 {
     if (!accs) return false;
     for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        accs[i] = m_trajectoryGenerationReferenceAcceleraton[i];
+        accs[i] = m_trajectoryGenerationReferenceAcceleration[i];
     }
     return true;
 }
@@ -286,8 +286,8 @@ bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
             return true;
         }
     } else {
-        std::cerr << "[WARN] gazebo_yarp_controlboard: you tried to call setPosition" << std::endl;
-        std::cerr << "[WARN] for a joint that is not in POSITION_DIRECT control mode." << std::endl;
+        yError() << "gazebo_yarp_controlboard: you tried to call setPosition " <<
+        "for a joint that is not in POSITION_DIRECT control mode.";
     }
     return false;
 }

@@ -15,6 +15,7 @@
 #include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/sig/Image.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -124,6 +125,56 @@ bool  MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fin
   return true;
 }
 
+double MinJerkTrajectoryGenerator::computeTrajectoryStep()
+{
+  double target=0;
+  double delta_target=0;
+  
+  // (10 * (t/T)^3 - 15 * (t/T)^4 + 6 * (t/T)^5) * (x0-xf) + x0 
+  if (m_trajectory_complete)
+  {
+    target = m_xf;
+    delta_target = target - m_prev_a;
+    m_prev_a = target;
+    //yDebug()<<"mdone" << target;
+    return delta_target;
+  }
+
+  if (m_cur_t== 0)
+  {
+    m_cur_t += m_step;
+    m_cur_step ++;
+
+    target = m_x0;
+    delta_target = target - m_prev_a;
+    m_prev_a = target;
+    //yDebug()<<"first" ;
+    return delta_target;
+  }
+  else if (m_cur_t < 1.0 - m_step)
+  {
+    // calculate the power factors
+    target = compute_p5f (m_cur_t);
+    target += m_x0;
+  
+    // time
+    m_cur_t += m_step;
+    m_cur_step ++;
+
+    delta_target = target - m_prev_a;
+    m_prev_a = target;
+    //yDebug()<< delta_target;
+    return delta_target;
+  }
+  
+  //yDebug()<<"last";
+  m_trajectory_complete = true;
+  target =m_xf;
+  
+  //position reached, so step is zero
+  return 0.0;
+}
+
 double MinJerkTrajectoryGenerator::computeTrajectory()
 {
   double target=0;
@@ -187,36 +238,47 @@ bool ConstSpeedTrajectoryGenerator::abortTrajectory(double limit)
   return true;
 }
 
+double ConstSpeedTrajectoryGenerator::computeTrajectoryStep()
+{
+    double step = 0;
+    double error_abs = fabs(m_xf - m_computed_reference);
+    
+    if (m_xf > m_computed_reference)
+    {
+      step = +(m_speed / 1000.0) * m_controllerPeriod; //* _T_controller;
+    }
+    else
+    {
+      step = -(m_speed / 1000.0) * m_controllerPeriod; //* _T_controller;
+    }
+          
+    if( error_abs < fabs(step) )
+    {
+      step = (m_xf - m_computed_reference);
+    }
+    
+    //yDebug() << step;
+    return step;
+}
+
 double ConstSpeedTrajectoryGenerator::computeTrajectory()
 {
     double step = (m_speed / 1000.0) * m_controllerPeriod; //* _T_controller;
     double error_abs = fabs(m_computed_reference - m_xf);
 
-    // if delta is bigger then threshold, in some cases this will never converge to an end.
-    // Check to prevent those cases
     if(error_abs)
     {
-        // Watch out for problem
-        //if((error_abs < m_positionThreshold) || ( error_abs < step) )    // This id both 'normal ending condition' and safe procedure when step > threshold causing infinite oscillation around final position
+        m_computed_reference += computeTrajectoryStep(); 
         if( error_abs < step)  
         {
-           // Just go to final position
-           m_computed_reference = m_xf;
            m_trajectory_complete = true;
         }
         else
         {
-          if (m_xf > m_computed_reference)
-          {
-             m_computed_reference += step;
-             m_trajectory_complete = false;
-          }
-          else
-          {
-             m_computed_reference -= step;
-             m_trajectory_complete = false;
-          }
+           m_trajectory_complete = false;
         }
     }
+    
+    //yDebug() << m_computed_reference;
     return m_computed_reference;
 }

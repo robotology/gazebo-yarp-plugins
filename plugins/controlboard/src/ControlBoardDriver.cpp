@@ -71,7 +71,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_jntReferencePositions.resize(m_numberOfJoints);
     m_oldReferencePositions.resize(m_numberOfJoints);
     m_trajectoryGenerationReferencePosition.resize(m_numberOfJoints);
-    m_trajectoryGenerationReferenceAcceleraton.resize(m_numberOfJoints);
+    m_trajectoryGenerationReferenceAcceleration.resize(m_numberOfJoints);
     m_jntReferenceTorques.resize(m_numberOfJoints);
     m_jointPosLimits.resize(m_numberOfJoints);
     m_jointVelLimits.resize(m_numberOfJoints);
@@ -96,7 +96,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_jntReferenceVelocities.zero();
     m_jntReferenceTorques.zero();
     m_trajectoryGenerationReferencePosition.zero();
-    m_trajectoryGenerationReferenceAcceleraton.zero();
+    m_trajectoryGenerationReferenceAcceleration.zero();
     amp = 1; // initially on - ok for simulator
     m_controlMode = new int[m_numberOfJoints];
     m_interactionMode = new int[m_numberOfJoints];
@@ -357,6 +357,17 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
             }
         }
+        else if (m_controlMode[j] == VOCAB_CM_MIXED)
+        {
+            if (m_clock % _T_controller == 0)
+            {
+                double computed_ref_speed = m_jntReferenceVelocities[j] / 1000.0 * 1.0; //controller period  
+                double computed_ref_pos =  m_jntReferencePositions[j] + m_trajectory_generator[j]->computeTrajectoryStep();
+                m_jntReferencePositions[j] = computed_ref_pos + computed_ref_speed;
+                //yDebug() << computed_ref_pos << " " << computed_ref_speed;
+                m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
+            }        
+        }
     }
     
     Vector m_motReferencePositions;
@@ -399,12 +410,10 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             }
         } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
             if (m_clock % _T_controller == 0) {
-                yWarning("mixed control not yet implemented");
                 sendPositionToGazebo(j, m_motReferencePositions[j]);
             }
         } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
             if (m_clock % _T_controller == 0) {
-                yWarning("mixed control not yet implemented");
                 sendImpPositionToGazebo(j, m_motReferencePositions[j]);
             }
         } else if (m_controlMode[j] == VOCAB_CM_TORQUE) {

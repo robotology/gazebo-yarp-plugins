@@ -94,6 +94,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_POSITION_DIRECT
           || mode == VOCAB_CM_VELOCITY
           || mode == VOCAB_CM_TORQUE
+          || mode == VOCAB_CM_MIXED
           || mode == VOCAB_CM_OPENLOOP
           || mode == VOCAB_CM_IDLE
           || mode == VOCAB_CM_FORCE_IDLE)) {
@@ -144,12 +145,22 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
     // mode specific switching actions
     switch (desired_mode) {
         case VOCAB_CM_POSITION :
+            m_jntReferencePositions[j] = m_positions[j];
+            m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+            m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
+        break;
         case VOCAB_CM_POSITION_DIRECT :
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
         break;
         case VOCAB_CM_VELOCITY :
             m_jntReferenceVelocities[j] = 0.0;
+        break;
+        case VOCAB_CM_MIXED:
+            m_jntReferencePositions[j] = m_positions[j];
+            m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+            m_jntReferenceVelocities[j] = 0.0;
+            m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
         break;
         case VOCAB_CM_TORQUE :
         case VOCAB_CM_OPENLOOP :

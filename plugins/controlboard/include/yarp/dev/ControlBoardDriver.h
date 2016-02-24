@@ -159,10 +159,10 @@ public:
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
 
-    virtual bool setRefAcceleration(int j, double acc); //NOT IMPLEMENTED
-    virtual bool setRefAccelerations(const double *accs); //NOT IMPLEMENTED
-    virtual bool getRefAcceleration(int j, double *acc); //NOT IMPLEMENTED
-    virtual bool getRefAccelerations(double *accs); //NOT IMPLEMENTED
+    virtual bool setRefAcceleration(int j, double acc); //NOT TESTED
+    virtual bool setRefAccelerations(const double *accs); //NOT TESTED
+    virtual bool getRefAcceleration(int j, double *acc); //NOT TESTED
+    virtual bool getRefAccelerations(double *accs); //NOT TESTED
 
     //VELOCITY CONTROL 2
     virtual bool setVelocityMode(); //NOT TESTED
@@ -397,7 +397,7 @@ private:
 
     yarp::sig::Vector m_jntReferenceTorques; /**< desired reference torques for torque control mode [NetwonMeters] */
     yarp::sig::Vector m_jntReferenceVelocities; /**< desired reference velocities for velocity control mode [Degrees/Seconds] */
-
+    
     //trajectory generator
     int* m_trajectory_generator_type;
     TrajectoryGenerator** m_trajectory_generator;
@@ -405,7 +405,7 @@ private:
     
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/
-    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleraton; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
+    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleration; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
 
     std::vector<std::string> m_jointNames;
     std::vector<std::string> controlboard_joint_names;

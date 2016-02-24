@@ -35,6 +35,7 @@ public:
   virtual bool initTrajectory (double current_pos, double final_pos, double speed)=0;
   virtual bool abortTrajectory(double limit)=0;
   virtual double computeTrajectory()=0;  
+  virtual double computeTrajectoryStep()=0;
   virtual yarp::dev::TrajectoryType getTrajectoryType()=0;
   bool isMotionDone() {return m_trajectory_complete;}
 };
@@ -49,6 +50,7 @@ public:
   bool initTrajectory (double current_pos, double final_pos, double speed);
   bool abortTrajectory(double limit);
   double computeTrajectory();
+  double computeTrajectoryStep();
   yarp::dev::TrajectoryType getTrajectoryType() {return yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}
 };
 
@@ -78,6 +80,7 @@ public:
   bool initTrajectory (double current_pos, double final_pos, double speed);
   bool abortTrajectory(double limit);
   double computeTrajectory();
+  double computeTrajectoryStep();
   yarp::dev::TrajectoryType getTrajectoryType() {return yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}
 };
 

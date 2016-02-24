@@ -13,7 +13,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::setRefOutput(int j, double v)
         {
             if (j >= 0 && j < (int)m_numberOfJoints) {
-                m_referenceTorques[j] = v;
+                m_jntReferenceTorques[j] = v;
                 return true;
             }
             return false;
@@ -23,7 +23,7 @@ namespace yarp {
         {
             if (!v) return false;
             for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
-                m_referenceTorques[j] = v[j];
+                m_jntReferenceTorques[j] = v[j];
             }
             return true;
         }
@@ -49,7 +49,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getRefOutput(int j, double *v)
         {
             if (v && j >= 0 && j < (int)m_numberOfJoints) {
-                *v = m_referenceTorques[j];
+                *v = m_jntReferenceTorques[j];
                 return true;
             }
             return false;
@@ -59,7 +59,7 @@ namespace yarp {
         {
             if (!v) return false;
             for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
-                v[j] = m_referenceTorques[j];
+                v[j] = m_jntReferenceTorques[j];
             }
             return true;
         }

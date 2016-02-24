@@ -195,6 +195,7 @@ public:
     virtual bool setControlMode(const int j, const int mode);
     virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModes(int *modes);
+    bool changeControlMode(const int j, const int mode); //private function
 
     //TORQUE CONTROL
     virtual bool setRefTorque(int j, double t); //NOT TESTED
@@ -386,7 +387,7 @@ private:
     yarp::sig::VectorOf<JointType> m_jointTypes;
 
     //Desired Control variables
-    yarp::sig::Vector m_referencePositions; /**< desired reference positions.
+    yarp::sig::Vector m_jntReferencePositions; /**< desired reference positions.
                                                  Depending on the position mode,
                                                  they can be set directly or indirectly
                                                  through the trajectory generator.
@@ -394,13 +395,13 @@ private:
     yarp::sig::Vector m_oldReferencePositions; // used to store last reference and check if a new ref has been commanded
     yarp::sig::Vector m_positionThreshold;  // Threshold under which trajectory generator stops computing new values
 
-    yarp::sig::Vector m_referenceTorques; /**< desired reference torques for torque control mode [NetwonMeters] */
-    yarp::sig::Vector m_referenceVelocities; /**< desired reference velocities for velocity control mode [Degrees/Seconds] */
+    yarp::sig::Vector m_jntReferenceTorques; /**< desired reference torques for torque control mode [NetwonMeters] */
+    yarp::sig::Vector m_jntReferenceVelocities; /**< desired reference velocities for velocity control mode [Degrees/Seconds] */
 
     //trajectory generator
     int* m_trajectory_generator_type;
     TrajectoryGenerator** m_trajectory_generator;
-    BaseCouplingHandler** m_coupling_handler;
+    BaseCouplingHandler*  m_coupling_handler;
     
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/

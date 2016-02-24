@@ -1,0 +1,89 @@
+<!-- <?xml version="1.0" ?> -->
+<!-- Example modified from rrbot example -->
+<robot name="coupled_pendulum">
+  <!-- Use a dummy "base_link" as in REP-120 models -->
+  <link name="base_link"/>
+  <joint name="fake_base_fixed_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base"/>
+  </joint>
+  
+  <!-- Base Link -->
+  <link name="base">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.15 0.15 2.15"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.15 0.15 2.15"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <mass value="1000"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <!-- link1 -->
+  <link name="link1">
+
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0 -0.5"/>
+      <geometry>
+        <box size="0.15 0.15 1.00"/>
+      </geometry>
+    </visual>    
+
+    <inertial>
+      <origin rpy="-0.00 0 0" xyz="0 0.0 -0.9"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <!-- link2 -->
+  <link name="link2">
+
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0 -0.5"/>
+      <geometry>
+        <box size="0.15 0.15 1.00"/>
+      </geometry>
+    </visual>
+    
+    <inertial>
+      <origin rpy="-0.30 0 0" xyz="0 0 -0.90"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  
+  <joint name="lower_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="link2"/>
+    <origin rpy="3.1415 0 0" xyz="0.15 0 1.75"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" velocity="100.0" lower="-5" upper="5" />
+  </joint>
+
+  <joint name="upper_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="link1"/>
+    <origin rpy="3.1415 0 0" xyz="-0.15 0 1.75"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="100" velocity="100.0" lower="-5" upper="5" />
+  </joint>
+  
+  <gazebo>
+    <plugin name="controlboard" filename="libgazebo_yarp_controlboard.so">
+        <yarpConfigurationFile>model://coupled_pendulum/conf/gazebo_controlboard.ini</yarpConfigurationFile>
+        <initialConfiguration>0.0 0.0</initialConfiguration>
+    </plugin>
+  </gazebo>
+</robot>

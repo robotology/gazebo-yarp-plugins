@@ -12,7 +12,7 @@
 #include <gazebo/transport/Publisher.hh>
 
 #include <yarp/os/Vocab.h>
-
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 
@@ -97,13 +97,29 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_OPENLOOP
           || mode == VOCAB_CM_IDLE
           || mode == VOCAB_CM_FORCE_IDLE)) {
-        std::cerr << "[WARN] request control mode "
+        yWarning() << "request control mode "
                   << yarp::os::Vocab::decode(mode) << " that is not supported by "
-                  << " gazebo_yarp_controlboard plugin." << std::endl;
+                  << " gazebo_yarp_controlboard plugin.";
         return false;
     }
     
-    
+    if (m_coupling_handler==0)
+    {
+      changeControlMode(j,mode);
+    }
+    else
+    {
+      yarp::sig::Vector coupling_vector = m_coupling_handler->getCoupledJoints();
+      for (int coupled_j=0; coupled_j<coupling_vector.size(); coupled_j++)
+      {
+        changeControlMode(coupling_vector[coupled_j], mode);
+      }
+    }
+      
+}
+
+bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode)
+{
     int desired_mode = mode;
     
     //if joint is in hw fault, only a force idle command can recover it
@@ -129,18 +145,18 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
     switch (desired_mode) {
         case VOCAB_CM_POSITION :
         case VOCAB_CM_POSITION_DIRECT :
-            m_referencePositions[j] = m_positions[j];
+            m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
         break;
         case VOCAB_CM_VELOCITY :
-            m_referenceVelocities[j] = 0.0;
+            m_jntReferenceVelocities[j] = 0.0;
         break;
         case VOCAB_CM_TORQUE :
         case VOCAB_CM_OPENLOOP :
-            m_referenceTorques[j] = m_torques[j];
+            m_jntReferenceTorques[j] = m_torques[j];
         break;
         case VOCAB_CM_IDLE:
-            m_referenceTorques[j] = 0.0;
+            m_jntReferenceTorques[j] = 0.0;
         break;
         default :
         break;

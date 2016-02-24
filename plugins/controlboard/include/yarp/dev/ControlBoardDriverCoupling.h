@@ -31,6 +31,12 @@ public:
   virtual bool decoupleVel (yarp::sig::Vector& current_vel)=0;
   virtual bool decoupleAcc (yarp::sig::Vector& current_acc)=0;
   virtual bool decoupleTrq (yarp::sig::Vector& current_trq)=0;  
+
+  virtual yarp::sig::Vector getCoupledJoints()=0;
+  
+  virtual yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref)=0;
+  virtual yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref)=0;
+  virtual yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref)=0;
 };
 
 class EyesCouplingHandler : public BaseCouplingHandler
@@ -44,6 +50,12 @@ public:
   bool decoupleVel (yarp::sig::Vector& current_vel);
   bool decoupleAcc (yarp::sig::Vector& current_acc);
   bool decoupleTrq (yarp::sig::Vector& current_trq);  
+ 
+  virtual yarp::sig::Vector getCoupledJoints();
+    
+  yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+  yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+  yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
 #endif //GAZEBOYARP_COUPLING_H

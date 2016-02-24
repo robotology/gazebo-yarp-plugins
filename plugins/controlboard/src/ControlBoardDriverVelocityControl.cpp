@@ -23,7 +23,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
     if (j >= 0 && j < (int)m_numberOfJoints) {
-        m_referenceVelocities[j] = sp;
+        m_jntReferenceVelocities[j] = sp;
         return true;
     }
     return false;
@@ -33,7 +33,7 @@ bool GazeboYarpControlBoardDriver::velocityMove(const double *sp) //NOT TESTED
 {
     if (!sp) return false;
     for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_referenceVelocities[i] = sp[i];
+        m_jntReferenceVelocities[i] = sp[i];
     }
     return true;
 }
@@ -108,7 +108,7 @@ bool GazeboYarpControlBoardDriver::getRefVelocity(const int joint, double *vel)
 {
     if (vel && joint >= 0 && joint < (int)m_numberOfJoints)
     {
-      *vel = m_referenceVelocities[joint];
+      *vel = m_jntReferenceVelocities[joint];
       return true;
     }
     return false;

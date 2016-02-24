@@ -75,7 +75,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getReference (int j, double *ref)
         {
-            *ref = m_referencePositions[j];
+            *ref = m_jntReferencePositions[j];
             return true;
         }
 

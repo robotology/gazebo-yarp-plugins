@@ -54,15 +54,11 @@ bool GazeboYarpControlBoardDriver::close()
     }
     delete [] m_trajectory_generator;
     
-    for (unsigned int i=0; i< m_numberOfJoints; i++)
+    if (m_coupling_handler!=0)
     {
-      if (m_coupling_handler[i]!=0)
-       {
-         delete m_coupling_handler[i];
-         m_coupling_handler[i] =0;
-       }
+       delete m_coupling_handler;
+       m_coupling_handler =0;
     }
-    delete [] m_coupling_handler;
     
     return true;
 }

@@ -19,6 +19,21 @@ namespace yarp {
   }
 }
   
+class RampFilter
+{
+private:
+  double m_final_reference;
+  double m_current_value;
+  double m_step;
+public:
+
+  RampFilter();
+  
+  void setReference(double ref, double step);
+  void update();
+  double getCurrentValue();
+};
+
 class TrajectoryGenerator
 {
 protected:

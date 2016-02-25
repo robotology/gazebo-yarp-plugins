@@ -22,8 +22,10 @@ bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
+    if (j >= 0 && j < (int)m_numberOfJoints)
+    {
         m_jntReferenceVelocities[j] = sp;
+        m_speed_ramp_handler[j].setReference(m_jntReferenceVelocities[j], m_trajectoryGenerationReferenceAcceleration[j]);
         return true;
     }
     return false;
@@ -32,8 +34,9 @@ bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 bool GazeboYarpControlBoardDriver::velocityMove(const double *sp) //NOT TESTED
 {
     if (!sp) return false;
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        m_jntReferenceVelocities[i] = sp[i];
+    for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+    {
+        velocityMove(i, sp[i]);
     }
     return true;
 }
@@ -42,7 +45,8 @@ bool GazeboYarpControlBoardDriver::velocityMove(const int n_joint, const int *jo
 {
     if (!joints || !spds) return false;
     bool ret = true;
-    for (int i = 0; i < n_joint && ret; i++) {
+    for (int i = 0; i < n_joint && ret; i++)
+    {
         ret = velocityMove(joints[i], spds[i]);
     }
     return ret;

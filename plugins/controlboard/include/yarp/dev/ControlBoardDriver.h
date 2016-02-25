@@ -402,6 +402,7 @@ private:
     int* m_trajectory_generator_type;
     TrajectoryGenerator** m_trajectory_generator;
     BaseCouplingHandler*  m_coupling_handler;
+    RampFilter* m_speed_ramp_handler;
     
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/

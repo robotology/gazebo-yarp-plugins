@@ -21,6 +21,48 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+RampFilter::RampFilter()
+{
+  m_final_reference = 0;
+  m_current_value = 0;
+  m_step = 0;
+}
+
+void RampFilter::setReference(double ref, double step)
+{
+  m_final_reference = ref;
+  m_step = step;
+
+}
+
+void RampFilter::update()
+{
+  double tmp = 0;
+  double error_abs = fabs(m_final_reference - m_current_value);
+  
+  if (m_final_reference > m_current_value)
+  {
+    tmp = +(m_step / 1000.0) * 1.0; //* m_controllerPeriod* _T_controller;
+  }
+  else
+  {
+    tmp = -(m_step / 1000.0) * 1.0; //* m_controllerPeriod*_T_controller;
+  }
+        
+  if( error_abs < fabs(tmp) )
+  {
+    tmp = (m_final_reference - m_current_value);
+  }
+  
+  m_current_value = m_current_value + tmp;
+}
+
+double RampFilter::getCurrentValue()
+{
+  return m_current_value;
+}
+  
+
 //------------------------------------------------------------------------------------------------------------------
 // MinJerkTrajectoryGenerator
 //------------------------------------------------------------------------------------------------------------------

@@ -96,7 +96,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_jntReferenceVelocities.zero();
     m_jntReferenceTorques.zero();
     m_trajectoryGenerationReferencePosition.zero();
-    m_trajectoryGenerationReferenceAcceleration.zero();
+   // m_trajectoryGenerationReferenceAcceleration.zero();
+    m_trajectoryGenerationReferenceAcceleration=10.0; //default value in deg/s^2
     amp = 1; // initially on - ok for simulator
     m_controlMode = new int[m_numberOfJoints];
     m_interactionMode = new int[m_numberOfJoints];
@@ -107,6 +108,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_trajectory_generator  = new TrajectoryGenerator*[m_numberOfJoints];
     m_trajectory_generator_type = new int[m_numberOfJoints];
     m_coupling_handler = 0;
+    m_speed_ramp_handler= new RampFilter[m_numberOfJoints];
     
     yarp::os::Bottle& traj_bottle = m_pluginParameters.findGroup("TRAJECTORY_GENERATION");
     if (!traj_bottle.isNull())
@@ -346,6 +348,13 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 
     //logger.log(m_velocities[2]);
     
+    //update refernce m_jntReferenceVelocities
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+      m_speed_ramp_handler[j].update();
+      //yDebug() << m_speed_ramp_handler[j].getCurrentValue();
+    }
+    
     //update Trajectories
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
@@ -361,7 +370,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         {
             if (m_clock % _T_controller == 0)
             {
-                double computed_ref_speed = m_jntReferenceVelocities[j] / 1000.0 * 1.0; //controller period  
+                double computed_ref_speed = m_speed_ramp_handler[j].getCurrentValue() / 1000.0 * 1;  //controller period
                 double computed_ref_pos =  m_jntReferencePositions[j] + m_trajectory_generator[j]->computeTrajectoryStep();
                 m_jntReferencePositions[j] = computed_ref_pos + computed_ref_speed;
                 //yDebug() << computed_ref_pos << " " << computed_ref_speed;
@@ -401,12 +410,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             }
         } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {//set vmo joint value
             if (m_clock % _T_controller == 0) {
-                sendVelocityToGazebo(j, m_motReferenceVelocities[j]);
+                sendVelocityToGazebo(j, m_speed_ramp_handler[j].getCurrentValue());
             }
         } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
             if (m_clock % _T_controller == 0) {
                 yWarning("Compliant velocity control not yet implemented");
-                sendVelocityToGazebo(j, m_motReferenceVelocities[j]);
+                sendVelocityToGazebo(j, m_speed_ramp_handler[j].getCurrentValue());
             }
         } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
             if (m_clock % _T_controller == 0) {

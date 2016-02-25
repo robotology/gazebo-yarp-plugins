@@ -60,5 +60,11 @@ bool GazeboYarpControlBoardDriver::close()
        m_coupling_handler =0;
     }
     
+    if (m_speed_ramp_handler!=0)
+    {
+      delete [] m_speed_ramp_handler;
+      m_speed_ramp_handler = 0;
+    }
+    
     return true;
 }

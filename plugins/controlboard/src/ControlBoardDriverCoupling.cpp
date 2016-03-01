@@ -20,6 +20,20 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+bool BaseCouplingHandler::checkJointIsCoupled(int joint)
+{
+  for (size_t i=0; i<m_coupledJoints.size(); i++)
+  {
+    if (m_coupledJoints[i]==joint) return true;
+  }
+  return false;
+}
+
+yarp::sig::VectorOf<int> BaseCouplingHandler::getCoupledJoints()
+{
+  return m_coupledJoints;
+}
+
 bool EyesCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
 {
   double temp = current_pos[0];
@@ -71,12 +85,4 @@ yarp::sig::Vector EyesCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_re
   out[0] = (trq_ref[0] + trq_ref[1])/2;
   out[1] = (trq_ref[0] - trq_ref[1])/2;
   return out;
-}
-
-yarp::sig::Vector EyesCouplingHandler::getCoupledJoints()
-{
-  yarp::sig::Vector v;
-  v.push_back(0);
-  v.push_back(1);
-  return v;
 }

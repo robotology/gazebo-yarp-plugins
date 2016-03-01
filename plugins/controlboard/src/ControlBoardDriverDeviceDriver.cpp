@@ -42,9 +42,8 @@ bool GazeboYarpControlBoardDriver::close()
     delete [] m_controlMode;
     delete [] m_interactionMode;
     delete [] m_isMotionDone;
-    delete [] m_trajectory_generator_type;
     
-    for (unsigned int i=0; i< m_numberOfJoints; i++)
+    for (unsigned int i=0; i< m_trajectory_generator.size(); i++)
     {
       if (m_trajectory_generator[i]!=0)
        {
@@ -52,18 +51,23 @@ bool GazeboYarpControlBoardDriver::close()
          m_trajectory_generator[i] =0;
        }
     }
-    delete [] m_trajectory_generator;
     
-    if (m_coupling_handler!=0)
+    for (unsigned int i=0; i<m_coupling_handler.size(); i++)
     {
-       delete m_coupling_handler;
-       m_coupling_handler =0;
+      if (m_coupling_handler[i]!=0)
+      {
+        delete m_coupling_handler[i];
+        m_coupling_handler[i] =0;
+      }
     }
     
-    if (m_speed_ramp_handler!=0)
+    for (unsigned int i=0; i<m_speed_ramp_handler.size(); i++)
     {
-      delete [] m_speed_ramp_handler;
-      m_speed_ramp_handler = 0;
+      if (m_speed_ramp_handler[i])
+      {
+        delete m_speed_ramp_handler[i];
+        m_speed_ramp_handler[i]=0;
+      }
     }
     
     return true;

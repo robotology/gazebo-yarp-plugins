@@ -10,6 +10,7 @@
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
+#include <boost/iterator/iterator_concepts.hpp>
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/LogStream.h>
@@ -104,19 +105,23 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
         return false;
     }
     
-    if (m_coupling_handler==0)
+    for (int cpl_i=0; cpl_i<(int)m_coupling_handler.size(); cpl_i++)
     {
-      changeControlMode(j,mode);
-    }
-    else
-    {
-      yarp::sig::Vector coupling_vector = m_coupling_handler->getCoupledJoints();
-      for (int coupled_j=0; coupled_j<coupling_vector.size(); coupled_j++)
+      if (m_coupling_handler[cpl_i] &&
+          m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
       {
-        changeControlMode(coupling_vector[coupled_j], mode);
+        yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
+        for (int coupled_j=0; coupled_j<coupling_vector.size(); coupled_j++)
+        {
+          changeControlMode(coupling_vector[coupled_j], mode);
+        }
+        break;
+      }
+      else
+      {
+        changeControlMode(j,mode);
       }
     }
-      
 }
 
 bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode)

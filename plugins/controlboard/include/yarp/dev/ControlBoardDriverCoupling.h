@@ -22,9 +22,9 @@ class BaseCouplingHandler
 {
 protected:
   gazebo::physics::Model* m_robot;
-
+  yarp::sig::VectorOf<int> m_coupledJoints;
   unsigned int m_controllerPeriod;
-  BaseCouplingHandler(gazebo::physics::Model* model) {m_robot = model;}
+  BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints) {m_robot = model; m_coupledJoints=coupled_joints;}
   
 public:
   virtual bool decouplePos (yarp::sig::Vector& current_pos)=0;
@@ -32,7 +32,8 @@ public:
   virtual bool decoupleAcc (yarp::sig::Vector& current_acc)=0;
   virtual bool decoupleTrq (yarp::sig::Vector& current_trq)=0;  
 
-  virtual yarp::sig::Vector getCoupledJoints()=0;
+  virtual yarp::sig::VectorOf<int> getCoupledJoints();
+  virtual bool checkJointIsCoupled(int joint);
   
   virtual yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref)=0;
   virtual yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref)=0;
@@ -43,15 +44,13 @@ class EyesCouplingHandler : public BaseCouplingHandler
 {
  
 public:
-  EyesCouplingHandler(gazebo::physics::Model* model):BaseCouplingHandler(model) {}
+  EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints):BaseCouplingHandler(model, coupled_joints) {}
   
 public:
   bool decouplePos (yarp::sig::Vector& current_pos);
   bool decoupleVel (yarp::sig::Vector& current_vel);
   bool decoupleAcc (yarp::sig::Vector& current_acc);
   bool decoupleTrq (yarp::sig::Vector& current_trq);  
- 
-  virtual yarp::sig::Vector getCoupledJoints();
     
   yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
   yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);

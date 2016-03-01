@@ -25,7 +25,8 @@ bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
     if (j >= 0 && j < (int)m_numberOfJoints)
     {
         m_jntReferenceVelocities[j] = sp;
-        m_speed_ramp_handler[j].setReference(m_jntReferenceVelocities[j], m_trajectoryGenerationReferenceAcceleration[j]);
+        if (m_speed_ramp_handler[j])
+          {  m_speed_ramp_handler[j]->setReference(m_jntReferenceVelocities[j], m_trajectoryGenerationReferenceAcceleration[j]); }
         return true;
     }
     return false;

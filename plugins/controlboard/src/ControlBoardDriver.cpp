@@ -487,6 +487,44 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
         m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));
         m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));
     }
+    
+    //...if the yarp plugin configuration file specifies a different velocity, override it...
+    yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
+    if (!limits_bottle.isNull())
+    {
+       yarp::os::Bottle& pos_limit_max = limits_bottle.findGroup("jntPosMax");
+       if (!pos_limit_max.isNull() && pos_limit_max.size() == m_numberOfJoints+1)
+       {
+           for(unsigned int i = 0; i < m_numberOfJoints; ++i)
+           { 
+             m_jointPosLimits[i].max = pos_limit_max.get(i+1).asDouble();
+         
+           }
+       }
+       else
+       {
+           yError() << "Failed to parse jntPosMax parameter";
+           return false;
+       }
+       yarp::os::Bottle& pos_limit_min = limits_bottle.findGroup("jntPosMin");
+       if (!pos_limit_min.isNull() && pos_limit_min.size() == m_numberOfJoints+1)
+       {
+           for(unsigned int i = 0; i < m_numberOfJoints; ++i)
+           { 
+             m_jointPosLimits[i].min = pos_limit_min.get(i+1).asDouble();           
+           }
+       }
+       else
+       {
+           yError() << "Failed to parse jntPosMin parameter";
+           return false;
+       }
+    }
+    else
+    {
+       yWarning() << "Missing LIMITS section";
+    }
+    
     return true;
 }
 
@@ -511,6 +549,11 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
              m_jointVelLimits[i].max = vel_limits.get(i+1).asDouble();
              m_jointVelLimits[i].min = 0;             
            }
+       }
+       else
+       {
+           yError() << "Failed to parse jntVelMax parameter";
+           return false;
        }
     }
     else

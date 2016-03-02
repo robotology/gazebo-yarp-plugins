@@ -122,6 +122,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
         changeControlMode(j,mode);
       }
     }
+    return true;
 }
 
 bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode)

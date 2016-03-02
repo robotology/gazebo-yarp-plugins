@@ -75,6 +75,7 @@ bool loadConfigModelPlugin(physics::ModelPtr _model,
             return false;
         }
     }
+    return true;
 }
 
 bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
@@ -127,6 +128,7 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
             return false;
         }
     }
+    return true;
 }
 
 

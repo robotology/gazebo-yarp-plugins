@@ -889,21 +889,21 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<GazeboY
               if (c_units==metric)
               {
                 GazeboYarpControlBoardDriver::PID pidValue;
-                pidValue.p=convertUserGainToGazeboGain(j,stiffness[j]);
-                pidValue.i=0;
-                pidValue.d=convertUserGainToGazeboGain(j,damping[j]);
-                pidValue.maxInt=0;
-                pidValue.maxOut=0;
+                pidValue.p = convertUserGainToGazeboGain(j,stiffness[j]);
+                pidValue.i = 0;
+                pidValue.d = convertUserGainToGazeboGain(j,damping[j]);
+                pidValue.maxInt = 0;
+                pidValue.maxOut = 0;
                 pids.push_back(pidValue);
               }
               else if (c_units==si)
               {
                 GazeboYarpControlBoardDriver::PID pidValue;
-                pidValue.p=j,stiffness[j];
-                pidValue.i=0;
-                pidValue.d=j,damping[j];
-                pidValue.maxInt=0;
-                pidValue.maxOut=0;
+                pidValue.p = stiffness[j];
+                pidValue.i = 0;
+                pidValue.d = damping[j];
+                pidValue.maxInt = 0;
+                pidValue.maxOut = 0;
                 pids.push_back(pidValue);
               }
           }

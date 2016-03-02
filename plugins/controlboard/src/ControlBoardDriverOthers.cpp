@@ -12,7 +12,7 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
-    name =  yarp::os::ConstString(controlboard_joint_names.at(axis));
+    name = yarp::os::ConstString(controlboard_joint_names.at(axis));
     return true;
 }
 

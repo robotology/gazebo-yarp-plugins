@@ -10,93 +10,93 @@
 #include <gazebo/physics/physics.hh>
 
 namespace yarp {
-  namespace dev {
-    enum TrajectoryType
-    {
-      TRAJECTORY_TYPE_CONST_SPEED = 0,
-      TRAJECTORY_TYPE_MIN_JERK = 1
-    };
-  }
+    namespace dev {
+        enum TrajectoryType
+        {
+            TRAJECTORY_TYPE_CONST_SPEED = 0,
+            TRAJECTORY_TYPE_MIN_JERK = 1
+        };
+    }
 }
-  
+
 class RampFilter
 {
 private:
-  double m_final_reference;
-  double m_current_value;
-  double m_step;
+    double m_final_reference;
+    double m_current_value;
+    double m_step;
 public:
 
-  RampFilter();
-  
-  void setReference(double ref, double step);
-  void update();
-  double getCurrentValue();
+    RampFilter();
+
+    void setReference(double ref, double step);
+    void update();
+    double getCurrentValue();
 };
 
 class TrajectoryGenerator
 {
 protected:
-  gazebo::physics::Model* m_robot;
-  bool   m_trajectory_complete;
-  double m_x0;
-  double m_xf;
-  double m_speed;
-  double m_computed_reference;
-  unsigned int m_controllerPeriod;
-  TrajectoryGenerator(gazebo::physics::Model* model) {m_robot = model; m_trajectory_complete=true; m_speed=0;}
-  
+    gazebo::physics::Model* m_robot;
+    bool   m_trajectory_complete;
+    double m_x0;
+    double m_xf;
+    double m_speed;
+    double m_computed_reference;
+    unsigned int m_controllerPeriod;
+    TrajectoryGenerator(gazebo::physics::Model* model);
+
 public:
-  virtual bool initTrajectory (double current_pos, double final_pos, double speed)=0;
-  virtual bool abortTrajectory(double limit)=0;
-  virtual double computeTrajectory()=0;  
-  virtual double computeTrajectoryStep()=0;
-  virtual yarp::dev::TrajectoryType getTrajectoryType()=0;
-  bool isMotionDone() {return m_trajectory_complete;}
+    virtual ~TrajectoryGenerator();
+    virtual bool initTrajectory (double current_pos, double final_pos, double speed) = 0;
+    virtual bool abortTrajectory(double limit) = 0;
+    virtual double computeTrajectory() = 0;
+    virtual double computeTrajectoryStep() = 0;
+    virtual yarp::dev::TrajectoryType getTrajectoryType() = 0;
+    bool isMotionDone();
 };
 
 class ConstSpeedTrajectoryGenerator: public TrajectoryGenerator
 {
 public:
-  ConstSpeedTrajectoryGenerator(gazebo::physics::Model* model):TrajectoryGenerator(model) {}
-  ~ConstSpeedTrajectoryGenerator();  
-  
+    ConstSpeedTrajectoryGenerator(gazebo::physics::Model* model);
+    virtual ~ConstSpeedTrajectoryGenerator();
+
 public:
-  bool initTrajectory (double current_pos, double final_pos, double speed);
-  bool abortTrajectory(double limit);
-  double computeTrajectory();
-  double computeTrajectoryStep();
-  yarp::dev::TrajectoryType getTrajectoryType() {return yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}
+    bool initTrajectory(double current_pos, double final_pos, double speed);
+    bool abortTrajectory(double limit);
+    double computeTrajectory();
+    double computeTrajectoryStep();
+    yarp::dev::TrajectoryType getTrajectoryType();
 };
 
 class MinJerkTrajectoryGenerator: public TrajectoryGenerator
 {
-  
 public:
-  MinJerkTrajectoryGenerator(gazebo::physics::Model* model):TrajectoryGenerator(model) {}
-  ~MinJerkTrajectoryGenerator();
-  
-private:
-  double m_trajectory_coeff_c1;
-  double m_trajectory_coeff_c2;
-  double m_trajectory_coeff_c3;
-  double m_dx0;
-  double m_tf;
-  double m_prev_a;
-  double m_cur_t;
-  double m_cur_step;
-  double m_step;
+    MinJerkTrajectoryGenerator(gazebo::physics::Model* model);
+    virtual ~MinJerkTrajectoryGenerator();
 
-  double compute_p5f (double t);
-  double compute_p5f_vel (double t);
-  double compute_current_vel();
-  
+private:
+    double m_trajectory_coeff_c1;
+    double m_trajectory_coeff_c2;
+    double m_trajectory_coeff_c3;
+    double m_dx0;
+    double m_tf;
+    double m_prev_a;
+    double m_cur_t;
+    double m_cur_step;
+    double m_step;
+
+    double compute_p5f(double t);
+    double compute_p5f_vel(double t);
+    double compute_current_vel();
+
 public:
-  bool initTrajectory (double current_pos, double final_pos, double speed);
-  bool abortTrajectory(double limit);
-  double computeTrajectory();
-  double computeTrajectoryStep();
-  yarp::dev::TrajectoryType getTrajectoryType() {return yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}
+    bool initTrajectory(double current_pos, double final_pos, double speed);
+    bool abortTrajectory(double limit);
+    double computeTrajectory();
+    double computeTrajectoryStep();
+    yarp::dev::TrajectoryType getTrajectoryType();
 };
 
 #endif //GAZEBOYARP_TRAJECTORY_H

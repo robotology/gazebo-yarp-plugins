@@ -41,7 +41,7 @@ bool GazeboYarpControlBoardDriver::setImpedanceOffset(int j, double offset)
 {
     if(j >= 0 && j < m_numberOfJoints)
     {
-        m_torqueOffsett[j] = offset;
+        m_torqueOffset[j] = offset;
         return true;
     }
     return false;
@@ -54,7 +54,7 @@ bool GazeboYarpControlBoardDriver::getImpedanceOffset(int j, double* offset)
 {
     if(j >= 0 && j < m_numberOfJoints)
     {
-        *offset = m_torqueOffsett[j];
+        *offset = m_torqueOffset[j];
         return true;
     }
     return false;

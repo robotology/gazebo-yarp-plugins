@@ -79,7 +79,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_velocityPIDs.reserve(m_numberOfJoints);
     m_impedancePosPDs.reserve(m_numberOfJoints);
     m_torquePIDs.resize(m_numberOfJoints);
-    m_torqueOffsett.resize(m_numberOfJoints);
+    m_torqueOffset.resize(m_numberOfJoints);
     m_minStiffness.resize(m_numberOfJoints, 0.0);
     m_maxStiffness.resize(m_numberOfJoints, 1000.0);
     m_minDamping.resize(m_numberOfJoints, 0.0);
@@ -103,7 +103,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_interactionMode = new int[m_numberOfJoints];
     m_isMotionDone = new bool[m_numberOfJoints];
     m_clock = 0;
-    m_torqueOffsett = 0;
+    m_torqueOffset = 0;
 
     m_trajectory_generator.resize(m_numberOfJoints, NULL);
     m_coupling_handler.clear();
@@ -214,7 +214,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     {
         // Set an old reference value surely out of range. This will force the setting of initial reference at startup
         // NOTE: This has to be after setMinMaxPos function
-        m_oldReferencePositions[j] = m_jointPosLimits[j].max *2;
+        m_oldReferencePositions[j] = 1e21;
     }
 
     if (!setMinMaxVel())
@@ -1064,8 +1064,13 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 
     if(ref != m_oldReferencePositions[j])
     {
+        if(check_desired_position_within_limits(j, ref, m_oldReferencePositions[j])==false)
+        {
+           //yDebug("WARN: OUT of LIMITS %s, j:%d min:%f cur:%f max:%f", deviceName.c_str(), j, m_jointPosLimits[j].min,ref,m_jointPosLimits[j].max);       
+        }
+         
         // yDebug() << "Sending new command: new ref is " << ref << "; old ref was " << m_oldReferencePositions[j] ;
-        prepareJointMsg(j_cmd,j,ref);
+        prepareJointPositionMsg(j_cmd,j,ref);
         m_jointCommandPublisher->WaitForConnection();
         m_jointCommandPublisher->Publish(j_cmd);
         m_oldReferencePositions[j] = ref;
@@ -1073,7 +1078,7 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
     return true;
 }
 
-void GazeboYarpControlBoardDriver::prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)
+void GazeboYarpControlBoardDriver::prepareJointPositionMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)
 {
     GazeboYarpControlBoardDriver::PID positionPID = m_positionPIDs[joint_index];
 
@@ -1105,6 +1110,105 @@ bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref)
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int i, double& ref)
+{
+  double band =0;
+  int   signKp = (m_positionPIDs[i].p>0?1:-1);
+  int   signRef = (ref>0?1:-1);
+  //if (m_controlMode[i] == VOCAB_CM_TORQUE || m_interactionMode[i] == VOCAB_IM_COMPLIANT)
+  if (m_controlMode[i] != VOCAB_CM_IDLE && m_controlMode[i] != VOCAB_CM_FORCE_IDLE)
+  {
+      if  (m_positions[i] > m_jointPosLimits[i].max)
+      {
+          if (signKp*signRef >0 )
+          {
+              ref = ( (m_jointPosLimits[i].max-m_positions[i]) * (m_positionPIDs[i].p));
+              if (ref > m_positionPIDs[i].maxOut) ref = m_positionPIDs[i].maxOut;
+              else if (ref < -m_positionPIDs[i].maxOut) ref = -m_positionPIDs[i].maxOut;
+              //_integral[i] = 0;
+              #ifdef DEBUG_LIMITS
+              yDebug() << "TTT TMAX" << m_positions[i] ">" <<  m_jointPosLimits[i].max;
+              #endif
+          }
+          return false;
+      }
+      else if  (m_positions[i] < m_jointPosLimits[i].min)   
+      {
+          if (signKp*signRef <0 )
+          {
+              ref = ( (m_jointPosLimits[i].min-m_positions[i]) * (m_positionPIDs[i].p)); 
+              if (ref > m_positionPIDs[i].maxOut) ref = m_positionPIDs[i].maxOut;
+              else if (ref < -m_positionPIDs[i].maxOut) ref = -m_positionPIDs[i].maxOut;        
+              //_integral[i] = 0;      
+              #ifdef DEBUG_LIMITS
+              yDebug() << "TTT TMIN" << m_positions[i] "<" <<  m_jointPosLimits[i].min;
+              #endif
+          }                               
+          return false;
+      }               
+  }
+  return true;
+}
+
+bool GazeboYarpControlBoardDriver::check_desired_position_within_limits(int i, double& desired, double previous_desired)
+{
+    if (desired < m_jointPosLimits[i].min && (desired - previous_desired) < 0) 
+    {      
+        #ifdef DEBUG_LIMITS
+        yDebug()<<"TTT PMIN" << desired << m_jointPosLimits[i].min << previous_desired;
+        #endif
+        desired =m_jointPosLimits[i].min;
+        if (m_controlMode[i] == VOCAB_CM_VELOCITY)
+        {
+          m_jntReferenceVelocities[i] = 0;     
+        }
+        else if (m_controlMode[i] == VOCAB_CM_POSITION)
+        {
+          m_trajectoryGenerationReferencePosition[i] = desired;
+          m_trajectory_generator[i]->initTrajectory (m_positions[i], m_jointPosLimits[i].min, m_trajectoryGenerationReferenceSpeed[i]);
+        }
+        else if (m_controlMode[i] == VOCAB_CM_POSITION_DIRECT)
+        {
+          m_jntReferencePositions[i] = desired;
+        }
+        else if (m_controlMode[i] == VOCAB_CM_MIXED)
+        {
+          m_jntReferenceVelocities[i] = 0;
+          m_trajectoryGenerationReferencePosition[i] = desired;    
+          m_trajectory_generator[i]->initTrajectory (m_positions[i], m_jointPosLimits[i].min, m_trajectoryGenerationReferenceSpeed[i]);
+        }
+        return false;
+    }
+    else if (desired > m_jointPosLimits[i].max && (desired - previous_desired) > 0)
+    {
+        #ifdef DEBUG_LIMITS
+        yDebug()<<"TTT PMAX" << desired << m_jointPosLimits[i].max << previous_desired;
+        #endif
+        desired = m_jointPosLimits[i].max;
+        if (m_controlMode[i] == VOCAB_CM_VELOCITY)
+        {
+          m_jntReferenceVelocities[i] = 0;     
+        }
+        else if (m_controlMode[i] == VOCAB_CM_POSITION)
+        {
+          m_trajectoryGenerationReferencePosition[i] = desired;
+          m_trajectory_generator[i]->initTrajectory (m_positions[i], m_jointPosLimits[i].min, m_trajectoryGenerationReferenceSpeed[i]);
+        }
+        else if (m_controlMode[i] == VOCAB_CM_POSITION_DIRECT)
+        {
+          m_jntReferencePositions[i] = desired;
+        }
+        else if (m_controlMode[i] == VOCAB_CM_MIXED)
+        {
+          m_jntReferenceVelocities[i] = 0;
+          m_trajectoryGenerationReferencePosition[i] = desired;    
+          m_trajectory_generator[i]->initTrajectory (m_positions[i], m_jointPosLimits[i].min, m_trajectoryGenerationReferenceSpeed[i]);
+        }
+        return false;
+    }
+    return true;
+}
+
 void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     GazeboYarpControlBoardDriver::PID velocityPID = m_velocityPIDs[j];
@@ -1120,7 +1224,7 @@ void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCm
     j_cmd.mutable_velocity()->set_target(convertUserToGazebo(j, ref));
 }
 
-bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) //NOT TESTED
+bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs)
 {
     for (unsigned int j = 0; j < m_numberOfJoints; j++) {
         sendTorqueToGazebo(j,refs[j]);
@@ -1128,8 +1232,13 @@ bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs) 
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double ref) //NOT TESTED
+bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j, double ref) 
 {
+    if (check_joint_within_limits_override_torque(j,ref)==false)
+    {
+        //yDebug("TORQUE LIMITS %s j:%d ", deviceName.c_str(), j);      
+    }
+          
     gazebo::msgs::JointCmd j_cmd;
     prepareJointTorqueMsg(j_cmd,j,ref);
     m_jointCommandPublisher->WaitForConnection();
@@ -1137,7 +1246,7 @@ bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j,const double r
     return true;
 }
 
-void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
+void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, double ref)
 {
     j_cmd.set_name(m_jointPointers[j]->GetScopedName());
 //    j_cmd.mutable_position()->set_p_gain(0.0);
@@ -1149,7 +1258,7 @@ void GazeboYarpControlBoardDriver::prepareJointTorqueMsg(gazebo::msgs::JointCmd&
     j_cmd.set_force(ref);
 }
 
-void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const double des )
+void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, double des )
 {
     if(j >= 0 && j < m_numberOfJoints) {
         /*
@@ -1158,7 +1267,7 @@ void GazeboYarpControlBoardDriver::sendImpPositionToGazebo ( const int j, const 
          */
         //yDebug()<<"m_velocities"<<j<<" : "<<m_velocities[j];
         double q = m_positions[j] - m_zeroPosition[j];
-        double t_ref = -m_impedancePosPDs[j].p * (q - des) - m_impedancePosPDs[j].d * m_velocities[j] + m_torqueOffsett[j];
+        double t_ref = -m_impedancePosPDs[j].p * (q - des) - m_impedancePosPDs[j].d * m_velocities[j] + m_torqueOffset[j];
         sendTorqueToGazebo(j, t_ref);
     }
 }

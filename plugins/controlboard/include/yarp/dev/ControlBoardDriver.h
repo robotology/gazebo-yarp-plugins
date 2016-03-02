@@ -417,7 +417,7 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_torquePIDs;
 
-    yarp::sig::Vector m_torqueOffsett;
+    yarp::sig::Vector m_torqueOffset;
     yarp::sig::Vector m_minStiffness;
     yarp::sig::Vector m_minDamping;
     yarp::sig::Vector m_maxStiffness;
@@ -444,16 +444,20 @@ private:
     bool setPIDsForGroup_IMPEDANCE( std::vector<GazeboYarpControlBoardDriver::PID>&);
     bool setMinMaxImpedance();
     bool setPIDs(); //WORKS
+    
+    bool check_desired_position_within_limits(int i, double& desired, double previous_desired);
+    bool check_joint_within_limits_override_torque(int i, double&ref );
+    
     bool sendPositionsToGazebo(yarp::sig::Vector& refs);
     bool sendPositionToGazebo(int j,double ref);
-    void prepareJointMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref);  //WORKS
+    void prepareJointPositionMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, double ref);  //WORKS
     bool sendVelocitiesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
     bool sendVelocityToGazebo(int j,double ref); //NOT TESTED
-    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
+    void prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, double ref); //NOT TESTED
     bool sendTorquesToGazebo(yarp::sig::Vector& refs); //NOT TESTED
-    bool sendTorqueToGazebo(const int j,const double ref); //NOT TESTED
-    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref); //NOT TESTED
-    void sendImpPositionToGazebo ( const int j, const double des );
+    bool sendTorqueToGazebo(const int j, double ref); //NOT TESTED
+    void prepareJointTorqueMsg(gazebo::msgs::JointCmd& j_cmd, const int j, double ref); //NOT TESTED
+    void sendImpPositionToGazebo ( const int j,  double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
     void prepareResetJointMsg(int j);
     

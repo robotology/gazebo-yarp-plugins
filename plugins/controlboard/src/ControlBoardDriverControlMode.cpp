@@ -107,21 +107,17 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
     
     for (int cpl_i=0; cpl_i<(int)m_coupling_handler.size(); cpl_i++)
     {
-      if (m_coupling_handler[cpl_i] &&
-          m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
+      if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
       {
         yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
         for (int coupled_j=0; coupled_j<coupling_vector.size(); coupled_j++)
         {
           changeControlMode(coupling_vector[coupled_j], mode);
         }
-        break;
-      }
-      else
-      {
-        changeControlMode(j,mode);
+        return true;
       }
     }
+    changeControlMode(j,mode);
     return true;
 }
 

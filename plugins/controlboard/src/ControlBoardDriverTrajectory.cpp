@@ -72,13 +72,23 @@ double RampFilter::getCurrentValue()
 TrajectoryGenerator::TrajectoryGenerator(gazebo::physics::Model* model)
 : m_robot(model)
 , m_trajectory_complete(true)
-, m_speed(0) {}
+, m_speed(0)
+, m_joint_min(0)
+, m_joint_max(0)
+{}
 
 TrajectoryGenerator::~TrajectoryGenerator() {}
 
 bool TrajectoryGenerator::isMotionDone()
 {
-    return m_trajectory_complete;
+  return m_trajectory_complete;
+}
+
+bool  TrajectoryGenerator::setLimits(double min, double max)
+{
+  m_joint_min = min;
+  m_joint_max = max;
+  return true;
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -173,6 +183,8 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
     m_x0 = current_pos;
     m_prev_a = current_pos;
     m_xf = final_pos;
+    if (m_xf > m_joint_max) m_xf = m_joint_max;
+    else if(m_xf < m_joint_min) m_xf = m_joint_min;
     m_speed = speed;
 
     //double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
@@ -335,6 +347,8 @@ bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double f
     m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     m_x0 = current_pos;
     m_xf = final_pos;
+    if (m_xf > m_joint_max) m_xf = m_joint_max;
+    else if(m_xf < m_joint_min) m_xf = m_joint_min;
     m_speed = speed;
     m_computed_reference = m_x0;
     m_mutex.post();

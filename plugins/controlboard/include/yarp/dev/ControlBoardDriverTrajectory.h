@@ -46,6 +46,8 @@ protected:
     double m_speed;
     double m_computed_reference;
     unsigned int m_controllerPeriod;
+    double m_joint_min;
+    double m_joint_max;
     TrajectoryGenerator(gazebo::physics::Model* model);
 
 public:
@@ -55,6 +57,7 @@ public:
     virtual double computeTrajectory() = 0;
     virtual double computeTrajectoryStep() = 0;
     virtual yarp::dev::TrajectoryType getTrajectoryType() = 0;
+    bool setLimits(double min, double max);
     bool isMotionDone();
 };
 

@@ -445,7 +445,6 @@ private:
     bool setMinMaxImpedance();
     bool setPIDs(); //WORKS
     
-    bool check_desired_position_within_limits(int i, double& desired, double previous_desired);
     bool check_joint_within_limits_override_torque(int i, double&ref );
     
     bool sendPositionsToGazebo(yarp::sig::Vector& refs);

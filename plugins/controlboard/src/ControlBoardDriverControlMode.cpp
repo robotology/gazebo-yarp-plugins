@@ -149,6 +149,7 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
         case VOCAB_CM_POSITION :
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+            m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
         break;
         case VOCAB_CM_POSITION_DIRECT :
@@ -162,6 +163,7 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_jntReferenceVelocities[j] = 0.0;
+            m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
         break;
         case VOCAB_CM_TORQUE :

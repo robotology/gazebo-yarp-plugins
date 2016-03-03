@@ -22,6 +22,7 @@ namespace yarp {
 class RampFilter
 {
 private:
+    yarp::os::Semaphore m_mutex;
     double m_final_reference;
     double m_current_value;
     double m_step;
@@ -37,6 +38,7 @@ public:
 class TrajectoryGenerator
 {
 protected:
+    yarp::os::Semaphore m_mutex;
     gazebo::physics::Model* m_robot;
     bool   m_trajectory_complete;
     double m_x0;
@@ -62,6 +64,11 @@ public:
     ConstSpeedTrajectoryGenerator(gazebo::physics::Model* model);
     virtual ~ConstSpeedTrajectoryGenerator();
 
+private:
+    double p_computeTrajectory();
+    double p_computeTrajectoryStep();
+    bool   p_abortTrajectory (double limit);
+      
 public:
     bool initTrajectory(double current_pos, double final_pos, double speed);
     bool abortTrajectory(double limit);
@@ -87,9 +94,13 @@ private:
     double m_cur_step;
     double m_step;
 
-    double compute_p5f(double t);
-    double compute_p5f_vel(double t);
-    double compute_current_vel();
+    double p_computeTrajectory();
+    double p_computeTrajectoryStep();
+    bool   p_abortTrajectory (double limit);
+        
+    double p_compute_p5f(double t);
+    double p_compute_p5f_vel(double t);
+    double p_compute_current_vel();
 
 public:
     bool initTrajectory(double current_pos, double final_pos, double speed);

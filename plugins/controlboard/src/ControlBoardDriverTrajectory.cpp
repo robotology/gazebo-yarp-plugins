@@ -30,13 +30,15 @@ RampFilter::RampFilter()
 
 void RampFilter::setReference(double ref, double step)
 {
+    m_mutex.wait();
     m_final_reference = ref;
     m_step = step;
-
+    m_mutex.post();
 }
 
 void RampFilter::update()
 {
+    m_mutex.wait();
     double tmp = 0;
     double error_abs = fabs(m_final_reference - m_current_value);
 
@@ -55,6 +57,7 @@ void RampFilter::update()
     }
 
     m_current_value = m_current_value + tmp;
+    m_mutex.post();
 }
 
 double RampFilter::getCurrentValue()
@@ -87,7 +90,7 @@ MinJerkTrajectoryGenerator::MinJerkTrajectoryGenerator(gazebo::physics::Model* m
 
 MinJerkTrajectoryGenerator::~MinJerkTrajectoryGenerator() {}
 
-double MinJerkTrajectoryGenerator::compute_p5f (double t)
+double MinJerkTrajectoryGenerator::p_compute_p5f (double t)
 {
     double accum = m_dx0*t;
     double tmp = t * t * t;
@@ -99,7 +102,7 @@ double MinJerkTrajectoryGenerator::compute_p5f (double t)
     return accum;
 }
 
-double MinJerkTrajectoryGenerator::compute_p5f_vel (double t)
+double MinJerkTrajectoryGenerator::p_compute_p5f_vel (double t)
 {
     double accum = -2*m_dx0*t - m_dx0;
     accum = accum + (30*m_x0 +15*m_dx0    -30*m_xf) * (t*t);
@@ -107,7 +110,7 @@ double MinJerkTrajectoryGenerator::compute_p5f_vel (double t)
     return accum;
 }
 
-double MinJerkTrajectoryGenerator::compute_current_vel()
+double MinJerkTrajectoryGenerator::p_compute_current_vel()
 {
     double a;
 
@@ -117,17 +120,16 @@ double MinJerkTrajectoryGenerator::compute_current_vel()
     {
         return 0;
     }
-    else
-        if (m_cur_t < 1.0 - m_step)
-        {
-            // calculate the velocity
-            a = compute_p5f_vel (m_cur_t);
-            return a;
-        }
+    else  if (m_cur_t < 1.0 - m_step)
+    {
+        // calculate the velocity
+        a = p_compute_p5f_vel (m_cur_t);
+        return a;
+    }
     return 0;
 }
 
-bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
+bool MinJerkTrajectoryGenerator::p_abortTrajectory (double limit)
 {
     if (!m_trajectory_complete)
     {
@@ -145,16 +147,29 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
     return true;
 }
 
+bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
+{
+    m_mutex.wait();
+    bool ret = p_abortTrajectory(limit);
+    m_mutex.post();
+    return ret;
+}
+
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
+    m_mutex.wait();
     m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     double speedf = fabs(speed);
     double dx0 =0;
     m_computed_reference = current_pos;
 
-    if (speed <= 0) return false;
+    if (speed <= 0)
+    {
+      m_mutex.post();
+      return false; 
+    }
 
-    m_dx0 = compute_current_vel();
+    m_dx0 = p_compute_current_vel();
     m_x0 = current_pos;
     m_prev_a = current_pos;
     m_xf = final_pos;
@@ -172,8 +187,9 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
 
     if (m_tf < 1 || m_tf == 0)
     {
-        abortTrajectory (final_pos);
+        p_abortTrajectory (final_pos);
         m_step=0;
+        m_mutex.post();
         return false;
     }
     else
@@ -183,11 +199,12 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
     m_cur_t = 0;
     m_cur_step = 0;
     m_trajectory_complete =  false;
-
+    
+    m_mutex.post();
     return true;
 }
 
-double MinJerkTrajectoryGenerator::computeTrajectoryStep()
+double MinJerkTrajectoryGenerator::p_computeTrajectoryStep()
 {
     double target=0;
     double delta_target=0;
@@ -216,7 +233,7 @@ double MinJerkTrajectoryGenerator::computeTrajectoryStep()
     else if (m_cur_t < 1.0 - m_step)
     {
         // calculate the power factors
-        target = compute_p5f (m_cur_t);
+        target = p_compute_p5f (m_cur_t);
         target += m_x0;
 
         // time
@@ -237,7 +254,15 @@ double MinJerkTrajectoryGenerator::computeTrajectoryStep()
     return 0.0;
 }
 
-double MinJerkTrajectoryGenerator::computeTrajectory()
+double MinJerkTrajectoryGenerator::computeTrajectoryStep()
+{
+    m_mutex.wait();
+    double ret = p_computeTrajectoryStep();
+    m_mutex.post();
+    return ret;
+}
+
+double MinJerkTrajectoryGenerator::p_computeTrajectory()
 {
     double target=0;
 
@@ -263,7 +288,7 @@ double MinJerkTrajectoryGenerator::computeTrajectory()
     else if (m_cur_t < 1.0 - m_step)
     {
         // calculate the power factors
-        target = compute_p5f (m_cur_t);
+        target = p_compute_p5f (m_cur_t);
         target += m_x0;
 
         // time
@@ -278,7 +303,15 @@ double MinJerkTrajectoryGenerator::computeTrajectory()
     //yDebug()<<"last";
     m_trajectory_complete = true;
     target =m_xf;
-    return target;
+    return target;  
+}
+
+double MinJerkTrajectoryGenerator::computeTrajectory()
+{   
+    m_mutex.wait();
+    double ret = p_computeTrajectory();
+    m_mutex.post();
+    return ret;
 }
 
 yarp::dev::TrajectoryType MinJerkTrajectoryGenerator::getTrajectoryType()
@@ -298,20 +331,31 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
+    m_mutex.wait();
     m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     m_x0 = current_pos;
     m_xf = final_pos;
     m_speed = speed;
     m_computed_reference = m_x0;
+    m_mutex.post();
     return true;
+}
+
+bool ConstSpeedTrajectoryGenerator::p_abortTrajectory(double limit)
+{
+    //to be implemented
+  return true;
 }
 
 bool ConstSpeedTrajectoryGenerator::abortTrajectory(double limit)
 {
-    return true;
+    m_mutex.wait();
+    bool ret = p_abortTrajectory(limit);
+    m_mutex.post();
+    return ret;
 }
 
-double ConstSpeedTrajectoryGenerator::computeTrajectoryStep()
+double ConstSpeedTrajectoryGenerator::p_computeTrajectoryStep()
 {
     double step = 0;
     double error_abs = fabs(m_xf - m_computed_reference);
@@ -334,14 +378,30 @@ double ConstSpeedTrajectoryGenerator::computeTrajectoryStep()
     return step;
 }
 
+double ConstSpeedTrajectoryGenerator::computeTrajectoryStep()
+{
+    m_mutex.wait();
+    double ret = p_computeTrajectoryStep();
+    m_mutex.post();
+    return ret;
+}
+
 double ConstSpeedTrajectoryGenerator::computeTrajectory()
+{
+    m_mutex.wait();
+    double ret = p_computeTrajectory();
+    m_mutex.post();
+    return ret;
+}
+
+double ConstSpeedTrajectoryGenerator::p_computeTrajectory()
 {
     double step = (m_speed / 1000.0) * m_controllerPeriod; //* _T_controller;
     double error_abs = fabs(m_computed_reference - m_xf);
     
     if(error_abs)
     {
-        m_computed_reference += computeTrajectoryStep(); 
+        m_computed_reference += p_computeTrajectoryStep(); 
         if( error_abs < step)  
         {
             m_trajectory_complete = true;

@@ -14,11 +14,16 @@ bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* list
     listOfKeys->clear();
     listOfKeys->addString("hardwareDamping");
     listOfKeys->addString("hardwareFriction");
-    //listOfKeys->addString("hardwareHiStop");
-    //listOfKeys->addString("hardwareLowStop");
     listOfKeys->addString("hardwareEffortLimit");
+    
     listOfKeys->addString("hardwareVelocityLimit");
     listOfKeys->addString("yarp_jntMaxVel");
+    
+    listOfKeys->addString("yarp_jntMaxPos");
+    listOfKeys->addString("yarp_jntMinPos");
+    listOfKeys->addString("hardwareHiStop");
+    listOfKeys->addString("hardwareLowStop");
+    
     listOfKeys->addString("SHORTCUT_all_pos_kp");
     listOfKeys->addString("SHORTCUT_all_pos_kd");
     listOfKeys->addString("SHORTCUT_all_pos_ki");
@@ -41,12 +46,12 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     }
     if (key == "hardwareHiStop")
     {
-        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = m_jointPointers[i]->GetParam(std::string("hi_stop"),0);  r.addDouble(tmp); }
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));  r.addDouble(tmp); }
         return true;
     }
     if (key == "hardwareLowStop")
     {
-        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = m_jointPointers[i]->GetParam(std::string("lo_stop"),0);  r.addDouble(tmp); }
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));  r.addDouble(tmp); }
         return true;
     }
     if (key == "hardwareEffortLimit")
@@ -62,6 +67,16 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     if (key == "yarp_jntMaxVel")
     {
         yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp_min,tmp_max; getVelLimits(i,&tmp_min,&tmp_max);  r.addDouble(tmp_max); }
+        return true;
+    }
+    if (key == "yarp_jntMaxPos")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp_min,tmp_max; getLimits(i,&tmp_min,&tmp_max);  r.addDouble(tmp_max); }
+        return true;
+    }
+    if (key == "yarp_jntMinPos")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp_min,tmp_max; getLimits(i,&tmp_min,&tmp_max);  r.addDouble(tmp_min); }
         return true;
     }
     if (key == "SHORTCUT_all_pos_kp")
@@ -136,7 +151,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         for (int i = 0; i < m_numberOfJoints; i++)
         {
             double value = bval->get(i).asDouble();
-            m_jointPointers[i]->SetParam("hi_stop",0,value);
+            m_jointPointers[i]->SetUpperLimit(0,convertUserToGazebo(i,value));
         }
         return true;
     }
@@ -145,7 +160,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         for (int i = 0; i < m_numberOfJoints; i++)
         {
             double value = bval->get(i).asDouble();
-            m_jointPointers[i]->SetParam("lo_stop",0,value);
+            m_jointPointers[i]->SetLowerLimit(0,convertUserToGazebo(i,value));
         }
         return true;
     }
@@ -155,6 +170,28 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         {
             double value = bval->get(i).asDouble();
             setVelLimits(i,0,value);
+        }
+        return true;
+    }
+    if (key == "yarp_jntMaxPos")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asDouble();
+            double t_max=0, t_min=0;    
+            getLimits(i,&t_min,&t_max);
+            setLimits(i,t_min,value);
+        }
+        return true;
+    }
+    if (key == "yarp_jntMinPos")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asDouble();
+            double t_max=0, t_min=0;    
+            getLimits(i,&t_min,&t_max);
+            setLimits(i,value,t_max);
         }
         return true;
     }

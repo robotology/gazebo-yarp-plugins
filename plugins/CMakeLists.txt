@@ -28,3 +28,10 @@ if( NOT (GAZEBO_VERSION VERSION_LESS 6) )
 else()
     message(WARNING "Gazebo version is lower than 6, disabling depthCamera plugin.")
 endif()
+
+
+if( NOT (GAZEBO_VERSION VERSION_LESS 7) )
+    add_subdirectory(lasersensor)
+else()
+    message(WARNING "Gazebo version is lower than 7, disabling lasersensor plugin.")
+endif()

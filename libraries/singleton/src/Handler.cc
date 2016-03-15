@@ -99,8 +99,11 @@ void Handler::removeRobot(const std::string& robotName)
 bool Handler::setSensor(gazebo::sensors::Sensor* _sensor)
 {
     bool ret = false;
+#if GAZEBO_MAJOR_VERSION >= 7
+    std::string scopedSensorName = _sensor->ScopedName();
+#else
     std::string scopedSensorName = _sensor->GetScopedName();
-
+#endif
     SensorsMap::iterator sensor = m_sensorsMap.find(scopedSensorName);
     if (sensor != m_sensorsMap.end()) {
         //sensor already exists. Increment reference counting

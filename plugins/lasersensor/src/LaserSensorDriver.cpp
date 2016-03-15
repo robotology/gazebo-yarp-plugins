@@ -29,12 +29,16 @@ GazeboYarpLaserSensorDriver::~GazeboYarpLaserSensorDriver() {}
 void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
 {   
     yarp::os::LockGuard guard(m_mutex);
-    
+
     /** \todo ensure that the timestamp is the right one */
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */
+#if GAZEBO_MAJOR_VERSION >= 7
+    m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
+    this->m_parentSensor->Ranges(m_sensorData);
+#else
     m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
-
     this->m_parentSensor->GetRanges(m_sensorData);
+#endif
 
     return;
 }

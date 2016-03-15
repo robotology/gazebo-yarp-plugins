@@ -60,7 +60,11 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
+#if GAZEBO_MAJOR_VERSION >= 7
+    m_sensorName = _sensor->ScopedName();
+#else
     m_sensorName = _sensor->GetScopedName();
+#endif
     m_sensor = (gazebo::sensors::DepthCameraSensor*)_sensor.get();
     if(m_sensor == NULL)
     {

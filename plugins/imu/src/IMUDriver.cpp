@@ -45,8 +45,11 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
 #endif
 
     /** \todo TODO ensure that the timestamp is the right one */
+#if GAZEBO_MAJOR_VERSION >= 7
+    m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
+#else
     m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
-
+#endif
     m_dataMutex.wait();
 
     for (unsigned i = 0; i < 3; i++) {

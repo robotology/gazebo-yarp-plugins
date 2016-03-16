@@ -97,7 +97,6 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     std::cout << "Data from Gazebo:\n width: " << m_width << ", height: " << height() << std::endl;
     m_imageFrame_BufferSize = 3*m_width*m_height;
     m_depthFrame_BufferSize = m_width*m_height*sizeof(float);
-//     m_RGBPointCloud_BufferSize = 0;
 
     m_colorFrameMutex.wait();
     m_imageFrame_Buffer = new unsigned char[m_imageFrame_BufferSize];
@@ -125,15 +124,11 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
                                                                 &GazeboYarpDepthCameraDriver::OnNewDepthFrame,
                                                                 this, _1, _2, _3, _4, _5));
 
-    std::cout << "this->m_updateImageFrame_Connection is " << this->m_updateImageFrame_Connection << std::endl;
-    std::cout << "this->m_updateDepthFrame_Connection is " << this->m_updateDepthFrame_Connection << std::endl;
-    std::cout << "this->m_updateRGBPointCloud_Connection is " << this->m_updateRGBPointCloud_Connection << std::endl;
     return true;
 }
 
 bool GazeboYarpDepthCameraDriver::close()
 {
-    // Copy & paste like a Monkey
     if (this->m_updateImageFrame_Connection.get())
     {
         m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateImageFrame_Connection);
@@ -182,11 +177,6 @@ bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
                           unsigned int _width, unsigned int _height,
                           unsigned int _depth, const std::string &_format)
 {
-//     std::cout << "OnNewImageFrame: " <<
-//                     "\n\t_width is " << _width    <<
-//                     "\n\t_height is " << _height   <<
-//                     "\n\t_depth is " << _depth     <<
-//                     "\n\t_format is " << _format   << std::endl;
 
     m_colorFrameMutex.wait();
 
@@ -213,11 +203,7 @@ void GazeboYarpDepthCameraDriver::OnNewRGBPointCloud(const float * /*_pcd*/,
                 unsigned int _width, unsigned int _height,
                 unsigned int _depth, const std::string &_format)
 {
-//     std::cout << "OnNewRGBPointCloud: " <<
-//                 "\n\t_width is " << _width    <<
-//                 "\n\t_height is " << _height   <<
-//                 "\n\t_depth is " << _depth     <<
-//                 "\n\t_format is " << _format   << std::endl;
+    // Gazebo does not generate pointCouds yet, so nothing to do here!
     return;
 }
 
@@ -228,26 +214,13 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float * /*_image*/,
                                                         unsigned int _depth,
                                                         const std::string &_format)
 {
-  /*rendering::Camera::SaveFrame(_image, this->width,
-    this->height, this->depth, this->format,
-    "/tmp/depthCamera/me.jpg");  */
-
-//     std::cout << "OnNewDepthFrame: " <<
-//                 "\n\t_width is " << _width    <<
-//                 "\n\t_height is " << _height   <<
-//                 "\n\t_depth is " << _depth     <<
-//                 "\n\t_format is " << _format   << std::endl;
-//
-//     for(int i=0; i<400; i++)
-//     std::cout << std::endl;
-
     m_depthFrameMutex.wait();
     // for depth camera
     if(m_depthCameraSensorPtr->IsActive())
     #if GAZEBO_MAJOR_VERSION >= 7
-        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);   // change from sensor pointer to device pointer ... check carefully
+        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);
     #else
-        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);   // change from sensor pointer to device pointer ... check carefully
+        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);
     #endif
 
     m_depthFrameMutex.post();
@@ -325,7 +298,7 @@ bool GazeboYarpDepthCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRg
                 pixel[2] = 0;
             }
         }
-    } 
+    }
 
     m_colorFrameMutex.post();
     return true;
@@ -445,7 +418,6 @@ bool GazeboYarpDepthCameraDriver::getRGBD_Frames(yarp::sig::FlexImage &colorFram
     depthFrame.setPixelSize(4);
     if( (colorFrame.width() != m_width) || (colorFrame.height() != m_height) )
     {
-        std::cout << "colorFrame size is " << colorFrame.getRawImageSize() << ", internal color image size is " << m_imageFrame_BufferSize << std::endl;
         colorFrame.resize(m_width, m_height);
     }
 
@@ -453,7 +425,6 @@ bool GazeboYarpDepthCameraDriver::getRGBD_Frames(yarp::sig::FlexImage &colorFram
     {
         depthFrame.resize(m_width, m_height);
     }
-//     std::cout << "depthFrame size is " << depthFrame.getRawImageSize() << ", internal depth image size is " << m_depthFrame_BufferSize << std::endl;
 
     m_colorFrameMutex.wait();
     memcpy(colorFrame.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);

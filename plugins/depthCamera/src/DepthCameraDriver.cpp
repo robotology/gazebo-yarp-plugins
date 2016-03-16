@@ -188,22 +188,21 @@ bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
 //                     "\n\t_depth is " << _depth     <<
 //                     "\n\t_format is " << _format   << std::endl;
 
-
-#if GAZEBO_MAJOR_VERSION >= 7
     m_colorFrameMutex.wait();
+
+    #if GAZEBO_MAJOR_VERSION >= 7
     if(m_depthCameraSensorPtr->IsActive())
         memcpy(m_imageFrame_Buffer, m_depthCameraPtr->ImageData(), m_imageFrame_BufferSize);
 
     m_colorTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-    m_colorFrameMutex.post();
 #else
-    m_colorFrameMutex.wait();
     if(m_imageCameraSensorPtr->IsActive())
         memcpy(m_imageFrame_Buffer, m_imageCameraSensorPtr->GetImageData(), m_imageFrame_BufferSize);
 
     m_colorTimestamp.update(this->m_imageCameraSensorPtr->GetLastUpdateTime().Double());
-    m_colorFrameMutex.post();
 #endif
+
+    m_colorFrameMutex.post();
     return true;
 }
 

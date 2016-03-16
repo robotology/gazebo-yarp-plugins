@@ -34,6 +34,15 @@ GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
     m_depthCameraSensorPtr = 0;
     m_depthCameraPtr       = 0;
 
+    m_depthFrame_Buffer     = 0;
+    m_depthFrame_BufferSize = 0;
+    m_imageFrame_Buffer     = 0;
+    m_imageFrame_BufferSize = 0;
+
+    // point cloud stuff is not used yet
+    m_RGBPointCloud_Buffer = 0;
+    m_RGBPointCloud_BufferSize = 0;
+
     m_updateDepthFrame_Connection = 0;
     m_updateRGBPointCloud_Connection = 0;
     m_updateImageFrame_Connection = 0;
@@ -148,15 +157,18 @@ bool GazeboYarpDepthCameraDriver::close()
 #endif
     m_depthCameraSensorPtr = NULL;
 
-    delete[] m_depthFrame_Buffer;
+    if(m_depthFrame_Buffer)
+        delete[] m_depthFrame_Buffer;
     m_depthFrame_Buffer = 0;
     m_depthFrame_BufferSize = 0;
 
-    delete[] m_imageFrame_Buffer;
+    if(m_imageFrame_Buffer)
+        delete[] m_imageFrame_Buffer;
     m_imageFrame_Buffer = 0;
     m_imageFrame_BufferSize = 0;
 
-    delete[] m_RGBPointCloud_Buffer;
+    if(m_RGBPointCloud_Buffer)
+        delete[] m_RGBPointCloud_Buffer;
     m_RGBPointCloud_Buffer = 0;
     m_RGBPointCloud_BufferSize = 0;
 

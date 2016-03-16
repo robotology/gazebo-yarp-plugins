@@ -55,7 +55,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     std::cout << "GazeboYarpDepthCameraDriver::open() " << sensorScopedName << std::endl;
 
 #if GAZEBO_MAJOR_VERSION < 7
-    m_imageCameraSensorPtr = dynamic_cast<gazebo::sensors::CameraSensor*> (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
+    m_imageCameraSensorPtr = (gazebo::sensors::CameraSensor*) (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     if (!m_imageCameraSensorPtr) {
         std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
         return false;
@@ -63,7 +63,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     m_imageCameraPtr = m_imageCameraSensorPtr->GetCamera();
 #endif
 
-    m_depthCameraSensorPtr = (gazebo::sensors::DepthCameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
+    m_depthCameraSensorPtr = dynamic_cast<gazebo::sensors::DepthCameraSensor*> (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     if (!m_depthCameraSensorPtr) {
         std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
         return false;

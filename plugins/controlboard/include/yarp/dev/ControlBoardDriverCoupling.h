@@ -23,6 +23,7 @@ class BaseCouplingHandler
 protected:
     gazebo::physics::Model* m_robot;
     yarp::sig::VectorOf<int> m_coupledJoints;
+    std::vector<std::string> m_coupledJointNames;
     unsigned int m_controllerPeriod;
     BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
     
@@ -35,6 +36,7 @@ public:
     virtual bool decoupleTrq(yarp::sig::Vector& current_trq) = 0;
 
     virtual yarp::sig::VectorOf<int> getCoupledJoints();
+    virtual std::string getCoupledJointName (int joint);
     virtual bool checkJointIsCoupled(int joint);
 
     virtual yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref) = 0;

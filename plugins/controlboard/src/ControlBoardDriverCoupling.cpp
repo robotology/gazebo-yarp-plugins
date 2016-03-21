@@ -42,8 +42,31 @@ yarp::sig::VectorOf<int> BaseCouplingHandler::getCoupledJoints()
     return m_coupledJoints;
 }
 
+std::string BaseCouplingHandler::getCoupledJointName(int joint)
+{
+    int c_joint = -1;
+    for (size_t i =0; i<m_coupledJoints.size(); i++)
+    {
+        if (m_coupledJoints[i]==joint) c_joint = i;
+    }
+               
+    if (c_joint>=0 && c_joint < m_coupledJoints.size())
+    {
+        return m_coupledJointNames[c_joint];
+    }
+    else
+    {
+        return std::string("invalid");
+    }
+}
+
 EyesCouplingHandler::EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints) {}
+: BaseCouplingHandler(model, coupled_joints)
+{
+    m_coupledJointNames.resize(2);
+    m_coupledJointNames[0] = "eyes_version";
+    m_coupledJointNames[1] = "eyes_vergence"; 
+}
 
 bool EyesCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
 {

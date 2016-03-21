@@ -85,11 +85,20 @@ bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
     // Prefill the property object with some gazebo-yarp-plugins "Enviromental Variables"
     // (not using the env variable in fromConfigFile(const ConstString& fname, Searchable& env, bool wipe)
     // method because we want the variable defined here to be overwritable by the user configuration file
+#if GAZEBO_MAJOR_VERSION >= 7
+    std::string gazeboYarpPluginsSensorName = _sensor->Name();
+#else
     std::string gazeboYarpPluginsSensorName = _sensor->GetName();
+#endif
     plugin_parameters.put("gazeboYarpPluginsSensorName",gazeboYarpPluginsSensorName.c_str());
 
     // Extract the robot name from the sensor scoped name
+#if GAZEBO_MAJOR_VERSION >= 7
+    std::string scopedSensorName = _sensor->ScopedName();
+#else
     std::string scopedSensorName = _sensor->GetScopedName();
+#endif
+
     std::vector<std::string> explodedScopedSensorName = splitString(scopedSensorName,":");
 
     // The vector should be at least of 3 elements because
@@ -119,10 +128,18 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
         GazeboYarpPlugins::addGazeboEnviromentalVariablesSensor(_sensor,_sdf,plugin_parameters);
 
         bool wipe = false;
-        if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe)) {
+        if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
+        {
             return true;
-        } else {
-            std::cerr << "GazeboYarpPlugins error: failure in loading configuration for sensor " << _sensor->GetName() << std::endl
+        }
+        else
+        {
+#if GAZEBO_MAJOR_VERSION >= 7
+    std::string sensorName = _sensor->Name();
+#else
+    std::string sensorName = _sensor->GetName();
+#endif
+            std::cerr << "GazeboYarpPlugins error: failure in loading configuration for sensor " << sensorName << std::endl
                       << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << std::endl
                       << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path << std::endl;
             return false;

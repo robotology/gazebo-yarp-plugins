@@ -27,10 +27,21 @@ GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
     m_display_time_box  = false;
     m_display_timestamp = false;
 
+#if GAZEBO_MAJOR_VERSION < 7
     m_imageCameraSensorPtr = 0;
     m_imageCameraPtr       = 0;
+#endif
     m_depthCameraSensorPtr = 0;
     m_depthCameraPtr       = 0;
+
+    m_depthFrame_Buffer     = 0;
+    m_depthFrame_BufferSize = 0;
+    m_imageFrame_Buffer     = 0;
+    m_imageFrame_BufferSize = 0;
+
+    // point cloud stuff is not used yet
+    m_RGBPointCloud_Buffer = 0;
+    m_RGBPointCloud_BufferSize = 0;
 
     m_updateDepthFrame_Connection = 0;
     m_updateRGBPointCloud_Connection = 0;
@@ -52,15 +63,16 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 
     std::cout << "GazeboYarpDepthCameraDriver::open() " << sensorScopedName << std::endl;
 
-    m_imageCameraSensorPtr = (gazebo::sensors::CameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
+#if GAZEBO_MAJOR_VERSION < 7
+    m_imageCameraSensorPtr = (gazebo::sensors::CameraSensor*) (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     if (!m_imageCameraSensorPtr) {
         std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
         return false;
     }
     m_imageCameraPtr = m_imageCameraSensorPtr->GetCamera();
+#endif
 
-
-    m_depthCameraSensorPtr = (gazebo::sensors::DepthCameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
+    m_depthCameraSensorPtr = dynamic_cast<gazebo::sensors::DepthCameraSensor*> (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     if (!m_depthCameraSensorPtr) {
         std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
         return false;
@@ -75,13 +87,16 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     if (config.check("vertical_flip")) m_vertical_flip =true;
     if (config.check("horizonal_flip")) m_horizontal_flip =true;
 
+#if GAZEBO_MAJOR_VERSION >= 7
+    m_width  = m_depthCameraPtr->ImageWidth();
+    m_height = m_depthCameraPtr->ImageHeight();
+#else
     m_width  = m_imageCameraPtr->GetImageWidth();
     m_height = m_imageCameraPtr->GetImageHeight();
-
+#endif
     std::cout << "Data from Gazebo:\n width: " << m_width << ", height: " << height() << std::endl;
     m_imageFrame_BufferSize = 3*m_width*m_height;
     m_depthFrame_BufferSize = m_width*m_height*sizeof(float);
-//     m_RGBPointCloud_BufferSize = 0;
 
     m_colorFrameMutex.wait();
     m_imageFrame_Buffer = new unsigned char[m_imageFrame_BufferSize];
@@ -97,7 +112,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 //     memset(m_RGBPointCloud_Buffer, 0x00, m_RGBPointCloud_BufferSize);
 
     //Connect the driver to the gazebo simulation
-    this->m_updateImageFrame_Connection    = m_imageCameraPtr->ConnectNewImageFrame(boost::bind(
+    this->m_updateImageFrame_Connection    = m_depthCameraPtr->ConnectNewImageFrame(boost::bind(
                                                                 &GazeboYarpDepthCameraDriver::OnNewImageFrame,
                                                                 this, _1, _2, _3, _4, _5));
 
@@ -109,45 +124,46 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
                                                                 &GazeboYarpDepthCameraDriver::OnNewDepthFrame,
                                                                 this, _1, _2, _3, _4, _5));
 
-    std::cout << "this->m_updateImageFrame_Connection is " << this->m_updateImageFrame_Connection << std::endl;
-    std::cout << "this->m_updateDepthFrame_Connection is " << this->m_updateDepthFrame_Connection << std::endl;
-    std::cout << "this->m_updateRGBPointCloud_Connection is " << this->m_updateRGBPointCloud_Connection << std::endl;
     return true;
 }
 
 bool GazeboYarpDepthCameraDriver::close()
 {
-    // Copy & paste like a Monkey
     if (this->m_updateImageFrame_Connection.get())
     {
-        m_imageCameraPtr->DisconnectNewImageFrame(this->m_updateImageFrame_Connection);
+        m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateImageFrame_Connection);
         this->m_updateImageFrame_Connection = gazebo::event::ConnectionPtr();
     }
 
     if (this->m_updateRGBPointCloud_Connection.get())
     {
-        m_imageCameraPtr->DisconnectNewImageFrame(this->m_updateRGBPointCloud_Connection);
+        m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateRGBPointCloud_Connection);
         this->m_updateRGBPointCloud_Connection = gazebo::event::ConnectionPtr();
     }
 
     if (this->m_updateDepthFrame_Connection.get())
     {
-        m_imageCameraPtr->DisconnectNewImageFrame(this->m_updateDepthFrame_Connection);
+        m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateDepthFrame_Connection);
         this->m_updateDepthFrame_Connection = gazebo::event::ConnectionPtr();
     }
 
+#if GAZEBO_MAJOR_VERSION < 7
     m_imageCameraSensorPtr = NULL;
+#endif
     m_depthCameraSensorPtr = NULL;
 
-    delete[] m_depthFrame_Buffer;
+    if(m_depthFrame_Buffer)
+        delete[] m_depthFrame_Buffer;
     m_depthFrame_Buffer = 0;
     m_depthFrame_BufferSize = 0;
 
-    delete[] m_imageFrame_Buffer;
+    if(m_imageFrame_Buffer)
+        delete[] m_imageFrame_Buffer;
     m_imageFrame_Buffer = 0;
     m_imageFrame_BufferSize = 0;
 
-    delete[] m_RGBPointCloud_Buffer;
+    if(m_RGBPointCloud_Buffer)
+        delete[] m_RGBPointCloud_Buffer;
     m_RGBPointCloud_Buffer = 0;
     m_RGBPointCloud_BufferSize = 0;
 
@@ -162,17 +178,20 @@ bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
                           unsigned int _depth, const std::string &_format)
 {
 
-//     std::cout << "OnNewImageFrame: " <<
-//                     "\n\t_width is " << _width    <<
-//                     "\n\t_height is " << _height   <<
-//                     "\n\t_depth is " << _depth     <<
-//                     "\n\t_format is " << _format   << std::endl;
-
     m_colorFrameMutex.wait();
+
+    #if GAZEBO_MAJOR_VERSION >= 7
+    if(m_depthCameraSensorPtr->IsActive())
+        memcpy(m_imageFrame_Buffer, m_depthCameraPtr->ImageData(), m_imageFrame_BufferSize);
+
+    m_colorTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+#else
     if(m_imageCameraSensorPtr->IsActive())
         memcpy(m_imageFrame_Buffer, m_imageCameraSensorPtr->GetImageData(), m_imageFrame_BufferSize);
 
     m_colorTimestamp.update(this->m_imageCameraSensorPtr->GetLastUpdateTime().Double());
+#endif
+
     m_colorFrameMutex.post();
     return true;
 }
@@ -184,11 +203,7 @@ void GazeboYarpDepthCameraDriver::OnNewRGBPointCloud(const float * /*_pcd*/,
                 unsigned int _width, unsigned int _height,
                 unsigned int _depth, const std::string &_format)
 {
-//     std::cout << "OnNewRGBPointCloud: " <<
-//                 "\n\t_width is " << _width    <<
-//                 "\n\t_height is " << _height   <<
-//                 "\n\t_depth is " << _depth     <<
-//                 "\n\t_format is " << _format   << std::endl;
+    // Gazebo does not generate pointCouds yet, so nothing to do here!
     return;
 }
 
@@ -199,29 +214,15 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float * /*_image*/,
                                                         unsigned int _depth,
                                                         const std::string &_format)
 {
-  /*rendering::Camera::SaveFrame(_image, this->width,
-    this->height, this->depth, this->format,
-    "/tmp/depthCamera/me.jpg");  */
-
-//     std::cout << "OnNewDepthFrame: " <<
-//                 "\n\t_width is " << _width    <<
-//                 "\n\t_height is " << _height   <<
-//                 "\n\t_depth is " << _depth     <<
-//                 "\n\t_format is " << _format   << std::endl;
-//
-//     for(int i=0; i<400; i++)
-//     std::cout << std::endl;
-
     m_depthFrameMutex.wait();
     // for depth camera
     if(m_depthCameraSensorPtr->IsActive())
     #if GAZEBO_MAJOR_VERSION >= 7
-        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);   // change from sensor pointer to device pointer ... check carefully
+        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);
     #else
-        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);   // change from sensor pointer to device pointer ... check carefully
+        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);
     #endif
 
-//     std::cout << m_depthFrame_Buffer[320+(640*250)] << "\t" << std::flush;
     m_depthFrameMutex.post();
 }
 
@@ -297,7 +298,7 @@ bool GazeboYarpDepthCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRg
                 pixel[2] = 0;
             }
         }
-    } 
+    }
 
     m_colorFrameMutex.post();
     return true;
@@ -417,7 +418,6 @@ bool GazeboYarpDepthCameraDriver::getRGBD_Frames(yarp::sig::FlexImage &colorFram
     depthFrame.setPixelSize(4);
     if( (colorFrame.width() != m_width) || (colorFrame.height() != m_height) )
     {
-        std::cout << "colorFrame size is " << colorFrame.getRawImageSize() << ", internal color image size is " << m_imageFrame_BufferSize << std::endl;
         colorFrame.resize(m_width, m_height);
     }
 
@@ -425,7 +425,6 @@ bool GazeboYarpDepthCameraDriver::getRGBD_Frames(yarp::sig::FlexImage &colorFram
     {
         depthFrame.resize(m_width, m_height);
     }
-//     std::cout << "depthFrame size is " << depthFrame.getRawImageSize() << ", internal depth image size is " << m_depthFrame_BufferSize << std::endl;
 
     m_colorFrameMutex.wait();
     memcpy(colorFrame.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);

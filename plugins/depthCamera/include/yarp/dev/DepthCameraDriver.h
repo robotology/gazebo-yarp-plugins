@@ -267,9 +267,10 @@ private:
     unsigned char  *m_RGBPointCloud_Buffer;
     int counter;
 
+#if GAZEBO_MAJOR_VERSION < 7
     gazebo::sensors::CameraSensor*       m_imageCameraSensorPtr;
     gazebo::rendering::CameraPtr         m_imageCameraPtr;
-
+#endif
     gazebo::sensors::DepthCameraSensor*  m_depthCameraSensorPtr;
     gazebo::rendering::DepthCameraPtr    m_depthCameraPtr;
 

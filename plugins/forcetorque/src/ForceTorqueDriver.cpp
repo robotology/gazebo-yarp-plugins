@@ -38,7 +38,11 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_
 
     /** \todo ensure that the timestamp is the right one */
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */
+#if GAZEBO_MAJOR_VERSION >= 7
+    m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
+#else
     m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
+#endif
 
     m_dataMutex.wait();
 

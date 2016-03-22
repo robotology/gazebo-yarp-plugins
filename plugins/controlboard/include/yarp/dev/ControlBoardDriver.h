@@ -196,6 +196,7 @@ public:
     virtual bool setControlModes(const int n_joint, const int *joints, int *modes);
     virtual bool setControlModes(int *modes);
     bool changeControlMode(const int j, const int mode); //private function
+    bool changeInteractionMode(int j, yarp::dev::InteractionModeEnum mode); //private function
 
     //TORQUE CONTROL
     virtual bool setRefTorque(int j, double t); //NOT TESTED

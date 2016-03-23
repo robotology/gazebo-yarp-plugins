@@ -25,6 +25,7 @@ protected:
     yarp::sig::VectorOf<int> m_coupledJoints;
     std::vector<std::string> m_coupledJointNames;
     unsigned int m_controllerPeriod;
+    unsigned int m_couplingSize;
     BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
     
 public:
@@ -49,6 +50,91 @@ class EyesCouplingHandler : public BaseCouplingHandler
 
 public:
     EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+};
+
+class ThumbCouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    ThumbCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+};
+
+class IndexCouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    IndexCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+};
+
+class MiddleCouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    MiddleCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+};
+
+class PinkyCouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    PinkyCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+};
+
+class FingersAbductionCouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    FingersAbductionCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);

@@ -179,6 +179,61 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
              m_coupling_handler.push_back(cpl);
              yInfo() << "using eyes_vergence_control";
          }
+         else if (coupling_bottle->get(0).asString()=="fingers_abduction_control")
+         {
+             yarp::sig::VectorOf<int> coupled_joints;
+             Bottle* b = coupling_bottle->get(1).asList();
+             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
+             for (int is=0;is<b->size();is++)
+             { coupled_joints.push_back(b->get(is).asInt()); }
+             BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints);
+             m_coupling_handler.push_back(cpl);
+             yInfo() << "using fingers_abduction_control";
+         }
+         else if (coupling_bottle->get(0).asString()=="thumb_control")
+         {
+             yarp::sig::VectorOf<int> coupled_joints;
+             Bottle* b = coupling_bottle->get(1).asList();
+             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
+             for (int is=0;is<b->size();is++)
+             { coupled_joints.push_back(b->get(is).asInt()); }
+             BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints);
+             m_coupling_handler.push_back(cpl);
+             yInfo() << "using thumb_control";
+         }
+         else if (coupling_bottle->get(0).asString()=="index_control")
+         {
+             yarp::sig::VectorOf<int> coupled_joints;
+             Bottle* b = coupling_bottle->get(1).asList();
+             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
+             for (int is=0;is<b->size();is++)
+             { coupled_joints.push_back(b->get(is).asInt()); }
+             BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints);
+             m_coupling_handler.push_back(cpl);
+             yInfo() << "using index_control";
+         }
+         else if (coupling_bottle->get(0).asString()=="middle_control")
+         {
+             yarp::sig::VectorOf<int> coupled_joints;
+             Bottle* b = coupling_bottle->get(1).asList();
+             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
+             for (int is=0;is<b->size();is++)
+             { coupled_joints.push_back(b->get(is).asInt()); }
+             BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints);
+             m_coupling_handler.push_back(cpl);
+             yInfo() << "using middle_control";
+         }
+         else if (coupling_bottle->get(0).asString()=="pinky_control")
+         {
+             yarp::sig::VectorOf<int> coupled_joints;
+             Bottle* b = coupling_bottle->get(1).asList();
+             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
+             for (int is=0;is<b->size();is++)
+             { coupled_joints.push_back(b->get(is).asInt()); }
+             BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints);
+             m_coupling_handler.push_back(cpl);
+             yInfo() << "using pinky_control";
+         }
          else if (coupling_bottle->get(0).asString()=="none")
          {
              yDebug() << "Just for test";

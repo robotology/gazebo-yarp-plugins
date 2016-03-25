@@ -47,7 +47,7 @@ before_script:
   - cd robot-testing
   - mkdir build 
   - cd build 
-  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
+  - cmake -DENABLE_MIDDLEWARE_PLUGINS:BOOL=ON -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
   - make 
   - sudo make install
   # by default /usr/local/lib is not in the search path of dlopen

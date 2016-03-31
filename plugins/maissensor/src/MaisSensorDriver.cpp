@@ -47,6 +47,7 @@ bool validate(Bottle &input, Bottle &out, const std::string &key1, const std::st
 
 bool GazeboYarpMaisSensorDriver::gazebo_init()
 {
+      yDebug() << ">>>>>>>>>>>>>done1";
     //m_robot = gazebo_pointer_wrapper::getModel();
     // yDebug()<<"if this message is the last one you read, m_robot has not been set";
     //assert is a NOP in release mode. We should change the error handling either with an exception or something else
@@ -67,7 +68,7 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
     m_positions.zero();
     m_clock = 0;
 
-    yDebug() << "done";
+    yDebug() << ">>>>>>>>>>>done2";
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
         m_jointTypes[j] = JointType_Unknown;
@@ -121,6 +122,7 @@ bool GazeboYarpMaisSensorDriver::configureJointType()
 
 void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
+  yDebug()<<"onUpdate()";
     LockGuard lock(m_mutex);
     m_clock++;
 
@@ -128,6 +130,7 @@ void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _inf
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
     {
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
+        yDebug() << jnt_cnt << m_positions[jnt_cnt];
     }
 
     // Updating timestamp
@@ -278,6 +281,7 @@ double * GazeboYarpMaisSensorDriver::convertUserToGazebo(double *values)
 
 int GazeboYarpMaisSensorDriver::read(yarp::sig::Vector &out)
 {
+  yDebug() << ">>>>>> read()";
     LockGuard lock(m_mutex);
     out = m_positions;
     return yarp::dev::IAnalogSensor::AS_OK;

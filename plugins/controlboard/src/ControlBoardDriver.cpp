@@ -659,6 +659,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
                 joint_found = true;
                 m_jointNames[i] = gazebo_joint_name;
                 m_jointPointers[i] = this->m_robot->GetJoint(gazebo_joint_name);
+                yDebug() << "found: " <<  gazebo_joint_name << controlboard_joint_names[i];
             }
         }
 

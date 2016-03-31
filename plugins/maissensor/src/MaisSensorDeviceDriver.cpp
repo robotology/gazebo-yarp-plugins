@@ -15,6 +15,7 @@ using namespace gazebo;
 
 bool GazeboYarpMaisSensorDriver::open(yarp::os::Searchable& config)
 {
+  yDebug() << ">>>>>>>>>> open()";
     m_pluginParameters.fromString(config.toString().c_str());
 
     deviceName = m_pluginParameters.find("name").asString().c_str();

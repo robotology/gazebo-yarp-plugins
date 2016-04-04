@@ -73,7 +73,7 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     // Don't forget to load the camera plugin!!!! ???
 //    CameraPlugin::Load(_sensor, _sdf);
 
-    std::cout << "sensor scoped name is " << m_sensorName.c_str() << std::endl;
+    std::cout << "GazeboYarpCamera Plugin: sensor scoped name is " << m_sensorName.c_str() << std::endl;
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 

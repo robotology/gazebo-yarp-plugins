@@ -6,6 +6,7 @@ add_subdirectory(forcetorque)
 add_subdirectory(imu)
 add_subdirectory(jointsensors)
 add_subdirectory(showmodelcom)
+add_subdirectory(multicamera)
 
 find_package(OpenCV QUIET)
 option(GAZEBO_YARP_PLUGINS_HAS_OPENCV "Compile plugins that depend on OpenCV" ${OpenCV_FOUND})

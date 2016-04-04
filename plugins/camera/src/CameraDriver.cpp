@@ -105,7 +105,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     }
 
     if (config.check("vertical_flip")) m_vertical_flip =true;
-    if (config.check("horizonal_flip")) m_horizontal_flip =true;
+    if (config.check("horizontal_flip")) m_horizontal_flip =true;
     if (config.check("display_timestamp")) m_display_timestamp =true;
     if (config.check("display_time_box")) m_display_time_box =true;
 

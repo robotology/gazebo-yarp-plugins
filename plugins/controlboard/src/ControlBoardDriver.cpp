@@ -84,6 +84,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_maxStiffness.resize(m_numberOfJoints, 1000.0);
     m_minDamping.resize(m_numberOfJoints, 0.0);
     m_maxDamping.resize(m_numberOfJoints, 100.0);
+    m_kPWM.resize(m_numberOfJoints,1.0);
     m_jointTypes.resize(m_numberOfJoints);
     m_positionThreshold.resize(m_numberOfJoints);
 
@@ -1104,6 +1105,14 @@ bool GazeboYarpControlBoardDriver::setPIDs()
         setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", m_impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
     }
 
+    if (m_pluginParameters.check("kPWM"))
+    {
+        Bottle kPWM = m_pluginParameters.findGroup("kPWM");
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+        {
+           m_kPWM[i]=kPWM.get(i+1).asDouble();
+        }
+    }
     return true;
 }
 

@@ -423,6 +423,7 @@ private:
     yarp::sig::Vector m_minDamping;
     yarp::sig::Vector m_maxStiffness;
     yarp::sig::Vector m_maxDamping;
+    yarp::sig::Vector m_kPWM;
 
     bool* m_isMotionDone;
     int * m_controlMode;

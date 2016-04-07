@@ -21,6 +21,8 @@ bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* list
     
     listOfKeys->addString("yarp_jntMaxPos");
     listOfKeys->addString("yarp_jntMinPos");
+    listOfKeys->addString("yarp_kPWM");
+	
     listOfKeys->addString("hardwareHiStop");
     listOfKeys->addString("hardwareLowStop");
     
@@ -72,6 +74,11 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     if (key == "yarp_jntMaxPos")
     {
         yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { double tmp_min,tmp_max; getLimits(i,&tmp_min,&tmp_max);  r.addDouble(tmp_max); }
+        return true;
+    }
+    if (key == "yarp_kPWM")
+    {
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { r.addDouble(m_kPWM[i]); }
         return true;
     }
     if (key == "yarp_jntMinPos")
@@ -192,6 +199,15 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
             double t_max=0, t_min=0;    
             getLimits(i,&t_min,&t_max);
             setLimits(i,value,t_max);
+        }
+        return true;
+    }
+    if (key == "yarp_kPWM")
+    {
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asDouble();
+            m_kPWM[i]=value;
         }
         return true;
     }

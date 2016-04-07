@@ -28,7 +28,7 @@ GazeboYarpLaserSensorDriver::~GazeboYarpLaserSensorDriver() {}
  * \todo check forcetorque data
  */
 void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
-{   
+{
     yarp::os::LockGuard guard(m_mutex);
 
     /** \todo ensure that the timestamp is the right one */
@@ -63,33 +63,41 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
     //Connect the driver to the gazebo simulation
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpLaserSensorDriver::onUpdate, this, _1));
 
-    
+
     m_max_angle = m_parentSensor->AngleMax().Degree();            //m_max_angles is expressed in degrees
     m_min_angle = m_parentSensor->AngleMin().Degree();            //m_min_angles is expressed in degrees
+#if GAZEBO_MAJOR_VERSION >= 7
     m_max_gazebo_range = m_parentSensor->RangeMax();              //m
     m_min_gazebo_range = m_parentSensor->RangeMin();              //m
     m_resolution = m_parentSensor->AngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
     m_samples   = m_parentSensor->RangeCount();
     m_rate      = m_parentSensor->UpdateRate();
+#else
+    m_max_gazebo_range = m_parentSensor->GetRangeMax();              //m
+    m_min_gazebo_range = m_parentSensor->GetRangeMin();              //m
+    m_resolution = m_parentSensor->GetAngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
+    m_samples   = m_parentSensor->GetRangeCount();
+    m_rate      = m_parentSensor->GetUpdateRate();
+#endif
     m_sensorData.resize(m_samples, 0.0);
 
     bool bg = config.check("GENERAL");
     if (bg != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        if (general_config.check("clip_min_range")==false) {yError() << "Missing clip_min_range"; return false; } 
+        if (general_config.check("clip_min_range")==false) {yError() << "Missing clip_min_range"; return false; }
         m_min_clip_range = general_config.find("clip_min_range").asDouble();
-        if (general_config.check("clip_max_range")==false) {yError() << "Missing clip_max_range"; return false; } 
+        if (general_config.check("clip_max_range")==false) {yError() << "Missing clip_max_range"; return false; }
         m_max_clip_range = general_config.find("clip_max_range").asDouble();
-        if (general_config.check("discard_min_range")==false) {yError() << "Missing discard_min_range"; return false; } 
+        if (general_config.check("discard_min_range")==false) {yError() << "Missing discard_min_range"; return false; }
         m_min_discard_range = general_config.find("discard_min_range").asDouble();
-        if (general_config.check("discard_max_range")==false) {yError() << "Missing discard_max_range"; return false; } 
+        if (general_config.check("discard_max_range")==false) {yError() << "Missing discard_max_range"; return false; }
         m_max_discard_range = general_config.find("discard_max_range").asDouble();
-        if (general_config.check("enable_clip_range")==false) {yError() << "Missing enable_clip_range"; return false; } 
+        if (general_config.check("enable_clip_range")==false) {yError() << "Missing enable_clip_range"; return false; }
         m_enable_clip_range = (general_config.find("enable_clip_range").asInt()==1);
-        if (general_config.check("enable_discard_range")==false) {yError() << "Missing enable_discard_range"; return false; } 
+        if (general_config.check("enable_discard_range")==false) {yError() << "Missing enable_discard_range"; return false; }
         m_enable_discard_range = (general_config.find("enable_discard_range").asInt()==1);
-        
+
         if (m_enable_clip_range==true && m_enable_discard_range)
         {
             yError() << "enable_clip_range and enable_discard_range both enabled! Choose one";
@@ -101,7 +109,7 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
         yError() << "Missing GENERAL section";
         return false;
     }
-        
+
     bool bs = config.check("SKIP");
     if (bs != false)
     {
@@ -258,7 +266,7 @@ bool GazeboYarpLaserSensorDriver::setHorizontalResolution (double step)
 bool GazeboYarpLaserSensorDriver::getScanRate (double &rate)
 {
     yarp::os::LockGuard guard(m_mutex);
-    rate = m_rate; 
+    rate = m_rate;
     return true;
 }
 

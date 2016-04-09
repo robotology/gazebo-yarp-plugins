@@ -12,6 +12,7 @@
 #include <yarp/os/LockGuard.h>
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/sensors.hh>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 
@@ -63,15 +64,46 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpLaserSensorDriver::onUpdate, this, _1));
 
     
-    m_max_angle = m_parentSensor->AngleMax().Degree();
-    m_min_angle = m_parentSensor->AngleMin().Degree();
+    m_max_angle = m_parentSensor->AngleMax().Degree();            //m_max_angles is expressed in degrees
+    m_min_angle = m_parentSensor->AngleMin().Degree();            //m_min_angles is expressed in degrees
+    m_resolution = m_parentSensor->AngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
     m_max_range = m_parentSensor->RangeMax();
-    m_min_range = m_parentSensor->RangeMin();  
+    m_min_range = m_parentSensor->RangeMin();
     m_samples   = m_parentSensor->RangeCount();
     m_rate      = m_parentSensor->UpdateRate();
     m_sensorData.resize(m_samples, 0.0);
     m_enable_clip_range = false;
-        
+
+    bool bs = config.check("SKIP");
+    if (bs != false)
+    {
+        yarp::os::Searchable& skip_config = config.findGroup("SKIP");
+        yarp::os::Bottle mins = skip_config.findGroup("min");
+        yarp::os::Bottle maxs = skip_config.findGroup("max");
+        size_t s_mins = mins.size();
+        size_t s_maxs = mins.size();
+        if (s_mins == s_maxs && s_maxs > 1 )
+        {
+            for (size_t s = 1; s < s_maxs; s++)
+            {
+                Range_t range;
+                range.max = maxs.get(s).asDouble();
+                range.min = mins.get(s).asDouble();
+                if (range.max >= 0 && range.max <= 360 &&
+                    range.min >= 0 && range.min <= 360 &&
+                    range.max > range.min)
+                {
+                    range_skip_vector.push_back(range);
+                    yDebug() << "Laser sensor: skipping angle between" << range.min << "and" << range.max;
+                }
+                else
+                {
+                    yError() << "Invalid range in SKIP section";
+                    return false;
+                }
+            }
+        }
+    }
     return true;
 }
 
@@ -119,7 +151,16 @@ bool GazeboYarpLaserSensorDriver::getMeasurementData (yarp::sig::Vector &data)
       if (m_enable_clip_range)
       {
         if (m_sensorData[i]>m_max_range) m_sensorData[i]=m_max_range;
-        if (m_sensorData[i]<m_min_range) m_sensorData[i]=m_min_range;    
+        if (m_sensorData[i]<m_min_range) m_sensorData[i]=m_min_range;
+      }
+      double angle = i * m_resolution;
+      for (size_t s = 0; s < range_skip_vector.size(); s++)
+      {
+        if (angle>=range_skip_vector[s].min && angle <= range_skip_vector[s].max)
+        {
+            m_sensorData[i] = INFINITY;
+            //yDebug() <<"skipping" << s << angle << range_skip_vector[s].min << range_skip_vector[s].max;
+        }
       }
       data[i] = m_sensorData[i];
     }

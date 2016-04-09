@@ -35,6 +35,11 @@ namespace gazebo {
     }
 }
 
+struct Range_t
+{
+    double min;
+    double max;
+};
 
 extern const std::string YarpLaserSensorScopedName;
 
@@ -80,9 +85,11 @@ private:
     double m_max_range; 
     double m_min_range; 
     double m_samples;  
+    double m_resolution;
     double m_rate; 
     bool   m_enable_clip_range;
     Device_status m_device_status;
+    std::vector <Range_t> range_skip_vector;
     
     std::vector<double> m_sensorData; //buffer for laser data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data

@@ -1105,13 +1105,11 @@ bool GazeboYarpControlBoardDriver::setPIDs()
         setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", m_impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
     }
 
-    if (m_pluginParameters.check("kPWM"))
+    if (m_pluginParameters.check("SIMULATION"))
     {
-        Bottle kPWM = m_pluginParameters.findGroup("kPWM");
-        for (unsigned int i = 0; i < m_numberOfJoints; ++i)
-        {
-           m_kPWM[i]=kPWM.get(i+1).asDouble();
-        }
+        Bottle& simGroup = m_pluginParameters.findGroup("SIMULATION");
+	Bottle xtmp;
+        if (!validate(simGroup, xtmp, "kPWM", "kPWM parameter", m_numberOfJoints+1))  {yError() << "Missing kPWM parameter"; return false;} else {for (int j=0; j<m_numberOfJoints; j++) m_kPWM[j]=xtmp.get(j+1).asDouble();}
     }
     return true;
 }

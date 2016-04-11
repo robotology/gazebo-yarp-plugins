@@ -18,10 +18,6 @@
 
 namespace gazebo
 {
-    namespace sensors {
-        class MultiMultiCameraSensor;
-    }
-
     /// \class GazeboYarpMultiCamera
     /// Gazebo Plugin reading from the Gazebo MultiCamera plugin.
     ///

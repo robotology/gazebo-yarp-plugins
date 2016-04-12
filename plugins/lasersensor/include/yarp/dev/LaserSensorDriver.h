@@ -82,12 +82,16 @@ public:
 private:
     double m_max_angle; 
     double m_min_angle; 
-    double m_max_range; 
-    double m_min_range; 
+    double m_max_clip_range; 
+    double m_min_clip_range; 
+    double m_max_discard_range; 
+    double m_min_discard_range;
     double m_samples;  
     double m_resolution;
     double m_rate; 
     bool   m_enable_clip_range;
+    bool   m_enable_discard_range;
+    
     Device_status m_device_status;
     std::vector <Range_t> range_skip_vector;
     

@@ -67,13 +67,39 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
     m_max_angle = m_parentSensor->AngleMax().Degree();            //m_max_angles is expressed in degrees
     m_min_angle = m_parentSensor->AngleMin().Degree();            //m_min_angles is expressed in degrees
     m_resolution = m_parentSensor->AngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
-    m_max_range = m_parentSensor->RangeMax();
-    m_min_range = m_parentSensor->RangeMin();
     m_samples   = m_parentSensor->RangeCount();
     m_rate      = m_parentSensor->UpdateRate();
     m_sensorData.resize(m_samples, 0.0);
-    m_enable_clip_range = false;
 
+    bool bg = config.check("GENERAL")
+    if (bg != false)
+    {
+        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
+        if (general_config.check("clip_min_range")==false) {yError() << "Missing clip_min_range"; return false; } 
+        m_min_clip_range = general_config.find("clip_min_range").asDouble();
+        if (general_config.check("clip_max_range")==false) {yError() << "Missing clip_max_range"; return false; } 
+        m_max_clip_range = general_config.find("clip_max_range").asDouble();
+        if (general_config.check("discard_min_range")==false) {yError() << "Missing discard_min_range"; return false; } 
+        m_min_discard_range = general_config.find("discard_min_range").asDouble();
+        if (general_config.check("discard_max_range")==false) {yError() << "Missing discard_max_range"; return false; } 
+        m_max_discard_range = general_config.find("discard_max_range").asDouble();
+        if (general_config.check("enable_clip_range")==false) {yError() << "Missing enable_clip_range"; return false; } 
+        m_enable_clip_range = (general_config.find("enable_clip_range").asInt()==1);
+        if (general_config.check("enable_discard_range")==false) {yError() << "Missing enable_discard_range"; return false; } 
+        m_enable_discard_range (maxs = general_config.find("enable_discard_range").asInt()==1);
+        
+        if (m_enable_clip_range==true && m_enable_discard_range)
+        {
+            yError() << "enable_clip_range and enable_discard_range both enabled! Choose one";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Missing GENERAL section";
+        return false;
+    }
+        
     bool bs = config.check("SKIP");
     if (bs != false)
     {
@@ -148,11 +174,18 @@ bool GazeboYarpLaserSensorDriver::getMeasurementData (yarp::sig::Vector &data)
 
     for (unsigned int i=0; i<m_samples; i++)
     {
-      if (m_enable_clip_range)
+
+      if (m_enable_discard_range)
       {
-        if (m_sensorData[i]>m_max_range) m_sensorData[i]=m_max_range;
-        if (m_sensorData[i]<m_min_range) m_sensorData[i]=m_min_range;
+        if (m_sensorData[i]>=m_max_range) m_sensorData[i]=INFINITY;
+        if (m_sensorData[i]<=m_min_range) m_sensorData[i]=INFINITY;
       }
+      else if (m_enable_clip_range)
+      {
+        if (m_sensorData[i]>=m_max_range) m_sensorData[i]=m_max_range;
+        if (m_sensorData[i]<=m_min_range) m_sensorData[i]=m_min_range;
+      }
+
       double angle = i * m_resolution;
       for (size_t s = 0; s < range_skip_vector.size(); s++)
       {

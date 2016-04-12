@@ -86,6 +86,8 @@ private:
     double m_min_clip_range; 
     double m_max_discard_range; 
     double m_min_discard_range;
+    double m_max_gazebo_range; 
+    double m_min_gazebo_range;
     double m_samples;  
     double m_resolution;
     double m_rate; 

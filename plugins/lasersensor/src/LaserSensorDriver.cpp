@@ -66,12 +66,14 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
     
     m_max_angle = m_parentSensor->AngleMax().Degree();            //m_max_angles is expressed in degrees
     m_min_angle = m_parentSensor->AngleMin().Degree();            //m_min_angles is expressed in degrees
+    m_max_gazebo_range = m_parentSensor->RangeMax();              //m
+    m_min_gazebo_range = m_parentSensor->RangeMin();              //m
     m_resolution = m_parentSensor->AngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
     m_samples   = m_parentSensor->RangeCount();
     m_rate      = m_parentSensor->UpdateRate();
     m_sensorData.resize(m_samples, 0.0);
 
-    bool bg = config.check("GENERAL")
+    bool bg = config.check("GENERAL");
     if (bg != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
@@ -86,7 +88,7 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
         if (general_config.check("enable_clip_range")==false) {yError() << "Missing enable_clip_range"; return false; } 
         m_enable_clip_range = (general_config.find("enable_clip_range").asInt()==1);
         if (general_config.check("enable_discard_range")==false) {yError() << "Missing enable_discard_range"; return false; } 
-        m_enable_discard_range (maxs = general_config.find("enable_discard_range").asInt()==1);
+        m_enable_discard_range = (general_config.find("enable_discard_range").asInt()==1);
         
         if (m_enable_clip_range==true && m_enable_discard_range)
         {
@@ -177,13 +179,13 @@ bool GazeboYarpLaserSensorDriver::getMeasurementData (yarp::sig::Vector &data)
 
       if (m_enable_discard_range)
       {
-        if (m_sensorData[i]>=m_max_range) m_sensorData[i]=INFINITY;
-        if (m_sensorData[i]<=m_min_range) m_sensorData[i]=INFINITY;
+        if (m_sensorData[i]>=m_max_discard_range) m_sensorData[i]=INFINITY;
+        if (m_sensorData[i]<=m_min_discard_range) m_sensorData[i]=INFINITY;
       }
       else if (m_enable_clip_range)
       {
-        if (m_sensorData[i]>=m_max_range) m_sensorData[i]=m_max_range;
-        if (m_sensorData[i]<=m_min_range) m_sensorData[i]=m_min_range;
+        if (m_sensorData[i]>=m_max_clip_range) m_sensorData[i]=m_max_clip_range;
+        if (m_sensorData[i]<=m_min_clip_range) m_sensorData[i]=m_min_clip_range;
       }
 
       double angle = i * m_resolution;
@@ -212,8 +214,8 @@ bool GazeboYarpLaserSensorDriver::getDeviceStatus (Device_status &status)
 bool GazeboYarpLaserSensorDriver::getDistanceRange (double &min, double &max)
 {
     yarp::os::LockGuard guard(m_mutex);
-    min = m_min_range;
-    max = m_max_range;
+    min = m_min_gazebo_range;
+    max = m_max_gazebo_range;
     return true;
 }
 

@@ -79,6 +79,10 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_velocityPIDs.reserve(m_numberOfJoints);
     m_impedancePosPDs.reserve(m_numberOfJoints);
     m_torquePIDs.resize(m_numberOfJoints);
+    m_position_control_law.resize(m_numberOfJoints,"none");
+    m_velocity_control_law.resize(m_numberOfJoints,"none");
+    m_torque_control_law.resize(m_numberOfJoints,"none");
+    m_impedance_control_law.resize(m_numberOfJoints,"none");
     m_torqueOffset.resize(m_numberOfJoints);
     m_minStiffness.resize(m_numberOfJoints, 0.0);
     m_maxStiffness.resize(m_numberOfJoints, 1000.0);
@@ -717,7 +721,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<GazeboYarpControlBoardDriver::PID>& pids )
+bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>& pids )
 {
     yarp::os::Property prop;
     if (m_pluginParameters.check("POSITION_CONTROL"))
@@ -744,7 +748,10 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<GazeboYa
         xtmp = pidGroup.findGroup("controlLaw");
         if (!xtmp.isNull())
         {
-            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))  {}
+            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+            {
+                for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
+            }
             else    {yError() << "invalid controlLaw value"; return false;}
         }
         else
@@ -809,7 +816,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<GazeboYa
     }
 }
 
-bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<GazeboYarpControlBoardDriver::PID>& pids )
+bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>& pids )
 {
     yarp::os::Property prop;
     if (m_pluginParameters.check("VELOCITY_CONTROL"))
@@ -836,7 +843,10 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<GazeboYa
         xtmp = pidGroup.findGroup("controlLaw");
         if (!xtmp.isNull())
         {
-            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))  {}
+            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+            {
+                for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
+            }
             else    {yError() << "invalid controlLaw value"; return false;}
         }
         else
@@ -899,7 +909,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<GazeboYa
     }
 }
 
-bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<GazeboYarpControlBoardDriver::PID>& pids )
+bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>& pids )
 {
     yarp::os::Property prop;
     if (m_pluginParameters.check("IMPEDANCE_CONTROL"))
@@ -926,7 +936,10 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<GazeboY
         xtmp = pidGroup.findGroup("controlLaw");
         if (!xtmp.isNull())
         {
-            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))  {}
+            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+            {
+                for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
+            }
             else    {yError() << "invalid controlLaw value"; return false;}
         }
         else
@@ -1051,7 +1064,7 @@ bool GazeboYarpControlBoardDriver::setPIDs()
     //POSITION PARAMETERS
     if (m_pluginParameters.check("POSITION_CONTROL"))
     {
-        if (setPIDsForGroup_POSITION(m_positionPIDs))
+        if (setPIDsForGroup_POSITION(m_position_control_law, m_positionPIDs))
         {
         }
         else
@@ -1064,17 +1077,19 @@ bool GazeboYarpControlBoardDriver::setPIDs()
     {
         yWarning ("'POSITION_CONTROL' group not found. Using DEPRECATED GAZEBO_PIDS section");
         setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_position_control_law[i] = "joint_pid_gazebo_v1";}
     }
     else
     {
         yWarning() << "Unable to find a valid section containing position control gains, use default values";
         setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_position_control_law[i] = "joint_pid_gazebo_v1";}
     }
-
+    
     //VELOCITY PARAMETERS
     if (m_pluginParameters.check("VELOCITY_CONTROL"))
     {
-        if (setPIDsForGroup_VELOCITY(m_velocityPIDs))
+        if (setPIDsForGroup_VELOCITY(m_velocity_control_law, m_velocityPIDs))
         {
         }
         else
@@ -1084,20 +1099,22 @@ bool GazeboYarpControlBoardDriver::setPIDs()
         }
     }
     else if (m_pluginParameters.check("GAZEBO_VELOCITY_PIDS"))
-    {
+    { 
         yWarning ("'VELOCITY_CONTROL' group not found. Using DEPRECATED GAZEBO_VELOCITY_PIDS section");
         setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_velocity_control_law[i] = "joint_pid_gazebo_v1";}
     }
     else
     {
         yWarning() << "Unable to find a valid section containing velocity control gains, use default values";
         setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_velocity_control_law[i] = "joint_pid_gazebo_v1";}
     }
 
     //IMPEDANCE PARAMETERS
     if (m_pluginParameters.check("IMPEDANCE_CONTROL"))
     {
-        if (setPIDsForGroup_IMPEDANCE(m_impedancePosPDs))
+        if (setPIDsForGroup_IMPEDANCE(m_impedance_control_law, m_impedancePosPDs))
         {
         }
         else
@@ -1110,11 +1127,13 @@ bool GazeboYarpControlBoardDriver::setPIDs()
     {
         yWarning ("'IMPEDANCE' group not found. Using DEPRECATED GAZEBO_PIDS section");
         setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", m_impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_impedance_control_law[i] = "joint_pid_gazebo_v1";}
     }
     else
     {
         yWarning() << "Unable to find a valid section containing impedance control gains, use default values";
         setPIDsForGroup("GAZEBO_IMPEDANCE_POSITION_PIDS", m_impedancePosPDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermDerivativeTerm));
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_impedance_control_law[i] = "joint_pid_gazebo_v1";}
     }
 
     if (m_pluginParameters.check("SIMULATION"))

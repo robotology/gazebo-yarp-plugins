@@ -417,6 +417,10 @@ private:
     std::vector<GazeboYarpControlBoardDriver::PID> m_velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_torquePIDs;
+    std::vector<std::string> m_position_control_law;
+    std::vector<std::string> m_velocity_control_law;
+    std::vector<std::string> m_impedance_control_law;
+    std::vector<std::string> m_torque_control_law;
 
     yarp::sig::Vector m_torqueOffset;
     yarp::sig::Vector m_minStiffness;
@@ -441,9 +445,9 @@ private:
     bool setMinMaxVel();
     bool setJointNames();  //WORKS
     bool setPIDsForGroup(std::string, std::vector<GazeboYarpControlBoardDriver::PID>&, enum PIDFeedbackTerm pidTerms);
-    bool setPIDsForGroup_POSITION(  std::vector<GazeboYarpControlBoardDriver::PID>&);
-    bool setPIDsForGroup_VELOCITY(  std::vector<GazeboYarpControlBoardDriver::PID>&);
-    bool setPIDsForGroup_IMPEDANCE( std::vector<GazeboYarpControlBoardDriver::PID>&);
+    bool setPIDsForGroup_POSITION(  std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>&);
+    bool setPIDsForGroup_VELOCITY(  std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>&);
+    bool setPIDsForGroup_IMPEDANCE( std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>&);
     bool setMinMaxImpedance();
     bool setPIDs(); //WORKS
     

@@ -235,6 +235,17 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
              m_coupling_handler.push_back(cpl);
              yInfo() << "using pinky_control";
          }
+         else if (coupling_bottle->get(0).asString()=="cer_hand")
+         {
+             yarp::sig::VectorOf<int> coupled_joints;
+             Bottle* b = coupling_bottle->get(1).asList();
+             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
+             for (int is=0;is<b->size();is++)
+             { coupled_joints.push_back(b->get(is).asInt()); }
+             BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints);
+             m_coupling_handler.push_back(cpl);
+             yInfo() << "using cer_hand_control";
+         }
          else if (coupling_bottle->get(0).asString()=="none")
          {
              yDebug() << "Just for test";

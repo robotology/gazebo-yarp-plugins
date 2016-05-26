@@ -38,10 +38,9 @@ public:
 private:
     yarp::dev::PolyDriver m_wrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
-    yarp::dev::PolyDriverList m_controlBoards;
 
     yarp::os::Property m_parameters;
-
+    std::string m_sensorName;
     std::string m_robotName;
 };
 

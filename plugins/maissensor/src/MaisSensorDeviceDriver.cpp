@@ -15,7 +15,7 @@ using namespace gazebo;
 
 bool GazeboYarpMaisSensorDriver::open(yarp::os::Searchable& config)
 {
-  yDebug() << ">>>>>>>>>> open()";
+    //yTrace() << "GazeboYarpMaisSensorDriver::open()";
     m_pluginParameters.fromString(config.toString().c_str());
 
     deviceName = m_pluginParameters.find("name").asString().c_str();
@@ -38,6 +38,6 @@ bool GazeboYarpMaisSensorDriver::close()
         gazebo::event::Events::DisconnectWorldUpdateBegin (this->m_updateConnection);
         this->m_updateConnection = gazebo::event::ConnectionPtr();
     }
-    
+
     return true;
 }

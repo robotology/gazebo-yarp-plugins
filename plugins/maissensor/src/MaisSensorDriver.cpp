@@ -47,7 +47,6 @@ bool validate(Bottle &input, Bottle &out, const std::string &key1, const std::st
 
 bool GazeboYarpMaisSensorDriver::gazebo_init()
 {
-      yDebug() << ">>>>>>>>>>>>>done1";
     //m_robot = gazebo_pointer_wrapper::getModel();
     // yDebug()<<"if this message is the last one you read, m_robot has not been set";
     //assert is a NOP in release mode. We should change the error handling either with an exception or something else
@@ -68,7 +67,6 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
     m_positions.zero();
     m_clock = 0;
 
-    yDebug() << ">>>>>>>>>>>done2";
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
         m_jointTypes[j] = JointType_Unknown;
@@ -122,7 +120,6 @@ bool GazeboYarpMaisSensorDriver::configureJointType()
 
 void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
-  yDebug()<<"onUpdate()";
     LockGuard lock(m_mutex);
     m_clock++;
 
@@ -130,7 +127,7 @@ void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _inf
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
     {
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
-        yDebug() << jnt_cnt << m_positions[jnt_cnt];
+       // yDebug() << jnt_cnt << m_positions[jnt_cnt];
     }
 
     // Updating timestamp
@@ -153,15 +150,31 @@ bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
     m_jointPointers.resize(nr_of_joints);
 
     const gazebo::physics::Joint_V & gazebo_models_joints = m_robot->GetJoints();
+    if (gazebo_models_joints.size() == 0)
+    {
+        yError() << "size of gazebo_models_joints is zero!";
+        return false;
+    }
+    else
+    {
+        //yDebug() << " size of gazebo_models_joints: " <<gazebo_models_joints.size();
+    }
 
     controlboard_joint_names.clear();
     for (unsigned int i = 0; i < m_jointNames.size(); i++) {
         bool joint_found = false;
         controlboard_joint_names.push_back(joint_names_bottle.get(i+1).asString().c_str());
 
-        for (unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++) {
+        for (unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++)
+        {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
-            if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_names[i])) {
+            
+            //char buff[1000];
+            //sprintf(buff, "full:'%s' sub:'%s'", gazebo_joint_name.c_str(),controlboard_joint_names[i].c_str());
+            //yDebug() << "***" << buff;
+            
+            if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_names[i]))
+            {
                 joint_found = true;
                 m_jointNames[i] = gazebo_joint_name;
                 m_jointPointers[i] = this->m_robot->GetJoint(gazebo_joint_name);
@@ -281,7 +294,6 @@ double * GazeboYarpMaisSensorDriver::convertUserToGazebo(double *values)
 
 int GazeboYarpMaisSensorDriver::read(yarp::sig::Vector &out)
 {
-  yDebug() << ">>>>>> read()";
     LockGuard lock(m_mutex);
     out = m_positions;
     return yarp::dev::IAnalogSensor::AS_OK;

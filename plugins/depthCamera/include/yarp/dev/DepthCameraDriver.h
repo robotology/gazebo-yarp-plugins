@@ -82,7 +82,7 @@ public:
 
 
     // IRGBDSensor interface
-    virtual bool getDeviceInfo(yarp::os::Property& device_info);
+    virtual bool getDeviceInfo(yarp::os::Searchable *device_info);
 
    /**
     * Get the distance measurements as an image
@@ -245,9 +245,8 @@ public:
 
 private:
     // camera data here
-    yarp::os::Property    m_conf;
-    int                   m_width;
-    int                   m_height;
+    int m_width;
+    int m_height;
 
     int m_imageFrame_BufferSize;
     int m_depthFrame_BufferSize;

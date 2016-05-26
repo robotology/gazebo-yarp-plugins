@@ -7,6 +7,8 @@
 #include "Handler.hh"
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
 
@@ -35,7 +37,7 @@ Handler* Handler::getHandler()
     if (!s_handle) {
         s_handle = new Handler();
         if (!s_handle)
-            std::cout << "Error while calling GazeboYarpPluginHandler constructor" << std::endl;
+            yError() << "Error while calling GazeboYarpPluginHandler constructor";
     }
     mutex().post();
 
@@ -57,9 +59,9 @@ bool Handler::setRobot(gazebo::physics::Model* _model)
         //robot does not exists. Add to map
         ReferenceCountingModel model(_model);
         if (!m_robotMap.insert(std::pair<std::string, ReferenceCountingModel>(scopedRobotName, model)).second) {
-            std::cout << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!" << std::endl;
-            std::cout << " The name of the sensor is already present but the pointer does not match with the one already registered!" << std::endl;
-            std::cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << std::endl;
+            yError() << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!";
+            yError() << " The name of the sensor is already present but the pointer does not match with the one already registered!";
+            yError() << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error.";
             ret = false;
         } else {
             ret = true;
@@ -77,7 +79,7 @@ gazebo::physics::Model* Handler::getRobot(const std::string& robotName) const
         tmp = robot->second.object();
     }
     else {
-        std::cout << "Robot was not found: " << robotName << std::endl;
+        yError() << "Robot was not found: " << robotName;
         tmp = NULL;
     }
     return tmp;
@@ -92,7 +94,7 @@ void Handler::removeRobot(const std::string& robotName)
             m_robotMap.erase(robot);
         }
     } else {
-        std::cout << "Could not remove robot " << robotName << ". Robot was not found" << std::endl;
+        yError() << "Could not remove robot " << robotName << ". Robot was not found";
     }
 }
 
@@ -113,9 +115,9 @@ bool Handler::setSensor(gazebo::sensors::Sensor* _sensor)
         //sensor does not exists. Add to map
         ReferenceCountingSensor countedSensor(_sensor);
         if (!m_sensorsMap.insert(std::pair<std::string, ReferenceCountingSensor>(scopedSensorName, countedSensor)).second) {
-            std::cout << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!" << std::endl;
-            std::cout << " The name of the sensor is already present but the pointer does not match with the one already registered!" << std::endl;
-            std::cout << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error." << std::endl;
+            yError() << "Error in GazeboYarpPlugins::Handler while inserting a new sensor pointer!";
+            yError() << " The name of the sensor is already present but the pointer does not match with the one already registered!";
+            yError() << " This should not happen, as the scoped name should be unique in Gazebo. Fatal error.";
             ret = false;
         } else {
             ret = true;
@@ -133,7 +135,7 @@ gazebo::sensors::Sensor* Handler::getSensor(const std::string& sensorScopedName)
     if (sensor != m_sensorsMap.end()) {
         tmp = sensor->second.object();
     } else {
-        std::cout << "Sensor was not found: " << sensorScopedName << std::endl;
+        yError() << "Sensor was not found: " << sensorScopedName;
         tmp = NULL;
     }
     return tmp;
@@ -148,7 +150,7 @@ void Handler::removeSensor(const std::string& sensorName)
             m_sensorsMap.erase(sensor);
         }
     } else {
-        std::cout << "Could not remove sensor " << sensorName << ". Sensor was not found" << std::endl;
+        yError() << "Could not remove sensor " << sensorName << ". Sensor was not found";
     }
 }
 
@@ -165,15 +167,15 @@ bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2ad
         }
         else
         {
-            std::cout << " Error in GazeboYarpPlugins::Handler while inserting a new yarp device pointer!" << std::endl;
-            std::cout << " The name of the device is already present but the pointer does not match with the one already registered!" << std::endl;
-            std::cout << " This should not happen, check the names are correct in your config file. Fatal error." << std::endl;
+            yError() << " Error in GazeboYarpPlugins::Handler while inserting a new yarp device pointer!";
+            yError() << " The name of the device is already present but the pointer does not match with the one already registered!";
+            yError() << " This should not happen, check the names are correct in your config file. Fatal error.";
         }
     } else {
         //device does not exists. Add to map
         ReferenceCountingDevice countedDevice(device2add);
         if (!m_devicesMap.insert(std::pair<std::string, ReferenceCountingDevice>(deviceName, countedDevice)).second) {
-            std::cout << " Error in GazeboYarpPlugins::Handler while inserting a new device pointer!" << std::endl;
+            yError() << " Error in GazeboYarpPlugins::Handler while inserting a new device pointer!";
             ret = false;
         } else {
             ret = true;
@@ -206,10 +208,10 @@ void Handler::removeDevice(const std::string& deviceName)
         }
         else
         {
-            std::cout << "Not removing device '" << deviceName << "' yet because it is still used by other devices, Decremented counter to " << device->second.count() << std::endl;
+            yError() << "Not removing device '" << deviceName << "' yet because it is still used by other devices, Decremented counter to " << device->second.count();
         }
     } else {
-        std::cout << "Could not remove device " << deviceName << ". Device was not found" << std::endl;
+        yError() << "Could not remove device " << deviceName << ". Device was not found";
     }
     return;
 }

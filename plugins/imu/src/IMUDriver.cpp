@@ -11,6 +11,8 @@
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ImuSensor.hh>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 
@@ -81,7 +83,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     m_parentSensor = dynamic_cast<gazebo::sensors::ImuSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
 
     if (!m_parentSensor) {
-        std::cout << "GazeboYarpIMUDriver Error: IMU sensor was not found" << std::endl;
+        yError() << "GazeboYarpIMUDriver Error: IMU sensor was not found";
         return false;
     }
 

@@ -14,7 +14,8 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
-
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <iostream>
 
 namespace gazebo
@@ -70,7 +71,7 @@ namespace gazebo
         m_network = new yarp::os::Network();
         if (!m_network
             || !yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-            std::cerr << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+            yError() << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?";
             cleanup();
             return;
         }
@@ -87,7 +88,7 @@ namespace gazebo
             m_portName = portName.asString();
         }
 
-        std::cout << "GazeboYarpClock loaded. Clock port will be " << m_portName << std::endl;
+        yDebug() << "GazeboYarpClock loaded. Clock port will be " << m_portName;
         
         //The proper loading is done when the world is created
         m_worldCreatedEvent = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboYarpClock::gazeboYarpClockLoad,this,_1));
@@ -103,39 +104,39 @@ namespace gazebo
         //Create ports
         m_clockPort = new yarp::os::BufferedPort<yarp::os::Bottle>();
         if (!m_clockPort) {
-            std::cerr << "GazeboYarpClock: Failed to create clock port." << std::endl;
+            yError() << "GazeboYarpClock: Failed to create clock port.";
             cleanup();
             return;
         }
         
         if (!m_clockPort->open(m_portName)) {
-            std::cerr << "GazeboYarpClock: Failed to open clock port." << std::endl;
+            yError() << "GazeboYarpClock: Failed to open clock port.";
             cleanup();
             return;
         }
         
         m_rpcPort = new yarp::os::Port();
         if (!m_rpcPort) {
-            std::cerr << "GazeboYarpClock: Failed to create rpc port." << std::endl;
+            yError() << "GazeboYarpClock: Failed to create rpc port.";
             cleanup();
             return;
         }
         
         m_clockServer = new GazeboYarpPlugins::ClockServerImpl(*this);
         if (!m_clockServer) {
-            std::cerr << "GazeboYarpClock: Could not create Clock Server." << std::endl;
+            yError() << "GazeboYarpClock: Could not create Clock Server.";
             cleanup();
             return;
         }
         
         if (!m_clockServer->yarp().attachAsServer(*m_rpcPort)) {
-            std::cerr << "GazeboYarpClock: Failed to attach Clock Server to RPC port." << std::endl;
+            yError() << "GazeboYarpClock: Failed to attach Clock Server to RPC port.";
             cleanup();
             return;
         }
         
         if (!m_rpcPort->open(m_portName + "/rpc")) {
-            std::cerr << "GazeboYarpClock: Failed to open rpc port " << (m_portName + "/rpc") << std::endl;
+            yError() << "GazeboYarpClock: Failed to open rpc port " << (m_portName + "/rpc");
             cleanup();
             return;
         }

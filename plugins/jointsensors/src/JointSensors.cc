@@ -15,6 +15,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 GZ_REGISTER_MODEL_PLUGIN(gazebo::GazeboYarpJointSensors)
 
@@ -42,7 +44,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
 {
     yarp::os::Network::init();
     if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-       std::cerr << "GazeboYarpJointSensors::Load error: yarp network does not seem to be available, is the yarpserver running?" << std::endl;
+       yError() << "GazeboYarpJointSensors::Load error: yarp network does not seem to be available, is the yarpserver running?";
        return;
     }
 
@@ -79,7 +81,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
     wrapper_properties.put("device","analogServer");
     if (!m_jointsensorsWrapper.open(wrapper_properties)) {
-        std::cout << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver wrapper" << std::endl;
+        yError() << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver wrapper";
         return;
     }
 
@@ -87,7 +89,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     //Force the device to be of type "gazebo_jointsensors" (it make sense? probably yes)
     driver_properties.put("device","gazebo_jointsensors");
     if (!m_jointsensorsDriver.open(driver_properties)) {
-        std::cout << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver" << std::endl;
+        yError() << "GazeboYarpJointSensors Plugin failed: error in opening yarp driver";
         return;
     }
 
@@ -95,7 +97,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     ::yarp::dev::PolyDriverList driver_list;
 
     if (!m_jointsensorsWrapper.view(m_iWrap)) {
-        std::cerr << "GazeboYarpJointSensors : error in loading wrapper" << std::endl;
+        yError() << "GazeboYarpJointSensors : error in loading wrapper";
         return;
     }
 
@@ -103,7 +105,7 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
 
     if (m_iWrap->attachAll(driver_list)) {
     } else {
-        std::cerr << "GazeboYarpJointSensors : error in connecting wrapper and device " << std::endl;
+        yError() << "GazeboYarpJointSensors : error in connecting wrapper and device ";
     }
 
 }

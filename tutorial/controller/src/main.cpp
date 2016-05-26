@@ -50,8 +50,8 @@ int main(int argc, char **argv)
     if (!params.check("robot"))
     {
         robotName = "doublePendulumGazebo";
-//         fprintf(stderr, "Please specify the name of the robot\n");
-//         fprintf(stderr, "--robot name (e.g. icub)\n");
+//         yError("Please specify the name of the robot\n");
+//         yError("--robot name (e.g. icub)\n");
 //         return -1;
     }
     else {
@@ -71,8 +71,8 @@ int main(int argc, char **argv)
     // create a device
     PolyDriver robotDevice(options);
     if (!robotDevice.isValid()) {
-        printf("Device not available.  Here are the known devices:\n");
-        printf("%s", Drivers::factory().toString().c_str());
+        yError("Device not available.  Here are the known devices:\n");
+        yError("%s", Drivers::factory().toString().c_str());
         return 0;
     }
 
@@ -88,19 +88,19 @@ int main(int argc, char **argv)
     ok = ok && robotDevice.view(encoders);
     
     if (!ok) {
-        printf("Problems acquiring interfaces\n");
+        yError("Problems acquiring interfaces\n");
         return 0;
     }
     
     BufferedPort<Bottle> *speedInput = new BufferedPort<Bottle>();
     if (!speedInput || !speedInput->open((localPorts + "/speeds:i").c_str())) {
-        fprintf(stderr, "Could not open port speed\n");                
+        yError("Could not open port speed\n");
         return false;
     }
 
-    fprintf(stderr, "Trying to connect: %s to %s...", (remotePorts + "/analog/speed").c_str(), (localPorts + "/speeds:i").c_str());
+    yDebug("Trying to connect: %s to %s...", (remotePorts + "/analog/speed").c_str(), (localPorts + "/speeds:i").c_str());
     Network::connect((remotePorts + "/analog:o/speed").c_str(), (localPorts + "/speeds:i").c_str());
-    fprintf(stderr, "hopefully ok \n");
+    yDebug("hopefully ok \n");
 
     //parameters
     const double m1  = 1;
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
         yarp::sig::Vector error(2);
         error = q-qDes;
         
-        printf("Error: %lf * %lf      Torque:  %lf * %lf       Vel:  %lf * %lf\n", error(0), error(1), tau(0), tau(1), dq(0), dq(1));
+        yError("Error: %lf * %lf      Torque:  %lf * %lf       Vel:  %lf * %lf\n", error(0), error(1), tau(0), tau(1), dq(0), dq(1));
         
         torque->setRefTorques(tau.data());
         
@@ -222,7 +222,7 @@ int main(int argc, char **argv)
         
         yarp::sig::Matrix vLyapunov(1, 1);
         vLyapunov = 0.5 * (dqMatrix.transposed() * M) * dqMatrix + 0.5 * eMatrix.transposed() * kp * eMatrix;
-        printf("Lyapunov Value: %lf\n", vLyapunov(0, 0));
+        yInfo("Lyapunov Value: %lf\n", vLyapunov(0, 0));
         
         
         yarp::os::Time::delay(0.01);

@@ -11,7 +11,8 @@
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/common/common.hh>
-
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 
 #include <string>
@@ -69,9 +70,9 @@ bool loadConfigModelPlugin(physics::ModelPtr _model,
         if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe)) {
             return true;
         } else {
-            std::cerr << "GazeboYarpPlugins error: failure in loading configuration for model " << _model->GetName() << std::endl
-                      << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << std::endl
-                      << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path << std::endl;
+            yError() << "GazeboYarpPlugins error: failure in loading configuration for model" << _model->GetName() << "\n"
+                      << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << "\n"
+                      << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path;
             return false;
         }
     }
@@ -106,8 +107,8 @@ bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
     // worldName::modelName::linkOrJointName::sensorName
     if( explodedScopedSensorName.size() < 3 )
     {
-        std::cerr << "GazeboYarpPlugins warning: unexpected scopedSensorName " << scopedSensorName << std::endl;
-        std::cerr << "GazeboYarpPlugins warning: gazeboYarpPluginsRobotName not set in sensor " << gazeboYarpPluginsSensorName << std::endl;
+        yError() << "GazeboYarpPlugins warning: unexpected scopedSensorName " << scopedSensorName;
+        yError() << "GazeboYarpPlugins warning: gazeboYarpPluginsRobotName not set in sensor " << gazeboYarpPluginsSensorName;
         return false;
     }
 
@@ -139,9 +140,9 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
 #else
     std::string sensorName = _sensor->GetName();
 #endif
-            std::cerr << "GazeboYarpPlugins error: failure in loading configuration for sensor " << sensorName << std::endl
-                      << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << std::endl
-                      << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path << std::endl;
+            yError()  << "GazeboYarpPlugins error: failure in loading configuration for sensor " << sensorName << "\n"
+                      << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name 
+                      << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path ;
             return false;
         }
     }

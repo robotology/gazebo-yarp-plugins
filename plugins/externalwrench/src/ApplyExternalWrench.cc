@@ -67,11 +67,11 @@ void ApplyExternalWrench::UpdateChild()
 //     gazebo::physics::Link_V tmpLinksVector;
 //     tmpLinksVector = m_myModel->GetLinks();
 //     for (int i=0; i<tmpLinksVector.size(); i++)
-//       std::cout << tmpLinksVector[i]->GetName() << " ";
-//     std::cout << std::endl;
+//     yDebug() << tmpLinksVector[i]->GetName() << " ";
+//     yDebug() << std::endl;
 
     if ( !this->m_onLink ) {
-        //std::cout << "[ERROR] ApplyWrench plugin: link named " << this->m_linkName<< " not found"<<std::endl;
+        //yError() << "ApplyWrench plugin: link named " << this->m_linkName<< " not found";
         return;
     }
 
@@ -95,7 +95,7 @@ void ApplyExternalWrench::UpdateChild()
 
     // This has to be done during the specified duration
     if ( applying_force_flag && ( time_current - timeIni ) < m_wrenchToApply.duration ) {
-//         printf ( "Applying external force on the robot for %f seconds...\n", this->m_duration );
+//      yError ( "Applying external force on the robot for %f seconds...", this->m_duration );
         this->m_onLink->AddForce ( force );
         this->m_onLink->AddTorque ( torque );
         math::Vector3 linkCoGPos = this->m_onLink->GetWorldCoGPose().pos; // Get link's COG position where wrench will be applied
@@ -127,7 +127,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 {
     // Check if yarp network is active;
     if ( !this->m_yarpNet.checkNetwork() ) {
-        printf ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin\n" );
+        yError ( "ERROR Yarp Network was not found active in ApplyExternalWrench plugin" );
         return;
     }
 
@@ -155,7 +155,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 	    this->m_subscope = retrieveSubscope(links, m_modelScope);
             configuration_loaded = true;
         } else {
-            printf ( "ERROR trying to get robot configuration file\n" );
+            yError ( "ERROR trying to get robot configuration file" );
             return;
         }
     } else {
@@ -169,7 +169,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 
     // Starting RPC thread to read desired wrench to be applied
     if ( !m_rpcThread.start() ) {
-        printf ( "ERROR: rpcThread did not start correctly\n" );
+        yError ( "ERROR: rpcThread did not start correctly" );
     }
 
 
@@ -250,7 +250,7 @@ bool RPCServerThread::threadInit()
 {
 
     if ( !m_rpcPort.open ( std::string ( "/"+m_robotName + "/applyExternalWrench/rpc:i" ).c_str() ) ) {
-        printf ( "ERROR opening RPC port /applyExternalWrench\n" );
+        yError ( "ERROR opening RPC port /applyExternalWrench" );
         return false;
     }
     // Default link on which wrenches are applied

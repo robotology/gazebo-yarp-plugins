@@ -7,7 +7,8 @@
 
 #include "DepthCameraDriver.h"
 #include <yarp/os/Value.h>
-
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
@@ -61,12 +62,12 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
 
-    std::cout << "GazeboYarpDepthCameraDriver::open() " << sensorScopedName << std::endl;
+    yTrace() << "GazeboYarpDepthCameraDriver::open() " << sensorScopedName;
 
 #if GAZEBO_MAJOR_VERSION < 7
     m_imageCameraSensorPtr = (gazebo::sensors::CameraSensor*) (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     if (!m_imageCameraSensorPtr) {
-        std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
+        yError() << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" ;
         return false;
     }
     m_imageCameraPtr = m_imageCameraSensorPtr->GetCamera();
@@ -74,7 +75,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 
     m_depthCameraSensorPtr = dynamic_cast<gazebo::sensors::DepthCameraSensor*> (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
     if (!m_depthCameraSensorPtr) {
-        std::cout << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" << std::endl;
+        yError() << "GazeboYarpDepthCameraDriver Error: camera sensor was not found";
         return false;
     }
     #if GAZEBO_MAJOR_VERSION >= 7
@@ -94,7 +95,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     m_width  = m_imageCameraPtr->GetImageWidth();
     m_height = m_imageCameraPtr->GetImageHeight();
 #endif
-    std::cout << "Data from Gazebo:\n width: " << m_width << ", height: " << height() << std::endl;
+    yDebug() << "Data from Gazebo:\n width: " << m_width << ", height: " << height();
     m_imageFrame_BufferSize = 3*m_width*m_height;
     m_depthFrame_BufferSize = m_width*m_height*sizeof(float);
 

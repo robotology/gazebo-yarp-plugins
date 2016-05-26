@@ -15,6 +15,8 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpIMU)
 
@@ -35,7 +37,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
     yarp::os::Network::init();
     if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-        std::cerr << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+        yError() << "GazeboYarpIMU::Load error: yarp network does not seem to be available, is the yarpserver running?";
         return;
     }
 
@@ -68,7 +70,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     //Open the driver
     if (m_imuDriver.open(m_parameters)) {
     } else {
-        std::cout << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver" << std::endl;
+        yError() << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver";
     }
 }
 

@@ -88,7 +88,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
 
     m_parentSensor = (gazebo::sensors::MultiCameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     if (!m_parentSensor) {
-        std::cout << "GazeboYarpMultiCameraDriver Error: camera sensor was not found" << std::endl;
+        yError() << "GazeboYarpMultiCameraDriver Error: camera sensor was not found";
         return false;
     }
 

@@ -8,6 +8,8 @@
 #include "JointSensorsDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 
@@ -62,7 +64,7 @@ void GazeboYarpJointSensorsDriver::onUpdate(const gazebo::common::UpdateInfo & _
 //DEVICE DRIVER
 bool GazeboYarpJointSensorsDriver::open(yarp::os::Searchable& config)
 {
-    std::cout << "GazeboYarpJointSensorsDriver::open() called" << std::endl;
+    yTrace() << "GazeboYarpJointSensorsDriver::open() called";
 
     yarp::os::Property pluginParameters;
     pluginParameters.fromString(config.toString().c_str());
@@ -72,7 +74,7 @@ bool GazeboYarpJointSensorsDriver::open(yarp::os::Searchable& config)
     _robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(NULL == _robot)
     {
-        std::cout << "GazeboYarpJointSensorsDriver error: robot was not found\n";
+        yError() << "GazeboYarpJointSensorsDriver error: robot was not found";
         return false;
     }
 
@@ -97,24 +99,24 @@ bool GazeboYarpJointSensorsDriver::open(yarp::os::Searchable& config)
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
                                  boost::bind ( &GazeboYarpJointSensorsDriver::onUpdate, this, _1 ) );
 
-    std::cout << "GazeboYarpJointSensorsDriver::open() returning true" << std::endl;
+    yTrace() << "GazeboYarpJointSensorsDriver::open() returning true";
     return true;
 }
 
 bool GazeboYarpJointSensorsDriver::setJointPointers(yarp::os::Property & pluginParameters)  //WORKS
 {
-    std::cout << ".ini file found, using joint names in ini file" << std::endl;
+    yDebug() << ".ini file found, using joint names in ini file";
     yarp::os::Bottle joint_names_bottle = pluginParameters.findGroup("jointNames");
 
     if (joint_names_bottle.isNull()) {
-        std::cout << "GazeboYarpJointSensorsDriver::setJointPointers() error: cannot find jointNames parameter." << std::endl;
+        yError() << "GazeboYarpJointSensorsDriver::setJointPointers() error: cannot find jointNames parameter.";
         return false;
     }
 
     jointsensors_nr_of_channels = joint_names_bottle.size() - 1;
 
     if (jointsensors_nr_of_channels == 0) {
-        std::cout << "GazeboYarpJointSensorsDriver::setJointPointers() error: no joint selected." << std::endl;
+        yError() << "GazeboYarpJointSensorsDriver::setJointPointers() error: no joint selected.";
         return false;
     }
 
@@ -137,7 +139,7 @@ bool GazeboYarpJointSensorsDriver::setJointPointers(yarp::os::Property & pluginP
         }
 
         if( !joint_found ) {
-            std::cout << "GazeboYarpJointSensorsDriver::setJointPointers(): Error, cannot find joint " << controlboard_joint_name << std::endl;
+            yError() << "GazeboYarpJointSensorsDriver::setJointPointers(): Error, cannot find joint " << controlboard_joint_name;
             joint_ptrs.resize(0);
             jointsensors_nr_of_channels = 0;
             return false;
@@ -149,12 +151,12 @@ bool GazeboYarpJointSensorsDriver::setJointPointers(yarp::os::Property & pluginP
 
 bool GazeboYarpJointSensorsDriver::setJointSensorsType(yarp::os::Property & pluginParameters)  //WORKS
 {
-    std::cout << ".ini file found, using joint names in ini file" << std::endl;
+    yDebug() << ".ini file found, using joint names in ini file";
 
     std::string parameter_name = "gazeboJointSensorsType";
 
     if(!pluginParameters.check(parameter_name.c_str())) {
-        std::cout << "GazeboYarpJointSensorsDriver::setJointSensorsType() error: cannot find " << parameter_name << " parameter." << std::endl;
+        yError() << "GazeboYarpJointSensorsDriver::setJointSensorsType() error: cannot find " << parameter_name << " parameter.";
         return false;
     }
 
@@ -167,8 +169,8 @@ bool GazeboYarpJointSensorsDriver::setJointSensorsType(yarp::os::Property & plug
     } else if ( sensors_type == "torque" ) {
         jointsensors_type = Torque;
     } else {
-        std::cerr << "GazeboYarpJointSensorsDriver::setJointSensorsType() error: sensor type " << sensors_type << " not recognized." << std::endl
-                  << "\t\tThe available types are position, speed and torque." << std::endl;
+        yError() << "GazeboYarpJointSensorsDriver::setJointSensorsType() error: sensor type " << sensors_type << " not recognized.\n" 
+                  << "\t\tThe available types are position, speed and torque.";
         return false;
     }
 
@@ -199,7 +201,7 @@ int GazeboYarpJointSensorsDriver::read(yarp::sig::Vector &out)
     }
 
     if( (int)out.size() != jointsensors_nr_of_channels ) {
-        std::cout << " GazeboYarpJointSensorsDriver:read() warning : resizing input vector, this can probably be avoided" << std::endl;
+        yWarning() << " GazeboYarpJointSensorsDriver:read() warning : resizing input vector, this can probably be avoided" ;
         out.resize(jointsensors_nr_of_channels);
     }
 
@@ -217,7 +219,7 @@ int GazeboYarpJointSensorsDriver::getChannels()
 
 int GazeboYarpJointSensorsDriver::getState(int /*ch*/)
 {
-    printf("getstate\n");
+    yTrace("getstate");
     return AS_OK;
 }
 

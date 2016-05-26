@@ -86,7 +86,7 @@ namespace gazebo
     {
         // Check if yarp network is active;
         if (!yarp::os::Network::checkNetwork()) {
-            printf("ERROR Yarp Network was not found active\n");
+            yError("ERROR Yarp Network was not found active");
             return;
         }
 
@@ -96,7 +96,7 @@ namespace gazebo
         std::string port_name = "/" + this->m_modelScope + "/CoMInWorld:o";
         m_comOutputPort = new yarp::os::BufferedPort<yarp::os::Bottle>();
         if (!m_comOutputPort || !m_comOutputPort->open(port_name)) {
-            printf("Could not open port %s\n", port_name.c_str());
+            yError("Could not open port %s", port_name.c_str());
             return;
         }
 

@@ -10,7 +10,8 @@
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
-
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <gazebo/sensors/DepthCameraSensor.hh>
 #include <yarp/dev/PolyDriver.h>
 
@@ -32,9 +33,9 @@ GazeboYarpDepthCamera::~GazeboYarpDepthCamera()
 
 void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    std::cout << "depth camera LOAD" << std::endl;
+    yTrace() << "depth camera LOAD";
     if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-        std::cerr << "GazeboYarpDepthCamera::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+        yError() << "GazeboYarpDepthCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
         return;
     }
 
@@ -56,7 +57,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if (!configuration_loaded)
     {
-        std::cout << "error loading configuration from SDF" << std::endl;
+        yError() << "error loading configuration from SDF";
         return;
     }
 
@@ -68,14 +69,14 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     m_sensor = (gazebo::sensors::DepthCameraSensor*)_sensor.get();
     if(m_sensor == NULL)
     {
-        std::cout << "m_sensor == NULL" << std::endl;
+        yDebug() << "m_sensor == NULL";
     }
 
 
     // Don't forget to load the camera plugin!!!! ???
 //    DepthCameraPlugin::Load(_sensor, _sdf);
 
-    std::cout << "GazeboYarpDepthCamera Plugin: sensor scoped name is " << m_sensorName.c_str() << std::endl;
+    yDebug() << "GazeboYarpDepthCamera Plugin: sensor scoped name is " << m_sensorName.c_str() ;
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
@@ -83,15 +84,15 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     //Open the driver
     if (m_cameraDriver.open(m_parameters)) {
-        std::cout << "Loaded GazeboYarpDepthCamera Plugin correctly" << std::endl;
+        yInfo() << "Loaded GazeboYarpDepthCamera Plugin correctly";
     } else {
-        std::cout << "GazeboYarpDepthCamera Plugin Load failed: error in opening yarp driver" << std::endl;
+        yError() << "GazeboYarpDepthCamera Plugin Load failed: error in opening yarp driver";
     }
 
     m_cameraDriver.view(iFrameGrabberImage);
     if(iFrameGrabberImage == NULL)
     {
-        std::cout << "Unable to get the iFrameGrabberImage interface from the device" << std::endl;
+        yError() << "Unable to get the iFrameGrabberImage interface from the device";
         return;
     }
 

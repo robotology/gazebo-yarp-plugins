@@ -10,6 +10,8 @@
 
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ForceTorqueSensor.hh>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 
@@ -72,7 +74,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 
     if (!m_parentSensor)
     {
-        std::cout << "Error, ForceTorque sensor was not found" << std::endl;
+        yError() << "Error, ForceTorque sensor was not found";
         return AS_ERROR;
     }
 

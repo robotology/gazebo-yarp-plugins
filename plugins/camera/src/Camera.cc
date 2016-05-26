@@ -13,7 +13,8 @@
 
 #include <gazebo/sensors/CameraSensor.hh>
 #include <yarp/dev/PolyDriver.h>
-
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpCamera)
 
@@ -33,13 +34,13 @@ GazeboYarpCamera::~GazeboYarpCamera()
 void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
     if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-        std::cerr << "GazeboYarpCamera::Load error: yarp network does not seem to be available, is the yarpserver running?"<<std::endl;
+        yError() << "GazeboYarpCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
         return;
     }
 
 
     if (!_sensor) {
-        gzerr << "GazeboYarpCamera plugin requires a CameraSensor." << std::endl;
+        gzerr << "GazeboYarpCamera plugin requires a CameraSensor.";
         return;
     }
 
@@ -66,14 +67,14 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     m_sensor = (gazebo::sensors::CameraSensor*)_sensor.get();
     if(m_sensor == NULL)
     {
-        std::cout << "m_sensor == NULL" << std::endl;
+        yDebug() << "m_sensor == NULL";
     }
 
 
     // Don't forget to load the camera plugin!!!! ???
 //    CameraPlugin::Load(_sensor, _sdf);
 
-    std::cout << "GazeboYarpCamera Plugin: sensor scoped name is " << m_sensorName.c_str() << std::endl;
+    yDebug() << "GazeboYarpCamera Plugin: sensor scoped name is " << m_sensorName.c_str();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
@@ -81,15 +82,15 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 
     //Open the driver
     if (m_cameraDriver.open(m_parameters)) {
-        std::cout << "Loaded GazeboYarpCamera Plugin correctly" << std::endl;
+        yInfo() << "Loaded GazeboYarpCamera Plugin correctly";
     } else {
-        std::cout << "GazeboYarpCamera Plugin Load failed: error in opening yarp driver" << std::endl;
+        yError() << "GazeboYarpCamera Plugin Load failed: error in opening yarp driver";
     }
 
     m_cameraDriver.view(iFrameGrabberImage);
     if(iFrameGrabberImage == NULL)
     {
-        std::cout << "Unable to get the iFrameGrabberImage interface from the device" << std::endl;
+        yError() << "Unable to get the iFrameGrabberImage interface from the device";
         return;
     }
 

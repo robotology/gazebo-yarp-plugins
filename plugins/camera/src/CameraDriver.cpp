@@ -13,6 +13,8 @@
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/CameraSensor.hh>
 #include <yarp/os/Value.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace std;
 using namespace yarp::dev;
@@ -100,7 +102,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     // TODO get parent sensor, if it make any sense
     m_parentSensor = (gazebo::sensors::CameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     if (!m_parentSensor) {
-        std::cout << "GazeboYarpCameraDriver Error: camera sensor was not found" << std::endl;
+        yError() << "GazeboYarpCameraDriver Error: camera sensor was not found" ;
         return false;
     }
 
@@ -117,7 +119,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
 
     if(m_camera == NULL)
     {
-        std::cout << "GazeboYarpCameraDriver Error: camera pointer not valid" << std::endl;
+        yError() << "GazeboYarpCameraDriver Error: camera pointer not valid";
         return false;
     }
 

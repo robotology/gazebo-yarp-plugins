@@ -339,29 +339,41 @@ bool GazeboYarpDepthCameraDriver::getDeviceInfo(yarp::os::Property &device_info)
 {
     using namespace gazebo::rendering;
     
-    DistortionPtr       distModel; 
-    distModel           = m_depthCameraSensorPtr->DepthCamera()->LensDistortion();
+    Distortion*         distModel; 
+    DepthCamera*        camPtr;
     yarp::os::Value     retM;
+    camPtr              = m_depthCameraSensorPtr->DepthCamera().get();
+    if(!camPtr)
+    {
+        return false;
+    }
+    distModel           = camPtr->GetDistortion().get();
     
-    //identity matrix
-    retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
+    if(distModel)
+    {
+        device_info.put("k1", distModel->GetK1());
+        device_info.put("k2", distModel->GetK2());
+        device_info.put("k3", distModel->GetK3());
+        device_info.put("t1", distModel->GetP1());
+        device_info.put("t2", distModel->GetP2());
+        device_info.put("principalPointX", distModel->GetCenter().x);
+        device_info.put("principalPointY", distModel->GetCenter().y);
+    }
     
-    device_info.put("k1", distModel.get()->GetK1());
-    device_info.put("k2", distModel.get()->GetK2());
-    device_info.put("k3", distModel.get()->GetK3());
-    device_info.put("t1", distModel.get()->GetP1());
-    device_info.put("t2", distModel.get()->GetP2());
-    device_info.put("cx", distModel.get()->GetCenter().x);
-    device_info.put("cy", distModel.get()->GetCenter().y);
-    device_info.put("distortionModel", "plumb_bob");
-    device_info.put("retificationMatrix", retM);
-    
-    //override with parameter from configuration file
     if(m_conf.check("CAMERA_PARAM"))
     {
         device_info.fromString(m_conf.findGroup("CAMERA_PARAM").toString());
     }
+    else
+    {
+        yWarning("missing parameters in configuration files!!");
+    }
+    device_info.put("retificationMatrix", retM);
+    retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
+    device_info.put("distortionModel", "plumb_bob");
     return true;
+    
+    
 }
 
 bool GazeboYarpDepthCameraDriver::getMeasurementData(yarp::sig::FlexImage &image, yarp::os::Stamp *stamp)

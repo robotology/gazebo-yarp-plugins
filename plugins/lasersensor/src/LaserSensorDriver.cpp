@@ -38,6 +38,7 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
 #endif
 
     m_lastTimestamp.update(_info.simTime.Double());
+    m_first_run = false;
     return;
 }
 
@@ -50,7 +51,8 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName(config.find(YarpLaserSensorScopedName.c_str()).asString().c_str());
 
     m_parentSensor = dynamic_cast<gazebo::sensors::RaySensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
-
+    m_first_run = true;
+    
     if (!m_parentSensor)
     {
         yError() << "Error, sensor" <<  sensorScopedName << "was not found" ;
@@ -169,9 +171,17 @@ bool GazeboYarpLaserSensorDriver::getMeasurementData (yarp::sig::Vector &data)
 
    if (m_sensorData.size() != m_samples)
    {
-       m_device_status = DEVICE_GENERAL_ERROR;
-       yError() << "Internal error";
-       return false ;
+       if (m_first_run)
+       {
+          m_device_status = DEVICE_TIMEOUT;
+          return false;
+       }
+       else
+       {
+          m_device_status = DEVICE_GENERAL_ERROR;
+          yError() << "Internal error";
+          return false ;
+       }
    }
 
    if (data.size() != m_samples)

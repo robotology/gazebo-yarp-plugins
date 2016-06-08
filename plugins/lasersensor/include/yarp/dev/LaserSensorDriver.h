@@ -93,6 +93,7 @@ private:
     double m_rate; 
     bool   m_enable_clip_range;
     bool   m_enable_discard_range;
+    bool   m_first_run;
     
     Device_status m_device_status;
     std::vector <Range_t> range_skip_vector;

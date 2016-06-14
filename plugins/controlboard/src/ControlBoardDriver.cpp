@@ -281,12 +281,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
       yError()<<"Failed to get joint limits";
       return false;
     }
-    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
-    {
-        // Set an old reference value surely out of range. This will force the setting of initial reference at startup
-        // NOTE: This has to be after setMinMaxPos function
-        m_oldReferencePositions[j] = 1e21;
-    }
+
 
     if (!setMinMaxVel())
     {
@@ -314,9 +309,14 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
       return false;
     }
 
+    // Connect the onUpdate method to the WorldUpdateBegin event callback
     this->m_updateConnection =
     gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,
                                                                      this, _1));
+
+    // Connect the onReset method to the WorldReset event callback
+    this->m_resetConnection =
+    gazebo::event::Events::ConnectWorldReset(boost::bind(&GazeboYarpControlBoardDriver::onReset, this));
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
     m_gazeboNode->Init(this->m_robot->GetWorld()->GetName());
@@ -324,6 +324,13 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     _T_controller = 1;
 
+    resetPositionsAndTrajectoryGenerators();
+
+    return true;
+}
+
+void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
+{
     if(m_pluginParameters.check("initialConfiguration") )
     {
         std::stringstream ss(m_pluginParameters.find("initialConfiguration").toString());
@@ -353,10 +360,10 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             m_jointPointers[i]->SetAngle(0,a);
 #endif
         }
-        
+
         yDebug() << "Initializing Trajectory Generator with default values";
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max); 
+            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
             m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
         }
     }
@@ -366,12 +373,25 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         for (unsigned int i = 0; i < m_numberOfJoints; ++i)
         {
             m_positions[i] = convertGazeboToUser(i, m_jointPointers[i]->GetAngle(0));
-            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max); 
+            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
             m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
         }
     }
-    return true;
+
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+        m_controlMode[j] = VOCAB_CM_POSITION;
+        m_interactionMode[j] = VOCAB_IM_STIFF;
+    }
+
+    for (unsigned int j = 0; j < m_numberOfJoints; ++j)
+    {
+        // Set an old reference value surely out of range. This will force the setting of initial reference at startup
+        // NOTE: This has to be after setMinMaxPos function
+        m_oldReferencePositions[j] = 1e21;
+    }
 }
+
 
 bool GazeboYarpControlBoardDriver::configureJointType()
 {
@@ -552,6 +572,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
     //yDebug()<< deviceName << "7";  
 }
+
+void GazeboYarpControlBoardDriver::onReset()
+{
+    resetPositionsAndTrajectoryGenerators();
+}
+
 
 bool GazeboYarpControlBoardDriver::setMinMaxPos()
 {

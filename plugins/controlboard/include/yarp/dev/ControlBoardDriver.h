@@ -93,7 +93,22 @@ public:
      * Gazebo stuff
      */
     bool gazebo_init();
+
+    /**
+     * Callback for the WorldUpdateBegin Gazebo event.
+     */
     void onUpdate(const gazebo::common::UpdateInfo&);
+
+    /**
+     * Callback for the WorldReset Gazebo event.
+     */
+    void onReset();
+
+    /**
+     * Helper function for resetting the position and the trajectory generator.
+     */
+    void resetPositionsAndTrajectoryGenerators();
+
 
     /**
      * Yarp interfaces start here
@@ -360,7 +375,17 @@ private:
 
     std::string deviceName;
     gazebo::physics::Model* m_robot;
+
+    /**
+     * Connection to the WorldUpdateBegin Gazebo event
+     */
     gazebo::event::ConnectionPtr m_updateConnection;
+
+    /**
+     * Connection to the WorldReset Gazebo event
+     */
+    gazebo::event::ConnectionPtr m_resetConnection;
+
 
 
 

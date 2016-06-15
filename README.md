@@ -25,6 +25,8 @@ For using Yarp with Gazebo, you shall install:
 
 **Gazebo is under active development, so it is recommended to use the latest released version of Gazebo. Known poblems related to old versions of Gazebo are documented in the [Old Gazebo Versions](#old-gazebo-versions) section.**
 
+**If you are a user of the Yarp `devel` branch, you should use the `devel` branch of `gazebo-yarp-plugins`.**
+
 *You could prefer to run an older version of Gazebo if you want to use it with ROS integration. Depending on your ROS version you have to stick to a given Gazebo version.*
 *Yarp integration provided by gazebo-yarp-plugins is not affected by this kind of limitations.*
 

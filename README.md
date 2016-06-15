@@ -23,7 +23,7 @@ For using Yarp with Gazebo, you shall install:
  * Gazebo simulator and its header files (at least version 5), following the [instructions on the official Gazebo website](http://gazebosim.org/tutorials?cat=install). If you are on Debian or Ubuntu, remember to install the header files for Gazebo, that are contained in the `libgazebo*-dev` package. 
  * Yarp (at least version 2.3.63.2, i.e. the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources).
 
-**Gazebo is under active development, so it is recommended to use the latest released version of Gazebo.**
+**Gazebo is under active development, so it is recommended to use the latest released version of Gazebo. Known poblems related to old versions of Gazebo are documented in the [Old Gazebo Versions](#old-gazebo-versions) section.**
 
 *You could prefer to run an older version of Gazebo if you want to use it with ROS integration. Depending on your ROS version you have to stick to a given Gazebo version.*
 *Yarp integration provided by gazebo-yarp-plugins is not affected by this kind of limitations.*
@@ -93,14 +93,13 @@ Troubleshooting
 - If Gazebo crashes without any error message while loading a model using gazebo-yarp-plugins, you have issue with shared library linking. Probably gazebo-yarp-plugins is linked against a manually installed library (for example boost), while the gazebo binary is linking against the system version of the same library. For more information read [issue  71 discussion](https://github.com/robotology/gazebo-yarp-plugins/issues/71) or file [a new issue](https://github.com/robotology/gazebo-yarp-plugins/issues/new) to get help from the developers.
 
 #### Old Gazebo Versions
+- In versions of Gazebo prior to 7.2 there is a bug related to the use of Reset World with `gazebo-yarp-plugins` powered models. For more informations check [issue 92](https://github.com/robotology/gazebo-yarp-plugins/issues/92) . 
+- In versions of Gazebo prior to 4.1 there is a bug affecting the use of `gazebo-yarp-plugins` powered model with `roslaunch` . For more informations check [issue 123](https://github.com/robotology/gazebo-yarp-plugins/issues/123) . 
+- In versions of Gazebo prior to 3.1 there is a bug related to the coordinates frame of the six axis force torque sensor measure, so you 
+  have to handle with care the force torque measurement returned by the `gazebo_yarp_forcetorque` plugin. For more informations check [issue 73]( https://github.com/robotology/gazebo-yarp-plugins/issues/73). 
 - In versions of Gazebo prior to 3.0 there is a bug related to the integral part of the low-level position controller. If you are using 
   Gazebo 1.9 or 2.2 then the low level position control will excert no integral action on the model. If you want to get more informations on
   this bug, please check [issue 119](https://github.com/robotology/gazebo-yarp-plugins/issues/119) and [Gazebo issue 1082] (https://bitbucket.org/osrf/gazebo/issue/1082/jointcontroller-does-not-handle-correctly). 
-
-- In versions of Gazebo prior to 3.1 there is a bug related to the coordinates frame of the six axis force torque sensor measure, so you 
-  have to handle with care the force torque measurement returned by the `gazebo_yarp_forcetorque` plugin. For more informations check [issue 73]( https://github.com/robotology/gazebo-yarp-plugins/issues/73). 
-
-- In versions of Gazebo prior to 4.1 there is a bug affecting the use of `gazebo-yarp-plugins` powered model with `roslaunch` . For more informations check [issue 123](https://github.com/robotology/gazebo-yarp-plugins/issues/123) . 
 
 Design
 ------

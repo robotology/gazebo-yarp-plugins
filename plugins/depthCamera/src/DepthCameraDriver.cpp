@@ -189,7 +189,7 @@ bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
     if(m_depthCameraSensorPtr->IsActive())
         memcpy(m_imageFrame_Buffer, m_depthCameraPtr->ImageData(), m_imageFrame_BufferSize);
 
-    m_depthTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+    m_colorTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
 #else
     if(m_imageCameraSensorPtr->IsActive())
         memcpy(m_imageFrame_Buffer, m_imageCameraSensorPtr->GetImageData(), m_imageFrame_BufferSize);
@@ -224,10 +224,13 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float * /*_image*/,
     if(m_depthCameraSensorPtr->IsActive())
     #if GAZEBO_MAJOR_VERSION >= 7
         memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);
+        m_depthTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
     #else
         memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);
+        m_depthTimestamp.update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
     #endif
 
+    
     m_depthFrameMutex.post();
 }
 
@@ -329,11 +332,6 @@ int GazeboYarpDepthCameraDriver::getRawBufferSize()
     return m_imageFrame_BufferSize;
 }
 
-double a()
-{
-    return 0.1;
-}
-
 // IRGBDSensor interface
 bool GazeboYarpDepthCameraDriver::getDeviceInfo(yarp::os::Property &device_info)
 {
@@ -343,37 +341,45 @@ bool GazeboYarpDepthCameraDriver::getDeviceInfo(yarp::os::Property &device_info)
     DepthCamera*        camPtr;
     yarp::os::Value     retM;
     camPtr              = m_depthCameraSensorPtr->DepthCamera().get();
-    if(!camPtr)
+    yarp::os::Bottle&   camParam = m_conf.findGroup("CAMERA_PARAM");
+    if(camPtr)
     {
-        return false;
+        distModel = camPtr->GetDistortion().get();
+        if(distModel)
+        {
+            device_info.put("k1", distModel->GetK1());
+            device_info.put("k2", distModel->GetK2());
+            device_info.put("k3", distModel->GetK3());
+            device_info.put("t1", distModel->GetP1());
+            device_info.put("t2", distModel->GetP2());
+            device_info.put("principalPointX", distModel->GetCenter().x);
+            device_info.put("principalPointY", distModel->GetCenter().y);
+        }
+        else
+        {
+            device_info.put("k1", 0);
+            device_info.put("k2", 0);
+            device_info.put("k3", 0);
+            device_info.put("t1", 0);
+            device_info.put("t2", 0);
+            device_info.put("principalPointX", width()/2);
+            device_info.put("principalPointY", height()/2);
+        }
     }
-    distModel           = camPtr->GetDistortion().get();
+    device_info.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
+    device_info.put("distortionModel", "plumb_bob");
+    device_info.put("stamp", m_colorTimestamp.getTime());
     
-    if(distModel)
+    if(!camParam.isNull())
     {
-        device_info.put("k1", distModel->GetK1());
-        device_info.put("k2", distModel->GetK2());
-        device_info.put("k3", distModel->GetK3());
-        device_info.put("t1", distModel->GetP1());
-        device_info.put("t2", distModel->GetP2());
-        device_info.put("principalPointX", distModel->GetCenter().x);
-        device_info.put("principalPointY", distModel->GetCenter().y);
-    }
-    
-    if(m_conf.check("CAMERA_PARAM"))
-    {
-        device_info.fromString(m_conf.findGroup("CAMERA_PARAM").toString());
+        device_info.fromString(camParam.toString(),false);
     }
     else
     {
         yWarning("missing parameters in configuration files!!");
     }
-    device_info.put("retificationMatrix", retM);
-    retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
-    device_info.put("distortionModel", "plumb_bob");
     return true;
-    
-    
+
 }
 
 bool GazeboYarpDepthCameraDriver::getMeasurementData(yarp::sig::FlexImage &image, yarp::os::Stamp *stamp)

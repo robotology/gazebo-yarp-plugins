@@ -103,8 +103,7 @@ private:
     yarp::os::Property m_pluginParameters; /**< Contains the parameters of the device contained in the yarpConfigurationFile .ini file */
 
     yarp::sig::Vector m_positions; /**< joint positions [Degrees] */
-    unsigned int m_robotRefreshPeriod; //ms
-    unsigned int m_numberOfJoints; /**< number of joints controlled by the control board */;
+    unsigned int m_numberOfJoints; /**< number of joints controlled by the control board */
 
 
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */

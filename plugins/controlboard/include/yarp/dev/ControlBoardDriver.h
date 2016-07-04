@@ -391,7 +391,6 @@ private:
 
     yarp::os::Property m_pluginParameters; /**< Contains the parameters of the device contained in the yarpConfigurationFile .ini file */
 
-    unsigned int m_robotRefreshPeriod; //ms
     unsigned int m_numberOfJoints; /**< number of joints controlled by the control board */
     std::vector<Range> m_jointPosLimits;
     std::vector<Range> m_jointVelLimits;

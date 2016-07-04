@@ -37,9 +37,9 @@ void GazeboYarpInertialMTB::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     _sensor->SetActive(true);
 
 #if GAZEBO_MAJOR_VERSION >= 7
-    this->m_sensorName = _sensor->ScopedName();
+    m_sensorName = _sensor->ScopedName();
 #else
-    this->m_sensorName = _sensor->GetScopedName();
+    m_sensorName = _sensor->GetScopedName();
 #endif
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());

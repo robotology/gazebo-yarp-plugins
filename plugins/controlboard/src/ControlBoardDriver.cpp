@@ -55,7 +55,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     assert(m_robot);
     if (!m_robot) return false;
 
-    this->m_robotRefreshPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     if (!setJointNames()) return false;      // this function also fills in the m_jointPointers vector
 
     m_numberOfJoints = m_jointNames.size();

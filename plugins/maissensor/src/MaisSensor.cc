@@ -38,6 +38,7 @@ GazeboYarpMaisSensor::~GazeboYarpMaisSensor()
         m_wrapper.close();
 
     GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_sensorName);
+    GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
 
     yarp::os::Network::fini();
 }

@@ -5,6 +5,7 @@
  */
 
 #include "inertialMTBPartDriver.h"
+#include <GazeboYarpPlugins/ConfHelpers.hh>
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
@@ -17,39 +18,44 @@ using namespace yarp::dev;
 
 const std::string MTBPartDriverParentScopedName = "ModelScopedName";
 
-const std::string GazeboYarpInertialMTBPartDriver::LUTmtbPosEnum2Id[1+eoas_inertial_pos_max_numberof] = {"",
+const std::string GazeboYarpInertialMTBPartDriver::LUTmtbPosEnum2Id[1+eoas_inertial_pos_max_numberof] = {"none",
     "1b7","1b8","1b9","1b10","1b11","1b12","1b13",
     "10b12","10b13","10b8","10b9","10b10","10b11","10b1","10b2","10b3","10b4","10b5","10b6","10b7",
-    "","","","",
+    "none","none","none","none",
     "2b7","2b8","2b9","2b10","2b11","2b12","2b13",
     "11b12","11b13","11b8","11b9","11b10","11b11","11b1","11b2","11b3","11b5","11b4","11b6","11b7",
-    "","","","",
+    "none","none","none","none",
     "9b7","9b8","9b9","9b10",
-    "","","",""};
+    "none","none","none","none"};
 
 const double GazeboYarpInertialMTBPartDriver::version = 6.0;
 
-std::map<std::string,int>& GazeboYarpInertialMTBPartDriver::generateLUTmtbId2PosEnum()
+std::map<std::string,int> GazeboYarpInertialMTBPartDriver::generateLUTmtbId2PosEnum()
 {
     // Fill the mapping from MTB sensor labels to position Ids
+    std::map<std::string,int> lut;
     for (int posId = 0; posId < eoas_inertial_pos_max_numberof; posId++)
     {
-        LUTmtbId2PosEnum[LUTmtbPosEnum2Id[posId]] = posId;
+        lut[LUTmtbPosEnum2Id[posId]] = posId;
     }
-    return LUTmtbId2PosEnum;
+    return lut;
 }
 
 std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTmtbId2PosEnum = generateLUTmtbId2PosEnum();
 
-std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTpart2outBufferSize{
-    {"left_arm",8},
+std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTpart2maxSensors{
     {"left_arm",8},
     {"right_arm",8},
     {"left_leg",13},
-    {"right_arm",13},
+    {"right_leg",13},
     {"torso",4}
 };
 
+std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTmtbType2enum{
+    {"none",eoas_inertial_type_none},
+    {"acc",eoas_inertial_type_accelerometer},
+    {"gyro",eoas_inertial_type_gyroscope}
+};
 
 
 GazeboYarpInertialMTBPartDriver::GazeboYarpInertialMTBPartDriver() {}
@@ -102,19 +108,18 @@ void GazeboYarpInertialMTBPartDriver::onUpdate(const gazebo::common::UpdateInfo 
 //DEVICE DRIVER
 bool GazeboYarpInertialMTBPartDriver::open(yarp::os::Searchable& config)
 {
-    // Get the part to which the sensors are attached
-    m_robotPart = config.find("robotPart").asString();
-
     // Get the parent model (robot scoped name) for rebuilding the
     // sensors scoped names
     std::string robotScopedName(config.find(MTBPartDriverParentScopedName.c_str()).asString().c_str());
-
     // Get the list of enabled sensors
     yarp::os::Bottle enabledSensors = *config.find("enabledSensors").asList();
+    // Build the vector of enabled sensors pointers
     buildEnabledSensorsVector(robotScopedName,enabledSensors);
 
+    // Get the part to which the sensors are attached
+    std::string robotPart = config.find("robotPart").asString().c_str();
     // Build the fixed parameters in the output buffer "m_inertialmtbOutBuffer"
-    buildOutBufferFixedData();
+    buildOutBufferFixedData(robotPart,enabledSensors);
 
     //Connect the driver to the gazebo simulation
     m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpInertialMTBPartDriver::onUpdate, this, _1));
@@ -132,35 +137,53 @@ bool GazeboYarpInertialMTBPartDriver::close()
 }
 
 //GENERIC SENSOR
-bool GazeboYarpInertialMTBPartDriver::read(yarp::sig::Vector &out)
+int GazeboYarpInertialMTBPartDriver::read(yarp::sig::Vector &out)
 {
     if (m_inertialmtbOutBuffer.size() != m_nbChannels ) {
         yError() << "GazeboYarpInertialMTBPartDriver Error: inertialMTB sensor export buffer not ready!";
-        return false;
+        return AS_ERROR;
     }
 
     if (out.size() != m_inertialmtbOutBuffer.size()) {
         yError() << "GazeboYarpInertialMTBPartDriver Error: output buffer to wrapper size mismatch!";
-        return false;
+        return AS_ERROR;
     }
 
     m_dataMutex.wait();
     out = m_inertialmtbOutBuffer;
     m_dataMutex.post();
 
-    return true;
+    return AS_OK;
 }
 
-bool GazeboYarpInertialMTBPartDriver::getChannels(int *nc)
+int GazeboYarpInertialMTBPartDriver::getChannels()
 {
-    if (!nc) return false;
-    *nc = m_nbChannels;
-    return true;
+    return m_nbChannels;
 }
 
-bool GazeboYarpInertialMTBPartDriver::calibrate(int /*ch*/, double /*v*/)
+int GazeboYarpInertialMTBPartDriver::getState(int /*ch*/)
 {
-    return true; //Calibration is not simulated
+    return AS_OK;
+}
+
+int GazeboYarpInertialMTBPartDriver::calibrateSensor()
+{
+    return AS_OK;
+}
+
+int GazeboYarpInertialMTBPartDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
+{
+    return AS_OK;
+}
+
+int GazeboYarpInertialMTBPartDriver::calibrateChannel(int /*ch*/)
+{
+    return AS_OK;
+}
+
+int GazeboYarpInertialMTBPartDriver::calibrateChannel(int /*ch*/, double /*v*/)
+{
+    return AS_OK;
 }
 
 yarp::os::Stamp GazeboYarpInertialMTBPartDriver::getLastInputStamp()
@@ -195,17 +218,41 @@ bool GazeboYarpInertialMTBPartDriver::buildEnabledSensorsVector(std::string robo
     return true;
 }
 
-bool GazeboYarpInertialMTBPartDriver::buildOutBufferFixedData()
+bool GazeboYarpInertialMTBPartDriver::buildOutBufferFixedData(std::string robotPart,
+                                                              yarp::os::Bottle & enabledSensors)
 {
-#if 0
-    enum eOas_inertial_type_t : int;
-    enum eOas_inertial_position_t : int;
-    std::vector<eOas_inertial_position_t> sensorType;
-    std::vector<>
+    // Resize the output buffer
+    m_nbChannels = sensorDataStartOffset + LUTpart2maxSensors[robotPart]*sensorDataLength;
+    m_inertialmtbOutBuffer.resize(m_nbChannels,0);
 
+    /*
+     * Go through the buffer and fill the metadata
+     */
     m_dataMutex.wait();
-    m_inertialmtbOutBuffer.resize(m_nbChannels, 0.0);
+
+    // number of enabled sensors and VERsion of the format
+    m_inertialmtbOutBuffer(0) = double(enabledSensors.size());
+    m_inertialmtbOutBuffer(1) = version;
+
+    // got through all enabled sensors
+    for (int sensorIdx = 0, bufferOffset = sensorDataStartOffset;
+         sensorIdx < enabledSensors.size();
+         sensorIdx++, bufferOffset+=sensorDataLength)
+    {
+        std::vector<std::string> explodedSensorName =
+        GazeboYarpPlugins::splitString(enabledSensors.get(sensorIdx).asString(),"_");
+        // Get the sensor label (1b1, 1b2, ...)
+        std::string sensorLabel = *(explodedSensorName.end()-1);
+        // Get the sensor type (accelerometer or gyroscope)
+        std::string sensorType = *(explodedSensorName.end()-2);
+        // Set the metadata in the output buffer
+        m_inertialmtbOutBuffer(bufferOffset+sensorIdxOffset) = double(LUTmtbId2PosEnum[sensorLabel]);
+        m_inertialmtbOutBuffer(bufferOffset+sensorTypeOffset) = double(LUTmtbType2enum[sensorType]);
+    }
+
+    // The remaining content is already by default set to zero
+
     m_dataMutex.post();
-#endif
+
     return true;
 }

@@ -10,7 +10,7 @@
 #include <vector>
 #include <map>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/IAnalogSensor.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
@@ -48,7 +48,7 @@ extern const std::string MTBPartDriverParentScopedName;
 /// It can be configurated using the yarpConfigurationFile sdf tag,
 /// that contains a Gazebo URI pointing at a yarp .ini configuration file.
 class yarp::dev::GazeboYarpInertialMTBPartDriver:
-    public yarp::dev::IGenericSensor,
+    public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
 {
@@ -67,10 +67,14 @@ public:
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
-    //GENERIC SENSOR
-    virtual bool read(yarp::sig::Vector& outVector);
-    virtual bool getChannels(int* numberOfChannels);
-    virtual bool calibrate(int channelIndex, double v);
+    //ANALOG SENSOR
+    virtual int read(yarp::sig::Vector& out);
+    virtual int getState(int channel);
+    virtual int getChannels();
+    virtual int calibrateChannel(int channel, double v);
+    virtual int calibrateSensor();
+    virtual int calibrateSensor(const yarp::sig::Vector& value);
+    virtual int calibrateChannel(int channel);
 
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();
@@ -90,21 +94,15 @@ private:
      * Fill the output buffer with the inertial sensors fixed metadata as per
      * EMS data format specified further below: n, VER, ai, bi.
      */
-    inline bool buildOutBufferFixedData();
-
-    /**
-     *
-     * Generate the mapping from a robot part name to the size of the output
-     * buffer size.
-     */
-    static std::map<std::string,int>& generateLUTpart2outBufferSize();
+    inline bool buildOutBufferFixedData(std::string robotPart,
+                                        yarp::os::Bottle & enabledSensors);
 
     /**
      *
      * Generate the mapping from MTB sensor labels to position Ids (there is a
      * unique id for every possible inertial sensor positioned on iCub)
      */
-    static std::map<std::string,int>& generateLUTmtbId2PosEnum();
+    static std::map<std::string,int> generateLUTmtbId2PosEnum();
 
     //Yarp interface parameters
     yarp::sig::Vector m_inertialmtbOutBuffer; //buffer for the exported data
@@ -116,9 +114,8 @@ private:
 
     //Inner parameters
     yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
-    std::string m_robotPart;
     std::vector<gazebo::sensors::ImuSensor*> m_enabledSensors;
-    static std::map<std::string,int> LUTpart2outBufferSize;
+    static std::map<std::string,int> LUTpart2maxSensors;
 
     //Connection and synchro with Gazebo
     gazebo::event::ConnectionPtr m_updateConnection;
@@ -142,8 +139,8 @@ private:
      */
     static const int sensorDataLength = 6;
     static const int sensorDataStartOffset = 2;
-    static const int sensorTypeOffset = 0;
-    static const int sensorIdxOffset = 1;
+    static const int sensorTypeOffset = 1;
+    static const int sensorIdxOffset = 0;
     static const int sensorTimestpNmeasOffset = 2;
 
     // Below enums are directly copied from icub-firmware-shared/eth/embobj/plus/comm-v2/icub/EoAnalogSensors.h
@@ -234,6 +231,8 @@ private:
     static const double version;
 
     static std::map<std::string,int> LUTmtbId2PosEnum;
+
+    static std::map<std::string,int> LUTmtbType2enum;
 };
 
 #endif // GAZEBOYARP_INERTIALMTBPARTDRIVER_H

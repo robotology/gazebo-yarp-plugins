@@ -11,6 +11,7 @@
 #include <gazebo/common/Plugin.hh>
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
 
 #include <string>
 
@@ -54,7 +55,9 @@ namespace gazebo
         virtual void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
     private:
-        yarp::dev::PolyDriver m_wrapper;
+        yarp::dev::PolyDriver m_inertialMTBwrapper;
+        yarp::dev::IMultipleWrapper* m_iWrap;
+        yarp::dev::PolyDriver m_inertialMTBpartDriver;
         std::string m_robotName;
     };
 }

@@ -427,11 +427,6 @@ FingersAbductionCouplingHandler::FingersAbductionCouplingHandler(gazebo::physics
 : BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize = 4;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "hand_finger";
-    m_coupledJointNames[1] = "reserved"; 
-    m_coupledJointNames[2] = "reserved"; 
-    m_coupledJointNames[3] = "reserved"; 
 }
 
 bool FingersAbductionCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)

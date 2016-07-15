@@ -83,7 +83,7 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
             wrapper_group = m_parameters.findGroup("WRAPPER");
             if(wrapper_group.isNull())
             {
-                yError("GazeboYarpControlBoard : [WRAPPER] group not found in config file\n");
+                yError("GazeboYarpMaisSensor : [WRAPPER] group not found in config file\n");
                 return;
             }
 

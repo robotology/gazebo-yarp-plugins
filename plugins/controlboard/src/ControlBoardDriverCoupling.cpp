@@ -24,10 +24,11 @@ using namespace yarp::dev;
 // BaseCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-BaseCouplingHandler::BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
+BaseCouplingHandler::BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
 {
     m_robot = model;
     m_coupledJoints=coupled_joints;
+    m_coupledJointNames=coupled_joint_names;
     //m_couplingSize = m_coupledJoints.size();
 }
 
@@ -69,13 +70,10 @@ std::string BaseCouplingHandler::getCoupledJointName(int joint)
 // EyesCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-EyesCouplingHandler::EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+EyesCouplingHandler::EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize = 2;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "eyes_version";
-    m_coupledJointNames[1] = "eyes_vergence"; 
 }
 
 bool EyesCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -142,15 +140,10 @@ yarp::sig::Vector EyesCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_re
 // ThumbCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-ThumbCouplingHandler::ThumbCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+ThumbCouplingHandler::ThumbCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize = 4;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "thumb_oppose";
-    m_coupledJointNames[1] = "thumb_proximal"; 
-    m_coupledJointNames[2] = "thumb_distal";     
-    m_coupledJointNames[3] = "reserved";     
 }
 
 bool ThumbCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -217,14 +210,10 @@ yarp::sig::Vector ThumbCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_r
 // IndexCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-IndexCouplingHandler::IndexCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+IndexCouplingHandler::IndexCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize = 3;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "index_proximal";
-    m_coupledJointNames[1] = "index_distal"; 
-    m_coupledJointNames[2] = "reserved";     
 }
 
 bool IndexCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -288,14 +277,10 @@ yarp::sig::Vector IndexCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_r
 // MiddleCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-MiddleCouplingHandler::MiddleCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+MiddleCouplingHandler::MiddleCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize=3;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "middle_proximal";
-    m_coupledJointNames[1] = "middle_distal"; 
-    m_coupledJointNames[2] = "reserved";     
 }
 
 bool MiddleCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -362,17 +347,10 @@ yarp::sig::Vector MiddleCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_
 // PinkyCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-PinkyCouplingHandler::PinkyCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+PinkyCouplingHandler::PinkyCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize=6;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "pinky";
-    m_coupledJointNames[1] = "reserved"; 
-    m_coupledJointNames[2] = "reserved"; 
-    m_coupledJointNames[3] = "reserved"; 
-    m_coupledJointNames[4] = "reserved"; 
-    m_coupledJointNames[5] = "reserved"; 
 }
 
 bool PinkyCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -445,15 +423,10 @@ yarp::sig::Vector PinkyCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_r
 // FingersAbductionCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-FingersAbductionCouplingHandler::FingersAbductionCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+FingersAbductionCouplingHandler::FingersAbductionCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize = 4;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "hand_finger";
-    m_coupledJointNames[1] = "reserved"; 
-    m_coupledJointNames[2] = "reserved"; 
-    m_coupledJointNames[3] = "reserved"; 
 }
 
 bool FingersAbductionCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -521,15 +494,10 @@ yarp::sig::Vector FingersAbductionCouplingHandler::decoupleRefTrq (yarp::sig::Ve
 // CerHandCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-CerHandCouplingHandler::CerHandCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints)
-: BaseCouplingHandler(model, coupled_joints)
+CerHandCouplingHandler::CerHandCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
 {
     m_couplingSize = 4;
-    m_coupledJointNames.resize(m_couplingSize);
-    m_coupledJointNames[0] = "thumb";
-    m_coupledJointNames[1] = "paddle"; 
-    m_coupledJointNames[2] = "reserved"; 
-    m_coupledJointNames[3] = "reserved"; 
 }
 
 bool CerHandCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)

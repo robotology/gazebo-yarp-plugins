@@ -86,6 +86,13 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
                 yError("GazeboYarpControlBoard : [WRAPPER] group not found in config file\n");
                 return;
             }
+
+            if(m_parameters.check("ROS"))
+            {
+                yarp::os::ConstString ROS;
+                ROS = yarp::os::ConstString ("(") + m_parameters.findGroup("ROS").toString() + yarp::os::ConstString (")");
+                wrapper_group.append(yarp::os::Bottle(ROS));
+            }
                 
             configuration_loaded = true;
         }

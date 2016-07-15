@@ -26,7 +26,7 @@ protected:
     std::vector<std::string> m_coupledJointNames;
     unsigned int m_controllerPeriod;
     unsigned int m_couplingSize;
-    BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
     
 public:
     virtual ~BaseCouplingHandler();
@@ -49,7 +49,7 @@ class EyesCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);
@@ -66,7 +66,7 @@ class ThumbCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    ThumbCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    ThumbCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);
@@ -83,7 +83,7 @@ class IndexCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    IndexCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    IndexCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);
@@ -100,7 +100,7 @@ class MiddleCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    MiddleCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    MiddleCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);
@@ -117,7 +117,7 @@ class PinkyCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    PinkyCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    PinkyCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);
@@ -134,7 +134,7 @@ class FingersAbductionCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    FingersAbductionCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    FingersAbductionCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);
@@ -151,7 +151,7 @@ class CerHandCouplingHandler : public BaseCouplingHandler
 {
 
 public:
-    CerHandCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints);
+    CerHandCouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
 
 public:
     bool decouplePos (yarp::sig::Vector& current_pos);

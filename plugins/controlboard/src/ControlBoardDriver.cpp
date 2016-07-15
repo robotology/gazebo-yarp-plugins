@@ -165,87 +165,61 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
        { 
          yarp::os::Bottle* coupling_bottle = coupling_group_bottle.get(cnt).asList();
          
-         if (coupling_bottle==0 || coupling_bottle->size()!=2)
+         if (coupling_bottle==0 || coupling_bottle->size()!=3)
          {
            yError() << "Error parsing coupling parameter"; return false;
          } 
          //yDebug() << "Requested coupling:" << cnt << " / " << coupling_bottle->size();
          //yDebug() << "Requested coupling:" << coupling_bottle->toString();
          
+         yarp::sig::VectorOf<int> coupled_joints;
+         std::vector<std::string> coupled_joint_names;
+         Bottle* b = coupling_bottle->get(1).asList();
+         if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter, wrong size of the joints numbers list"; return false;}
+         for (int is=0;is<b->size();is++) { coupled_joints.push_back(b->get(is).asInt()); }
+         Bottle* b2 = coupling_bottle->get(2).asList();
+         if (b2==0 || b2->size()==0) {yError() << "Error parsing coupling parameter, wrong size of the joint names list"; return false;}
+         for (int is=0;is<b2->size();is++) { coupled_joint_names.push_back(b2->get(is).asString()); }
+             
          if (coupling_bottle->get(0).asString()=="eyes_vergence_control")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using eyes_vergence_control";
          }
          else if (coupling_bottle->get(0).asString()=="fingers_abduction_control")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using fingers_abduction_control";
          }
          else if (coupling_bottle->get(0).asString()=="thumb_control")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using thumb_control";
          }
          else if (coupling_bottle->get(0).asString()=="index_control")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using index_control";
          }
          else if (coupling_bottle->get(0).asString()=="middle_control")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using middle_control";
          }
          else if (coupling_bottle->get(0).asString()=="pinky_control")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using pinky_control";
          }
          else if (coupling_bottle->get(0).asString()=="cer_hand")
          {
-             yarp::sig::VectorOf<int> coupled_joints;
-             Bottle* b = coupling_bottle->get(1).asList();
-             if (b==0 || b->size()==0) {yError() << "Error parsing coupling parameter"; return false;}
-             for (int is=0;is<b->size();is++)
-             { coupled_joints.push_back(b->get(is).asInt()); }
-             BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints);
+             BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
              m_coupling_handler.push_back(cpl);
              yInfo() << "using cer_hand_control";
          }

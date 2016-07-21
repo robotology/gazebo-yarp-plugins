@@ -51,7 +51,7 @@ namespace gazebo
 
     protected:
       rendering::VisualPtr m_model;
-       VideoVisual* m_video_visual;
+      VideoVisual* m_video_visual;
       yarp::os::Property m_parameters;
       boost::mutex m_image;
       int m_height;

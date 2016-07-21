@@ -104,6 +104,11 @@ namespace gazebo
       delete m_network;
       m_network=0;
     }
+    if (m_video_visual)
+    {
+        delete m_video_visual;
+        m_video_visual=0;
+    }
   }
 
   void VideoTexture::Load(rendering::VisualPtr parent, sdf::ElementPtr sdf) 

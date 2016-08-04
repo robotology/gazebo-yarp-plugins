@@ -18,15 +18,14 @@ using namespace yarp::dev;
 
 const std::string MTBPartDriverParentScopedName = "ModelScopedName";
 
-const std::string GazeboYarpInertialMTBPartDriver::LUTmtbPosEnum2Id[1+eoas_inertial_pos_max_numberof] = {"none",
+const std::string GazeboYarpInertialMTBPartDriver::LUTmtbPosEnum2Id[1+eoas_inertial_pos_offsetcentral+4] = {"none",
     "1b7","1b8","1b9","1b10","1b11","1b12","1b13",
     "10b12","10b13","10b8","10b9","10b10","10b11","10b1","10b2","10b3","10b4","10b5","10b6","10b7",
     "none","none","none","none",
     "2b7","2b8","2b9","2b10","2b11","2b12","2b13",
     "11b12","11b13","11b8","11b9","11b10","11b11","11b1","11b2","11b3","11b5","11b4","11b6","11b7",
     "none","none","none","none",
-    "9b7","9b8","9b9","9b10",
-    "none","none","none","none"};
+    "9b7","9b8","9b9","9b10"};
 
 const double GazeboYarpInertialMTBPartDriver::version = 6.0;
 
@@ -34,7 +33,7 @@ std::map<std::string,int> GazeboYarpInertialMTBPartDriver::generateLUTmtbId2PosE
 {
     // Fill the mapping from MTB sensor labels to position Ids
     std::map<std::string,int> lut;
-    for (int posId = 0; posId < eoas_inertial_pos_max_numberof; posId++)
+    for (int posId = 0; posId < sizeof(LUTmtbPosEnum2Id)/sizeof(std::string); posId++)
     {
         lut[LUTmtbPosEnum2Id[posId]] = posId;
     }
@@ -139,11 +138,6 @@ bool GazeboYarpInertialMTBPartDriver::close()
 //GENERIC SENSOR
 int GazeboYarpInertialMTBPartDriver::read(yarp::sig::Vector &out)
 {
-    if (m_inertialmtbOutBuffer.size() != m_nbChannels ) {
-        yError() << "GazeboYarpInertialMTBPartDriver Error: inertialMTB sensor export buffer not ready!";
-        return AS_ERROR;
-    }
-
     if (out.size() != m_inertialmtbOutBuffer.size()) {
         yError() << "GazeboYarpInertialMTBPartDriver Error: output buffer to wrapper size mismatch!";
         return AS_ERROR;

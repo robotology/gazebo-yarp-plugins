@@ -226,7 +226,7 @@ private:
     } eOas_inertial_position_t;
 
     // LUT of MTB IDs indexed by the MTB enum defined above.
-    static const std::string LUTmtbPosEnum2Id[1+eoas_inertial_pos_max_numberof];
+    static const std::string LUTmtbPosEnum2Id[1+eoas_inertial_pos_offsetcentral+4];
 
     static const double version;
 

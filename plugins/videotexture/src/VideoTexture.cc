@@ -64,11 +64,6 @@ namespace gazebo
             PixelBox pb = PixelBox(m_width, m_height, 1, FORMAT, (void*)image_ptr->data);
             m_texture->getBuffer()->blitFromMemory(pb);
         }
-    if (m_video_visual)
-    {
-        delete m_video_visual;
-        m_video_visual=0;
-    }
     }
 
   void VideoTexture::Load(rendering::VisualPtr parent, sdf::ElementPtr sdf) 

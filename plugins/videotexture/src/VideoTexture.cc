@@ -36,10 +36,6 @@ namespace gazebo
       Ogre::TextureManager::getSingleton().remove(m_texture->getName());
   }
 
-/////////////////////////////////////////////////////////////
-/// \brief VideoTexture::Update
-/// updates Texture
-///
     void VideoTexture::Update()
     {
         ImageType* img = m_VideoPort.read(false);
@@ -68,6 +64,7 @@ namespace gazebo
 
   void VideoTexture::Load(rendering::VisualPtr parent, sdf::ElementPtr sdf) 
   {
+    yDebug() << parent.get() << parent->GetMeshName();
     yInfo()<<"VideoTexture plugin started";
     if (m_network != 0) return;
 
@@ -79,8 +76,6 @@ namespace gazebo
        yError() << "VideoTexture::Load error: yarp network does not seem to be available, is the yarpserver running?";
        return;
     }
-
-
 
     //Getting .ini configuration file from sdf
     bool configuration_loaded = false;
@@ -108,15 +103,23 @@ namespace gazebo
         return;
     }
 
-    std::string portname = m_parameters.find("name").asString();
-    m_VideoPort.open("/videovisual");
+    std::string sourcePortName;
+    m_VideoPort.open("/"+m_model->GetName());
     m_VideoPort.setReadOnly();
+
+    sourcePortName = "/grabber";
+    sourcePortName = m_parameters.find("defaultSourcePortName").asString();
     m_texName      = m_model->GetName();
     m_connection   = event::Events::ConnectPreRender(std::bind(&VideoTexture::Update, this));
     m_width        = 480;
     m_height       = 640;
+    m_scale        = 1;
+    m_width        = m_parameters.find("widthRes").asInt();
+    m_height       = m_parameters.find("heightRes").asInt();
+    m_scale        = m_parameters.find("heightLen").asDouble();
     m_material     = Ogre::MaterialManager::getSingleton().getByName(m_model->GetMaterialName());
     m_texture      = Ogre::TextureManager::getSingleton().getByName(m_texName);
+
     if(m_texture.isNull())
     {
         m_texture = Ogre::TextureManager::getSingleton().createManual
@@ -131,9 +134,9 @@ namespace gazebo
                   );
     }
 
-    if(yarp::os::NetworkBase::exists("/grabber"))
+    if(yarp::os::NetworkBase::exists(sourcePortName))
     {
-        yarp::os::NetworkBase::connect("/grabber", "/videovisual");
+        yarp::os::NetworkBase::connect(sourcePortName, "/"+m_model->GetName());
         Update();
     }
     else
@@ -145,13 +148,18 @@ namespace gazebo
         }
         m_texture->getBuffer()->blitFromMemory(PixelBox(m_width, m_height, 1, FORMAT, (void*)data));
     }
+
     if(m_material.get())
     {
         m_material->getTechnique(0)->getPass(0)->removeAllTextureUnitStates();
         m_material->getTechnique(0)->getPass(0)->createTextureUnitState(m_texture->getName());
         m_material->setReceiveShadows(false);
-    }
-    m_model->SetScale(gazebo::math::Vector3(float(m_width)/float(m_height), 1.0, 1.0));
+    }    
+
+    double wScale = m_scale*(float(m_width)/float(m_height));
+    m_model->GetSceneNode()->scale(wScale, m_scale, m_scale);
+    m_model->GetSceneNode()->translate(0, m_scale/2, 0);
+
   }
 
   GZ_REGISTER_VISUAL_PLUGIN(VideoTexture);

@@ -47,6 +47,7 @@ namespace gazebo
       boost::mutex           m_image;
       int                    m_height;
       int                    m_width;
+      double                 m_scale;
       yarp::os::Network*     m_network;
       yarp::os::Port         m_input_port;
       std::string            m_port_name;

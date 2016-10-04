@@ -107,7 +107,6 @@ namespace gazebo
     m_VideoPort.open("/"+m_model->GetName());
     m_VideoPort.setReadOnly();
 
-    sourcePortName = "/grabber";
     sourcePortName = m_parameters.find("defaultSourcePortName").asString();
     m_texName      = m_model->GetName();
     m_connection   = event::Events::ConnectPreRender(std::bind(&VideoTexture::Update, this));

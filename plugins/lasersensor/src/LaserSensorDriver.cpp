@@ -158,7 +158,7 @@ yarp::os::Stamp GazeboYarpLaserSensorDriver::getLastInputStamp()
     return m_lastTimestamp;
 }
 
-bool GazeboYarpLaserSensorDriver::getMeasurementData (yarp::sig::Vector &data)
+bool GazeboYarpLaserSensorDriver::getRawData (yarp::sig::Vector &data)
 {
     yarp::os::LockGuard guard(m_mutex);
     ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
@@ -212,7 +212,68 @@ bool GazeboYarpLaserSensorDriver::getMeasurementData (yarp::sig::Vector &data)
             //yDebug() <<"skipping" << s << angle << range_skip_vector[s].min << range_skip_vector[s].max;
         }
       }
-      data[i] = m_sensorData[i];
+      data[i]=m_sensorData[i];
+    }
+
+    m_device_status = DEVICE_OK_IN_USE;
+	return true;
+}
+
+bool GazeboYarpLaserSensorDriver::getLaserMeasurement (std::vector<yarp::dev::LaserMeasurementData> &data)
+{
+    yarp::os::LockGuard guard(m_mutex);
+    ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
+    /*
+    if( (int)m_forceTorqueData.size() != YarpForceTorqueChannelsNumber ||
+        (int)out.size() != YarpForceTorqueChannelsNumber ) {
+        return AS_ERROR;
+    }
+    */
+
+   if (m_sensorData.size() != m_samples)
+   {
+       if (m_first_run)
+       {
+          m_device_status = DEVICE_TIMEOUT;
+          return false;
+       }
+       else
+       {
+          m_device_status = DEVICE_GENERAL_ERROR;
+          yError() << "Internal error";
+          return false ;
+       }
+   }
+
+   if (data.size() != m_samples)
+   {
+       data.resize(m_samples);
+   }
+
+    for (unsigned int i=0; i<m_samples; i++)
+    {
+
+      if (m_enable_discard_range)
+      {
+        if (m_sensorData[i]>=m_max_discard_range) m_sensorData[i]=INFINITY;
+        if (m_sensorData[i]<=m_min_discard_range) m_sensorData[i]=INFINITY;
+      }
+      else if (m_enable_clip_range)
+      {
+        if (m_sensorData[i]>=m_max_clip_range) m_sensorData[i]=m_max_clip_range;
+        if (m_sensorData[i]<=m_min_clip_range) m_sensorData[i]=m_min_clip_range;
+      }
+
+      double angle = i * m_resolution;
+      for (size_t s = 0; s < range_skip_vector.size(); s++)
+      {
+        if (angle>=range_skip_vector[s].min && angle <= range_skip_vector[s].max)
+        {
+            m_sensorData[i] = INFINITY;
+            //yDebug() <<"skipping" << s << angle << range_skip_vector[s].min << range_skip_vector[s].max;
+        }
+      }
+      data[i].set_polar(m_sensorData[i],angle);
     }
 
     m_device_status = DEVICE_OK_IN_USE;

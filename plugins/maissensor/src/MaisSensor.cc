@@ -113,14 +113,14 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
         yError()<<"GazeboYarpMaisSensor Plugin failed: error in opening yarp driver wrapper";
         return;
-    };
+    }
 
     
     yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
 
     if (netList->isNull())
     {
-        yError("GazeboYarpControlBoard : net list to attach to was not found, load failed.");
+        yError("GazeboYarpMaisSensor : net list to attach to was not found, load failed.");
         m_wrapper.close();
         return;
     }
@@ -147,7 +147,7 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
         driver_group = m_parameters.findGroup(newPoly.key.c_str());
         if (driver_group.isNull())
         {
-            yError("GazeboYarpControlBoard::Load  Error: [%s] group not found in config file. Closing wrapper.", newPoly.key.c_str());
+            yError("GazeboYarpMaisSensor::Load  Error: [%s] group not found in config file. Closing wrapper for device [%s].", newPoly.key.c_str(), m_sensorName.c_str());
             return;
         }
 

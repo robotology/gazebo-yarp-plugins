@@ -23,11 +23,7 @@ For using Yarp with Gazebo, you shall install:
  * Gazebo simulator and its header files (at least version 5), following the [instructions on the official Gazebo website](http://gazebosim.org/tutorials?cat=install). If you are on Debian or Ubuntu, remember to install the header files for Gazebo, that are contained in the `libgazebo*-dev` package.
  * Yarp (at least version 2.3.63.2, i.e. the version available in the master branch of the yarp repository) following the [instructions on the official Yarp wiki](http://wiki.icub.org/wiki/Linux:Installation_from_sources#Getting_the_YARP_and_iCub_sources).
 
-<<<<<<< HEAD
 **Gazebo is under active development, so it is recommended to use the latest released version of Gazebo. Known problems related to old versions of Gazebo are documented in the [Old Gazebo Versions](#old-gazebo-versions) section.**
-=======
-**Gazebo is under active development, so it is recommended to use the latest released version of Gazebo. Known poblems related to old versions of Gazebo are documented in the [Old Gazebo Versions](#old-gazebo-versions) section.**
->>>>>>> master
 
 **If you are a user of the Yarp `devel` branch, you should use the `devel` branch of `gazebo-yarp-plugins`.**
 

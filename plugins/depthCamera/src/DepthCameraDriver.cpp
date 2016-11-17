@@ -344,7 +344,11 @@ bool GazeboYarpDepthCameraDriver::getDeviceInfo(yarp::os::Property &device_info)
     yarp::os::Bottle&   camParam = m_conf.findGroup("CAMERA_PARAM");
     if(camPtr)
     {
+#if GAZEBO_MAJOR_VERSION >= 7
+        distModel = camPtr->LensDistortion().get();
+#else
         distModel = camPtr->GetDistortion().get();
+#endif
         if(distModel)
         {
             device_info.put("k1", distModel->GetK1());
@@ -442,7 +446,11 @@ bool GazeboYarpDepthCameraDriver::getVerticalScanLimits(double *min, double *max
     {
         return false;
     }
+#if GAZEBO_MAJOR_VERSION >= 7
+    *min = *max = m_depthCameraSensorPtr->DepthCamera()->VFOV().Degree();
+#else
     *min = *max = m_depthCameraSensorPtr->DepthCamera()->GetVFOV().Degree();
+#endif
     return true;
 }
 

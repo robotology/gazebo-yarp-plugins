@@ -19,6 +19,19 @@ namespace yarp {
     }
 }
 
+class Watchdog
+{
+    double m_duration;
+    double m_lastUpdate;
+public:
+    void   reset();
+    bool   isExpired();
+    void   modifyDuration(double expireTime);
+    double getDuration();
+
+    Watchdog (double expireTime);
+};
+
 class RampFilter
 {
 private:

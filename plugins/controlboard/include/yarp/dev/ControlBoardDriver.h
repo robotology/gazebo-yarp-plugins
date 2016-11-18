@@ -427,6 +427,7 @@ private:
     std::vector<TrajectoryGenerator*> m_trajectory_generator;
     std::vector<BaseCouplingHandler*>  m_coupling_handler;
     std::vector<RampFilter*> m_speed_ramp_handler;
+    std::vector<Watchdog*> m_velocity_watchdog;
     
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/

@@ -112,6 +112,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_trajectory_generator.resize(m_numberOfJoints, NULL);
     m_coupling_handler.clear();
     m_speed_ramp_handler.resize(m_numberOfJoints, NULL);
+    m_velocity_watchdog.resize(m_numberOfJoints, NULL);
+    
     VectorOf<int> trajectory_generator_type;
     trajectory_generator_type.resize(m_numberOfJoints);
     
@@ -148,6 +150,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
       m_speed_ramp_handler[j] = new RampFilter();
+      m_velocity_watchdog[j] = new Watchdog(0.200); //watchdog set to 200ms
     }
     
     yarp::os::Bottle& coupling_group_bottle = m_pluginParameters.findGroup("COUPLING");  
@@ -446,6 +449,10 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     {
       if (m_speed_ramp_handler[j])
       {
+        if (m_velocity_watchdog[j]->isExpired()) 
+        {
+          m_speed_ramp_handler[j]->stop();
+        }
         m_speed_ramp_handler[j]->update();
         //yDebug() << m_speed_ramp_handler[j]->getCurrentValue();
       }

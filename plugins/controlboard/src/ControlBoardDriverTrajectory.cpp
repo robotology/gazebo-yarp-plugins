@@ -21,6 +21,35 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+void Watchdog::reset()
+{
+    m_lastUpdate=yarp::os::Time::now();
+}
+
+bool Watchdog::isExpired()
+{
+    if (m_duration<0) return false;
+    if ((yarp::os::Time::now()- m_lastUpdate) > m_duration) return true;
+    return false;
+}
+
+Watchdog::Watchdog (double expireTime)
+{
+    m_duration=expireTime;
+    m_lastUpdate=yarp::os::Time::now();
+}
+
+void Watchdog::modifyDuration(double expireTime)
+{
+     m_duration=expireTime; 
+}
+
+double Watchdog::getDuration()
+{
+     return m_duration; 
+}
+
+
 RampFilter::RampFilter()
 {
     m_final_reference = 0;

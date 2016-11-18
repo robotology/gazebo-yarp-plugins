@@ -36,6 +36,15 @@ void RampFilter::setReference(double ref, double step)
     m_mutex.post();
 }
 
+void RampFilter::stop()
+{
+    m_mutex.wait();
+    m_final_reference = 0.0;
+    m_current_value = 0.0;
+    m_step = 0.0;
+    m_mutex.post();
+}
+
 void RampFilter::update()
 {
     m_mutex.wait();

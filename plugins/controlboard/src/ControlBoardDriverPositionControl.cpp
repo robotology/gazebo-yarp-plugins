@@ -24,8 +24,33 @@ bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 
 bool GazeboYarpControlBoardDriver::stop(int j) //WORKS
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
-        m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+    if (j >= 0 && j < (int)m_numberOfJoints)
+    {
+        if (m_controlMode[j]==VOCAB_CM_POSITION)
+        {
+            m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+            m_trajectory_generator[j]->abortTrajectory(m_positions[j]);
+        }
+        else if  (m_controlMode[j]==VOCAB_CM_VELOCITY)
+        {
+            m_jntReferenceVelocities[j]=0;
+            m_speed_ramp_handler[j]->stop();
+        }
+        else if  (m_controlMode[j]==VOCAB_CM_MIXED)
+        {
+            m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+            m_trajectory_generator[j]->abortTrajectory(m_positions[j]);
+            m_jntReferenceVelocities[j]=0;
+            m_speed_ramp_handler[j]->stop();
+        }
+        else if  (m_controlMode[j]==VOCAB_CM_POSITION_DIRECT)
+        {
+            m_trajectoryGenerationReferencePosition[j] = m_positions[j];
+            m_jntReferencePositions[j] = m_positions[j];
+        }
+        else
+        {
+        }
         return true;
     }
     return false;
@@ -33,7 +58,10 @@ bool GazeboYarpControlBoardDriver::stop(int j) //WORKS
 
 bool GazeboYarpControlBoardDriver::stop() //WORKS
 {
-    m_trajectoryGenerationReferencePosition = m_positions;
+    for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+    {
+        stop(i);
+    }
     return true;
 }
 
@@ -41,7 +69,7 @@ bool GazeboYarpControlBoardDriver::positionMove(const double *refs) //WORKS
 {
     for (unsigned int i = 0; i < m_numberOfJoints; ++i)
     {
-	positionMove(i,refs[i]);
+        positionMove(i,refs[i]);
     }
     return true;
 }

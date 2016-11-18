@@ -33,6 +33,7 @@ public:
     void setReference(double ref, double step);
     void update();
     double getCurrentValue();
+    void stop();
 };
 
 class TrajectoryGenerator

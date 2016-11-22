@@ -68,6 +68,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_maxTorques.resize(m_numberOfJoints, 2000.0);
     m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_jntReferencePositions.resize(m_numberOfJoints);
+    m_motReferencePositions.resize(m_numberOfJoints);
+    m_motReferenceVelocities.resize(m_numberOfJoints);
+    m_motReferenceTorques.resize(m_numberOfJoints);
     m_oldReferencePositions.resize(m_numberOfJoints);
     m_trajectoryGenerationReferencePosition.resize(m_numberOfJoints);
     m_trajectoryGenerationReferenceAcceleration.resize(m_numberOfJoints);
@@ -95,6 +98,9 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_positions.zero();
     m_zeroPosition.zero();
     m_velocities.zero();
+    m_motReferencePositions.zero();
+    m_motReferenceVelocities.zero();
+    m_motReferenceTorques.zero();
     m_trajectoryGenerationReferenceSpeed.zero();
     m_jntReferencePositions.zero();
     m_jntReferenceVelocities.zero();
@@ -481,14 +487,20 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
             }        
         }
+        else if (m_controlMode[j] == VOCAB_CM_VELOCITY)
+        {
+            if (m_clock % _T_controller == 0)
+            {
+                 if (m_speed_ramp_handler[j]) m_jntReferenceVelocities[j] = m_speed_ramp_handler[j]->getCurrentValue();
+            }
+        }
     }
     
-    //yDebug()<< deviceName << "5";     
-    Vector m_motReferencePositions=m_jntReferencePositions;
-    Vector m_motReferenceVelocities=m_jntReferenceVelocities;
-    Vector m_motReferenceTorques=m_jntReferenceTorques;
-         
+    //yDebug()<< deviceName << "5";
     //references decoupling
+    m_motReferencePositions=m_jntReferencePositions;
+    m_motReferenceVelocities=m_jntReferenceVelocities;
+    m_motReferenceTorques=m_jntReferenceTorques;
     for (unsigned int cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
     {
       if (m_coupling_handler[cpl_cnt])
@@ -499,53 +511,80 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
       }
     }
     
-    //yDebug()<< deviceName << "6";       
+    //yDebug()<< deviceName << "6";
     //update References
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
         //set pos joint value, set m_referenceVelocities joint value
-        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
-            if (m_clock % _T_controller == 0) {
+        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendPositionToGazebo(j, m_motReferencePositions[j]);
             }
-        } else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
-            if (m_clock % _T_controller == 0) {
+        }
+        else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendImpPositionToGazebo(j, m_motReferencePositions[j]);
             }
-        } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {//set vmo joint value
-            if (m_clock % _T_controller == 0) {
-                if (m_speed_ramp_handler[j]) {sendVelocityToGazebo(j, m_speed_ramp_handler[j]->getCurrentValue());}
-                else {sendVelocityToGazebo(j, m_jntReferenceVelocities[j]);}
+        }
+        else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+        {
+            if (m_clock % _T_controller == 0)
+            {
+               sendVelocityToGazebo(j, m_motReferenceVelocities[j]);
             }
-        } else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
-            if (m_clock % _T_controller == 0) {
-                yWarning("Compliant velocity control not yet implemented");
-                if (m_speed_ramp_handler[j]) {sendVelocityToGazebo(j, m_speed_ramp_handler[j]->getCurrentValue());}
-                else {sendVelocityToGazebo(j, m_jntReferenceVelocities[j]);}
+        }
+        else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
+        {
+            if (m_clock % _T_controller == 0)
+            {
+               yWarning("Compliant velocity control not yet implemented");
+               sendVelocityToGazebo(j, m_motReferenceVelocities[j]);
             }
-        } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF)) {
-            if (m_clock % _T_controller == 0) {
+        } 
+        else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendPositionToGazebo(j, m_motReferencePositions[j]);
             }
-        } else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT)) {
-            if (m_clock % _T_controller == 0) {
+        }
+        else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendImpPositionToGazebo(j, m_motReferencePositions[j]);
             }
-        } else if (m_controlMode[j] == VOCAB_CM_TORQUE) {
-            if (m_clock % _T_controller == 0) {
+        }
+        else if (m_controlMode[j] == VOCAB_CM_TORQUE)
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendTorqueToGazebo(j, m_motReferenceTorques[j]);
             }
-        } else if (m_controlMode[j] == VOCAB_CM_IDLE) {
-            if (m_clock % _T_controller == 0) {
+        } 
+        else if (m_controlMode[j] == VOCAB_CM_IDLE)
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendTorqueToGazebo(j, 0.0);
             }
-        } else if (m_controlMode[j] == VOCAB_CM_HW_FAULT) {
-            if (m_clock % _T_controller == 0) {
+        }
+        else if (m_controlMode[j] == VOCAB_CM_HW_FAULT)
+        {
+            if (m_clock % _T_controller == 0)
+            {
                 sendTorqueToGazebo(j, 0.0);
             }
-        } else if (m_controlMode[j] == VOCAB_CM_OPENLOOP) {
+        }
+        else if (m_controlMode[j] == VOCAB_CM_OPENLOOP)
+        {
             //OpenLoop control sends torques to gazebo at this moment.
             //Check if gazebo implements a "motor" entity and change the code accordingly.
-            if (m_clock % _T_controller == 0) {
+            if (m_clock % _T_controller == 0)
+            {
                 sendTorqueToGazebo(j, m_motReferenceTorques[j]);
             }
         }

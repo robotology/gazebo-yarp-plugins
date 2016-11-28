@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+<model name="Video_Texture">
+  <pose>0 0 0 1.57079632679 0 0</pose>
+  <static>true</static>
+    <link name="link">
+      <visual name="visual">
+      <geometry>
+        <plane>
+            <size>1 1</size>
+            <normal>0 0 1</normal>
+        </plane>
+      </geometry>
+      <material>
+      <diffuse>1.0 1.0 1.0 1.0</diffuse>
+      </material>
+      <plugin name="VideoTexture" filename="/usr/local/lib/libgazebo_yarp_videotexture.so">
+      <yarpConfigurationFile>model://video_texture/vtcfg.ini</yarpConfigurationFile>
+      </plugin>
+      </visual>
+    </link>
+  </model>
+</sdf>

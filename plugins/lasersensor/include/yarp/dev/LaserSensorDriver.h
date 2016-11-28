@@ -9,6 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IRangefinder2D.h>
+#include <yarp/dev/LaserMeasurementData.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
@@ -63,7 +64,8 @@ public:
     virtual bool close();
 
     //ANALOG SENSOR
-    virtual bool getMeasurementData (yarp::sig::Vector &data);
+    virtual bool getLaserMeasurement (std::vector<yarp::dev::LaserMeasurementData> &data);
+    virtual bool getRawData (yarp::sig::Vector &data);
     virtual bool getDeviceStatus (Device_status &status);
     virtual bool getDistanceRange (double &min, double &max);
     virtual bool setDistanceRange (double min, double max);

@@ -21,45 +21,36 @@
 #include <gazebo/transport/TransportTypes.hh>
 
 typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageType;
+#define FORMAT Ogre::PF_B8G8R8
 
 namespace gazebo 
 {
 
-  class VideoVisual : public rendering::Visual, public yarp::os::BufferedPort<ImageType>
-  {
-    public: 
-      VideoVisual(const std::string &name, rendering::VisualPtr parent, int height, int width);
-      virtual ~VideoVisual();
-      void render(const cv::Mat& image);
-    private:
-      Ogre::TexturePtr m_texture;
-      int m_height;
-      int m_width;
-    public:
-      using yarp::os::BufferedPort<ImageType>::onRead;
-      virtual void onRead(ImageType &img);
-  }; 
-
   class VideoTexture : public VisualPlugin 
   {
+      void Update();
     public: 
     
       VideoTexture();
       virtual ~VideoTexture();
-
       void Load(rendering::VisualPtr parent, sdf::ElementPtr sdf);
 
     protected:
-      rendering::VisualPtr m_model;
-      VideoVisual* m_video_visual;
-      yarp::os::Property m_parameters;
-      boost::mutex m_image;
-      int m_height;
-      int m_width;
-      yarp::os::Network   *m_network;
+      yarp::os::BufferedPort<ImageType> m_VideoPort;
 
-      yarp::os::Port m_input_port;
-      std::string m_port_name;
+      std::string            m_texName;
+      Ogre::MaterialPtr      m_material;
+      Ogre::TexturePtr       m_texture;
+      event::ConnectionPtr   m_connection;
+      rendering::VisualPtr   m_model;
+      yarp::os::Property     m_parameters;
+      boost::mutex           m_image;
+      int                    m_height;
+      int                    m_width;
+      double                 m_scale;
+      yarp::os::Network*     m_network;
+      yarp::os::Port         m_input_port;
+      std::string            m_port_name;
   };
 
 }

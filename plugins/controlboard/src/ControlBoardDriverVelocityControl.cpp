@@ -25,6 +25,7 @@ bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
     if (j >= 0 && j < (int)m_numberOfJoints)
     {
         m_jntReferenceVelocities[j] = sp;
+        m_velocity_watchdog[j]->reset();
         if (m_speed_ramp_handler[j])
           {  m_speed_ramp_handler[j]->setReference(m_jntReferenceVelocities[j], m_trajectoryGenerationReferenceAcceleration[j]); }
         return true;
@@ -91,8 +92,8 @@ bool GazeboYarpControlBoardDriver::getVelPid(int j, yarp::dev::Pid *pid)
       pid->kd = convertGazeboGainToUserGain(j, m_velocityPIDs[j].d);
 
       // The output limits are only related to the output, so they don't need to be converted
-      pid->max_int = m_positionPIDs[j].maxInt;
-      pid->max_output = m_positionPIDs[j].maxOut;
+      pid->max_int = m_velocityPIDs[j].maxInt;
+      pid->max_output = m_velocityPIDs[j].maxOut;
       return true;
     }
     return false;

@@ -30,6 +30,7 @@ bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* list
     listOfKeys->addString("SHORTCUT_all_pos_kd");
     listOfKeys->addString("SHORTCUT_all_pos_ki");
         
+    listOfKeys->addString("VelocityTimeout");
     return true;
 }
 
@@ -99,6 +100,11 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     if (key == "SHORTCUT_all_pos_ki")
     {   
         yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.ki); }
+        return true;
+    }
+    if (key == "VelocityTimeout")
+    {   
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { r.addDouble(m_velocity_watchdog[i]->getDuration()); }
         return true;
     }
     yWarning("getRemoteVariable(): Unknown variable %s", key.c_str());
@@ -244,6 +250,16 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         }
         return true;
     }
+    if (key == "VelocityTimeout")
+    {   
+        for (int i = 0; i < m_numberOfJoints; i++)
+        {
+            double value = bval->get(i).asDouble();
+            m_velocity_watchdog[i]->modifyDuration(value);
+        }
+        return true;
+    }
+    
     yWarning("setRemoteVariable(): Unknown variable %s", key.c_str());
     return false;
 }

@@ -19,6 +19,19 @@ namespace yarp {
     }
 }
 
+class Watchdog
+{
+    double m_duration;
+    double m_lastUpdate;
+public:
+    void   reset();
+    bool   isExpired();
+    void   modifyDuration(double expireTime);
+    double getDuration();
+
+    Watchdog (double expireTime);
+};
+
 class RampFilter
 {
 private:
@@ -33,6 +46,7 @@ public:
     void setReference(double ref, double step);
     void update();
     double getCurrentValue();
+    void stop();
 };
 
 class TrajectoryGenerator

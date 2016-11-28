@@ -22,7 +22,7 @@ before_script:
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu trusty main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update
-  - sudo apt-get -y install libace-dev libgsl0-dev
+  - sudo apt-get -y install libace-dev libgsl0-dev libeigen3-dev
   - if [ $USE_GAZEBO_FIVE ]; then sudo apt-get install -qq -y libgazebo5-dev libavcodec-dev libavformat-dev libswscale-dev libtinyxml-dev libboost-system-dev; fi
   - if [ $USE_GAZEBO_SIX ]; then sudo apt-get install -qq -y libgazebo6-dev libavcodec-dev libavformat-dev libswscale-dev; fi
   - if [ $USE_GAZEBO_SEVEN ]; then sudo apt-get install -qq -y libgazebo7-dev libavcodec-dev libavformat-dev libswscale-dev; fi
@@ -31,6 +31,7 @@ before_script:
   # install yarp
   - git clone https://github.com/robotology/yarp
   - cd yarp
+  - git checkout devel
   - mkdir build
   - cd build
   - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCREATE_LIB_MATH:BOOL=ON -DYARP_USE_OPENCV:BOOL=OFF -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..

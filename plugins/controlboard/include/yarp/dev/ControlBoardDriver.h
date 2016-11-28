@@ -417,6 +417,11 @@ private:
                                                  they can be set directly or indirectly
                                                  through the trajectory generator.
                                                  [Degrees] */
+                                                 
+    yarp::sig::Vector m_motReferencePositions;   //after calling decouple decoupleRefPos this is the reference which is sent to the PID
+    yarp::sig::Vector m_motReferenceVelocities;  //after calling decouple decoupleRefVel this is the reference which is sent to the PID
+    yarp::sig::Vector m_motReferenceTorques;     //after calling decouple decoupleRefTrq this is the reference which is sent to the PID
+    
     yarp::sig::Vector m_oldReferencePositions; // used to store last reference and check if a new ref has been commanded
     yarp::sig::Vector m_positionThreshold;  // Threshold under which trajectory generator stops computing new values
 
@@ -427,6 +432,7 @@ private:
     std::vector<TrajectoryGenerator*> m_trajectory_generator;
     std::vector<BaseCouplingHandler*>  m_coupling_handler;
     std::vector<RampFilter*> m_speed_ramp_handler;
+    std::vector<Watchdog*> m_velocity_watchdog;
     
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/

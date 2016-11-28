@@ -76,6 +76,8 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
         default :
         break;
    }
+
+    return true;
 }
 
 bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)

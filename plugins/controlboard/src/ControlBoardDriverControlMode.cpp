@@ -158,11 +158,13 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
         break;
         case VOCAB_CM_VELOCITY :
             m_jntReferenceVelocities[j] = 0.0;
+            m_speed_ramp_handler[j]->stop();
         break;
         case VOCAB_CM_MIXED:
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_jntReferenceVelocities[j] = 0.0;
+             m_speed_ramp_handler[j]->stop();
             m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
         break;

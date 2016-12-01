@@ -167,8 +167,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
           yError() << "Missing param in COUPLING section";
           return false;
        }
-       yDebug() << "Requested couplings:" << coupling_group_bottle.toString();
-       yDebug() << "Size: " << coupling_group_bottle.size();
+       //yDebug() << "Requested couplings:" << coupling_group_bottle.toString();
+       //yDebug() << "Size: " << coupling_group_bottle.size();
        
        for (size_t cnt=1; cnt<coupling_group_bottle.size() ;cnt++)
        { 

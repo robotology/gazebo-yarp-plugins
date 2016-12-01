@@ -244,7 +244,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         
        }
     }
-    yDebug() << "done";
+    //yDebug() << "done";
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
         m_controlMode[j] = VOCAB_CM_POSITION;
@@ -330,7 +330,7 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
             m_positions[counter - 1] = convertGazeboToUser(counter-1, tmp);
             counter++;
         }
-        yDebug()<<"INITIAL CONFIGURATION IS: "<<initial_config.toString();
+        //yDebug()<<"INITIAL CONFIGURATION IS: "<<initial_config.toString();
 
         // Set initial reference
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
@@ -343,7 +343,7 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
 #endif
         }
 
-        yDebug() << "Initializing Trajectory Generator with default values";
+        //yDebug() << "Initializing Trajectory Generator with default values";
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
             m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
@@ -351,7 +351,7 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
     }
     else
     {
-        yDebug() << "Initializing Trajectory Generator with current values";
+        //yDebug() << "Initializing Trajectory Generator with current values";
         for (unsigned int i = 0; i < m_numberOfJoints; ++i)
         {
             m_positions[i] = convertGazeboToUser(i, m_jointPointers[i]->GetAngle(0));
@@ -708,7 +708,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
                 joint_found = true;
                 m_jointNames[i] = gazebo_joint_name;
                 m_jointPointers[i] = this->m_robot->GetJoint(gazebo_joint_name);
-                yDebug() << "found: " <<  gazebo_joint_name << controlboard_joint_names[i];
+                //yDebug() << "found: " <<  gazebo_joint_name << controlboard_joint_names[i];
             }
         }
 

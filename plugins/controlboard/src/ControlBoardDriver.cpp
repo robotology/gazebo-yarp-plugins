@@ -1053,7 +1053,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
 
     yarp::os::Bottle& kin_chain_bot = m_pluginParameters.findGroup(name);
     if (kin_chain_bot.check("min_stiffness")) {
-        yInfo()<<"min_stiffness param found!";
+        //yInfo()<<"min_stiffness param found!";
         yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
         if(min_stiff_bot.size()-1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
@@ -1064,7 +1064,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yWarning()<<"No minimum stiffness value found in ini file, default one will be used!";
 
     if (kin_chain_bot.check("max_stiffness")) {
-        yInfo()<<"max_stiffness param found!";
+        //yInfo()<<"max_stiffness param found!";
         yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
         if (max_stiff_bot.size()-1 == m_numberOfJoints) {
             for (unsigned int i = 0; i < m_numberOfJoints; ++i)
@@ -1076,7 +1076,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yWarning()<<"No maximum stiffness value found in ini file, default one will be used!";
 
     if (kin_chain_bot.check("min_damping")) {
-        yInfo()<<"min_damping param found!";
+        //yInfo()<<"min_damping param found!";
         yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
         if(min_damping_bot.size()-1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
@@ -1087,7 +1087,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yWarning()<<"No minimum dampings value found in ini file, default one will be used!";
 
     if(kin_chain_bot.check("max_damping")) {
-        yInfo()<<"max_damping param found!";
+        //yInfo()<<"max_damping param found!";
         yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
         if (max_damping_bot.size() - 1 == m_numberOfJoints) {
             for(unsigned int i = 0; i < m_numberOfJoints; ++i)
@@ -1097,10 +1097,10 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
     } else
         yWarning()<<"No maximum damping value found in ini file, default one will be used!";
 
-    yDebug()<<"min_stiffness: [ "<<m_minStiffness.toString()<<" ]";
-    yDebug()<<"max_stiffness: [ "<<m_maxStiffness.toString()<<" ]";
-    yDebug()<<"min_damping: [ "<<m_minDamping.toString()<<" ]";
-    yDebug()<<"max_damping: [ "<<m_maxDamping.toString()<<" ]";
+    //yDebug()<<"min_stiffness: [ "<<m_minStiffness.toString()<<" ]";
+    //yDebug()<<"max_stiffness: [ "<<m_maxStiffness.toString()<<" ]";
+    //yDebug()<<"min_damping: [ "<<m_minDamping.toString()<<" ]";
+    //yDebug()<<"max_damping: [ "<<m_maxDamping.toString()<<" ]";
     return true;
 }
 

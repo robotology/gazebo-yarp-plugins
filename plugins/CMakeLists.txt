@@ -31,9 +31,9 @@ else()
 endif()
 
 # disabling depthCamera plugin until it is updated to latest changes in yarp
-#if( (NOT (GAZEBO_VERSION VERSION_LESS 7)) AND (NOT (YARP_VERSION VERSION_LESS 2.3.67)) )
-#    add_subdirectory(depthCamera)
-#else()
-#    message(STATUS "Gazebo version is lower than 7 or YARP version is lower than 2.3.67, disabling depthCamera  plugin.")
-#endif()
+if( (NOT (GAZEBO_VERSION VERSION_LESS 7)) AND (NOT (YARP_VERSION VERSION_LESS 2.3.67)) )
+    add_subdirectory(depthCamera)
+else()
+    message(STATUS "Gazebo version is lower than 7 or YARP version is lower than 2.3.67, disabling depthCamera  plugin.")
+endif()
 

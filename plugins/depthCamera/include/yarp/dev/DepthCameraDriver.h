@@ -97,8 +97,6 @@ public:
     void OnNewRGBPointCloud(const float * /*_pcd*/, UInt /*_width*/, UInt /*_height*/, UInt /*_depth*/, const std::string &/*_format*/);
     void OnNewDepthFrame(const float * /*_image*/, UInt /*_width*/, UInt /*_height*/, UInt /*_depth*/, const std::string &/*_format*/);
 
-    virtual int getRawBufferSize();
-
 private:
     yarp::os::Property  m_conf;
 

@@ -18,42 +18,54 @@
 #include <gazebo/rendering/Distortion.hh>
 #include <ignition/math2/ignition/math/Angle.hh>
 
+#define myError(s) yError() << "GazeboDepthCameraDriver:" << s; m_error = s
+
 using namespace std;
 using namespace yarp::dev;
+using namespace yarp::os;
+using namespace yarp::sig;
 using namespace ignition::math;
 
-const std::string YarpScopedName = "sensorScopedName";
+const string YarpScopedName = "sensorScopedName";
 
 GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
 {
-    m_vertical_flip     = false;
-    m_horizontal_flip   = false;
-    m_display_time_box  = false;
-    m_display_timestamp = false;
-
-#if GAZEBO_MAJOR_VERSION < 7
-    m_imageCameraSensorPtr = 0;
-    m_imageCameraPtr       = 0;
-#endif
-    m_depthCameraSensorPtr = 0;
-    m_depthCameraPtr       = 0;
-
-    m_depthFrame_Buffer     = 0;
-    m_depthFrame_BufferSize = 0;
-    m_imageFrame_Buffer     = 0;
-    m_imageFrame_BufferSize = 0;
+    m_imageFormat                    = VOCAB_PIXEL_RGB;
+    m_depthFormat                    = VOCAB_PIXEL_MONO_FLOAT;
+    m_width                          = 0;
+    m_height                         = 0;
+    m_vertical_flip                  = false;
+    m_horizontal_flip                = false;
+    m_display_time_box               = false;
+    m_display_timestamp              = false;
+    m_depthCameraSensorPtr           = 0;
+    m_depthCameraPtr                 = 0;
+    m_depthFrame_Buffer              = 0;
+    m_depthFrame_BufferSize          = 0;
+    m_imageFrame_Buffer              = 0;
+    m_imageFrame_BufferSize          = 0;
+    m_updateDepthFrame_Connection    = 0;
+    m_updateRGBPointCloud_Connection = 0;
+    m_updateImageFrame_Connection    = 0;
+    m_counter                        = 0;
 
     // point cloud stuff is not used yet
     m_RGBPointCloud_Buffer           = 0;
     m_RGBPointCloud_BufferSize       = 0;
 
-    m_updateDepthFrame_Connection    = 0;
-    m_updateRGBPointCloud_Connection = 0;
-    m_updateImageFrame_Connection    = 0;
+    m_format2VocabPixel["L8"]          = VOCAB_PIXEL_MONO;
+    m_format2VocabPixel["INT8"]        = VOCAB_PIXEL_MONO;
+    m_format2VocabPixel["R8G8B8"]      = VOCAB_PIXEL_RGB;
+    m_format2VocabPixel["RGB_INT8"]    = VOCAB_PIXEL_RGB;
+    m_format2VocabPixel["BGR_INT8"]    = VOCAB_PIXEL_BGR;
+    m_format2VocabPixel["B8G8R8"]      = VOCAB_PIXEL_BGR;
+    m_format2VocabPixel["BAYER_RGGB8"] = VOCAB_PIXEL_ENCODING_BAYER_RGGB8;
+    m_format2VocabPixel["BAYER_BGGR8"] = VOCAB_PIXEL_ENCODING_BAYER_BGGR8;
+    m_format2VocabPixel["BAYER_GBRG8"] = VOCAB_PIXEL_ENCODING_BAYER_GBRG8;
+    m_format2VocabPixel["BAYER_GRBG8"] = VOCAB_PIXEL_ENCODING_BAYER_GRBG8;
 
-    counter                          = 0;
+
 }
-
 
 GazeboYarpDepthCameraDriver::~GazeboYarpDepthCameraDriver()
 {
@@ -62,73 +74,47 @@ GazeboYarpDepthCameraDriver::~GazeboYarpDepthCameraDriver()
 //DEVICE DRIVER
 bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 {
+    string sensorScopedName((config.find(YarpScopedName.c_str()).asString().c_str()));
+
     //Get gazebo pointers
     m_conf.fromString(config.toString());
-    std::string sensorScopedName(config.find(YarpScopedName.c_str()).asString().c_str());
-
-    yTrace() << "GazeboYarpDepthCameraDriver::open() " << sensorScopedName;
-
-#if GAZEBO_MAJOR_VERSION < 7
-    m_imageCameraSensorPtr = (gazebo::sensors::CameraSensor*) (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
-    if (!m_imageCameraSensorPtr) {
-        yError() << "GazeboYarpDepthCameraDriver Error: camera sensor was not found" ;
-        return false;
-    }
-    m_imageCameraPtr = m_imageCameraSensorPtr->GetCamera();
-#endif
-
     m_depthCameraSensorPtr = dynamic_cast<gazebo::sensors::DepthCameraSensor*> (GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
-    if (!m_depthCameraSensorPtr) {
-        yError() << "GazeboYarpDepthCameraDriver Error: camera sensor was not found";
+
+    if (!m_depthCameraSensorPtr)
+    {
+        myError("camera sensor was not found");
         return false;
     }
-    #if GAZEBO_MAJOR_VERSION >= 7
-        m_depthCameraPtr = this->m_depthCameraSensorPtr->DepthCamera();
-    #else
-        m_depthCameraPtr = this->m_depthCameraSensorPtr->GetDepthCamera();
-    #endif
 
-    // What they are for? Can be removed?
-    if (config.check("vertical_flip")) m_vertical_flip =true;
-    if (config.check("horizonal_flip")) m_horizontal_flip =true;
+    m_depthCameraPtr = this->m_depthCameraSensorPtr->DepthCamera();
 
-#if GAZEBO_MAJOR_VERSION >= 7
     m_width  = m_depthCameraPtr->ImageWidth();
     m_height = m_depthCameraPtr->ImageHeight();
-#else
-    m_width  = m_imageCameraPtr->GetImageWidth();
-    m_height = m_imageCameraPtr->GetImageHeight();
-#endif
-    yDebug() << "Data from Gazebo:\n width: " << m_width << ", height: " << height();
-    m_imageFrame_BufferSize = 3*m_width*m_height;
-    m_depthFrame_BufferSize = m_width*m_height*sizeof(float);
-
-    m_colorFrameMutex.wait();
-    m_imageFrame_Buffer = new unsigned char[m_imageFrame_BufferSize];
-    memset(m_imageFrame_Buffer, 0x00, m_imageFrame_BufferSize);
-    m_colorFrameMutex.post();
+    m_imageFrame_BufferSize = m_depthCameraPtr->ImageDepth() * m_width * m_height;
+    m_depthFrame_BufferSize = m_width * m_height * sizeof(float);
 
     m_depthFrameMutex.wait();
-    m_depthFrame_Buffer = new float[m_width*m_height];
+
+    m_depthFrame_Buffer = new float[m_width * m_height];
     memset(m_depthFrame_Buffer, 0x00, m_depthFrame_BufferSize);
+
     m_depthFrameMutex.post();
 
-//     m_RGBPointCloud_Buffer = new unsigned char[m_RGBPointCloud_BufferSize];
-//     memset(m_RGBPointCloud_Buffer, 0x00, m_RGBPointCloud_BufferSize);
+    m_colorFrameMutex.wait();
+
+    m_imageFrame_Buffer = new unsigned char[m_imageFrame_BufferSize];
+    memset(m_imageFrame_Buffer, 0x00, m_imageFrame_BufferSize);
+
+    m_colorFrameMutex.post();
+
+
 
     //Connect the driver to the gazebo simulation
-    this->m_updateImageFrame_Connection    = m_depthCameraPtr->ConnectNewImageFrame(boost::bind(
-                                                                &GazeboYarpDepthCameraDriver::OnNewImageFrame,
-                                                                this, _1, _2, _3, _4, _5));
+    auto imageConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewImageFrame, this, _1, _2, _3, _4, _5);
+    auto depthConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewDepthFrame, this, _1, _2, _3, _4, _5);
 
-//     this->m_updateRGBPointCloud_Connection = m_depthCameraPtr->ConnectNewRGBPointCloud(boost::bind(
-//                                                                 &GazeboYarpDepthCameraDriver::OnNewRGBPointCloud,
-//                                                                 this, _1, _2, _3, _4, _5));
-
-    this->m_updateDepthFrame_Connection    = m_depthCameraPtr->ConnectNewDepthFrame(boost::bind(
-                                                                &GazeboYarpDepthCameraDriver::OnNewDepthFrame,
-                                                                this, _1, _2, _3, _4, _5));
-
+    this->m_updateImageFrame_Connection = m_depthCameraPtr->ConnectNewImageFrame(imageConnectionBind);
+    this->m_updateDepthFrame_Connection = m_depthCameraPtr->ConnectNewDepthFrame(depthConnectionBind);
     return true;
 }
 
@@ -152,24 +138,30 @@ bool GazeboYarpDepthCameraDriver::close()
         this->m_updateDepthFrame_Connection = gazebo::event::ConnectionPtr();
     }
 
-#if GAZEBO_MAJOR_VERSION < 7
-    m_imageCameraSensorPtr = NULL;
-#endif
     m_depthCameraSensorPtr = NULL;
 
     if(m_depthFrame_Buffer)
+    {
         delete[] m_depthFrame_Buffer;
-    m_depthFrame_Buffer = 0;
+    }
+
+    m_depthFrame_Buffer     = 0;
     m_depthFrame_BufferSize = 0;
 
     if(m_imageFrame_Buffer)
+    {
         delete[] m_imageFrame_Buffer;
-    m_imageFrame_Buffer = 0;
+    }
+
+    m_imageFrame_Buffer     = 0;
     m_imageFrame_BufferSize = 0;
 
     if(m_RGBPointCloud_Buffer)
+    {
         delete[] m_RGBPointCloud_Buffer;
-    m_RGBPointCloud_Buffer = 0;
+    }
+
+    m_RGBPointCloud_Buffer     = 0;
     m_RGBPointCloud_BufferSize = 0;
 
     return true;
@@ -178,366 +170,278 @@ bool GazeboYarpDepthCameraDriver::close()
 /*
  * Get the image from the simulator and store it internally
  */
-bool GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char *_image,
-                          unsigned int _width, unsigned int _height,
-                          unsigned int _depth, const std::string &_format)
+void GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char* _image, UInt _width, UInt _height, UInt _depth, const string& _format)
 {
-
+    //possible image format (hardcoded (sigh..) in osrf/gazebo/source/gazebo/rendering/Camera.cc )
+    /* data type is string. why they didn't use a enum? mystery...
+     * 
+     * L8 = INT8 = 1
+     * R8G8B8 = RGB_INT8 = BGR_INT8 = B8G8R8 = 3
+     * BAYER_RGGB8 = BAYER_BGGR8 = BAYER_GBRG8 = BAYER_GRBG8 = 1
+     * */
     m_colorFrameMutex.wait();
 
-    #if GAZEBO_MAJOR_VERSION >= 7
+    if(m_format2VocabPixel.find(_format) == m_format2VocabPixel.end())
+    {
+        myError("format not supported");
+        return;
+    }
+
+    m_imageFormat = m_format2VocabPixel[_format];
+    m_width       = _width;
+    m_height      = _height;
+
+    if(m_imageFrame_BufferSize != _width * _height * _depth)
+    {
+        m_imageFrame_BufferSize = _width * _height * _depth;
+        m_imageFrame_Buffer     = new unsigned char[_width * _height * _depth];
+    }
+
     if(m_depthCameraSensorPtr->IsActive())
-        memcpy(m_imageFrame_Buffer, m_depthCameraPtr->ImageData(), m_imageFrame_BufferSize);
+    {
+        memcpy(m_imageFrame_Buffer, _image, _width * _height * _depth);
+    }
 
     m_colorTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-#else
-    if(m_imageCameraSensorPtr->IsActive())
-        memcpy(m_imageFrame_Buffer, m_imageCameraSensorPtr->GetImageData(), m_imageFrame_BufferSize);
-
-    m_colorTimestamp.update(this->m_imageCameraSensorPtr->GetLastUpdateTime().Double());
-#endif
-
     m_colorFrameMutex.post();
-    return true;
+    return;
 }
 
-
-
-/////////////////////////////////////////////////
-void GazeboYarpDepthCameraDriver::OnNewRGBPointCloud(const float * /*_pcd*/,
-                unsigned int _width, unsigned int _height,
-                unsigned int _depth, const std::string &_format)
+void GazeboYarpDepthCameraDriver::OnNewRGBPointCloud(const float * /*_pcd*/, UInt _width, UInt _height, UInt _depth, const string &_format)
 {
     // Gazebo does not generate pointCouds yet, so nothing to do here!
     return;
 }
 
-/////////////////////////////////////////////////
-void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float * /*_image*/,
-                                                        unsigned int _width,
-                                                        unsigned int _height,
-                                                        unsigned int _depth,
-                                                        const std::string &_format)
+void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float* image, UInt _width, UInt _height, UInt _depth, const string& _format)
 {
     m_depthFrameMutex.wait();
-    // for depth camera
-    if(m_depthCameraSensorPtr->IsActive())
-    #if GAZEBO_MAJOR_VERSION >= 7
-        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->DepthData(), m_depthFrame_BufferSize);
-        m_depthTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-    #else
-        memcpy(m_depthFrame_Buffer, m_depthCameraPtr->GetDepthData(), m_depthFrame_BufferSize);
-        m_depthTimestamp.update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
-    #endif
 
+    if (_format != "FLOAT32")
+    {
+        myError("image format not recognized!");
+    }
+
+    m_depthFormat = VOCAB_PIXEL_MONO_FLOAT;
+    m_width       = _width;
+    m_height      = _height;
+
+    if(m_depthFrame_BufferSize != _width * _height * sizeof(float))
+    {
+        m_depthFrame_BufferSize = _width * _height * sizeof(float);
+        m_depthFrame_Buffer     = new float[_width * _height];
+    }
+
+    if(m_depthCameraSensorPtr->IsActive())
+    {
+        memcpy(m_depthFrame_Buffer, image, _width * _height * sizeof(float));
+        m_depthTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+    }
     
     m_depthFrameMutex.post();
 }
 
-// IFRAMEGRABBER IMAGE
-bool GazeboYarpDepthCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> &_image)
-{
-     m_colorFrameMutex.wait();
-    _image.resize(m_width, m_height);
-
-    if (m_vertical_flip == true && m_horizontal_flip == false)
-    {
-        int r;
-        int c;
-        for (c = 0; c < m_width; c++)
-            for (r = 0; r < m_height; r++)
-            {
-                unsigned char *pixel = _image.getPixelAddress(c,m_height-r-1);
-                pixel[0] = *(m_imageFrame_Buffer + r*m_width*3+c*3+0);
-                pixel[1] = *(m_imageFrame_Buffer + r*m_width*3+c*3+1);
-                pixel[2] = *(m_imageFrame_Buffer + r*m_width*3+c*3+2);
-            }
-    }
-    else if (m_vertical_flip==false && m_horizontal_flip==true)
-    {
-        int r;
-        int c;
-        for (c = 0; c < m_width; c++)
-            for (r = 0; r < m_height; r++)
-            {
-                unsigned char *pixel = _image.getPixelAddress(m_width-c-1,r);
-                pixel[0] = *(m_imageFrame_Buffer + r*m_width*3+c*3+0);
-                pixel[1] = *(m_imageFrame_Buffer + r*m_width*3+c*3+1);
-                pixel[2] = *(m_imageFrame_Buffer + r*m_width*3+c*3+2);
-            }
-    }
-    else if (m_vertical_flip==true && m_horizontal_flip==true)
-    {
-        int r;
-        int c;
-        for (c = 0; c < m_width; c++)
-            for (r = 0; r < m_height; r++)
-            {
-                unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
-                pixel[0] = *(m_imageFrame_Buffer + r*m_width*3+c*3+0);
-                pixel[1] = *(m_imageFrame_Buffer + r*m_width*3+c*3+1);
-                pixel[2] = *(m_imageFrame_Buffer + r*m_width*3+c*3+2);
-            }
-    }
-    else
-    {
-        memcpy(_image.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);
-    }
-
-    if (m_display_time_box)
-    {
-        counter++;
-        if (counter == 10) counter = 0; 
-        for (int c=0+counter*30; c<30+counter*30; c++)
-        for (int r=0; r<30; r++)
-        {
-           if (counter % 2 ==0)
-           {
-                unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
-                pixel[0] = 255;
-                pixel[1] = 0;
-                pixel[2] = 0;
-            }
-           else
-           {
-                unsigned char *pixel = _image.getPixelAddress(m_width-c-1,m_height-r-1);
-                pixel[0] = 0;
-                pixel[1] = 255;
-                pixel[2] = 0;
-            }
-        }
-    }
-
-    m_colorFrameMutex.post();
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &_image)
-{
-    return false;
-}
-
-int GazeboYarpDepthCameraDriver::height() const
+//IRGBDSensor
+int GazeboYarpDepthCameraDriver::getRgbHeight()
 {
     return m_height;
 }
 
-int GazeboYarpDepthCameraDriver::width() const
+int GazeboYarpDepthCameraDriver::getRgbWidth()
 {
     return m_width;
 }
-
-int GazeboYarpDepthCameraDriver::getRawBufferSize()
+bool GazeboYarpDepthCameraDriver::setRgbResolution(int width, int height)
 {
-    return m_imageFrame_BufferSize;
-}
+    m_depthCameraSensorPtr->DepthCamera()->SetImageHeight(height);
+    m_depthCameraSensorPtr->DepthCamera()->SetImageWidth(width);
 
-// IRGBDSensor interface
-bool GazeboYarpDepthCameraDriver::getDeviceInfo(yarp::os::Property &device_info)
-{
-    using namespace gazebo::rendering;
-    
-    Distortion*         distModel; 
-    DepthCamera*        camPtr;
-    yarp::os::Value     retM;
-    camPtr              = m_depthCameraSensorPtr->DepthCamera().get();
-    yarp::os::Bottle&   camParam = m_conf.findGroup("CAMERA_PARAM");
-    if(camPtr)
-    {
-#if GAZEBO_MAJOR_VERSION >= 7
-        distModel = camPtr->LensDistortion().get();
-#else
-        distModel = camPtr->GetDistortion().get();
-#endif
-        if(distModel)
-        {
-            device_info.put("k1", distModel->GetK1());
-            device_info.put("k2", distModel->GetK2());
-            device_info.put("k3", distModel->GetK3());
-            device_info.put("t1", distModel->GetP1());
-            device_info.put("t2", distModel->GetP2());
-            device_info.put("principalPointX", distModel->GetCenter().x);
-            device_info.put("principalPointY", distModel->GetCenter().y);
-        }
-        else
-        {
-            device_info.put("k1", 0);
-            device_info.put("k2", 0);
-            device_info.put("k3", 0);
-            device_info.put("t1", 0);
-            device_info.put("t2", 0);
-            device_info.put("principalPointX", width()/2);
-            device_info.put("principalPointY", height()/2);
-        }
-    }
-    device_info.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
-    device_info.put("distortionModel", "plumb_bob");
-    device_info.put("stamp", m_colorTimestamp.getTime());
-    
-    if(!camParam.isNull())
-    {
-        device_info.fromString(camParam.toString(),false);
-    }
-    else
-    {
-        yWarning("missing parameters in configuration files!!");
-    }
-    return true;
-
-}
-
-bool GazeboYarpDepthCameraDriver::getMeasurementData(yarp::sig::FlexImage &image, yarp::os::Stamp *stamp)
-{
-    m_depthFrameMutex.wait();
-    memcpy(image.getRawImage(), m_depthFrame_Buffer, m_depthFrame_BufferSize);
-
-    m_depthFrameMutex.post();
+    m_width  = width;
+    m_height = height;
     return true;
 }
 
-bool GazeboYarpDepthCameraDriver::getDeviceStatus(DepthSensor_status *status)
+bool GazeboYarpDepthCameraDriver::getRgbFOV(double& horizontalFov, double& verticalFov)
 {
-    if(status)
-    {
-        *status = IRGBDSensor::DepthSensor_status::DEPTHSENSOR_OK_IN_USE;
-        return true;
-    }
+    horizontalFov = m_depthCameraSensorPtr->DepthCamera()->HFOV().Degree();
+    verticalFov   = m_depthCameraSensorPtr->DepthCamera()->VFOV().Degree();
+    return true;
+}
+bool GazeboYarpDepthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    ignition::math::Angle hFov;
+    hFov.Degree(horizontalFov);
+    m_depthCameraSensorPtr->DepthCamera()->SetHFOV(hFov);
+    yWarning() << "GazeboDepthCameraDriver: only horizontal fov setted!";
+    return true;
+}
+bool GazeboYarpDepthCameraDriver::getRgbMirroring(bool& mirror)
+{
+    mirror = false;
+    return true;
+}
+bool GazeboYarpDepthCameraDriver::setRgbMirroring(bool mirror)
+{
+    myError("not implemented yet");
     return false;
 }
-
-bool GazeboYarpDepthCameraDriver::getDistanceRange(double *min, double *max)
+bool GazeboYarpDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 {
-    if(!min || !max)
+    return getDepthIntrinsicParam(intrinsic);
+}
+bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
+{
+    if(!timeStamp)
     {
+        myError("timestamp pointer invalid!");
         return false;
-    }
-    *min = m_depthCameraSensorPtr->DepthCamera()->NearClip();
-    *max = m_depthCameraSensorPtr->DepthCamera()->FarClip();
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::setDistanceRange(double min, double max)
-{
-    m_depthCameraSensorPtr->DepthCamera()->SetClipDist(min,max);
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::getHorizontalScanLimits(double *min, double *max)
-{
-    if(!min || !max)
-    {
-        return false;
-    }
-    *min = *max = m_depthCameraSensorPtr->DepthCamera()->HFOV().Degree();
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::setHorizontalScanLimits(double min, double max)
-{
-    Angle deg;
-    deg.Degree(max);
-    m_depthCameraSensorPtr->DepthCamera()->SetHFOV(deg);
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::getVerticalScanLimits(double *min, double *max)
-{
-    if(!min || !max)
-    {
-        return false;
-    }
-#if GAZEBO_MAJOR_VERSION >= 7
-    *min = *max = m_depthCameraSensorPtr->DepthCamera()->VFOV().Degree();
-#else
-    *min = *max = m_depthCameraSensorPtr->DepthCamera()->GetVFOV().Degree();
-#endif
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::setVerticalScanLimits(double min, double max)
-{
-    yError("it is not possible to set the Vscan here my dear friend.. it is automatically setted along the Hscan");
-    return false;
-}
-
-bool GazeboYarpDepthCameraDriver::getDataSize(double *horizontal, double *vertical)
-{
-    if(!horizontal || !vertical)
-    {
-        return false;
-    }
-    *horizontal = m_depthCameraSensorPtr->DepthCamera()->ImageHeight();
-    *vertical = m_depthCameraSensorPtr->DepthCamera()->ImageWidth();
-    return true;
-    
-}
-
-    bool GazeboYarpDepthCameraDriver::setDataSize(double horizontal, double vertical)
-{
-    m_depthCameraSensorPtr->DepthCamera()->SetImageSize(horizontal, vertical);
-    return true;
-    
-}
-
-    bool GazeboYarpDepthCameraDriver::getResolution(double *hRes, double *vRes)
-{
-    return false;
-}
-
-bool GazeboYarpDepthCameraDriver::setResolution(double hRes, double vRes)
-{
-    return false;
-}
-
-bool GazeboYarpDepthCameraDriver::getScanRate(double *rate)
-{
-    if(!rate)
-    {
-        return false;
-    }
-    *rate = m_depthCameraSensorPtr->DepthCamera()->RenderRate();
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::setScanRate(double rate)
-{
-    m_depthCameraSensorPtr->DepthCamera()->SetRenderRate(rate);
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::getRGBDSensor_Status(RGBDSensor_status *status)
-{
-    *status = RGBD_SENSOR_OK_IN_USE;
-    return true;
-}
-
-bool GazeboYarpDepthCameraDriver::getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
-{
-    colorFrame.setPixelCode(VOCAB_PIXEL_RGB);
-    colorFrame.setPixelSize(3);
-    depthFrame.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
-    depthFrame.setPixelSize(4);
-    if( (colorFrame.width() != m_width) || (colorFrame.height() != m_height) )
-    {
-        colorFrame.resize(m_width, m_height);
-    }
-
-    if( (depthFrame.width() != m_width) || (depthFrame.height() != m_height) )
-    {
-        depthFrame.resize(m_width, m_height);
     }
 
     m_colorFrameMutex.wait();
-    memcpy(colorFrame.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);
-    m_colorFrameMutex.post();
-    m_depthFrameMutex.wait();
-    memcpy(depthFrame.getRawImage(), m_depthFrame_Buffer, m_depthFrame_BufferSize);
-    m_depthFrameMutex.post();
-    if(colorStamp)
-        colorStamp->update(m_colorTimestamp.getTime());
-    if(depthStamp)
-        depthStamp->update(m_depthTimestamp.getTime());
 
+    if(m_width == 0 || m_height == 0)
+    {
+        myError("gazebo returned an invalid image size");
+        return false;
+    }
+    rgbImage.setPixelCode(m_imageFormat);
+    rgbImage.resize(m_width, m_height);
+    memcpy(rgbImage.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);
+    timeStamp->getTime();
+
+    m_colorFrameMutex.post();
     return true;
 }
 
+int GazeboYarpDepthCameraDriver::getDepthHeight()
+{
+    return m_height;
+}
+int GazeboYarpDepthCameraDriver::getDepthWidth()
+{
+    return m_width;
+}
+bool GazeboYarpDepthCameraDriver::setDepthResolution(int width, int height)
+{
+    return setRgbResolution(width, height);
+}
+bool GazeboYarpDepthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
+{
+    return getRgbFOV(horizontalFov, verticalFov);
+}
+bool GazeboYarpDepthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
+{
+    return getRgbFOV(horizontalFov, verticalFov);
+}
+bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
+{
+    using namespace gazebo::rendering;
+
+    Distortion*  distModel;
+    DepthCamera* camPtr;
+    Value        retM;
+
+    camPtr = m_depthCameraSensorPtr->DepthCamera().get();
+
+    if(camPtr)
+    {
+        distModel = camPtr->LensDistortion().get();
+        if(distModel)
+        {
+            intrinsic.put("focalLengthX",    camPtr->OgreCamera()->getFocalLength());
+            intrinsic.put("focalLengthY",    camPtr->OgreCamera()->getFocalLength() * camPtr->OgreCamera()->getAspectRatio());
+            intrinsic.put("k1",              distModel->GetK1());
+            intrinsic.put("k2",              distModel->GetK2());
+            intrinsic.put("k3",              distModel->GetK3());
+            intrinsic.put("t1",              distModel->GetP1());
+            intrinsic.put("t2",              distModel->GetP2());
+            intrinsic.put("principalPointX", distModel->GetCenter().x);
+            intrinsic.put("principalPointY", distModel->GetCenter().y);
+        }
+    }
+    intrinsic.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
+    intrinsic.put("distortionModel", "plumb_bob");
+    intrinsic.put("stamp", m_colorTimestamp.getTime());
+    return true;
+}
+
+double GazeboYarpDepthCameraDriver::getDepthAccuracy()
+{
+    return 0.00001;
+}
+
+bool GazeboYarpDepthCameraDriver::setDepthAccuracy(double accuracy)
+{
+    myError("impossible to set accuracy");
+    return false;
+}
+
+bool GazeboYarpDepthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
+{
+    nearPlane = m_depthCameraSensorPtr->DepthCamera()->NearClip();
+    farPlane  = m_depthCameraSensorPtr->DepthCamera()->FarClip();
+}
+bool GazeboYarpDepthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
+{
+    m_depthCameraSensorPtr->DepthCamera()->SetClipDist(nearPlane,farPlane);
+    return true;
+}
+bool GazeboYarpDepthCameraDriver::getDepthMirroring(bool& mirror)
+{
+    return getRgbMirroring(mirror);
+}
+bool GazeboYarpDepthCameraDriver::setDepthMirroring(bool mirror)
+{
+    return setRgbMirroring(mirror);
+}
+bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stamp* timeStamp)
+{
+    if(!timeStamp)
+    {
+        myError("gazeboDepthCameraDriver: timestamp pointer invalid!");
+        return false;
+    }
+    m_depthFrameMutex.wait();
+
+    if(m_width == 0 || m_height == 0)
+    {
+        myError("gazebo returned an invalid image size");
+        return false;
+    }
+
+    depthImage.resize(m_width, m_height);
+    //depthImage.setPixelCode(m_depthFormat);
+    memcpy(depthImage.getRawImage(), m_depthFrame_Buffer, m_width * m_height * sizeof(float));
+    timeStamp->getTime();
+
+    m_depthFrameMutex.post();
+    return true;
+}
+bool GazeboYarpDepthCameraDriver::getExtrinsicParam(sig::Matrix& extrinsic)
+{
+    extrinsic.resize(4, 4);
+    extrinsic.zero();
+    extrinsic[1][1] = extrinsic[2][2] = extrinsic[3][3] = extrinsic[4][4] = 1;
+    return true;
+}
+bool GazeboYarpDepthCameraDriver::getImages(FlexImage& colorFrame, depthImageType& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
+{
+    return getDepthImage(depthFrame, depthStamp) && getRgbImage(colorFrame, colorStamp);
+}
+
+IRGBDSensor::RGBDSensor_status GazeboYarpDepthCameraDriver::getSensorStatus()
+{
+    return m_depthCameraSensorPtr->IsActive() ? RGBD_SENSOR_OK_IN_USE : RGBD_SENSOR_NOT_READY;
+}
+yarp::os::ConstString GazeboYarpDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
+{
+    if(!timeStamp)
+    {
+        myError("timeStamp pointer invalid");
+    }
+    else
+    {
+        timeStamp->update();
+    }
+    return m_error;
+}

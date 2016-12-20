@@ -116,7 +116,7 @@ bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) /
 {
     if (spds && j >= 0 && j < (int)m_numberOfJoints) {
         *spds = m_accelerations[j];
-        return true;
+        return false;
     }
     return false;
 }

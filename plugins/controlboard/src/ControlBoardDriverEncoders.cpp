@@ -127,5 +127,5 @@ bool GazeboYarpControlBoardDriver::getEncoderAccelerations(double *accs) //NOT T
     for (unsigned int i=0; i<m_numberOfJoints; ++i) {
         getEncoderAcceleration(i,&accs[i]);
     }
-    return true;
+    return false;
 }

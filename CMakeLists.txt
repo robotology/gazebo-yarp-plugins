@@ -11,7 +11,10 @@ find_package(YARP 2.3.64.13 REQUIRED)
 # Finding dependencies
 find_package(Boost REQUIRED serialization system)
 find_package(Protobuf REQUIRED)
-find_package(Gazebo   REQUIRED)
+find_package(Gazebo REQUIRED)
+if (gazebo_VERSION_MAJOR LESS 5.0)
+    message(FATAL_ERROR "your gazebo version is older than GAZEBO 5.0. Gazebo Yarp plugins are supported with gazebo versions >= 5.0. Please update to a newer version")
+endif()
 find_package(SDFormat REQUIRED)
 find_package(OGRE QUIET)
 

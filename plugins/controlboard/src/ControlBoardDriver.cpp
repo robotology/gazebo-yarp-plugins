@@ -9,7 +9,9 @@
 #include <GazeboYarpPlugins/common.h>
 
 #include <cstdio>
-#include <gazebo/physics/physics.hh>
+#include <gazebo/common/Events.hh>
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/transport.hh>
 #include <gazebo/math/Angle.hh>
 

@@ -4,8 +4,10 @@
 #include <iostream>
 #include <string>
 #include <gazebo/common/Plugin.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <gazebo/transport/Node.hh>
+#include <gazebo/physics/Link.hh>
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/Model.hh>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcServer.h>

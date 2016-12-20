@@ -5,7 +5,6 @@
  */
 
 #include "ControlBoardDriver.h"
-#include <gazebo/physics/physics.hh>
 
 using namespace yarp::dev;
 

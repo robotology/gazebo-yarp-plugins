@@ -9,7 +9,10 @@
 #include "ClockServerImpl.h"
 
 #include <gazebo/gazebo_config.h>
-#include <gazebo/physics/physics.hh>
+#include <gazebo/common/Events.hh>
+#include <gazebo/physics/PhysicsEngine.hh>
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/PhysicsIface.hh>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/BufferedPort.h>

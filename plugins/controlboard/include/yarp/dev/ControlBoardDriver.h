@@ -403,6 +403,7 @@ private:
 
     yarp::sig::Vector m_positions; /**< joint positions [Degrees] */
     yarp::sig::Vector m_velocities; /**< joint velocities [Degrees/Seconds] */
+    yarp::sig::Vector m_accelerations; /**< joint accelerations [Degrees/Seconds/Seconds]> */
     yarp::sig::Vector m_torques; /**< joint torques [Netwon Meters] */
     yarp::sig::Vector m_maxTorques; /**< joint torques [Netwon Meters] */
 

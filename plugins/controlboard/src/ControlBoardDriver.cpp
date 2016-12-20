@@ -63,6 +63,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_zeroPosition.resize(m_numberOfJoints);
     m_jntReferenceVelocities.resize(m_numberOfJoints);
     m_velocities.resize(m_numberOfJoints);
+    m_accelerations.resize(m_numberOfJoints);
     amp.resize(m_numberOfJoints);
     m_torques.resize(m_numberOfJoints); m_torques.zero();
     m_maxTorques.resize(m_numberOfJoints, 2000.0);
@@ -98,6 +99,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_positions.zero();
     m_zeroPosition.zero();
     m_velocities.zero();
+    m_accelerations.zero();
     m_motReferencePositions.zero();
     m_motReferenceVelocities.zero();
     m_motReferenceTorques.zero();
@@ -419,6 +421,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         //TODO: consider multi-dof joint ?
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
         m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
+        //TODO Acceleration measurements - Not yet implemented in gazebo
         m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
     

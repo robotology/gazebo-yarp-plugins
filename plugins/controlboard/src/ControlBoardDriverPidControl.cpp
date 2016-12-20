@@ -97,8 +97,22 @@ namespace yarp {
             return true;
         }
 
-        bool GazeboYarpControlBoardDriver::getErrorLimit (int /*j*/, double */*limit*/) { return false; }
-        bool GazeboYarpControlBoardDriver::getErrorLimits (double */*limits*/) { return false; }
+        bool GazeboYarpControlBoardDriver::getErrorLimit (int j, double *limit) {
+            return false;
+            if(limit && j >= 0 && j < (int)m_numberOfJoints){
+                // Not yet implemented 
+                *limit = 0.0;
+                return false;
+            }
+        }
+        
+        bool GazeboYarpControlBoardDriver::getErrorLimits (double *limits) {
+            if(!limits) return false;
+            for (unsigned int i=0; i<m_numberOfJoints; i++){
+                getErrorLimit(i,&limits[i]);
+            }
+        }
+        
         bool GazeboYarpControlBoardDriver::resetPid (int /*j*/) { return false; }
         bool GazeboYarpControlBoardDriver::disablePid (int /*j*/) { return false; }
         bool GazeboYarpControlBoardDriver::enablePid (int /*j*/) { return false; }

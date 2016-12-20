@@ -10,8 +10,8 @@
 
 #include <ControlBoardDriverTrajectory.h>
 #include <cstdio>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/PhysicsEngine.hh>
 #include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>

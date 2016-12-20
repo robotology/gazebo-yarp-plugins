@@ -10,11 +10,6 @@
 #define YARPGAZEBO_WORLD_INTERFACESERVERIMPL
 
 #include <WorldInterfaceServer.h>
-
-#include "gazebo/physics/physics.hh"
-#include "gazebo/common/common.hh"
-#include "gazebo/gazebo.hh"
-
 #include "worldproxy.h"
 
 class WorldInterfaceServerImpl: public GazeboYarpPlugins::WorldInterfaceServer

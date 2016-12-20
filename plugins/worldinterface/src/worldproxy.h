@@ -9,9 +9,11 @@
 #ifndef GAZEBOYARP_WORLDPROXY_H
 #define GAZEBOYARP_WORLDPROXY_H
 
-#include "gazebo/physics/physics.hh"
-#include "gazebo/common/common.hh"
-#include "gazebo/gazebo.hh"
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/World.hh>
+#include <gazebo/physics/Joint.hh>
+#include <gazebo/physics/PhysicsEngine.hh>
+#include <gazebo/physics/Link.hh>
 
 #include "WorldInterfaceServer.h"
 #include <yarp/os/Mutex.h>

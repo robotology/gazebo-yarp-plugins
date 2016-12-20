@@ -9,9 +9,6 @@
  #ifndef YARPGAZEBO_WORLD_INTERFACE
 #define YARPGAZEBO_WORLD_INTERFACE
 
-
-#include "gazebo/physics/physics.hh"
-#include "gazebo/common/common.hh"
 #include "gazebo/gazebo.hh"
 
 #include "worldinterfaceserverimpl.h"

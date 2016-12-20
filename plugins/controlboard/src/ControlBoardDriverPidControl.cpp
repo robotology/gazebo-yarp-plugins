@@ -111,6 +111,7 @@ namespace yarp {
             for (unsigned int i=0; i<m_numberOfJoints; i++){
                 getErrorLimit(i,&limits[i]);
             }
+            return false;
         }
         
         bool GazeboYarpControlBoardDriver::resetPid (int /*j*/) { return false; }

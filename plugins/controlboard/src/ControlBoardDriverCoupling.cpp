@@ -10,8 +10,7 @@
 
 #include <ControlBoardDriverCoupling.h>
 #include <cstdio>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <gazebo/physics/Model.hh>
 #include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>

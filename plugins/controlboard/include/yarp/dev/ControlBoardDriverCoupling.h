@@ -7,7 +7,7 @@
 #ifndef GAZEBOYARP_COUPLING_H
 #define GAZEBOYARP_COUPLING_H
 
-#include <gazebo/physics/physics.hh>
+#include <gazebo/physics/Model.hh>
 
 namespace yarp {
     namespace dev {

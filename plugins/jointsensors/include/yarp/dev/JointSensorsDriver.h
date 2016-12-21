@@ -14,8 +14,8 @@
 #include <yarp/os/Semaphore.h>
 
 #include <gazebo/common/Plugin.hh>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/Joint.hh>
 
 namespace yarp {
     namespace dev {

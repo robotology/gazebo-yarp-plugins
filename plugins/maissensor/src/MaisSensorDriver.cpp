@@ -9,8 +9,10 @@
 #include <GazeboYarpPlugins/common.h>
 
 #include <cstdio>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/Joint.hh>
+#include <gazebo/physics/World.hh>
+#include <gazebo/transport/Node.hh>
 #include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>

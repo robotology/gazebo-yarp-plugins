@@ -8,8 +8,8 @@
 
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
-#include <gazebo/physics/physics.hh>
-#include <gazebo/transport/transport.hh>
+#include <gazebo/physics/Joint.hh>
+#include <gazebo/transport/Publisher.hh>
 
 namespace yarp {
     namespace dev {

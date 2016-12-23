@@ -54,6 +54,7 @@ private:
     yarp::os::Property m_parameters;
 
     std::string m_robotName;
+    bool registerRobotDescription(std::string wrapper_port_name);
 };
 
 }

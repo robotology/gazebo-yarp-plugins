@@ -15,6 +15,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/IRobotDescription.h>
+#include <yarp/os/Property.h>
 
 using namespace std;
 namespace gazebo
@@ -187,6 +189,91 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             }
             return;
         }
+        
+        if (registerRobotDescription(wrapper_group.find("name").toString()) == false)
+        {
+            yError() << "GazeboYarpControlBoard : failed to register the device to a RobotDescriptionServer";
+            //we may want to stop the execution?
+            //m_wrapper.close();
+            return;
+        }
     }
 
+    bool GazeboYarpControlBoard::registerRobotDescription(std::string wrapper_port_name)
+    {
+        //here starts the robot description stuff...
+        yarp::dev::PolyDriver* dd_descClnt=0;
+        yarp::dev::PolyDriver* dd_descSrv=0;
+        yarp::dev::IRobotDescription* idesc=0;
+        
+        //first we try to open the robotDescriptionClient, because maybe an external server is already running
+        dd_descClnt = new yarp::dev::PolyDriver;
+        yarp::os::Property clnt_opt;
+        clnt_opt.put("device", "robotDescriptionClient");
+        clnt_opt.put("local", std::string(wrapper_port_name+"/robotDescriptionClient"));
+        clnt_opt.put("remote", "/robotDescription");
+
+        bool b_client = false;
+        if (dd_descClnt->open(clnt_opt) && dd_descClnt->isValid())
+        {
+            yInfo() << "External robotDescriptionServer was found. Connection succesful.";
+            b_client = true;
+            dd_descClnt->view(idesc);
+        }
+        else
+        {
+            yInfo() << "External robotDescriptionServer was not found. Opening a new RobotDescriptionServer.";
+        }
+
+        //if the previous operation failed, then retry opening first a robotDescriptionServer and then a robotDescriptionClient
+        if (b_client == false)
+        {
+            dd_descSrv = new yarp::dev::PolyDriver;
+            yarp::os::Property srv_opt;
+            srv_opt.put("device", "robotDescriptionServer");
+            srv_opt.put("local", "/robotDescription");
+
+            bool b_server = false;
+            if (dd_descSrv->open(srv_opt) && dd_descSrv->isValid())
+            {
+                b_server = true;
+            }
+            else
+            {
+                //unable to open a robotDescriptionServer, this is a critical failure!
+                delete dd_descSrv;
+                dd_descSrv = 0;
+                yError() << "Unable to open robotDescriptionServer";
+                return false;
+            }
+
+            //robotDescriptionServer is running, so let's retry to open the robotDescriptionClient
+            if (dd_descClnt->open(clnt_opt) && dd_descClnt->isValid())
+            {
+                b_client = true;
+                dd_descClnt->view(idesc);
+            }
+            else
+            {
+                //unable to open the robotDescriptionClient, this is a critical failure!
+                delete dd_descClnt;
+                dd_descClnt = 0;
+                yError() << "Unable to open robotDescriptionClient";
+                return false;
+            }
+        }
+        
+        //we can now register the device
+        yarp::dev::DeviceDescription dev_desc;
+        dev_desc.device_name=wrapper_port_name;
+        dev_desc.device_type="controlboardwrapper2";
+        idesc->registerDevice(dev_desc);
+        
+        //and finally close the robotDescriptionClient
+        dd_descClnt->close();
+        delete dd_descClnt;
+        dd_descClnt = 0;
+        return true;
+    }
 }
+

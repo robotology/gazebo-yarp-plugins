@@ -16,7 +16,7 @@
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/sensors/DepthCameraSensor.hh>
 #include <gazebo/rendering/Distortion.hh>
-#include <ignition/math2/ignition/math/Angle.hh>
+#include <ignition/math/Angle.hh>
 
 #define myError(s) yError() << "GazeboDepthCameraDriver:" << s; m_error = s
 

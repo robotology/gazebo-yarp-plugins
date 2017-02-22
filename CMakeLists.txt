@@ -3,12 +3,21 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.8.7)
+PROJECT(GazeboYARPPlugins)
 
-PROJECT(GazeboYarpPlugins)
+# Project version
+set(${PROJECT_NAME}_MAJOR_VERSION 2)
+set(${PROJECT_NAME}_MINOR_VERSION 3)
+set(${PROJECT_NAME}_PATCH_VERSION 68)
+set(${PROJECT_NAME}_VERSION
+    ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
 
-find_package(YARP 2.3.64.13 REQUIRED)
+# Defines the CMAKE_INSTALL_LIBDIR, CMAKE_INSTALL_BINDIR and many other useful macros
+# See https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+include(GNUInstallDirs)
 
 # Finding dependencies
+find_package(YARP 2.3.64.13 REQUIRED)
 find_package(Boost REQUIRED serialization system)
 find_package(Protobuf REQUIRED)
 find_package(Gazebo REQUIRED)
@@ -34,8 +43,8 @@ endif()
 
 OPTION(GAZEBO_YARP_PLUGINS_ENABLE_RPATH "Enable installation with RPATH" TRUE)
 include(AddInstallRPATHSupport)
-add_install_rpath_support(BIN_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}
-                          LIB_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}"
+                          LIB_DIRS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
                           DEPENDS GAZEBO_YARP_PLUGINS_ENABLE_RPATH
                           USE_LINK_PATH)
 
@@ -48,7 +57,6 @@ include(AddDebugWarnings)
 #this is required for all plugins
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 
-
 #build common libraries first
 add_subdirectory(libraries)
 #build RPC libraries
@@ -56,5 +64,13 @@ add_subdirectory(thrift)
 #now build plugins
 add_subdirectory(plugins)
 
-
 include(AddUninstallTarget)
+
+# Install the files necessary to call find_package(GazeboYarpPlugins) in CMake projects
+include(InstallBasicPackageFiles)
+install_basic_package_files(${PROJECT_NAME}
+                            VARS_PREFIX ${PROJECT_NAME}
+                            VERSION ${${PROJECT_NAME}_VERSION}
+                            COMPATIBILITY AnyNewerVersion
+                            TARGETS_PROPERTY ${PROJECT_NAME}_TARGETS
+                            NO_CHECK_REQUIRED_COMPONENTS_MACRO)

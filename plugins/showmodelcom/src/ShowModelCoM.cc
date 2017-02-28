@@ -40,7 +40,8 @@ namespace gazebo
             delete m_comOutputPort;
             m_comOutputPort = 0;
         }
-        gazebo::event::Events::DisconnectWorldUpdateBegin(this->m_updateConnection);
+
+        m_updateConnection.reset();
         yarp::os::Network::fini();
     }
 

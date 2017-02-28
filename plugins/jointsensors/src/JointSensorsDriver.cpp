@@ -181,7 +181,7 @@ bool GazeboYarpJointSensorsDriver::setJointSensorsType(yarp::os::Property & plug
 
 bool GazeboYarpJointSensorsDriver::close()
 {
-    gazebo::event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+    this->updateConnection.reset();
     return true;
 }
 

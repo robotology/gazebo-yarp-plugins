@@ -40,11 +40,7 @@ bool GazeboYarpMaisSensorDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpMaisSensorDriver::close()
 {
-    //unbinding events
-    if (this->m_updateConnection.get()) {
-        gazebo::event::Events::DisconnectWorldUpdateBegin (this->m_updateConnection);
-        this->m_updateConnection = gazebo::event::ConnectionPtr();
-    }
+    this->m_updateConnection.reset();
 
     return true;
 }

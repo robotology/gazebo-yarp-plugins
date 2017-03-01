@@ -25,7 +25,7 @@ namespace gazebo
 
   VideoTexture::~VideoTexture()
   {
-      event::Events::DisconnectPreRender(m_connection);
+      m_connection.reset();
       if (m_network)
       {
         delete m_network;

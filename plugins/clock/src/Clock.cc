@@ -40,15 +40,9 @@ namespace gazebo
     
     void GazeboYarpClock::cleanup()
     {
-        if (m_worldCreatedEvent.get()) {
-            gazebo::event::Events::DisconnectWorldCreated(m_worldCreatedEvent);
-            m_worldCreatedEvent = gazebo::event::ConnectionPtr(); //resetting the pointer to NULL. I don't know if boost does it automatically with the above call
-        }
-        if (m_timeUpdateEvent.get()) {
-            gazebo::event::Events::DisconnectWorldUpdateBegin(m_timeUpdateEvent);
-            m_timeUpdateEvent = gazebo::event::ConnectionPtr();
-        }
-        
+        m_worldCreatedEvent.reset();
+        m_timeUpdateEvent.reset();
+
         if (m_clockPort) {
             m_clockPort->close();
             delete m_clockPort; m_clockPort = 0;
@@ -99,10 +93,7 @@ namespace gazebo
     
     void GazeboYarpClock::gazeboYarpClockLoad(std::string world_name)
     {
-        if (m_worldCreatedEvent.get()) {
-            gazebo::event::Events::DisconnectWorldCreated(m_worldCreatedEvent);
-            m_worldCreatedEvent = gazebo::event::ConnectionPtr();
-        }
+        m_worldCreatedEvent.reset();
         
         //Create ports
         m_clockPort = new yarp::os::BufferedPort<yarp::os::Bottle>();

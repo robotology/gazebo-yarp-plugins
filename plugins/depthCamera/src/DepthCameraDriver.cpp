@@ -107,36 +107,21 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 
     m_colorFrameMutex.post();
 
-
-
     //Connect the driver to the gazebo simulation
     auto imageConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewImageFrame, this, _1, _2, _3, _4, _5);
     auto depthConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewDepthFrame, this, _1, _2, _3, _4, _5);
 
     this->m_updateImageFrame_Connection = m_depthCameraPtr->ConnectNewImageFrame(imageConnectionBind);
     this->m_updateDepthFrame_Connection = m_depthCameraPtr->ConnectNewDepthFrame(depthConnectionBind);
+
     return true;
 }
 
 bool GazeboYarpDepthCameraDriver::close()
 {
-    if (this->m_updateImageFrame_Connection.get())
-    {
-        m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateImageFrame_Connection);
-        this->m_updateImageFrame_Connection = gazebo::event::ConnectionPtr();
-    }
-
-    if (this->m_updateRGBPointCloud_Connection.get())
-    {
-        m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateRGBPointCloud_Connection);
-        this->m_updateRGBPointCloud_Connection = gazebo::event::ConnectionPtr();
-    }
-
-    if (this->m_updateDepthFrame_Connection.get())
-    {
-        m_depthCameraPtr->DisconnectNewImageFrame(this->m_updateDepthFrame_Connection);
-        this->m_updateDepthFrame_Connection = gazebo::event::ConnectionPtr();
-    }
+    this->m_updateImageFrame_Connection.reset();
+    this->m_updateRGBPointCloud_Connection.reset();
+    this->m_updateDepthFrame_Connection.reset();
 
     m_depthCameraSensorPtr = NULL;
 

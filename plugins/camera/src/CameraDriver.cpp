@@ -148,8 +148,7 @@ bool GazeboYarpCameraDriver::close()
 {
     if (this->m_updateConnection.get())
     {
-        m_camera->DisconnectNewImageFrame(this->m_updateConnection);
-        this->m_updateConnection = gazebo::event::ConnectionPtr();
+        this->m_updateConnection.reset();
         m_parentSensor = NULL;
     }
     

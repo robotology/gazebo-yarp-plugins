@@ -22,7 +22,7 @@ ApplyExternalWrench::ApplyExternalWrench()
 ApplyExternalWrench::~ApplyExternalWrench()
 {
     m_rpcThread.stop();
-    gazebo::event::Events::DisconnectWorldUpdateBegin ( this->m_updateConnection );
+    this->m_updateConnection.reset();
 }
 
 void ApplyExternalWrench::UpdateChild()

@@ -145,12 +145,8 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
 bool yarp::dev::GazeboYarpMultiCameraDriver::close()
 {
     for (unsigned int i = 0; i < m_camera_count; ++i) {
-        if (this->m_updateConnection[i].get())
-        {
-            m_camera[i]->DisconnectNewImageFrame(this->m_updateConnection[i]);
-            this->m_updateConnection[i] = gazebo::event::ConnectionPtr();
-            m_parentSensor = NULL;
-        }
+        this->m_updateConnection[i].reset();
+        m_parentSensor = NULL;
         delete[] m_imageBuffer[i];
         m_imageBuffer[i] = 0;
         delete m_dataMutex[i];

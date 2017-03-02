@@ -56,6 +56,8 @@ script:
     -e GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/app/build/robotology/gazebo-yarp-plugins/build:/usr/local/lib
     robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
     sh -c 'cd build && make install && yarp detect --write && testrunner --verbose --suit /icub-tests/suits/basics-icubGazeboSim.xml'
+
+after_script:
   # Stop and remove running containers
   - docker stop yarp-server
   - docker rm yarp-server

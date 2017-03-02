@@ -2,99 +2,54 @@ language: cpp
 sudo: required
 dist: trusty
 
-matrix:
-  include:
-    - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_FIVE=TRUE
-    - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_SIX=TRUE
-    - compiler: clang
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_SIX=TRUE
-    - compiler: clang
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_FIVE=TRUE
-    - compiler: gcc
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug USE_GAZEBO_SEVEN=TRUE
-    - compiler: clang
-      env: GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release USE_GAZEBO_SEVEN=TRUE
+services:
+  - docker
 
+env:
+  global:
+    - PROJECT_DIR_ABS=$TRAVIS_BUILD_DIR
+    - IS_MASTER=1
+    - YARP_DOCKER_TAG="master"
+  matrix:
+    - GAZEBO_VERSION=gazebo7 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
+    - GAZEBO_VERSION=gazebo7 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
+    - GAZEBO_VERSION=gazebo8 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
+    - GAZEBO_VERSION=gazebo8 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
+
+before_install:
+  - if [ ! $TRAVIS_BRANCH = "master" ] ; then IS_MASTER=0 ; YARP_DOCKER_TAG="devel" ; fi
+  - docker pull robotology/yarp:${YARP_DOCKER_TAG}
+  - docker pull robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
 
 before_script:
-  - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu trusty main" > /etc/apt/sources.list.d/gazebo-latest.list'
-  - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-  - sudo apt-get update
-  - sudo apt-get -y install libace-dev libgsl0-dev libeigen3-dev libopencv-core-dev
-  - if [ $USE_GAZEBO_FIVE ]; then sudo apt-get install -qq -y libgazebo5-dev libavcodec-dev libavformat-dev libswscale-dev libtinyxml-dev libboost-system-dev; fi
-  - if [ $USE_GAZEBO_SIX ]; then sudo apt-get install -qq -y libgazebo6-dev libavcodec-dev libavformat-dev libswscale-dev; fi
-  - if [ $USE_GAZEBO_SEVEN ]; then sudo apt-get install -qq -y libgazebo7-dev libavcodec-dev libavformat-dev libswscale-dev; fi
-  # move to /home/travis/build/robotology/ directory
-  - cd ..
-  # install yarp
-  - git clone https://github.com/robotology/yarp
-  - cd yarp
-  - git checkout devel
-  - mkdir build
-  - cd build
-  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCREATE_LIB_MATH:BOOL=ON -DYARP_USE_OPENCV:BOOL=OFF -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
-  - make
-  - sudo make install
-  - sudo ldconfig
-  - cd ../..
-  
-  # launch yarp while you install everything else
-  - yarpserver &
-  
-  # install robot-testing framework
-  - git clone https://github.com/robotology/robot-testing
-  - cd robot-testing
-  - mkdir build 
-  - cd build 
-  - cmake -DENABLE_MIDDLEWARE_PLUGINS:BOOL=ON -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
-  - make 
-  - sudo make install
-  # by default /usr/local/lib is not in the search path of dlopen
-  # so we add it to LD_LIBRARY_PATH
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-  - sudo ldconfig
-  - cd ../..
-  
-  # install icub-tests 
-  - git clone https://github.com/robotology/icub-tests
-  - cd icub-tests
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} ..
-  - make 
-  - export YARP_DATA_DIRS=${YARP_DATA_DIRS}:/home/travis/build/robotology/icub-tests/suits
-  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/travis/build/robotology/icub-tests/build/plugins
-  - sudo ldconfig
-  - cd ../..
-  
-  # install icub-gazebo (for testing)
-  - git clone https://github.com/robotology-playground/icub-gazebo
-  - export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/home/travis/build/robotology/icub-gazebo
-  # export icub-gazebo in GAZEBO_RESOURCE_PATH (see https://bitbucket.org/osrf/gazebo/issue/1607/gazebo-does-not-start-if-the#comment-18101826 )
-  - source /usr/share/gazebo/setup.sh
-  - export GAZEBO_RESOURCE_PATH=${GAZEBO_RESOURCE_PATH}:/home/travis/build/robotology/icub-gazebo
-  
-  # compile gazebo-yarp-plugins
-  - cd gazebo-yarp-plugins
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..
-  - pwd
+  # Run the yarpserver as background container
+  - >-
+    docker run -d -it
+    -p 10000:10000
+    --name yarp-server
+    robotology/yarp:${YARP_DOCKER_TAG}
+    yarpserver
 
-script: 
-  - make
-  # set GAZEBO_PLUGIN_PATH for running the tests
-  - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/home/travis/build/robotology/gazebo-yarp-plugins/build
-  # test install/uninstall
-  - sudo make install
-  - export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/usr/local/lib 
-  # run tests
-  - testrunner --verbose --suit ../../icub-tests/suits/basics-icubGazeboSim.xml
-  - sudo make uninstall
-  - pkill yarpserver
+  # Run CMake into the persistent $PROJECT_DIR_ABS folder
+  - cd $PROJECT_DIR_ABS
+  - mkdir build
+  - >-
+    docker run -it --rm -v "$PROJECT_DIR_ABS:/app" -w /app
+    robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
+    sh -c 'cd build && cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..'
 
-notifications:
-  email:
-    - pegua1@gmail.com
+script:
+  # Build the project
+  - >-
+    docker run -it --rm -v "$PROJECT_DIR_ABS:/app" -w /app
+    robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
+    sh -c 'cd build && make'
+  # Install and execute the project
+  - >-
+    docker run -it --rm -v "$PROJECT_DIR_ABS:/app" -w /app
+    -e GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/app/build/robotology/gazebo-yarp-plugins/build:/usr/local/lib
+    robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
+    sh -c 'cd build && make install && yarp detect --write && testrunner --verbose --suit /icub-tests/suits/basics-icubGazeboSim.xml'
+  # Stop and remove running containers
+  - docker stop yarp-server
+  - docker rm yarp-server

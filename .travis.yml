@@ -1,6 +1,7 @@
 language: cpp
 sudo: required
 dist: trusty
+cache: ccache
 
 services:
   - docker
@@ -34,19 +35,25 @@ before_script:
   - cd $PROJECT_DIR_ABS
   - mkdir build
   - >-
-    docker run -it --rm -v "$PROJECT_DIR_ABS:/app" -w /app
+    docker run -it --rm
+    -v "$HOME/.ccache:/root/.ccache"
+    -v "$PROJECT_DIR_ABS:/app" -w /app
     robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
     sh -c 'cd build && cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..'
 
 script:
   # Build the project
   - >-
-    docker run -it --rm -v "$PROJECT_DIR_ABS:/app" -w /app
+    docker run -it --rm
+    -v "$HOME/.ccache:/root/.ccache"
+    -v "$PROJECT_DIR_ABS:/app" -w /app
     robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
     sh -c 'cd build && make'
   # Install and execute the project
   - >-
-    docker run -it --rm -v "$PROJECT_DIR_ABS:/app" -w /app
+    docker run -it --rm
+    -v "$PROJECT_DIR_ABS:/app" -w /app
+    -v "$HOME/.ccache:/root/.ccache"
     -e GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/app/build/robotology/gazebo-yarp-plugins/build:/usr/local/lib
     robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
     sh -c 'cd build && make install && yarp detect --write && testrunner --verbose --suit /icub-tests/suits/basics-icubGazeboSim.xml'

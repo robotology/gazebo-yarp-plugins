@@ -9,7 +9,6 @@ services:
 env:
   global:
     - PROJECT_DIR_ABS=$TRAVIS_BUILD_DIR
-    - IS_MASTER=1
     - YARP_DOCKER_TAG="master"
   matrix:
     - GAZEBO_VERSION=gazebo7 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
@@ -18,7 +17,7 @@ env:
     - GAZEBO_VERSION=gazebo8 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
 
 before_install:
-  - if [ ! $TRAVIS_BRANCH = "master" ] ; then IS_MASTER=0 ; YARP_DOCKER_TAG="devel" ; fi
+  - if [ ! $TRAVIS_BRANCH = "master" ] ; then YARP_DOCKER_TAG="devel" ; fi
   - docker pull robotology/yarp:${YARP_DOCKER_TAG}
   - docker pull robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
 

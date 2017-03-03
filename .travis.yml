@@ -72,3 +72,7 @@ after_script:
   # Stop and remove running containers
   - docker stop yarp-server
   - docker rm yarp-server
+
+notifications:
+  email:
+    - pegua1@gmail.com

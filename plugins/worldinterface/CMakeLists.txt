@@ -21,7 +21,8 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME worldinterface
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS} ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}
                               LINKED_LIBRARIES gazebo_yarp_rpc_worldinterface ${LIB_COMMON_NAME} gazebo_yarp_singleton ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES}
                               HEADERS ${worldinterface_headers}
-                                      src/worldinterfaceserverimpl.h
-                                      src/worldproxy.h
+					include/worldinterface.h
+					include/worldinterfaceserverimpl.h
+					include/worldproxy.h
                               SOURCES ${worldinterface_source}
                             )

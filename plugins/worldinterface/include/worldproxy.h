@@ -198,15 +198,37 @@ public:
    * @param id string that identifies object in gazebo (returned after creation)
    * @param link_name name of a fully scoped link (e.g. MODEL1::link)
    * @return true if success, false otherwise
+   *    attach OBJECT_NAME::object_parent_link1::....::object_end_link ROBOT_NAME::robot_parent_link1::....::robot_end_link
    */
   virtual bool attach(const std::string& id, const std::string& link_name);
+
+  /**
+    * Attach an object to a link of the robot - takes unscoped names as arguments
+    * @param object_name string that identifies object in gazebo (returned after creation or spawnning)
+    * @param object_link_name name of the link of the object
+    * @param robot_name name of the robot
+    * @param robot_link_name name of the link to which the object_link_name has to be attached
+    * @return true if success, false otherwise
+    *   attachUnscoped OBJECT_NAME object_end_link ROBOT_NAME robot_end_link
+    */
+    virtual bool attachUnscoped(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name);
   
    /**
    * Detach a previously attached object.
    * @param id string that identifies object in gazebo (returned after creation)
    * @return true if success, false otherwise
+   *    detach OBJECT_NAME::object_parent_link1::....::object_end_link
    */
   virtual bool detach(const std::string& id);
+
+   /**
+    * Detach a previously attached object.
+    * @param object_name string that identifies object in gazebo (returned after creation or spawnning)
+    * @param object_link_name name of the link from which to detach the joint created using attachUnscoped
+    * @return true if success, false otherwise
+    *   detachUnscoped OBJECT_NAME object_end_link
+    */
+    virtual bool detachUnscoped(const std::string& object_name, const std::string& object_link_name);
   
    /**
    * Change the names of an object.

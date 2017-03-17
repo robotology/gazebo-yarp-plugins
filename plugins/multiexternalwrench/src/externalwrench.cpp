@@ -4,6 +4,7 @@
 bool ExternalWrench::threadInit()
 {
     yInfo() << "Thread initialization";
+    tick = yarp::os::Time::now();
     wrench = new wrenchCommand();
     return true;
 }
@@ -54,7 +55,8 @@ void ExternalWrench::run()
 }
 void ExternalWrench::applyWrench()
 {
-    tick = yarp::os::Time::now();
+    yInfo() << "Applying external wrench";
+    
     tock = yarp::os::Time::now();
     if((tock-tick) < wrench->duration)
     {
@@ -74,6 +76,7 @@ void ExternalWrench::applyWrench()
 
 void ExternalWrench::threadRelease()
 {
+    yInfo() << "Releasing thread";
     delete wrench;
     yarp::os::Thread::threadRelease();
 }

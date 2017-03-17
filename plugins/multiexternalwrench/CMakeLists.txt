@@ -4,8 +4,8 @@ PROJECT(Plugin_MultiExternalWrench)
 
 include(AddGazeboYarpPluginTarget)
 
-set(multiexternalwrench_headers include/externalwrench.h include/externalwrenchserver.h include/multiexternalwrenchinterface.h)
-set(multiexternalwrench_sources src/externalwrench.cpp src/externalwrenchserver.cpp src/multiexternalwrenchinterface.cpp)
+set(multiexternalwrench_headers include/externalwrench.h include/applymultiexternalwrench.h)
+set(multiexternalwrench_sources src/externalwrench.cpp src/applymultiexternalwrench.cpp)
 
 set(LIB_COMMON_NAME gazebo_yarp_lib_common)
 if(CMAKE_VERSION VERSION_LESS 3.0.0)

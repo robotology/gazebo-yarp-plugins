@@ -3,33 +3,43 @@
 //Initializing wrench command
 bool ExternalWrench::threadInit()
 {
+    yInfo() << "Thread initialization";
     wrench = new wrenchCommand();
-
+    return true;
 }
 
-bool ExternalWrench::setWrench(std::string& modelName,yarp::os::Bottle& cmd)
+bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 {
+    model = _model;
     wrench->link_name = cmd.get(0).asString();
+    yInfo() << "Link name : " << wrench->link_name;
     getLink();
     
     wrench->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
+    std::cout << "Force values : " << wrench->force << std::endl;
     wrench->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
+    std::cout << "Torque values : " << wrench->torque << std::endl;
     wrench->duration = cmd.get(7).asDouble();
+    yInfo() << "Wrench duration : " << wrench->duration;
+    yInfo() << "Set new wrench values done";
 }
 
 bool ExternalWrench::getLink()
 {
+    yInfo() << "Getting the link in the model";
     //Getting the link from link linkName
     model_links = model->GetLinks();
     for(int i = 0; i < model_links.size(); i++)
     {
         std::string candidate_link_name = model_links[i]->GetScopedName();
-        
+        yInfo() << "Candidate link name : " << candidate_link_name;
         std::size_t lastcolon = candidate_link_name.rfind(":");
         std::string unscoped_link_name =  candidate_link_name.substr(lastcolon+1,std::string::npos);
         if(unscoped_link_name == wrench->link_name)
         {
             link = model_links[i];
+            yInfo() << "Found the link : " << link->GetName();
+            break;
         }
         else{
             yError() << "MultiExternalWrenchInterface error: could not find the link!";

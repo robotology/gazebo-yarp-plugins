@@ -58,18 +58,10 @@ public:
     virtual void run();
     virtual void threadRelease(); 
     
-    void setModel(physics::ModelPtr& _model)
-    {
-        model = _model;
-    }
-    bool setWrench(std::string&, yarp::os::Bottle&);
+    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
     bool getLink();
     void applyWrench();
-    
-    ExternalWrench();
-virtual ~ExternalWrench();
-
-    
+    void setModel();
 };
 
 

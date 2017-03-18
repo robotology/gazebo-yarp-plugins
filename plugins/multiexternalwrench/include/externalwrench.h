@@ -53,10 +53,12 @@ private:
     
 public:
     
+    bool duration_done;
     
     virtual bool threadInit();
     virtual void run();
-    virtual void threadRelease(); 
+    virtual void threadRelease();
+    virtual bool stop();
     
     bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
     bool getLink();

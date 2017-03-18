@@ -126,6 +126,19 @@ void RPCServerThread::run()
         }
         m_reply.clear();
         command.clear();
+        
+        //Now check for duration done flag from all the wrench threads and removes the ones that are done
+        yInfo() << "Number of external wrench threads : " << wrenchThreads.size();
+        /*for(int i = 0; i < wrenchThreads.size() ; i++)
+        {
+            bool duration_check = wrenchThreads.at(i)->duration_done;
+            if(duration_check==true)
+            {
+                yInfo() << "Deleting an external wrench thread";
+                delete wrenchThreads.at(i);
+            }
+            
+        }*/
     }
 }
 

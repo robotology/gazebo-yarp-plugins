@@ -3,8 +3,9 @@
 //Initializing wrench command
 bool ExternalWrench::threadInit()
 {
-    yInfo() << "Thread initialization";
+    yInfo() << "New external wrench thread initialization";
     tick = yarp::os::Time::now();
+    duration_done = false;
     wrench = new wrenchCommand();
     return true;
 }
@@ -22,7 +23,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
     std::cout << "Torque values : " << wrench->torque << std::endl;
     wrench->duration = cmd.get(7).asDouble();
     yInfo() << "Wrench duration : " << wrench->duration;
-    yInfo() << "Set new wrench values done";
+    yInfo() << "Set new wrench values";
 }
 
 bool ExternalWrench::getLink()
@@ -32,21 +33,25 @@ bool ExternalWrench::getLink()
     model_links = model->GetLinks();
     for(int i = 0; i < model_links.size(); i++)
     {
+        yInfo() << "Number of link in the model : " << model_links.size();
         std::string candidate_link_name = model_links[i]->GetScopedName();
-        yInfo() << "Candidate link name : " << candidate_link_name;
+        yInfo() << "Candidate link full scoped name : " << candidate_link_name;
         std::size_t lastcolon = candidate_link_name.rfind(":");
         std::string unscoped_link_name =  candidate_link_name.substr(lastcolon+1,std::string::npos);
+        yInfo() << "Candidate link unscoped name : " << unscoped_link_name;
         if(unscoped_link_name == wrench->link_name)
         {
             link = model_links[i];
             yInfo() << "Found the link : " << link->GetName();
             break;
         }
-        else{
-            yError() << "MultiExternalWrenchInterface error: could not find the link!";
-            return false;
-        }
     }
+    if(link->GetName() != wrench->link_name)
+    {
+        yError() << "MultiExternalWrenchPluging::External Wrench thread  error: could not find the link!";
+        return false;
+    }
+    return true;
 }
  
 void ExternalWrench::run()
@@ -55,11 +60,12 @@ void ExternalWrench::run()
 }
 void ExternalWrench::applyWrench()
 {
-    yInfo() << "Applying external wrench";
     
     tock = yarp::os::Time::now();
+    yInfo() << "Tock-Tick : " << (tock - tick) << " , Duration : " << wrench->duration; 
     if((tock-tick) < wrench->duration)
     {
+        yInfo() << "Applying external wrench";
         link->AddForce(wrench->force);
         link->AddTorque(wrench->torque);
         math::Vector3 linkCoGPos = link->GetWorldCoGPose().pos;
@@ -71,13 +77,23 @@ void ExternalWrench::applyWrench()
         math::Pose linkCoGPose (linkCoGPos - rotation*math::Vector3(0,0,.15),forceOrientation);
         tock = yarp::os::Time::now();
     }
-    else this->threadRelease();
+    else this->stop();
 }
 
 void ExternalWrench::threadRelease()
 {
     yInfo() << "Releasing thread";
-    delete wrench;
+    //delete wrench;
+    duration_done = true;
     yarp::os::Thread::threadRelease();
 }
+
+bool ExternalWrench::stop()
+{
+    yInfo() << "Stopping thread";
+    yarp::os::Thread::stop();
+    return true;
+
+}
+
 

@@ -111,7 +111,7 @@ void RPCServerThread::run()
                 m_cmd = command;
                 m_lock.unlock();
                
-                yInfo() << "Creating new instances of external wrench";
+                yInfo() << "Creating new instance of external wrench";
                //Creating new instances of external wrenches
                newWrench = new ExternalWrench();
                newWrench->start();

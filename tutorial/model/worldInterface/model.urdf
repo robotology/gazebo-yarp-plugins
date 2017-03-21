@@ -10,8 +10,14 @@
   </joint>
   
   <link name="base">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.40"/>
+      <geometry>
+        <box size="0.20 0.20 0.20"/>
+      </geometry>
+    </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0.40"/>
       <geometry>
         <box size="0.20 0.20 0.20"/>
       </geometry>
@@ -27,7 +33,7 @@
   <!-- Use the following lines in your model -->  
   <gazebo>
     <plugin name="world_interface" filename="libgazebo_yarp_worldinterface.so">
-    <yarpConfigurationFile>package://worldInterface/conf/worldInterface.ini</yarpConfigurationFile>
+    <yarpConfigurationFile>model://worldInterface/conf/worldInterface.ini</yarpConfigurationFile>
     </plugin>
   </gazebo>
   <!-- -->

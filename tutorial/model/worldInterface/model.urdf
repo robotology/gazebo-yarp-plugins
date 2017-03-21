@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<!-- <?xml version="1.0" ?> -->
+<robot name="simple_world_interface">
+
+  <link name="base_link"/>
+
+  <joint name="fake_base_fixed_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base"/>
+  </joint>
+  
+  <link name="base">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.40"/>
+      <geometry>
+        <box size="0.20 0.20 0.20"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.40"/>
+      <geometry>
+        <box size="0.20 0.20 0.20"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <mass value="100"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <!-- Use the following lines in your model -->  
+  <gazebo>
+    <plugin name="world_interface" filename="libgazebo_yarp_worldinterface.so">
+    <yarpConfigurationFile>model://worldInterface/conf/worldInterface.ini</yarpConfigurationFile>
+    </plugin>
+  </gazebo>
+  <!-- -->
+  
+</robot>

@@ -28,7 +28,7 @@
 
 using namespace gazebo; 
 
-class ExternalWrench: public yarp::os::Thread
+class ExternalWrench
 {
 private:
 
@@ -55,10 +55,8 @@ public:
     
     bool duration_done;
     
-    virtual bool threadInit();
-    virtual void run();
-    virtual void threadRelease();
-    virtual bool stop();
+    ExternalWrench();
+    ~ExternalWrench();
     
     bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
     bool getLink();

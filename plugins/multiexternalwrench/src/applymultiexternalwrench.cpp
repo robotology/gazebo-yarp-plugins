@@ -6,12 +6,12 @@ namespace gazebo
     
 ApplyMultiExternalWrench::ApplyMultiExternalWrench()
 {
-
 }
 
 ApplyMultiExternalWrench::~ApplyMultiExternalWrench()
 {
     m_rpcThread.stop();
+    this->m_updateConnection.reset();
 }
 
 void ApplyMultiExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
@@ -57,9 +57,32 @@ void ApplyMultiExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr 
     if ( !m_rpcThread.start() ) {
         yError ( "ERROR: rpcThread did not start correctly" );
     }
+    
+    this->m_updateConnection = event::Events::ConnectWorldUpdateBegin(boost::bind(&ApplyMultiExternalWrench::applyWrenchs,this));
+}
 
 }
 
+void ApplyMultiExternalWrench::applyWrenchs()
+{
+    //Now check for duration done flag from all the wrench threads and removes the ones that are done
+    //yInfo() << "Applying external wrenches";
+    //yInfo() << "Number of external wrenches : " << m_rpcThread.wrenchThreads.size();
+    m_rpcThread.m_lock.lock();
+    for(int i = 0; i < m_rpcThread.wrenchThreads.size() ; i++)
+    {
+        bool duration_check = m_rpcThread.wrenchThreads.at(i)->duration_done;
+        if(duration_check==false)
+        {
+            m_rpcThread.wrenchThreads.at(i)->applyWrench();
+        }
+        else
+        {
+            //yInfo() << "External wrench duration done";
+            //delete m_rpcThread.wrenchThreads.at(i);
+        }
+    }
+    m_rpcThread.m_lock.unlock();
 }
 
 void RPCServerThread::setRobotModel(physics::ModelPtr robotModel)
@@ -114,9 +137,9 @@ void RPCServerThread::run()
                 yInfo() << "Creating new instance of external wrench";
                //Creating new instances of external wrenches
                newWrench = new ExternalWrench();
-               newWrench->start();
                newWrench->setWrench(m_robotModel,m_cmd);
                wrenchThreads.push_back(newWrench);
+               
             
             } else {
                 this->m_reply.clear();
@@ -125,20 +148,7 @@ void RPCServerThread::run()
             }
         }
         m_reply.clear();
-        command.clear();
-        
-        //Now check for duration done flag from all the wrench threads and removes the ones that are done
-        yInfo() << "Number of external wrench threads : " << wrenchThreads.size();
-        /*for(int i = 0; i < wrenchThreads.size() ; i++)
-        {
-            bool duration_check = wrenchThreads.at(i)->duration_done;
-            if(duration_check==true)
-            {
-                yInfo() << "Deleting an external wrench thread";
-                delete wrenchThreads.at(i);
-            }
-            
-        }*/
+        command.clear();   
     }
 }
 

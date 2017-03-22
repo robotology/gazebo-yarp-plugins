@@ -8,17 +8,20 @@ class RPCServerThread: public yarp::os::Thread
 private:
     
     ExternalWrench *newWrench;
-    std::vector<ExternalWrench*> wrenchThreads;
+    
     
     yarp::os::RpcServer m_rpcPort;
     yarp::os::Bottle m_cmd;
     yarp::os::Bottle m_reply;
-    boost::mutex m_lock;
     
     std::string m_robotName;
     physics::ModelPtr m_robotModel;
     
 public:
+    boost::mutex m_lock;
+    
+    std::vector<ExternalWrench*> wrenchThreads;
+    
     virtual bool        threadInit();
     virtual void        run();
     virtual void        threadRelease();
@@ -35,8 +38,9 @@ namespace gazebo
     public:
         ApplyMultiExternalWrench();
         ~ApplyMultiExternalWrench();
-        
-         void Load (physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        void applyWrenchs();
+        void Load (physics::ModelPtr _model, sdf::ElementPtr _sdf);
+   
     private:
         yarp::os::Network m_yarpNet;
         RPCServerThread m_rpcThread;

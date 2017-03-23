@@ -50,7 +50,7 @@ bool ExternalWrench::getLink()
             this->m_node = transport::NodePtr(new gazebo::transport::Node());
             this->m_node->Init(model->GetWorld()->GetName());
             std::string visual_topic_name = "~/" + wrench->link_name + "_wrench_visual_" + boost::lexical_cast<std::string>(count);
-            m_visPub = this->m_node->Advertise<msgs::Visual> (visual_topic_name,10);
+            m_visPub = this->m_node->Advertise<msgs::Visual> ("~/visual",10);
             
             // Set the visual's name. This should be unique.
             m_visualMsg.set_name ("__CYLINDER_VISUAL__");

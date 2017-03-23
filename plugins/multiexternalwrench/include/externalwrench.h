@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <ctime>
 #include <stdio.h>
 #include <string>
 
@@ -37,6 +38,7 @@ class ExternalWrench
 private:
    
    static int count;
+   float color[4];
    struct wrenchCommand
    {
         std::string link_name;

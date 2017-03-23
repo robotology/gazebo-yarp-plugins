@@ -6,6 +6,14 @@ int ExternalWrench::count = 0;
 ExternalWrench::ExternalWrench()
 {
     yInfo() << "New external wrench initialization";
+    
+    //srand(boost::lexical_cast<float>(std::time(NULL)));
+    srand(rand()%100);
+    color[0] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    color[1] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    color[2] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    color[3] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    
     count++;
     tick = yarp::os::Time::now();
     duration_done = false;
@@ -49,11 +57,11 @@ bool ExternalWrench::getLink()
             //Wrench Visual
             this->m_node = transport::NodePtr(new gazebo::transport::Node());
             this->m_node->Init(model->GetWorld()->GetName());
-            std::string visual_topic_name = "~/" + wrench->link_name + "_wrench_visual_" + boost::lexical_cast<std::string>(count);
-            m_visPub = this->m_node->Advertise<msgs::Visual> ("~/visual",10);
+            m_visPub = this->m_node->Advertise<msgs::Visual> ("~/visual",100);
             
             // Set the visual's name. This should be unique.
-            m_visualMsg.set_name ("__CYLINDER_VISUAL__");
+            std::string visual_name = "__" + wrench->link_name + "__CYLINDER_VISUAL__" + boost::lexical_cast<std::string>(count);
+            m_visualMsg.set_name (visual_name);
 
             // Set the visual's parent. This visual will be attached to the parent
             m_visualMsg.set_parent_name(model->GetScopedName());
@@ -103,8 +111,8 @@ void ExternalWrench::applyWrench()
         #else
           msgs::Set(m_visualMsg.mutable_pose(), linkCoGPose);
         #endif
-        
-        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(),common::Color(1,0,0,0.3));
+          
+        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(),common::Color(color[0],color[1],color[2],color[3]));
         m_visualMsg.set_visible(1);
         m_visPub->Publish(m_visualMsg);
     }

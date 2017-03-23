@@ -57,7 +57,7 @@ bool ExternalWrench::getLink()
             //Wrench Visual
             this->m_node = transport::NodePtr(new gazebo::transport::Node());
             this->m_node->Init(model->GetWorld()->GetName());
-            m_visPub = this->m_node->Advertise<msgs::Visual> ("~/visual",100);
+            m_visPub = this->m_node->Advertise<msgs::Visual>("~/visual",100);
             
             // Set the visual's name. This should be unique.
             std::string visual_name = "__" + wrench->link_name + "__CYLINDER_VISUAL__" + boost::lexical_cast<std::string>(count);
@@ -73,7 +73,7 @@ bool ExternalWrench::getLink()
             geomMsg->mutable_cylinder()->set_length(.15);
 
             // Don't cast shadows
-            m_visualMsg.set_cast_shadows ( false );
+            m_visualMsg.set_cast_shadows(false);
             break;
         }
     }
@@ -87,9 +87,6 @@ bool ExternalWrench::getLink()
  
 void ExternalWrench::applyWrench()
 {
-    
-    
-    
     tock = yarp::os::Time::now();
     //yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrench->duration; 
     if((tock-tick) < wrench->duration)

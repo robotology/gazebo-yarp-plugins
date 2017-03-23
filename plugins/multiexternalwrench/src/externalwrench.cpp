@@ -122,6 +122,7 @@ void ExternalWrench::applyWrench()
 
 ExternalWrench::~ExternalWrench()
 {
+    yInfo() << "ExternalWrench Destructor";
     count--;
 }
 

@@ -10,6 +10,17 @@ ApplyMultiExternalWrench::ApplyMultiExternalWrench()
 
 ApplyMultiExternalWrench::~ApplyMultiExternalWrench()
 {
+    m_rpcThread.m_lock.lock();
+    for(int i = 0; i < m_rpcThread.wrenchesVectorPtr->size() ; i++)
+    {
+        if(m_rpcThread.wrenchesVectorPtr->at(i)->duration_done)
+        {
+            //TODO Delete the external wrench pointers
+             delete m_rpcThread.wrenchesVectorPtr->at(i);
+        }
+           
+    }
+    m_rpcThread.m_lock.unlock();
     m_rpcThread.stop();
     this->m_updateConnection.reset();
 }
@@ -137,9 +148,7 @@ void RPCServerThread::run()
                //Creating new instances of external wrenches
                newWrench = new ExternalWrench();
                newWrench->setWrench(m_robotModel,m_cmd);
-               wrenchesVectorPtr->push_back(newWrench);
-               
-            
+               wrenchesVectorPtr->push_back(newWrench);            
             } else {
                 this->m_reply.clear();
                 this->m_reply.addString ( "ERROR: Incorrect command format" );

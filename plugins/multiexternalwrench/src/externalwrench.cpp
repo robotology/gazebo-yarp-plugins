@@ -1,9 +1,12 @@
 #include <externalwrench.h>
 
+int ExternalWrench::count = 0;
+
 //Initializing wrench command
 ExternalWrench::ExternalWrench()
 {
     yInfo() << "New external wrench initialization";
+    count++;
     tick = yarp::os::Time::now();
     duration_done = false;
     wrench = new wrenchCommand();
@@ -42,6 +45,27 @@ bool ExternalWrench::getLink()
         {
             link = model_links[i];
             //yInfo() << "Found the link : " << link->GetName();
+            
+            //Wrench Visual
+            this->m_node = transport::NodePtr(new gazebo::transport::Node());
+            this->m_node->Init(model->GetWorld()->GetName());
+            std::string visual_topic_name = "~/" + wrench->link_name + "_wrench_visual_" + boost::lexical_cast<std::string>(count);
+            m_visPub = this->m_node->Advertise<msgs::Visual> (visual_topic_name,10);
+            
+            // Set the visual's name. This should be unique.
+            m_visualMsg.set_name ("__CYLINDER_VISUAL__");
+
+            // Set the visual's parent. This visual will be attached to the parent
+            m_visualMsg.set_parent_name(model->GetScopedName());
+
+            // Create a cylinder
+            msgs::Geometry *geomMsg = m_visualMsg.mutable_geometry();
+            geomMsg->set_type(msgs::Geometry::CYLINDER);
+            geomMsg->mutable_cylinder()->set_radius(0.01);
+            geomMsg->mutable_cylinder()->set_length(.30);
+
+            // Don't cast shadows
+            m_visualMsg.set_cast_shadows ( false );
             break;
         }
     }
@@ -56,8 +80,10 @@ bool ExternalWrench::getLink()
 void ExternalWrench::applyWrench()
 {
     
+    
+    
     tock = yarp::os::Time::now();
-    yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrench->duration; 
+    //yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrench->duration; 
     if((tock-tick) < wrench->duration)
     {
         //yInfo() << "Applying external wrench";
@@ -71,13 +97,29 @@ void ExternalWrench::applyWrench()
         math::Quaternion forceOrientation = rotation.GetRotation();
         math::Pose linkCoGPose (linkCoGPos - rotation*math::Vector3(0,0,.15),forceOrientation);
         tock = yarp::os::Time::now();
+        
+        #if GAZEBO_MAJOR_VERSION >= 7
+          msgs::Set(m_visualMsg.mutable_pose(), linkCoGPose.Ign());
+        #else
+          msgs::Set(m_visualMsg.mutable_pose(), linkCoGPose);
+        #endif
+        
+        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(),common::Color(1,0,0,0.3));
+        m_visualMsg.set_visible(1);
+        m_visPub->Publish(m_visualMsg);
     }
-    else duration_done = true;
+    else
+    {
+        m_visualMsg.set_visible(0);
+        m_visPub->Publish(m_visualMsg);
+        duration_done = true;
+    }
 }
 
 ExternalWrench::~ExternalWrench()
 {
     //delete wrench;
+    count--;
 }
 
 

@@ -3,6 +3,8 @@
 
 
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
 #include <string>
 
 #include "gazebo/gazebo.hh"
@@ -26,12 +28,15 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
 
+#include <boost/lexical_cast.hpp>
+
 using namespace gazebo; 
 
 class ExternalWrench
 {
 private:
-
+   
+   static int count;
    struct wrenchCommand
    {
         std::string link_name;
@@ -47,6 +52,10 @@ private:
    physics::ModelPtr model;
    physics::LinkPtr link;
    physics::Link_V model_links;
+   
+   transport::NodePtr m_node;
+   transport::PublisherPtr m_visPub;
+   msgs::Visual            m_visualMsg;
    
    event::ConnectionPtr updateConnection;
     

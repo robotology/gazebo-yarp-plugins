@@ -69,17 +69,16 @@ void ApplyMultiExternalWrench::applyWrenchs()
     //yInfo() << "Applying external wrenches";
     //yInfo() << "Number of external wrenches : " << m_rpcThread.wrenchThreads.size();
     m_rpcThread.m_lock.lock();
-    for(int i = 0; i < m_rpcThread.wrenchThreads.size() ; i++)
+    for(int i = 0; i < m_rpcThread.wrenchesVectorPtr->size() ; i++)
     {
-        bool duration_check = m_rpcThread.wrenchThreads.at(i)->duration_done;
+        bool duration_check = m_rpcThread.wrenchesVectorPtr->at(i)->duration_done;
         if(duration_check==false)
         {
-            m_rpcThread.wrenchThreads.at(i)->applyWrench();
+            m_rpcThread.wrenchesVectorPtr->at(i)->applyWrench();
         }
         else
         {
             //yInfo() << "External wrench duration done";
-            //delete m_rpcThread.wrenchThreads.at(i);
         }
     }
     m_rpcThread.m_lock.unlock();
@@ -138,7 +137,7 @@ void RPCServerThread::run()
                //Creating new instances of external wrenches
                newWrench = new ExternalWrench();
                newWrench->setWrench(m_robotModel,m_cmd);
-               wrenchThreads.push_back(newWrench);
+               wrenchesVectorPtr->push_back(newWrench);
                
             
             } else {

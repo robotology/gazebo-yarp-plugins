@@ -9,7 +9,6 @@ private:
     
     ExternalWrench *newWrench;
     
-    
     yarp::os::RpcServer m_rpcPort;
     yarp::os::Bottle m_cmd;
     yarp::os::Bottle m_reply;
@@ -20,7 +19,7 @@ private:
 public:
     boost::mutex m_lock;
     
-    std::vector<ExternalWrench*> wrenchThreads;
+    std::unique_ptr<std::vector<ExternalWrench*>> wrenchesVectorPtr{new std::vector<ExternalWrench*>};
     
     virtual bool        threadInit();
     virtual void        run();

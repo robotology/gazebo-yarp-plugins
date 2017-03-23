@@ -17,22 +17,21 @@ ExternalWrench::ExternalWrench()
     count++;
     tick = yarp::os::Time::now();
     duration_done = false;
-    wrench = new wrenchCommand();
 }
 
 bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 {
     model = _model;
-    wrench->link_name = cmd.get(0).asString();
-    yInfo() << "Link name : " << wrench->link_name;
+    wrenchPtr->link_name = cmd.get(0).asString();
+    yInfo() << "Link name : " << wrenchPtr->link_name;
     getLink();
     
-    wrench->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
-    std::cout << "Force values : " << wrench->force << std::endl;
-    wrench->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
-    std::cout << "Torque values : " << wrench->torque << std::endl;
-    wrench->duration = cmd.get(7).asDouble();
-    yInfo() << "Wrench duration : " << wrench->duration;
+    wrenchPtr->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
+    std::cout << "Force values : " << wrenchPtr->force << std::endl;
+    wrenchPtr->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
+    std::cout << "Torque values : " << wrenchPtr->torque << std::endl;
+    wrenchPtr->duration = cmd.get(7).asDouble();
+    yInfo() << "Wrench duration : " << wrenchPtr->duration;
     yInfo() << "Set new wrench values";
 }
 
@@ -49,7 +48,7 @@ bool ExternalWrench::getLink()
         std::size_t lastcolon = candidate_link_name.rfind(":");
         std::string unscoped_link_name =  candidate_link_name.substr(lastcolon+1,std::string::npos);
         //yInfo() << "Candidate link unscoped name : " << unscoped_link_name;
-        if(unscoped_link_name == wrench->link_name)
+        if(unscoped_link_name == wrenchPtr->link_name)
         {
             link = model_links[i];
             //yInfo() << "Found the link : " << link->GetName();
@@ -60,7 +59,7 @@ bool ExternalWrench::getLink()
             m_visPub = this->m_node->Advertise<msgs::Visual>("~/visual",100);
             
             // Set the visual's name. This should be unique.
-            std::string visual_name = "__" + wrench->link_name + "__CYLINDER_VISUAL__" + boost::lexical_cast<std::string>(count);
+            std::string visual_name = "__" + wrenchPtr->link_name + "__CYLINDER_VISUAL__" + boost::lexical_cast<std::string>(count);
             m_visualMsg.set_name (visual_name);
 
             // Set the visual's parent. This visual will be attached to the parent
@@ -77,7 +76,7 @@ bool ExternalWrench::getLink()
             break;
         }
     }
-    if(link->GetName() != wrench->link_name)
+    if(link->GetName() != wrenchPtr->link_name)
     {
         yError() << "MultiExternalWrenchPluging::External Wrench error: could not find the link!";
         return false;
@@ -89,13 +88,13 @@ void ExternalWrench::applyWrench()
 {
     tock = yarp::os::Time::now();
     //yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrench->duration; 
-    if((tock-tick) < wrench->duration)
+    if((tock-tick) < wrenchPtr->duration)
     {
         //yInfo() << "Applying external wrench";
-        link->AddForce(wrench->force);
-        link->AddTorque(wrench->torque);
+        link->AddForce(wrenchPtr->force);
+        link->AddTorque(wrenchPtr->torque);
         math::Vector3 linkCoGPos = link->GetWorldCoGPose().pos;
-        math::Vector3 newZ = wrench->force.Normalize();
+        math::Vector3 newZ = wrenchPtr->force.Normalize();
         math::Vector3 newX = newZ.Cross(math::Vector3::UnitZ);
         math::Vector3 newY = newZ.Cross(newX);
         math::Matrix4 rotation = math::Matrix4 (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
@@ -123,7 +122,6 @@ void ExternalWrench::applyWrench()
 
 ExternalWrench::~ExternalWrench()
 {
-    //delete wrench;
     count--;
 }
 

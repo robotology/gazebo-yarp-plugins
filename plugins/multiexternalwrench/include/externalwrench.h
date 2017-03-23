@@ -7,6 +7,7 @@
 #include <ctime>
 #include <stdio.h>
 #include <string>
+#include <memory>
 
 #include "gazebo/gazebo.hh"
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -47,7 +48,8 @@ private:
         double duration;
    };
    
-   wrenchCommand *wrench;
+   std::unique_ptr<wrenchCommand> wrenchPtr{new wrenchCommand()};
+   
    double tick;
    double tock;
    

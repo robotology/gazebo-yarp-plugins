@@ -5,7 +5,7 @@ int ExternalWrench::count = 0;
 //Initializing wrench command
 ExternalWrench::ExternalWrench()
 {
-    yInfo() << "New external wrench initialization";
+    //yInfo() << "New external wrench initialization";
     
     //srand(boost::lexical_cast<float>(std::time(NULL)));
     srand(rand()%100);
@@ -23,16 +23,16 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 {
     model = _model;
     wrenchPtr->link_name = cmd.get(0).asString();
-    yInfo() << "Link name : " << wrenchPtr->link_name;
+    //yInfo() << "Link name : " << wrenchPtr->link_name;
     getLink();
     
     wrenchPtr->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
-    std::cout << "Force values : " << wrenchPtr->force << std::endl;
+    //std::cout << "Force values : " << wrenchPtr->force << std::endl;
     wrenchPtr->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
-    std::cout << "Torque values : " << wrenchPtr->torque << std::endl;
+    //std::cout << "Torque values : " << wrenchPtr->torque << std::endl;
     wrenchPtr->duration = cmd.get(7).asDouble();
-    yInfo() << "Wrench duration : " << wrenchPtr->duration;
-    yInfo() << "Set new wrench values";
+    //yInfo() << "Wrench duration : " << wrenchPtr->duration;
+    //yInfo() << "Set new wrench values";
 }
 
 bool ExternalWrench::getLink()
@@ -122,7 +122,7 @@ void ExternalWrench::applyWrench()
 
 ExternalWrench::~ExternalWrench()
 {
-    yInfo() << "ExternalWrench Destructor";
+    //yInfo() << "ExternalWrench Destructor";
     count--;
 }
 

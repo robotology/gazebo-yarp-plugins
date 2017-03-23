@@ -15,7 +15,6 @@ ApplyMultiExternalWrench::~ApplyMultiExternalWrench()
     {
         if(m_rpcThread.wrenchesVectorPtr->at(i)->duration_done)
         {
-            //TODO Delete the external wrench pointers
              delete m_rpcThread.wrenchesVectorPtr->at(i);
         }
            
@@ -144,7 +143,7 @@ void RPCServerThread::run()
                 m_cmd = command;
                 m_lock.unlock();
                
-                yInfo() << "Creating new instance of external wrench";
+               //yInfo() << "Creating new instance of external wrench";
                //Creating new instances of external wrenches
                newWrench = new ExternalWrench();
                newWrench->setWrench(m_robotModel,m_cmd);

@@ -99,7 +99,7 @@ public:
     bool getZero(const int n_joint, const int* joints,  double* refs);
     bool getTrue(int j, bool* flag);
     bool getTrue(bool* flags);
-
+    bool getTrueIfArgumentIsZero(const int n_joint);
 
     /**
      * Yarp interfaces start here

@@ -60,6 +60,11 @@ bool GazeboYarpFakeControlBoardDriver::getTrue(bool * flags)
     return true;
 }
 
+bool GazeboYarpFakeControlBoardDriver::getTrueIfArgumentIsZero(const int n_joints)
+{
+    return (n_joints == 0);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // IPositionControl
 ////////////////////////////////////////////////////////////////////////////// 
@@ -80,6 +85,18 @@ bool GazeboYarpFakeControlBoardDriver::getTargetPositions(const int n_joint, con
 bool GazeboYarpFakeControlBoardDriver::getRefSpeed(int j, double *ref) {return getZero(j,ref);}
 bool GazeboYarpFakeControlBoardDriver::getRefSpeeds(double *spds) {return getZero(spds);}
 
+// Setter methods with three arguments are critical : 
+// if they are called with a list of zero joints,
+// they should return true, otherwise false 
+bool GazeboYarpFakeControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::relativeMove(const int n_joint, const int *joints, const double *deltas) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flags) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::setRefSpeeds(const int n_joint, const int *joints, const double *spds) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::setRefAccelerations(const int n_joint, const int *joints, const double *accs) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::getRefSpeeds(const int n_joint, const int *joints, double *spds) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::getRefAccelerations(const int n_joint, const int *joints, double *accs) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::stop(const int n_joint, const int *joints) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs) {return getTrueIfArgumentIsZero(n_joint);}
 
 // Method that always return false
 bool GazeboYarpFakeControlBoardDriver::setRefSpeed(int j, double sp) {return false;}
@@ -95,17 +112,8 @@ bool GazeboYarpFakeControlBoardDriver::setRefAcceleration(int j, double acc) {re
 bool GazeboYarpFakeControlBoardDriver::setRefAccelerations(const double *accs) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefAcceleration(int j, double *acc) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefAccelerations(double *accs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::relativeMove(const int n_joint, const int *joints, const double *deltas) {return false;}
-bool GazeboYarpFakeControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flags) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setRefSpeeds(const int n_joint, const int *joints, const double *spds) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setRefAccelerations(const int n_joint, const int *joints, const double *accs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getRefSpeeds(const int n_joint, const int *joints, double *spds) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getRefAccelerations(const int n_joint, const int *joints, double *accs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::stop(const int n_joint, const int *joints) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setPositionDirectMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::setPosition(int j, double ref) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setPositions(const double *refs) {return false;}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -119,10 +127,11 @@ bool GazeboYarpFakeControlBoardDriver::getRefVelocities(const int n_joint, const
     return getZero(n_joint,joints,vels);
 }
 
+bool GazeboYarpFakeControlBoardDriver::velocityMove(const int n_joint, const int *joints, const double *spds) {return getTrueIfArgumentIsZero(n_joint);}
+
 bool GazeboYarpFakeControlBoardDriver::setVelocityMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::velocityMove(int j, double sp) {return false;}
 bool GazeboYarpFakeControlBoardDriver::velocityMove(const double *sp) {return false;}
-bool GazeboYarpFakeControlBoardDriver::velocityMove(const int n_joint, const int *joints, const double *spds) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setVelPid(int j, const yarp::dev::Pid &pid) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setVelPids(const yarp::dev::Pid *pids) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getVelPid(int j, yarp::dev::Pid *pid) {return false;}

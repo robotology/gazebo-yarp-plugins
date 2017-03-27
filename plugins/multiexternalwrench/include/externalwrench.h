@@ -53,6 +53,7 @@ private:
    double tick;
    double tock;
    
+   bool model_has_link;
    physics::ModelPtr model;
    physics::LinkPtr link;
    physics::Link_V model_links;

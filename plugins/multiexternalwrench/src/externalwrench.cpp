@@ -6,6 +6,7 @@ int ExternalWrench::count = 0;
 ExternalWrench::ExternalWrench()
 {
     //yInfo() << "New external wrench initialization";
+    model_has_link = false;
     
     //srand(boost::lexical_cast<float>(std::time(NULL)));
     srand(rand()%100);
@@ -24,14 +25,17 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
     model = _model;
     wrenchPtr->link_name = cmd.get(0).asString();
     //yInfo() << "Link name : " << wrenchPtr->link_name;
-    getLink();
-    
-    wrenchPtr->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
-    //std::cout << "Force values : " << wrenchPtr->force << std::endl;
-    wrenchPtr->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
-    //std::cout << "Torque values : " << wrenchPtr->torque << std::endl;
-    wrenchPtr->duration = cmd.get(7).asDouble();
-    //yInfo() << "Wrench duration : " << wrenchPtr->duration;
+    if(getLink())
+    {
+        wrenchPtr->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
+        //std::cout << "Force values : " << wrenchPtr->force << std::endl;
+        wrenchPtr->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
+        //std::cout << "Torque values : " << wrenchPtr->torque << std::endl;
+        wrenchPtr->duration = cmd.get(7).asDouble();
+        //yInfo() << "Wrench duration : " << wrenchPtr->duration;
+        return true;
+    }
+    else return false;
     //yInfo() << "Set new wrench values";
 }
 
@@ -40,9 +44,10 @@ bool ExternalWrench::getLink()
     //yInfo() << "Getting the link in the model";
     //Getting the link from link linkName
     model_links = model->GetLinks();
+    //yInfo() << "Number of links in the model : " << model_links.size();
     for(int i = 0; i < model_links.size(); i++)
     {
-        //yInfo() << "Number of link in the model : " << model_links.size();
+        
         std::string candidate_link_name = model_links[i]->GetScopedName();
         //yInfo() << "Candidate link full scoped name : " << candidate_link_name;
         std::size_t lastcolon = candidate_link_name.rfind(":");
@@ -73,12 +78,13 @@ bool ExternalWrench::getLink()
 
             // Don't cast shadows
             m_visualMsg.set_cast_shadows(false);
+            model_has_link = true;
             break;
         }
     }
-    if(link->GetName() != wrenchPtr->link_name)
+    if(!model_has_link)
     {
-        yError() << "MultiExternalWrenchPluging::External Wrench error: could not find the link!";
+        yError() << "MultiExternalWrenchPluging::External Wrench error: could not find the link in the model!";
         return false;
     }
     return true;
@@ -87,7 +93,7 @@ bool ExternalWrench::getLink()
 void ExternalWrench::applyWrench()
 {
     tock = yarp::os::Time::now();
-    //yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrench->duration; 
+    yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrenchPtr->duration; 
     if((tock-tick) < wrenchPtr->duration)
     {
         //yInfo() << "Applying external wrench";

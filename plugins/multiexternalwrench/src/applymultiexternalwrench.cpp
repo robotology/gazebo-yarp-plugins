@@ -31,8 +31,6 @@ void ApplyMultiExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr 
         return;
     }
 
-    this->m_modelScope = _model->GetScopedName();
-
     // Copy the pointer to the model to access later from UpdateChild
     this->m_myModel = _model;
 
@@ -49,8 +47,6 @@ void ApplyMultiExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr 
             
             m_rpcThread.setRobotName  ( robotName );
             m_rpcThread.setRobotModel(_model);
-            gazebo::physics::Link_V links = _model->GetLinks();
-            std::string defaultLink = links[0]->GetName();
             configuration_loaded = true;
         } else {
             yError ( "ERROR trying to get robot configuration file" );
@@ -59,7 +55,6 @@ void ApplyMultiExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr 
     } else {
             this->robotName = _model->GetName();
             m_rpcThread.setRobotName ( robotName );
-            gazebo::physics::Link_V links = _model->GetLinks();
             configuration_loaded = true;
     }
 
@@ -146,8 +141,11 @@ void RPCServerThread::run()
                //yInfo() << "Creating new instance of external wrench";
                //Creating new instances of external wrenches
                newWrench = new ExternalWrench();
-               newWrench->setWrench(m_robotModel,m_cmd);
-               wrenchesVectorPtr->push_back(newWrench);            
+               if(newWrench->setWrench(m_robotModel,m_cmd))
+               {
+                   wrenchesVectorPtr->push_back(newWrench);            
+               }
+               else yError() << "Failed to set new wrech values!";
             } else {
                 this->m_reply.clear();
                 this->m_reply.addString ( "ERROR: Incorrect command format" );

@@ -46,7 +46,6 @@ namespace gazebo
         yarp::os::Property m_iniParams;
         
         physics::ModelPtr m_myModel;
-        std::string m_modelScope;
         std::string robotName;
         
         boost::mutex m_lock;

@@ -10,7 +10,8 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IOpenLoopControl.h>
+#include <yarp/dev/IPWMControl.h>
+#include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode2.h>
@@ -79,7 +80,8 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public ITorqueControl,
     public IPositionDirect,
     public IImpedanceControl,
-    public IOpenLoopControl,
+    public IPWMControl,
+    public ICurrentControl,
     public IPidControl,
     public IRemoteVariables,
     public IAxisInfo
@@ -169,7 +171,7 @@ public:
     virtual bool getTargetPosition(const int joint, double *ref);
     virtual bool getTargetPositions(double *refs);
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
-        
+
 
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
@@ -203,7 +205,6 @@ public:
 
     virtual bool setImpedancePositionMode(int j);//NOT IMPLEMENTED
     virtual bool setImpedanceVelocityMode(int j); //NOT IMPLEMENTED
-    virtual bool setOpenLoopMode(int j); //NOT IMPLEMENTED
 
     // CONTROL MODE 2
     virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
@@ -250,14 +251,36 @@ public:
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
-    //IOpenLoopControl interface methods
-    virtual bool setRefOutput(int j, double v);
-    virtual bool setRefOutputs(const double *v);
-    virtual bool getRefOutput(int j, double *v);
-    virtual bool getRefOutputs(double *v);
-    virtual bool getOutput(int j, double *v);
-    virtual bool getOutputs(double *v);
-    virtual bool setOpenLoopMode();
+       // PWM interface
+    virtual bool setRefDutyCycle(int j, double v);
+    virtual bool setRefDutyCycles(const double *v);
+    virtual bool getRefDutyCycle(int j, double *v);
+    virtual bool getRefDutyCycles(double *v);
+    virtual bool getDutyCycle(int j, double *v);
+    virtual bool getDutyCycles(double *v);
+
+    // Current interface
+    //virtual bool getAxes(int *ax);
+    //virtual bool getCurrent(int j, double *t);
+    //virtual bool getCurrents(double *t);
+    virtual bool getCurrentRange(int j, double *min, double *max);
+    virtual bool getCurrentRanges(double *min, double *max);
+    virtual bool setRefCurrents(const double *t);
+    virtual bool setRefCurrent(int j, double t);
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t);
+    virtual bool getRefCurrents(double *t);
+    virtual bool getRefCurrent(int j, double *t);
+    virtual bool setCurrentPid(int j, const Pid &pid);
+    virtual bool setCurrentPids(const Pid *pids);
+    virtual bool getCurrentError(int j, double *err);
+    virtual bool getCurrentErrors(double *errs);
+    virtual bool getCurrentPidOutput(int j, double *out);
+    virtual bool getCurrentPidOutputs(double *outs);
+    virtual bool getCurrentPid(int j, Pid *pid);
+    virtual bool getCurrentPids(Pid *pids);
+    virtual bool resetCurrentPid(int j);
+    virtual bool disableCurrentPid(int j);
+    virtual bool enableCurrentPid(int j);
 
     /*
      * IPidControl Interface methods
@@ -280,6 +303,8 @@ public:
     virtual bool disablePid (int j);
     virtual bool enablePid (int j);
     virtual bool setOffset (int j, double v);
+    virtual bool getOutput(int j, double *out);
+    virtual bool getOutputs(double *outs);
 
     /*
      * Probably useless stuff here
@@ -306,13 +331,13 @@ public:
     virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
     virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val);
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
-    
+
     // CONTROL LIMITS2 (inside comanOthers.cpp)
     virtual bool getLimits(int axis, double *min, double *max);
     virtual bool setLimits(int axis, double min, double max);
-    virtual bool getVelLimits(int axis, double *min, double *max); 
+    virtual bool getVelLimits(int axis, double *min, double *max);
     virtual bool setVelLimits(int axis, double min, double max);
-    
+
     // IPOSITION DIRECT
     virtual bool setPositionDirectMode();
     virtual bool setPosition(int j, double ref);
@@ -417,23 +442,23 @@ private:
                                                  they can be set directly or indirectly
                                                  through the trajectory generator.
                                                  [Degrees] */
-                                                 
+
     yarp::sig::Vector m_motReferencePositions;   //after calling decouple decoupleRefPos this is the reference which is sent to the PID
     yarp::sig::Vector m_motReferenceVelocities;  //after calling decouple decoupleRefVel this is the reference which is sent to the PID
     yarp::sig::Vector m_motReferenceTorques;     //after calling decouple decoupleRefTrq this is the reference which is sent to the PID
-    
+
     yarp::sig::Vector m_oldReferencePositions; // used to store last reference and check if a new ref has been commanded
     yarp::sig::Vector m_positionThreshold;  // Threshold under which trajectory generator stops computing new values
 
     yarp::sig::Vector m_jntReferenceTorques; /**< desired reference torques for torque control mode [NetwonMeters] */
     yarp::sig::Vector m_jntReferenceVelocities; /**< desired reference velocities for velocity control mode [Degrees/Seconds] */
-    
+
     //trajectory generator
     std::vector<TrajectoryGenerator*> m_trajectory_generator;
     std::vector<BaseCouplingHandler*>  m_coupling_handler;
     std::vector<RampFilter*> m_speed_ramp_handler;
     std::vector<Watchdog*> m_velocity_watchdog;
-    
+
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/
     yarp::sig::Vector m_trajectoryGenerationReferenceAcceleration; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
@@ -480,9 +505,9 @@ private:
     bool setPIDsForGroup_IMPEDANCE( std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>&);
     bool setMinMaxImpedance();
     bool setPIDs(); //WORKS
-    
+
     bool check_joint_within_limits_override_torque(int i, double&ref );
-    
+
     bool sendPositionsToGazebo(yarp::sig::Vector& refs);
     bool sendPositionToGazebo(int j,double ref);
     void prepareJointPositionMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, double ref);  //WORKS
@@ -495,7 +520,7 @@ private:
     void sendImpPositionToGazebo ( const int j,  double des );
     void sendImpPositionsToGazebo ( yarp::sig::Vector& dess );
     void prepareResetJointMsg(int j);
-    
+
     /**
      * \brief convert data read from Gazebo to user unit sistem,
      *  e.g. degrees for revolute joints and meters for prismatic joints

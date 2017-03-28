@@ -48,7 +48,6 @@ bool GazeboYarpFakeControlBoardDriver::setControlModes(const int n_joint, const 
 
 bool GazeboYarpFakeControlBoardDriver::setPositionMode(int) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setVelocityMode(int) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setOpenLoopMode(int)  {return false;}
 bool GazeboYarpFakeControlBoardDriver::setImpedancePositionMode(int) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setImpedanceVelocityMode(int) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setTorqueMode(int ) {return false;}

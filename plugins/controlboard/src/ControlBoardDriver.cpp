@@ -121,10 +121,10 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_coupling_handler.clear();
     m_speed_ramp_handler.resize(m_numberOfJoints, NULL);
     m_velocity_watchdog.resize(m_numberOfJoints, NULL);
-    
+
     VectorOf<int> trajectory_generator_type;
     trajectory_generator_type.resize(m_numberOfJoints);
-    
+
     yarp::os::Bottle& traj_bottle = m_pluginParameters.findGroup("TRAJECTORY_GENERATION");
     if (!traj_bottle.isNull())
     {
@@ -135,7 +135,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
            else if  (traj_type.get(1).asString()=="constant_speed") {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
            else                                                     {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
        }
-       else 
+       else
        {
          yWarning() << "Missing TRAJECTORY_GENERATION group. Missing trajectory_type param. Assuming minimum_jerk";
          {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
@@ -146,7 +146,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
        yWarning() << "Missing trajectory_type param. Assuming minimum_jerk";
        {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
     }
-       
+
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
       if (trajectory_generator_type[j]==yarp::dev::TRAJECTORY_TYPE_MIN_JERK)
@@ -154,14 +154,14 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
       else
          {m_trajectory_generator[j] = new ConstSpeedTrajectoryGenerator(m_robot);}
     }
-    
+
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
       m_speed_ramp_handler[j] = new RampFilter();
       m_velocity_watchdog[j] = new Watchdog(0.200); //watchdog set to 200ms
     }
-    
-    yarp::os::Bottle& coupling_group_bottle = m_pluginParameters.findGroup("COUPLING");  
+
+    yarp::os::Bottle& coupling_group_bottle = m_pluginParameters.findGroup("COUPLING");
     if (!coupling_group_bottle.isNull())
     {
        if (coupling_group_bottle.size() ==0)
@@ -171,18 +171,18 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
        }
        yDebug() << "Requested couplings:" << coupling_group_bottle.toString();
        yDebug() << "Size: " << coupling_group_bottle.size();
-       
+
        for (size_t cnt=1; cnt<coupling_group_bottle.size() ;cnt++)
-       { 
+       {
          yarp::os::Bottle* coupling_bottle = coupling_group_bottle.get(cnt).asList();
-         
+
          if (coupling_bottle==0 || coupling_bottle->size()!=3)
          {
            yError() << "Error parsing coupling parameter"; return false;
-         } 
+         }
          //yDebug() << "Requested coupling:" << cnt << " / " << coupling_bottle->size();
          //yDebug() << "Requested coupling:" << coupling_bottle->toString();
-         
+
          yarp::sig::VectorOf<int> coupled_joints;
          std::vector<std::string> coupled_joint_names;
          Bottle* b = coupling_bottle->get(1).asList();
@@ -191,7 +191,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
          Bottle* b2 = coupling_bottle->get(2).asList();
          if (b2==0 || b2->size()==0) {yError() << "Error parsing coupling parameter, wrong size of the joint names list"; return false;}
          for (int is=0;is<b2->size();is++) { coupled_joint_names.push_back(b2->get(is).asString()); }
-             
+
          if (coupling_bottle->get(0).asString()=="eyes_vergence_control")
          {
              BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
@@ -243,7 +243,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
              yError() << "Unknown coupling type";
              return false;
          }
-        
+
        }
     }
     yDebug() << "done";
@@ -280,7 +280,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         else if (m_jointTypes[j]==JointType_Prismatic) m_trajectoryGenerationReferenceSpeed[j] = 0.010; //m/s
         if (m_trajectoryGenerationReferenceSpeed[j] >  m_jointVelLimits[j].max) m_trajectoryGenerationReferenceSpeed[j]= m_jointVelLimits[j].max/10;
     }
-    
+
     if (!setMinMaxImpedance())
     {
       yError()<<"Failed Impedance initialization";
@@ -423,7 +423,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
         m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
-    
+
     //yDebug()<< deviceName << "2";
     //measurements decoupling
     for (unsigned int cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
@@ -434,9 +434,9 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
          m_coupling_handler[cpl_cnt]->decoupleVel(m_velocities);
          //m_coupling_handler[cpl_cnt]->decoupleAcc(m_accelerations); //missing
          m_coupling_handler[cpl_cnt]->decoupleTrq(m_torques);
-      } 
+      }
     }
-    
+
     //yDebug()<< deviceName << "3";
     // check measured torque for hw fault
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++) {
@@ -451,13 +451,13 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_lastTimestamp.update(_info.simTime.Double());
 
     //logger.log(m_velocities[2]);
- 
+
     //update refernce m_jntReferenceVelocities
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
       if (m_speed_ramp_handler[j])
       {
-        if (m_velocity_watchdog[j]->isExpired()) 
+        if (m_velocity_watchdog[j]->isExpired())
         {
           m_speed_ramp_handler[j]->stop();
         }
@@ -465,8 +465,8 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         //yDebug() << m_speed_ramp_handler[j]->getCurrentValue();
       }
     }
-    
-    //yDebug()<< deviceName << "4";      
+
+    //yDebug()<< deviceName << "4";
     //update Trajectories
     for (unsigned int j = 0; j < m_numberOfJoints; ++j)
     {
@@ -487,7 +487,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 m_jntReferencePositions[j] = computed_ref_pos + computed_ref_speed;
                 //yDebug() << computed_ref_pos << " " << computed_ref_speed;
                 m_isMotionDone[j] = m_trajectory_generator[j]->isMotionDone();
-            }        
+            }
         }
         else if (m_controlMode[j] == VOCAB_CM_VELOCITY)
         {
@@ -497,7 +497,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             }
         }
     }
-    
+
     //yDebug()<< deviceName << "5";
     //references decoupling
     m_motReferencePositions=m_jntReferencePositions;
@@ -512,7 +512,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         m_motReferenceTorques = m_coupling_handler[cpl_cnt]->decoupleRefTrq(m_jntReferenceTorques);
       }
     }
-    
+
     //yDebug()<< deviceName << "6";
     //update References
     for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
@@ -545,7 +545,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                yWarning("Compliant velocity control not yet implemented");
                sendVelocityToGazebo(j, m_motReferenceVelocities[j]);
             }
-        } 
+        }
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             if (m_clock % _T_controller == 0)
@@ -566,7 +566,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             {
                 sendTorqueToGazebo(j, m_motReferenceTorques[j]);
             }
-        } 
+        }
         else if (m_controlMode[j] == VOCAB_CM_IDLE)
         {
             if (m_clock % _T_controller == 0)
@@ -581,9 +581,18 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
                 sendTorqueToGazebo(j, 0.0);
             }
         }
-        else if (m_controlMode[j] == VOCAB_CM_OPENLOOP)
+        else if (m_controlMode[j] == VOCAB_CM_PWM)
         {
-            //OpenLoop control sends torques to gazebo at this moment.
+            //PWM control sends torques to gazebo at this moment.
+            //Check if gazebo implements a "motor" entity and change the code accordingly.
+            if (m_clock % _T_controller == 0)
+            {
+                sendTorqueToGazebo(j, m_motReferenceTorques[j]);
+            }
+        }
+        else if (m_controlMode[j] == VOCAB_CM_CURRENT)
+        {
+            //PWM control sends torques to gazebo at this moment.
             //Check if gazebo implements a "motor" entity and change the code accordingly.
             if (m_clock % _T_controller == 0)
             {
@@ -591,7 +600,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             }
         }
     }
-    //yDebug()<< deviceName << "7";  
+    //yDebug()<< deviceName << "7";
 }
 
 void GazeboYarpControlBoardDriver::onReset()
@@ -607,7 +616,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
         m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));
         m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));
     }
-    
+
     //...if the yarp plugin configuration file specifies a different velocity, override it...
     yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
     if (!limits_bottle.isNull())
@@ -616,9 +625,9 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
        if (!pos_limit_max.isNull() && pos_limit_max.size() == m_numberOfJoints+1)
        {
            for(unsigned int i = 0; i < m_numberOfJoints; ++i)
-           { 
+           {
              m_jointPosLimits[i].max = pos_limit_max.get(i+1).asDouble();
-         
+
            }
        }
        else
@@ -630,8 +639,8 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
        if (!pos_limit_min.isNull() && pos_limit_min.size() == m_numberOfJoints+1)
        {
            for(unsigned int i = 0; i < m_numberOfJoints; ++i)
-           { 
-             m_jointPosLimits[i].min = pos_limit_min.get(i+1).asDouble();           
+           {
+             m_jointPosLimits[i].min = pos_limit_min.get(i+1).asDouble();
            }
        }
        else
@@ -644,7 +653,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
     {
        yWarning() << "Missing LIMITS section";
     }
-    
+
     return true;
 }
 
@@ -656,7 +665,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
         m_jointVelLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetVelocityLimit(0));
         m_jointVelLimits[i].min = 0;
     }
-    
+
     //...if the yarp plugin configuration file specifies a different velocity, override it...
     yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
     if (!limits_bottle.isNull())
@@ -665,9 +674,9 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
        if (!vel_limits.isNull())
        {
            for(unsigned int i = 0; i < m_numberOfJoints; ++i)
-           { 
+           {
              m_jointVelLimits[i].max = vel_limits.get(i+1).asDouble();
-             m_jointVelLimits[i].min = 0;             
+             m_jointVelLimits[i].min = 0;
            }
        }
        else
@@ -1132,7 +1141,7 @@ bool GazeboYarpControlBoardDriver::setPIDs()
         setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_position_control_law[i] = "joint_pid_gazebo_v1";}
     }
-    
+
     //VELOCITY PARAMETERS
     if (m_pluginParameters.check("VELOCITY_CONTROL"))
     {
@@ -1146,7 +1155,7 @@ bool GazeboYarpControlBoardDriver::setPIDs()
         }
     }
     else if (m_pluginParameters.check("GAZEBO_VELOCITY_PIDS"))
-    { 
+    {
         yWarning ("'VELOCITY_CONTROL' group not found. Using DEPRECATED GAZEBO_VELOCITY_PIDS section");
         setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {m_velocity_control_law[i] = "joint_pid_gazebo_v1";}
@@ -1269,24 +1278,24 @@ bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int
           }
           return false;
       }
-      else if  (m_positions[i] < m_jointPosLimits[i].min)   
+      else if  (m_positions[i] < m_jointPosLimits[i].min)
       {
           if (signKp*signRef <0 )
           {
-              ref = ( (m_jointPosLimits[i].min-m_positions[i]) * (m_positionPIDs[i].p)); 
+              ref = ( (m_jointPosLimits[i].min-m_positions[i]) * (m_positionPIDs[i].p));
               if (ref > m_positionPIDs[i].maxOut) ref = m_positionPIDs[i].maxOut;
-              else if (ref < -m_positionPIDs[i].maxOut) ref = -m_positionPIDs[i].maxOut;        
-              //_integral[i] = 0;      
+              else if (ref < -m_positionPIDs[i].maxOut) ref = -m_positionPIDs[i].maxOut;
+              //_integral[i] = 0;
               #ifdef DEBUG_LIMITS
               yDebug() << "TTT TMIN" << m_positions[i] "<" <<  m_jointPosLimits[i].min;
               #endif
-          }                               
+          }
           return false;
-      }               
+      }
   }
   return true;
 }
-    
+
 void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
     GazeboYarpControlBoardDriver::PID velocityPID = m_velocityPIDs[j];
@@ -1310,13 +1319,13 @@ bool GazeboYarpControlBoardDriver::sendTorquesToGazebo(yarp::sig::Vector& refs)
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j, double ref) 
+bool GazeboYarpControlBoardDriver::sendTorqueToGazebo(const int j, double ref)
 {
     if (check_joint_within_limits_override_torque(j,ref)==false)
     {
-        //yDebug("TORQUE LIMITS %s j:%d ", deviceName.c_str(), j);      
+        //yDebug("TORQUE LIMITS %s j:%d ", deviceName.c_str(), j);
     }
-          
+
     gazebo::msgs::JointCmd j_cmd;
     prepareJointTorqueMsg(j_cmd,j,ref);
     m_jointCommandPublisher->WaitForConnection();

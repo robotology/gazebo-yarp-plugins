@@ -20,7 +20,8 @@ set(controlBoard_source     src/ControlBoard.cc
                             src/ControlBoardDriverTorqueControl.cpp
                             src/ControlBoardDriverVelocityControl.cpp
                             src/ControlBoardDriverImpedancePositionControl.cpp
-                            src/ControlBoardDriverOpenLoop.cpp
+                            src/ControlBoardDriverPWM.cpp
+                            src/ControlBoardDriverCurrent.cpp
                             src/ControlBoardDriverPidControl.cpp
                             src/ControlBoardDriverTrajectory.cpp
                             src/ControlBoardDriverCoupling.cpp)

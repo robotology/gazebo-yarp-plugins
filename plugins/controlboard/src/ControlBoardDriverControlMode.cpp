@@ -70,10 +70,6 @@ bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENT
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::setOpenLoopMode(int j) //NOT IMPLEMENTED
-{
-    return this->setControlMode(j, VOCAB_CM_OPENLOOP);
-}
 
 bool GazeboYarpControlBoardDriver::getControlModes(const int n_joint, const int *joints, int *modes)
 {
@@ -95,7 +91,8 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_VELOCITY
           || mode == VOCAB_CM_TORQUE
           || mode == VOCAB_CM_MIXED
-          || mode == VOCAB_CM_OPENLOOP
+          || mode == VOCAB_CM_PWM
+          || mode == VOCAB_CM_CURRENT
           || mode == VOCAB_CM_IDLE
           || mode == VOCAB_CM_FORCE_IDLE)) {
         yWarning() << "request control mode "
@@ -168,7 +165,8 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
         break;
         case VOCAB_CM_TORQUE :
-        case VOCAB_CM_OPENLOOP :
+        case VOCAB_CM_PWM :
+        case VOCAB_CM_CURRENT :
             m_jntReferenceTorques[j] = m_torques[j];
         break;
         case VOCAB_CM_IDLE:

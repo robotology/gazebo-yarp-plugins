@@ -15,6 +15,12 @@
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
+
+namespace yarp {
+    namespace dev {
+        class IMultipleWrapper;
+    }
+}
 #include <string>
 
 namespace gazebo
@@ -51,10 +57,13 @@ namespace gazebo
 
     private:
         yarp::os::Network m_yarp;
-        yarp::os::Property m_parameters;
+        yarp::os::Property m_driverParameters;
         yarp::dev::PolyDriver m_cameraDriver;
         std::string m_sensorName;
         sensors::DepthCameraSensor *m_sensor;
+
+        yarp::dev::PolyDriver m_cameraWrapper;
+        yarp::dev::IMultipleWrapper* m_iWrap;
 
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
     };

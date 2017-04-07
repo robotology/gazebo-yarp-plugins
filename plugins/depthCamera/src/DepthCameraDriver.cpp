@@ -83,7 +83,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 
     if (!m_depthCameraSensorPtr)
     {
-        myError("camera sensor was not found");
+        yError("camera sensor was not found (sensor's scoped name %s!)", sensorScopedName.c_str());
         return false;
     }
 

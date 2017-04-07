@@ -34,7 +34,6 @@ GazeboYarpDepthCamera::~GazeboYarpDepthCamera()
 
 void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
-    yTrace() << "depth camera LOAD";
     if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
         yError() << "GazeboYarpDepthCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
         return;
@@ -75,11 +74,6 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yDebug() << "m_sensor == NULL";
     }
 
-
-    // Don't forget to load the camera plugin!!!! ???
-//    DepthCameraPlugin::Load(_sensor, _sdf);
-
-    yDebug() << "GazeboYarpDepthCamera Plugin: sensor scoped name is " << m_sensorName.c_str() ;
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 

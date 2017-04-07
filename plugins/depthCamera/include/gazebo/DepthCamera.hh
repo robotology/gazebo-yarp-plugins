@@ -8,11 +8,13 @@
 #ifndef GAZEBOYARP_DEPTHCAMERA_HH
 #define GAZEBOYARP_DEPTHCAMERA_HH
 
+#include <string>
+
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/plugins/DepthCameraPlugin.hh>
+
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
-
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
 
@@ -21,7 +23,6 @@ namespace yarp {
         class IMultipleWrapper;
     }
 }
-#include <string>
 
 namespace gazebo
 {

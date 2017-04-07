@@ -93,7 +93,7 @@ bool ExternalWrench::getLink()
 void ExternalWrench::applyWrench()
 {
     tock = yarp::os::Time::now();
-    yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrenchPtr->duration; 
+    //yInfo() << "Elapsed time : " << (tock - tick) << " , Duration : " << wrenchPtr->duration; 
     if((tock-tick) < wrenchPtr->duration)
     {
         //yInfo() << "Applying external wrench";

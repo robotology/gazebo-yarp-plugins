@@ -288,6 +288,7 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
     if(m_width == 0 || m_height == 0)
     {
         myError("gazebo returned an invalid image size");
+        m_colorFrameMutex.post();
         return false;
     }
     rgbImage.setPixelCode(m_imageFormat);
@@ -396,6 +397,7 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
     if(m_width == 0 || m_height == 0)
     {
         myError("gazebo returned an invalid image size");
+        m_depthFrameMutex.post();
         return false;
     }
 

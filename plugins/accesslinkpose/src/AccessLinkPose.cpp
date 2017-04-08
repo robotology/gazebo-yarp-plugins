@@ -134,11 +134,10 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
         //Get links for which pose is needed            
         for(int l = 0; l < number_of_links; l++)
         {
-            yInfo() << "Iteration : " << l;
             for(int i=0; i < all_links.size(); i++)
             {
                 std::string candidate_link_name = all_links[i]->GetScopedName();
-                yInfo() << "Candidate link name : " << candidate_link_name;
+                //yInfo() << "Candidate link name : " << candidate_link_name;
                 
                 std::size_t lastcolon = candidate_link_name.rfind(":");
                 std::string unscoped_link_name = candidate_link_name.substr(lastcolon+1,std::string::npos);

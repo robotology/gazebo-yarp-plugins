@@ -19,8 +19,46 @@ AccessLinkPose::~AccessLinkPose()
         delete m_network;
 }
 
+void AccessLinkPose::getLinkPoses()
+{
+    //yInfo() << "Getting link new pose values";
+    link_poses.clear();
+    
+    for(int i=0; i < links.size(); i++)
+    {
+        link = links.at(i);
+        
+        if(link_pose_type_vec.at(i) == "cog")
+        {
+            link_pose = link->GetWorldCoGPose();
+            link_poses.push_back(link_pose);
+        }
+        else if(link_pose_type_vec.at(i) == "inertial")
+        {
+            link_pose = link->GetWorldInertialPose();
+            link_poses.push_back(link_pose);
+        }
+        else if(link_pose_type_vec.at(i) == "world")
+        {
+            link_pose = link->GetWorldPose();
+            link_poses.push_back(link_pose);
+        }
+    }
+    
+    //yInfo() << "Link poses size : " << link_poses.size();
+    //Debug Code
+    /*for(int p=0; p < links.size(); p++)
+    {
+        std::cout << links.at(p)->GetName() << " pose " << link_poses.at(p) << std::endl;
+    }*/
+    
+        
+}
+
+
 void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
+    
     if(m_network != 0)
         return;
     
@@ -45,7 +83,7 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
             
             //Get number of links from config file
             number_of_links = m_parameters.find("number_of_links").asInt();
-            yInfo() << "Number of links : " << number_of_links;
+            //yInfo() << "Number of links : " << number_of_links;
             
             //Get the link names from config file
             link_names_group = m_parameters.findGroup("link_names");
@@ -53,7 +91,7 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
                 yError() << "link_names group not found in yarpConfigurationFile";
             else
             {
-                yInfo() << "link_names group size : " << link_names_group.size()-1;
+                //yInfo() << "link_names group size : " << link_names_group.size()-1;
                 if( (link_names_group.size()-1) != number_of_links)
                     yError() << "Invalid number of parameters in link_names";
                 else
@@ -62,7 +100,7 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
                     for(int i=0; i < number_of_links; i++)
                     {
                         link_names_vec.at(i) = link_names_group.get(i+1).asString();
-                        yInfo() << link_names_vec.at(i);
+                        //yInfo() << link_names_vec.at(i);
                     }
                 }
             }
@@ -73,7 +111,7 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
                 yError() << "link_pose_type group not found in yarpConfigurationFile";
             else
             {
-                yInfo() << "link_pose_type group size : " << link_pose_type_group.size()-1;
+                //yInfo() << "link_pose_type group size : " << link_pose_type_group.size()-1;
                 if( (link_pose_type_group.size()-1) != number_of_links)
                     yError() << "Invalid number of parameters in link_pose_type";
                 else
@@ -82,12 +120,40 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
                     for(int i=0; i < number_of_links; i++)
                     {
                         link_pose_type_vec.at(i) = link_pose_type_group.get(i+1).asString();
-                        yInfo() << link_pose_type_vec.at(i);
+                        //yInfo() << link_pose_type_vec.at(i);
                     }
                 }
             }
             configuration_loaded = true;
         }
+        
+        model = _model;
+        all_links = model->GetLinks();
+        //yInfo() << "Total number of links in the model : " << all_links.size();
+        
+        //Get links for which pose is needed            
+        for(int l = 0; l < number_of_links; l++)
+        {
+            yInfo() << "Iteration : " << l;
+            for(int i=0; i < all_links.size(); i++)
+            {
+                std::string candidate_link_name = all_links[i]->GetScopedName();
+                yInfo() << "Candidate link name : " << candidate_link_name;
+                
+                std::size_t lastcolon = candidate_link_name.rfind(":");
+                std::string unscoped_link_name = candidate_link_name.substr(lastcolon+1,std::string::npos);
+                
+                if(unscoped_link_name == link_names_vec.at(l))
+                {
+                    link = all_links[i];
+                    //yInfo() << "Found link : " << link->GetName();
+                    links.push_back(link);
+                    break;
+                }
+            }   
+        }
+        
+        //yInfo() << "Pose links size : " << links.size();       
     }
     
     if(!configuration_loaded)
@@ -95,6 +161,9 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
         yError() << "AccessLinkPose::Load error, could not load yarpConfigurationFile";
         return;
     }
+    
+    this->updateConnection = event::Events::ConnectWorldUpdateBegin(
+      boost::bind(&AccessLinkPose::getLinkPoses, this));
 
 }
 

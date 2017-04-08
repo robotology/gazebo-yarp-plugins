@@ -7,6 +7,10 @@
 #define YARPGAZEBO_ACCESSLINKPOSE_H
 
 #include <gazebo/gazebo.hh>
+#include <gazebo/physics/Link.hh>
+#include <gazebo/physics/Model.hh>
+#include <gazebo/math/gzmath.hh>
+#include <gazebo/math/Vector3.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <yarp/os/Network.h>
@@ -30,12 +34,21 @@ namespace gazebo
         std::vector<std::string> link_pose_type_vec;
         yarp::os::Bottle link_names_group;
         yarp::os::Bottle link_pose_type_group;
+        
+        gazebo::physics::ModelPtr model;
+        gazebo::physics::Link_V all_links;
+        
+        gazebo::physics::LinkPtr link;
+        gazebo::physics::Link_V links;
+        
+        gazebo::math::Pose link_pose;
+        std::vector<gazebo::math::Pose> link_poses;
                
     public:
         AccessLinkPose(); 
         ~AccessLinkPose();
         void Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr /*_sdf*/);
-        void onUpdate(const gazebo::common::UpdateInfo& /*_info*/);
+        void getLinkPoses();
     };
     
     GZ_REGISTER_MODEL_PLUGIN(AccessLinkPose);

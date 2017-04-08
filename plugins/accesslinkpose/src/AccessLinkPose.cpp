@@ -46,7 +46,7 @@ void AccessLinkPose::getLinkPoses()
     }
     
     //yInfo() << "Link poses size : " << link_poses.size();
-    yarp::os::Bottle pose_bottle = pose_output_port.prepare();
+    yarp::os::Bottle& pose_bottle = pose_output_port.prepare();
     pose_bottle.clear();
     
     for(int p=0; p < links.size(); p++)
@@ -71,15 +71,8 @@ void AccessLinkPose::getLinkPoses()
         pose_bottle.addDouble(orientation.w);
     }
     
-    yInfo() << "Pose Bottle : " << pose_bottle.toString().c_str();
-    pose_output_port.write(true);
-    
-    //Debug code
-    //yarp::os::Bottle *pose_received = pose_input_port.read();
-    //yInfo() << pose_received->toString().c_str();
-    
-    
-        
+    //yInfo() << "Pose Bottle : " << pose_bottle.toString().c_str();
+    pose_output_port.writeStrict();    
 }
 
 
@@ -110,10 +103,6 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
             
             std::string port_name = m_parameters.find("port_name").asString();
             pose_output_port.open(port_name);
-            
-            //Debug code
-            //pose_input_port.open("/pose_input");
-            //yarp::os::Network::connect(pose_output_port.getName(),pose_input_port.getName());
             
             //Get number of links from config file
             number_of_links = m_parameters.find("number_of_links").asInt();

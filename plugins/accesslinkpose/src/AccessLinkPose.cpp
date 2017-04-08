@@ -28,17 +28,17 @@ void AccessLinkPose::getLinkPoses()
     {
         link = links.at(i);
         
-        if(link_pose_type_vec.at(i) == "cog")
+        if(link_pose_type_vec.at(i) == "cog" || link_pose_type_vec.at(i) == "CoG" || link_pose_type_vec.at(i) == "WorldCoG")
         {
             link_pose = link->GetWorldCoGPose();
             link_poses.push_back(link_pose);
         }
-        else if(link_pose_type_vec.at(i) == "inertial")
+        else if(link_pose_type_vec.at(i) == "inertial" || link_pose_type_vec.at(i) == "Inertial" || link_pose_type_vec.at(i) == "WorldInertial")
         {
             link_pose = link->GetWorldInertialPose();
             link_poses.push_back(link_pose);
         }
-        else if(link_pose_type_vec.at(i) == "world")
+        else if(link_pose_type_vec.at(i) == "world" || link_pose_type_vec.at(i) == "World")
         {
             link_pose = link->GetWorldPose();
             link_poses.push_back(link_pose);

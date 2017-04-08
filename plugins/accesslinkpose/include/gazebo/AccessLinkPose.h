@@ -15,6 +15,8 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
@@ -43,6 +45,11 @@ namespace gazebo
         
         gazebo::math::Pose link_pose;
         std::vector<gazebo::math::Pose> link_poses;
+        
+        yarp::os::BufferedPort<yarp::os::Bottle> pose_output_port;
+        
+        //Debug code
+        //yarp::os::BufferedPort<yarp::os::Bottle> pose_input_port;
                
     public:
         AccessLinkPose(); 

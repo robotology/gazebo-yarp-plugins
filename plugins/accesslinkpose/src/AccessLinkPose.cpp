@@ -46,11 +46,38 @@ void AccessLinkPose::getLinkPoses()
     }
     
     //yInfo() << "Link poses size : " << link_poses.size();
-    //Debug Code
-    /*for(int p=0; p < links.size(); p++)
+    yarp::os::Bottle pose_bottle = pose_output_port.prepare();
+    pose_bottle.clear();
+    
+    for(int p=0; p < links.size(); p++)
     {
-        std::cout << links.at(p)->GetName() << " pose " << link_poses.at(p) << std::endl;
-    }*/
+        //std::cout << links.at(p)->GetName() << " pose " << link_poses.at(p) << std::endl;
+        
+        std::string link_name = links.at(p)->GetName();
+        pose_bottle.addString(link_name);
+        
+        gazebo::math::Pose pose = link_poses.at(p);
+        gazebo::math::Vector3 position = pose.pos;
+        gazebo::math::Quaternion orientation = pose.rot;
+        //std::cout << double(orientation.x);
+        
+        pose_bottle.addDouble(position[0]);
+        pose_bottle.addDouble(position[1]);
+        pose_bottle.addDouble(position[2]);
+        
+        pose_bottle.addDouble(orientation.x);
+        pose_bottle.addDouble(orientation.y);
+        pose_bottle.addDouble(orientation.z);
+        pose_bottle.addDouble(orientation.w);
+    }
+    
+    yInfo() << "Pose Bottle : " << pose_bottle.toString().c_str();
+    pose_output_port.write(true);
+    
+    //Debug code
+    //yarp::os::Bottle *pose_received = pose_input_port.read();
+    //yInfo() << pose_received->toString().c_str();
+    
     
         
 }
@@ -80,6 +107,13 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
         if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str()))
         {
             yInfo() << "Found yarpConfigurationFile: loading from " << ini_file_path ;
+            
+            std::string port_name = m_parameters.find("port_name").asString();
+            pose_output_port.open(port_name);
+            
+            //Debug code
+            //pose_input_port.open("/pose_input");
+            //yarp::os::Network::connect(pose_output_port.getName(),pose_input_port.getName());
             
             //Get number of links from config file
             number_of_links = m_parameters.find("number_of_links").asInt();
@@ -149,10 +183,15 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
                     links.push_back(link);
                     break;
                 }
-            }   
+            }
+            if(links.size() != l+1)
+            {
+                yError() << link_names_vec.at(l) << " not found in the gazebo model";\
+                return;
+            }
         }
         
-        //yInfo() << "Pose links size : " << links.size();       
+        //yInfo() << "Pose links size : " << links.size();   
     }
     
     if(!configuration_loaded)

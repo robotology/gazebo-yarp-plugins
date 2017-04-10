@@ -149,47 +149,6 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
             }
             configuration_loaded = true;
         }
-        
-        model = _model;
-        all_links = model->GetLinks();
-        //yInfo() << "Total number of links in the model : " << all_links.size();
-        
-        //Get links for which pose is needed            
-        for(int l = 0; l < number_of_links; l++)
-        {
-            for(int i=0; i < all_links.size(); i++)
-            {
-                std::string candidate_link_name = all_links[i]->GetScopedName();
-                //yInfo() << "Candidate link name : " << candidate_link_name;
-                
-                std::size_t lastcolon = candidate_link_name.rfind(":");
-                std::string unscoped_link_name = candidate_link_name.substr(lastcolon+1,std::string::npos);
-                
-                if(unscoped_link_name == link_names_vec.at(l))
-                {
-                    link = all_links[i];
-                    //yInfo() << "Found link : " << link->GetName();
-                    links.push_back(link);
-                    break;
-                }
-            }
-            if(links.size() != l+1)
-            {
-                yError() << link_names_vec.at(l) << " not found in the gazebo model";\
-                return;
-            }
-            
-            bool pose_type_check = link_pose_type_vec.at(l) == "cog" || link_pose_type_vec.at(l) == "CoG" || link_pose_type_vec.at(l) == "WorldCoG";
-            pose_type_check = pose_type_check || link_pose_type_vec.at(l) == "inertial" || link_pose_type_vec.at(l) == "Inertial" || link_pose_type_vec.at(l) == "WorldInertial";
-            pose_type_check = pose_type_check || link_pose_type_vec.at(l) == "world" || link_pose_type_vec.at(l) == "World";
-            if(!pose_type_check)
-            {
-                yError() << "AccessLinkPose plugin error: pose type specified in yarpConfigurationFile is incorrect";
-                return;
-            }
-        }
-        
-        //yInfo() << "Pose links size : " << links.size();   
     }
     
     if(!configuration_loaded)
@@ -197,6 +156,46 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
         yError() << "AccessLinkPose::Load error, could not load yarpConfigurationFile";
         return;
     }
+    
+    model = _model;
+    all_links = model->GetLinks();
+    //yInfo() << "Total number of links in the model : " << all_links.size();
+        
+    //Get links for which pose is needed            
+    for(int l = 0; l < number_of_links; l++)
+    {
+        for(int i=0; i < all_links.size(); i++)
+        {
+            std::string candidate_link_name = all_links[i]->GetScopedName();
+            //yInfo() << "Candidate link name : " << candidate_link_name;
+            
+            std::size_t lastcolon = candidate_link_name.rfind(":");
+            std::string unscoped_link_name = candidate_link_name.substr(lastcolon+1,std::string::npos);
+                
+            if(unscoped_link_name == link_names_vec.at(l))
+            {
+                link = all_links[i];
+                //yInfo() << "Found link : " << link->GetName();
+                links.push_back(link);
+                break;
+            }
+        }
+        if(links.size() != l+1)
+        {
+            yError() << link_names_vec.at(l) << " not found in the gazebo model";
+            return;
+        }
+        
+        bool pose_type_check = link_pose_type_vec.at(l) == "cog" || link_pose_type_vec.at(l) == "CoG" || link_pose_type_vec.at(l) == "WorldCoG";
+        pose_type_check = pose_type_check || link_pose_type_vec.at(l) == "inertial" || link_pose_type_vec.at(l) == "Inertial" || link_pose_type_vec.at(l) == "WorldInertial";
+        pose_type_check = pose_type_check || link_pose_type_vec.at(l) == "world" || link_pose_type_vec.at(l) == "World";
+        if(!pose_type_check)
+        {
+            yError() << "AccessLinkPose plugin error: pose type specified in yarpConfigurationFile is incorrect";
+            return;
+        }
+    }
+    //yInfo() << "Pose links size : " << links.size();   
     
     this->updateConnection = event::Events::ConnectWorldUpdateBegin(
       boost::bind(&AccessLinkPose::getLinkPoses, this));

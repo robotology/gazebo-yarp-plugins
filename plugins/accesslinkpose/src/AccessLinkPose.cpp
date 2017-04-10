@@ -178,6 +178,15 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
                 yError() << link_names_vec.at(l) << " not found in the gazebo model";\
                 return;
             }
+            
+            bool pose_type_check = link_pose_type_vec.at(l) == "cog" || link_pose_type_vec.at(l) == "CoG" || link_pose_type_vec.at(l) == "WorldCoG";
+            pose_type_check = pose_type_check || link_pose_type_vec.at(l) == "inertial" || link_pose_type_vec.at(l) == "Inertial" || link_pose_type_vec.at(l) == "WorldInertial";
+            pose_type_check = pose_type_check || link_pose_type_vec.at(l) == "world" || link_pose_type_vec.at(l) == "World";
+            if(!pose_type_check)
+            {
+                yError() << "AccessLinkPose plugin error: pose type specified in yarpConfigurationFile is incorrect";
+                return;
+            }
         }
         
         //yInfo() << "Pose links size : " << links.size();   

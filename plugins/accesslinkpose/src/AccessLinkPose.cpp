@@ -9,12 +9,12 @@ namespace gazebo
 {
 AccessLinkPose::AccessLinkPose()
 {
-    yInfo() << "AccessLinkPose default constructor";
+    //yInfo() << "AccessLinkPose default constructor";
 }
 
 AccessLinkPose::~AccessLinkPose()
 {
-    yInfo() << "AccessLinkPose destructor";
+    //yInfo() << "AccessLinkPose destructor";
     if(m_network)
         delete m_network;
 }

@@ -54,7 +54,7 @@ void AccessLinkPose::getLinkPoses()
         //std::cout << links.at(p)->GetName() << " pose " << link_poses.at(p) << std::endl;
         
         std::string link_name = links.at(p)->GetName();
-        pose_bottle.addString(link_name);
+        //pose_bottle.addString(link_name);
         
         gazebo::math::Pose pose = link_poses.at(p);
         gazebo::math::Vector3 position = pose.pos;

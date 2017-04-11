@@ -49,6 +49,11 @@ void AccessLinkPose::getLinkPoses()
     yarp::os::Bottle& pose_bottle = pose_output_port.prepare();
     pose_bottle.clear();
     
+    //Adding gazebo timestamp
+    time = world->GetSimTime();
+    pose_bottle.addString(time.FormattedString(gazebo::common::Time::HOURS,gazebo::common::Time::MILLISECONDS));
+    //pose_bottle.addDouble(time.Double());
+    
     for(int p=0; p < links.size(); p++)
     {
         //std::cout << links.at(p)->GetName() << " pose " << link_poses.at(p) << std::endl;
@@ -158,6 +163,7 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
     }
     
     model = _model;
+    world = model->GetWorld();
     all_links = model->GetLinks();
     //yInfo() << "Total number of links in the model : " << all_links.size();
         

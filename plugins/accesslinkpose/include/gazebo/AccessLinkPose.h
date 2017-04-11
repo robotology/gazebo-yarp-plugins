@@ -7,8 +7,10 @@
 #define YARPGAZEBO_ACCESSLINKPOSE_H
 
 #include <gazebo/gazebo.hh>
+#include <gazebo/common/common.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
+#include <gazebo/physics/World.hh>
 #include <gazebo/math/gzmath.hh>
 #include <gazebo/math/Vector3.hh>
 #include <GazeboYarpPlugins/common.h>
@@ -37,12 +39,14 @@ namespace gazebo
         yarp::os::Bottle link_names_group;
         yarp::os::Bottle link_pose_type_group;
         
+        gazebo::physics::WorldPtr world;
         gazebo::physics::ModelPtr model;
         gazebo::physics::Link_V all_links;
         
         gazebo::physics::LinkPtr link;
         gazebo::physics::Link_V links;
         
+        gazebo::common::Time time;
         gazebo::math::Pose link_pose;
         std::vector<gazebo::math::Pose> link_poses;
         

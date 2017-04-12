@@ -15,6 +15,7 @@ AccessLinkPose::AccessLinkPose()
 AccessLinkPose::~AccessLinkPose()
 {
     //yInfo() << "AccessLinkPose destructor";
+    delete pose_output_port;
     if(m_network)
         delete m_network;
 }
@@ -83,10 +84,8 @@ void AccessLinkPose::getLinkPoses()
 
 void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
-    
-    if(m_network != 0)
-        return;
-    
+    //yInfo() << "AccessLinkPose::Load method";
+
     m_network = new yarp::os::Network();
     
     if(!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout))
@@ -94,6 +93,8 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
         yError() << "AccessLinkPose::Load error: yarp network is not available, is the yarpserver running?";
         return;
     }
+    else 
+        yInfo() << "AccessLinkPose::Load yarp network found";
     
     bool configuration_loaded = false;
     
@@ -110,12 +111,15 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
             if(!yarp::os::Network::initialized())
                 yarp::os::Network::init();
             
+            //yInfo() << "Port name received from yarpConfigurationFile : " << port_name;
             pose_output_port = new yarp::os::BufferedPort<yarp::os::Bottle>;
             if(!pose_output_port->open(port_name))
             {
-                yError() << "Failed to open the pose " << port_name;
+                yError() << "Failed to open the port " << port_name;
                 return;
             }
+            else
+                //yInfo() << "Opened the port " << port_name;
             
             //Get number of links from config file
             number_of_links = m_parameters.find("number_of_links").asInt();

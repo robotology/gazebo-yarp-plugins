@@ -46,13 +46,13 @@ void AccessLinkPose::getLinkPoses()
     }
     
     //yInfo() << "Link poses size : " << link_poses.size();
-    yarp::os::Bottle& pose_bottle = pose_output_port.prepare();
+    yarp::os::Bottle& pose_bottle = pose_output_port->prepare();
     pose_bottle.clear();
     
     //Adding gazebo timestamp
     time = world->GetSimTime();
-    pose_bottle.addString(time.FormattedString(gazebo::common::Time::HOURS,gazebo::common::Time::MILLISECONDS));
-    //pose_bottle.addDouble(time.Double());
+    //pose_bottle.addString(time.FormattedString(gazebo::common::Time::HOURS,gazebo::common::Time::MILLISECONDS));
+    pose_bottle.addDouble(time.Double());
     
     for(int p=0; p < links.size(); p++)
     {
@@ -77,7 +77,7 @@ void AccessLinkPose::getLinkPoses()
     }
     
     //yInfo() << "Pose Bottle : " << pose_bottle.toString().c_str();
-    pose_output_port.writeStrict();    
+    pose_output_port->writeStrict();    
 }
 
 
@@ -107,7 +107,15 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
             yInfo() << "Found yarpConfigurationFile: loading from " << ini_file_path ;
             
             std::string port_name = m_parameters.find("port_name").asString();
-            pose_output_port.open(port_name);
+            if(!yarp::os::Network::initialized())
+                yarp::os::Network::init();
+            
+            pose_output_port = new yarp::os::BufferedPort<yarp::os::Bottle>;
+            if(!pose_output_port->open(port_name))
+            {
+                yError() << "Failed to open the pose " << port_name;
+                return;
+            }
             
             //Get number of links from config file
             number_of_links = m_parameters.find("number_of_links").asInt();

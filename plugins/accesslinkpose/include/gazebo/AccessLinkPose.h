@@ -50,7 +50,7 @@ namespace gazebo
         gazebo::math::Pose link_pose;
         std::vector<gazebo::math::Pose> link_poses;
         
-        yarp::os::BufferedPort<yarp::os::Bottle> pose_output_port;
+        yarp::os::BufferedPort<yarp::os::Bottle> *pose_output_port;
                        
     public:
         AccessLinkPose(); 

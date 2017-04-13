@@ -94,7 +94,9 @@ void AccessLinkPose::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf
         return;
     }
     else 
-        yInfo() << "AccessLinkPose::Load yarp network found";
+    {
+        //yInfo() << "AccessLinkPose::Load yarp network found";
+    }
     
     bool configuration_loaded = false;
     

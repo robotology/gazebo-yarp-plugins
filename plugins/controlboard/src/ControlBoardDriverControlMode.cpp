@@ -10,7 +10,6 @@
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
-#include <boost/iterator/iterator_concepts.hpp>
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/LogStream.h>
@@ -104,7 +103,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
                   << " gazebo_yarp_controlboard plugin.";
         return false;
     }
-    
+
     for (int cpl_i=0; cpl_i<(int)m_coupling_handler.size(); cpl_i++)
     {
       if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
@@ -124,7 +123,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
 bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode)
 {
     int desired_mode = mode;
-    
+
     //if joint is in hw fault, only a force idle command can recover it
     if (m_controlMode[j] == VOCAB_CM_HW_FAULT && mode != VOCAB_CM_FORCE_IDLE)
     {
@@ -183,6 +182,7 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
 
 bool GazeboYarpControlBoardDriver::setControlModes(const int n_joint, const int *joints, int *modes)
 {
+
     bool ret = true;
     for (int i = 0; i < n_joint; i++)
         ret = ret && setControlMode(joints[i], modes[i]);

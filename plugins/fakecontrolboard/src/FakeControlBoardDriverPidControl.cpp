@@ -32,6 +32,9 @@ bool GazeboYarpFakeControlBoardDriver::resetPid (int /*j*/) { return false; }
 bool GazeboYarpFakeControlBoardDriver::disablePid (int /*j*/) { return false; }
 bool GazeboYarpFakeControlBoardDriver::enablePid (int /*j*/) { return false; }
 bool GazeboYarpFakeControlBoardDriver::setOffset (int /*j*/, double /*v*/) { return false; }
+bool GazeboYarpFakeControlBoardDriver::getOutput(int j, double *out) { return false; }
+bool GazeboYarpFakeControlBoardDriver::getOutputs(double *outs) { return false; }
+
 
 }
 }

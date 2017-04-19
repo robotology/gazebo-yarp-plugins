@@ -13,8 +13,18 @@ namespace yarp {
 
         static inline bool NOT_YET_IMPLEMENTED(const char *txt)
         {
-            yError() << txt << " is not yet implemented for SieRosRobotController";
+            yError() << txt << " is not yet implemented for gazebo_yarp_controlboard";
             return true;
+        }
+
+        bool GazeboYarpControlBoardDriver::getCurrentRange(int j, double *min, double *max)
+        {
+            return NOT_YET_IMPLEMENTED("getCurrentRange");
+        }
+
+        bool GazeboYarpControlBoardDriver::getCurrentRanges(double *min, double *max)
+        {
+            return NOT_YET_IMPLEMENTED("getCurrentRanges");
         }
 
         bool GazeboYarpControlBoardDriver::setRefCurrent(int j, double v)
@@ -24,6 +34,17 @@ namespace yarp {
                 return true;
             }
             return false;
+        }
+
+        bool GazeboYarpControlBoardDriver::setRefCurrents(const int n_joint, const int *joints, const double *t)
+        {
+            if (!joints || !t) return false;
+            bool ret = true;
+            for (int i = 0; i < n_joint && ret; i++)
+            {
+                ret = setRefCurrent(joints[i], t[i]);
+            }
+            return ret;
         }
 
         bool GazeboYarpControlBoardDriver::setRefCurrents(const double* v)

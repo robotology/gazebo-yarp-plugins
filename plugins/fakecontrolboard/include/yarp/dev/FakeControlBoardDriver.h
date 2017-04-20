@@ -243,6 +243,7 @@ public:
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
     // PWM interface
+    virtual bool getNumberOfMotors(int *ax);
     virtual bool setRefDutyCycle(int j, double v);
     virtual bool setRefDutyCycles(const double *v);
     virtual bool getRefDutyCycle(int j, double *v);

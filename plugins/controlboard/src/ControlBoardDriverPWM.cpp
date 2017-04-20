@@ -10,6 +10,13 @@
 namespace yarp {
     namespace dev {
 
+        bool GazeboYarpControlBoardDriver::getNumberOfMotors(int *ax)
+        {
+            if (!ax) return false;
+            *ax = m_numberOfJoints;
+            return true;
+        }
+
         bool GazeboYarpControlBoardDriver::setRefDutyCycle(int j, double v)
         {
             if (j >= 0 && j < (int)m_numberOfJoints) {

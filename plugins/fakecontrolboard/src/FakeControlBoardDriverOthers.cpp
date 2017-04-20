@@ -42,6 +42,7 @@ bool GazeboYarpFakeControlBoardDriver::calibrate2(int j, unsigned int iv, double
 bool GazeboYarpFakeControlBoardDriver::done(int j) {return false;}
 
 // PWM interface
+bool GazeboYarpFakeControlBoardDriver::getNumberOfMotors(int *ax) { return getAxes(ax); }
 bool GazeboYarpFakeControlBoardDriver::setRefDutyCycle(int j, double v) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setRefDutyCycles(const double *v) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefDutyCycle(int j, double *v) {return false;}

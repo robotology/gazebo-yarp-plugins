@@ -41,4 +41,31 @@ bool GazeboYarpFakeControlBoardDriver::getAmpStatus(int, int *v) {return false;}
 bool GazeboYarpFakeControlBoardDriver::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) {return false;}
 bool GazeboYarpFakeControlBoardDriver::done(int j) {return false;}
 
+// PWM interface
+bool GazeboYarpFakeControlBoardDriver::setRefDutyCycle(int j, double v) {return false;}
+bool GazeboYarpFakeControlBoardDriver::setRefDutyCycles(const double *v) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getRefDutyCycle(int j, double *v) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getRefDutyCycles(double *v) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getDutyCycle(int j, double *v) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getDutyCycles(double *v) {return false;}
+
+// Current interface
+bool GazeboYarpFakeControlBoardDriver::getCurrentRange(int j, double *min, double *max) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentRanges(double *min, double *max) {return false;}
+bool GazeboYarpFakeControlBoardDriver::setRefCurrents(const double *t) {return false;}
+bool GazeboYarpFakeControlBoardDriver::setRefCurrent(int j, double t) {return false;}
+bool GazeboYarpFakeControlBoardDriver::setRefCurrents(const int n_joint, const int *joints, const double *t) { return (n_joint == 0); }
+bool GazeboYarpFakeControlBoardDriver::getRefCurrents(double *t) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getRefCurrent(int j, double *t) {return false;}
+bool GazeboYarpFakeControlBoardDriver::setCurrentPid(int j, const Pid &pid) {return false;}
+bool GazeboYarpFakeControlBoardDriver::setCurrentPids(const Pid *pids) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentError(int j, double *err) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentErrors(double *errs) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentPidOutput(int j, double *out) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentPidOutputs(double *outs) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentPid(int j, Pid *pid) {return false;}
+bool GazeboYarpFakeControlBoardDriver::getCurrentPids(Pid *pids) {return false;}
+bool GazeboYarpFakeControlBoardDriver::resetCurrentPid(int j) {return false;}
+bool GazeboYarpFakeControlBoardDriver::disableCurrentPid(int j) {return false;}
+bool GazeboYarpFakeControlBoardDriver::enableCurrentPid(int j) {return false;}
 

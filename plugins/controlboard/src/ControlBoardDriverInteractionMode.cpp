@@ -42,7 +42,7 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
 {
    prepareResetJointMsg(j);
    m_interactionMode[j] = (int) mode;
-     
+
    //the following code (copy and pasted from changeControlMode) is used to reset control references / trajectory generator to the current position etc.
    switch (m_controlMode[j])
    {
@@ -67,7 +67,8 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
         break;
         case VOCAB_CM_TORQUE :
-        case VOCAB_CM_OPENLOOP :
+        case VOCAB_CM_PWM :
+        case VOCAB_CM_CURRENT :
             m_jntReferenceTorques[j] = m_torques[j];
         break;
         case VOCAB_CM_IDLE:
@@ -84,7 +85,7 @@ bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::Interact
 {
     if (j < 0 || j >= (int)m_numberOfJoints) return false;
 
-    
+
     for (int cpl_i=0; cpl_i<(int)m_coupling_handler.size(); cpl_i++)
     {
       if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
@@ -98,7 +99,7 @@ bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::Interact
       }
     }
     changeInteractionMode(j,mode);
-    
+
     return true;
 }
 

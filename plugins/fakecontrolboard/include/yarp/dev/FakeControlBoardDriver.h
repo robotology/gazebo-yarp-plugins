@@ -10,7 +10,8 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IOpenLoopControl.h>
+#include <yarp/dev/IPWMControl.h>
+#include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode2.h>
@@ -77,7 +78,8 @@ class yarp::dev::GazeboYarpFakeControlBoardDriver:
     public ITorqueControl,
     public IPositionDirect,
     public IImpedanceControl,
-    public IOpenLoopControl,
+    public IPWMControl,
+    public ICurrentControl,
     public IPidControl,
     public IRemoteVariables,
     public IAxisInfo
@@ -85,14 +87,14 @@ class yarp::dev::GazeboYarpFakeControlBoardDriver:
 public:
     GazeboYarpFakeControlBoardDriver();
     virtual ~GazeboYarpFakeControlBoardDriver();
-    
+
     /**
      * Callback for the WorldUpdateBegin Gazebo event.
      */
     void onUpdate(const gazebo::common::UpdateInfo&);
-    
+
     /**
-     * Helper methods 
+     * Helper methods
      */
     bool getZero(int j,  double* val);
     bool getZero(double* vals);
@@ -124,8 +126,8 @@ public:
     virtual bool getEncoderSpeed(int j, double* sp); //NOT TESTED
     virtual bool getEncoderSpeeds(double* spds); //NOT TESTED
 
-    virtual bool getEncoderAcceleration(int j, double* spds); 
-    virtual bool getEncoderAccelerations(double* accs); 
+    virtual bool getEncoderAcceleration(int j, double* spds);
+    virtual bool getEncoderAccelerations(double* accs);
 
     // ENCODERS TIMED
     virtual bool getEncodersTimed(double* encs, double* time);
@@ -160,7 +162,7 @@ public:
     virtual bool getTargetPosition(const int joint, double *ref);
     virtual bool getTargetPositions(double *refs);
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
-        
+
 
     /// @arg spds [deg/sec]
     virtual bool setRefSpeeds(const double *spds); //NOT TESTED
@@ -193,8 +195,7 @@ public:
     virtual bool getControlModes(int *modes); //NOT TESTED
 
     virtual bool setImpedancePositionMode(int j);
-    virtual bool setImpedanceVelocityMode(int j); 
-    virtual bool setOpenLoopMode(int j); 
+    virtual bool setImpedanceVelocityMode(int j);
 
     // CONTROL MODE 2
     virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
@@ -213,26 +214,26 @@ public:
     virtual bool getTorque(int j, double *t); //NOT TESTED
     virtual bool getTorques(double *t); //NOT TESTED
 
-    virtual bool getBemfParam(int j, double *bemf); 
-    virtual bool setBemfParam(int j, double bemf); 
-    virtual bool setTorquePid(int j, const Pid &pid); 
-    virtual bool getTorqueRange(int j, double *min, double *max); 
-    virtual bool getTorqueRanges(double *min, double *max); 
-    virtual bool setTorquePids(const Pid *pids); 
-    virtual bool setTorqueErrorLimit(int j, double limit); 
-    virtual bool setTorqueErrorLimits(const double *limits); 
-    virtual bool getTorqueError(int j, double *err); 
-    virtual bool getTorqueErrors(double *errs); 
-    virtual bool getTorquePidOutput(int j, double *out); 
-    virtual bool getTorquePidOutputs(double *outs); 
-    virtual bool getTorquePid(int j, Pid *pid); 
-    virtual bool getTorquePids(Pid *pids); 
-    virtual bool getTorqueErrorLimit(int j, double *limit); 
-    virtual bool getTorqueErrorLimits(double *limits); 
-    virtual bool resetTorquePid(int j); 
-    virtual bool disableTorquePid(int j); 
-    virtual bool enableTorquePid(int j); 
-    virtual bool setTorqueOffset(int j, double v); 
+    virtual bool getBemfParam(int j, double *bemf);
+    virtual bool setBemfParam(int j, double bemf);
+    virtual bool setTorquePid(int j, const Pid &pid);
+    virtual bool getTorqueRange(int j, double *min, double *max);
+    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool setTorquePids(const Pid *pids);
+    virtual bool setTorqueErrorLimit(int j, double limit);
+    virtual bool setTorqueErrorLimits(const double *limits);
+    virtual bool getTorqueError(int j, double *err);
+    virtual bool getTorqueErrors(double *errs);
+    virtual bool getTorquePidOutput(int j, double *out);
+    virtual bool getTorquePidOutputs(double *outs);
+    virtual bool getTorquePid(int j, Pid *pid);
+    virtual bool getTorquePids(Pid *pids);
+    virtual bool getTorqueErrorLimit(int j, double *limit);
+    virtual bool getTorqueErrorLimits(double *limits);
+    virtual bool resetTorquePid(int j);
+    virtual bool disableTorquePid(int j);
+    virtual bool enableTorquePid(int j);
+    virtual bool setTorqueOffset(int j, double v);
 
     //IMPEDANCE CTRL
     virtual bool getImpedance(int j, double *stiffness, double *damping); // [Nm/deg] & [Nm*sec/deg]
@@ -241,14 +242,36 @@ public:
     virtual bool getImpedanceOffset(int j, double* offset);
     virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
-    //IOpenLoopControl interface methods
-    virtual bool setRefOutput(int j, double v);
-    virtual bool setRefOutputs(const double *v);
-    virtual bool getRefOutput(int j, double *v);
-    virtual bool getRefOutputs(double *v);
-    virtual bool getOutput(int j, double *v);
-    virtual bool getOutputs(double *v);
-    virtual bool setOpenLoopMode();
+    // PWM interface
+    virtual bool setRefDutyCycle(int j, double v);
+    virtual bool setRefDutyCycles(const double *v);
+    virtual bool getRefDutyCycle(int j, double *v);
+    virtual bool getRefDutyCycles(double *v);
+    virtual bool getDutyCycle(int j, double *v);
+    virtual bool getDutyCycles(double *v);
+
+    // Current interface
+    //virtual bool getAxes(int *ax);
+    //virtual bool getCurrentRaw(int j, double *t);
+    //virtual bool getCurrentsRaw(double *t);
+    virtual bool getCurrentRange(int j, double *min, double *max);
+    virtual bool getCurrentRanges(double *min, double *max);
+    virtual bool setRefCurrents(const double *t);
+    virtual bool setRefCurrent(int j, double t);
+    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t);
+    virtual bool getRefCurrents(double *t);
+    virtual bool getRefCurrent(int j, double *t);
+    virtual bool setCurrentPid(int j, const Pid &pid);
+    virtual bool setCurrentPids(const Pid *pids);
+    virtual bool getCurrentError(int j, double *err);
+    virtual bool getCurrentErrors(double *errs);
+    virtual bool getCurrentPidOutput(int j, double *out);
+    virtual bool getCurrentPidOutputs(double *outs);
+    virtual bool getCurrentPid(int j, Pid *pid);
+    virtual bool getCurrentPids(Pid *pids);
+    virtual bool resetCurrentPid(int j);
+    virtual bool disableCurrentPid(int j);
+    virtual bool enableCurrentPid(int j);
 
     /*
      * IPidControl Interface methods
@@ -271,22 +294,24 @@ public:
     virtual bool disablePid (int j);
     virtual bool enablePid (int j);
     virtual bool setOffset (int j, double v);
+    virtual bool getOutput(int j, double *out);
+    virtual bool getOutputs(double *outs);
 
     /*
      * Probably useless stuff here
      */
     //AMPLIFIER CONTROL (inside comanOthers.cpp)
-    virtual bool enableAmp(int j); 
-    virtual bool disableAmp(int j); 
-    virtual bool getCurrent(int j, double *val); 
-    virtual bool getCurrents(double *vals); 
-    virtual bool setMaxCurrent(int j, double v); 
-    virtual bool getMaxCurrent(int j, double *v);  
-    virtual bool getAmpStatus(int *st); 
-    virtual bool getAmpStatus(int k, int *v); 
+    virtual bool enableAmp(int j);
+    virtual bool disableAmp(int j);
+    virtual bool getCurrent(int j, double *val);
+    virtual bool getCurrents(double *vals);
+    virtual bool setMaxCurrent(int j, double v);
+    virtual bool getMaxCurrent(int j, double *v);
+    virtual bool getAmpStatus(int *st);
+    virtual bool getAmpStatus(int k, int *v);
 
     //CONTROL CALIBRATION (inside comanOthers.cpp)
-    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); 
+    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3);
     virtual bool done(int j); // NOT IMPLEMENTED
 
     /*
@@ -297,13 +322,13 @@ public:
     virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
     virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val);
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
-    
+
     // CONTROL LIMITS2 (inside comanOthers.cpp)
     virtual bool getLimits(int axis, double *min, double *max);
     virtual bool setLimits(int axis, double min, double max);
-    virtual bool getVelLimits(int axis, double *min, double *max); 
+    virtual bool getVelLimits(int axis, double *min, double *max);
     virtual bool setVelLimits(int axis, double min, double max);
-    
+
     // IPOSITION DIRECT
     virtual bool setPositionDirectMode();
     virtual bool setPosition(int j, double ref);
@@ -330,9 +355,9 @@ private:
 
     std::vector<int> m_controlMode;
     std::vector<int>  m_interactionMode;
-    
+
     // Attributes related to the updating on the timestamp
-    
+
     /**
      * Connection to the WorldUpdateBegin Gazebo event
      */

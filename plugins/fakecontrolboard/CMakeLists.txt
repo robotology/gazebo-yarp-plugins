@@ -15,7 +15,6 @@ set(plugin_source     src/FakeControlBoard.cc
                       src/FakeControlBoardDriverRemoteVariables.cpp
                       src/FakeControlBoardDriverControl.cpp
                       src/FakeControlBoardDriverImpedancePositionControl.cpp
-                      src/FakeControlBoardDriverOpenLoop.cpp
                       src/FakeControlBoardDriverPidControl.cpp)
 
 set(plugin_headers    include/gazebo/FakeControlBoard.hh

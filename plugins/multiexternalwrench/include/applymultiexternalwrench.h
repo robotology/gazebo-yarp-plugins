@@ -2,12 +2,13 @@
 #define APPLYMULTIEXTERNALWRENCH_H
 
 #include <externalwrench.h>
+#include <boost/shared_ptr.hpp>
 
 class RPCServerThread: public yarp::os::Thread
 {
 private:
     
-    ExternalWrench *newWrench;
+    //boost::shared_ptr<ExternalWrench> newWrench;
     
     yarp::os::RpcServer m_rpcPort;
     yarp::os::Bottle m_cmd;
@@ -19,7 +20,8 @@ private:
 public:
     boost::mutex m_lock;
     
-    std::unique_ptr<std::vector<ExternalWrench*>> wrenchesVectorPtr{new std::vector<ExternalWrench*>};
+    boost::shared_ptr< std::vector< boost::shared_ptr<ExternalWrench> > > wrenchesVectorPtr{new std::vector< boost::shared_ptr<ExternalWrench>>()};
+    
     
     virtual bool        threadInit();
     virtual void        run();

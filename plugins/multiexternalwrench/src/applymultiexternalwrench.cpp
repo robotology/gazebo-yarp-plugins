@@ -10,7 +10,7 @@ ApplyMultiExternalWrench::ApplyMultiExternalWrench()
 
 ApplyMultiExternalWrench::~ApplyMultiExternalWrench()
 {
-    m_rpcThread.m_lock.lock();
+    /*m_rpcThread.m_lock.lock();
     for(int i = 0; i < m_rpcThread.wrenchesVectorPtr->size() ; i++)
     {
         if(m_rpcThread.wrenchesVectorPtr->at(i)->duration_done)
@@ -19,7 +19,7 @@ ApplyMultiExternalWrench::~ApplyMultiExternalWrench()
         }
            
     }
-    m_rpcThread.m_lock.unlock();
+    m_rpcThread.m_lock.unlock();*/
     m_rpcThread.stop();
     this->m_updateConnection.reset();
 }
@@ -140,7 +140,8 @@ void RPCServerThread::run()
                
                //yInfo() << "Creating new instance of external wrench";
                //Creating new instances of external wrenches
-               newWrench = new ExternalWrench();
+               //newWrench = std::unique_ptr<ExternalWrench>(new ExternalWrench());
+               boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
                if(newWrench->setWrench(m_robotModel,m_cmd))
                {
                    wrenchesVectorPtr->push_back(newWrench);            

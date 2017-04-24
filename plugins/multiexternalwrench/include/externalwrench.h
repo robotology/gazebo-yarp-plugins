@@ -43,8 +43,8 @@ private:
    struct wrenchCommand
    {
         std::string link_name;
-        math::Vector3 force;
-        math::Vector3 torque;
+        gazebo::math::Vector3 force;
+        gazebo::math::Vector3 torque;
         double duration;
    };
    
@@ -52,6 +52,8 @@ private:
    
    double tick;
    double tock;
+   gazebo::math::Vector3 *force_;
+   gazebo::math::Vector3 *torque_;
    
    bool model_has_link;
    physics::ModelPtr model;

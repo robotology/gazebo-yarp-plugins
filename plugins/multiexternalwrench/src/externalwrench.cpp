@@ -20,25 +20,6 @@ ExternalWrench::ExternalWrench()
     duration_done = false;
 }
 
-bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
-{
-    model = _model;
-    wrenchPtr->link_name = cmd.get(0).asString();
-    //yInfo() << "Link name : " << wrenchPtr->link_name;
-    if(getLink())
-    {
-        wrenchPtr->force.Set(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
-        //std::cout << "Force values : " << wrenchPtr->force << std::endl;
-        wrenchPtr->torque.Set(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
-        //std::cout << "Torque values : " << wrenchPtr->torque << std::endl;
-        wrenchPtr->duration = cmd.get(7).asDouble();
-        //yInfo() << "Wrench duration : " << wrenchPtr->duration;
-        return true;
-    }
-    else return false;
-    //yInfo() << "Set new wrench values";
-}
-
 bool ExternalWrench::getLink()
 {
     //yInfo() << "Getting the link in the model";
@@ -89,6 +70,28 @@ bool ExternalWrench::getLink()
     }
     return true;
 }
+
+bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
+{
+    model = _model;
+    wrenchPtr->link_name = cmd.get(0).asString();
+    //yInfo() << "Link name : " << wrenchPtr->link_name;
+    //yInfo() << "wrench values : " << cmd.get(1).asDouble() << cmd.get(2).asDouble() << cmd.get(3).asDouble() << cmd.get(4).asDouble() << cmd.get(5).asDouble() << cmd.get(6).asDouble();
+    //yInfo() << "wrench duration : " << cmd.get(7).asDouble();
+    if(getLink())
+    {
+        force_ = new gazebo::math::Vector3(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
+        torque_ = new gazebo::math::Vector3(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
+        
+        std::cout << "Force values : " << force_ << std::endl;
+        std::cout << "Torque values : " << torque_ << std::endl;
+        wrenchPtr->duration = cmd.get(7).asDouble();
+        yInfo() << "Wrench duration : " << wrenchPtr->duration;
+        return true;
+    }
+    else return false;
+    //yInfo() << "Set new wrench values";
+}
  
 void ExternalWrench::applyWrench()
 {
@@ -97,8 +100,13 @@ void ExternalWrench::applyWrench()
     if((tock-tick) < wrenchPtr->duration)
     {
         //yInfo() << "Applying external wrench";
+        wrenchPtr->force = *force_;
+        wrenchPtr->torque = *torque_;
+        std::cout << wrenchPtr->force << " , " << wrenchPtr->torque << std::endl;
+       
         link->AddForce(wrenchPtr->force);
         link->AddTorque(wrenchPtr->torque);
+        
         math::Vector3 linkCoGPos = link->GetWorldCoGPose().pos;
         math::Vector3 newZ = wrenchPtr->force.Normalize();
         math::Vector3 newX = newZ.Cross(math::Vector3::UnitZ);
@@ -128,6 +136,9 @@ void ExternalWrench::applyWrench()
 
 ExternalWrench::~ExternalWrench()
 {
+    delete force_;
+    delete torque_;
+    
     //yInfo() << "ExternalWrench Destructor";
     count--;
 }

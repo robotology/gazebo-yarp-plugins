@@ -82,11 +82,11 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
     {
         force_ = new gazebo::math::Vector3(cmd.get(1).asDouble(),cmd.get(2).asDouble(),cmd.get(3).asDouble());
         torque_ = new gazebo::math::Vector3(cmd.get(4).asDouble(),cmd.get(5).asDouble(),cmd.get(6).asDouble());
-        
-        std::cout << "Force values : " << force_ << std::endl;
-        std::cout << "Torque values : " << torque_ << std::endl;
         wrenchPtr->duration = cmd.get(7).asDouble();
-        yInfo() << "Wrench duration : " << wrenchPtr->duration;
+        
+        //std::cout << "Force values : " << force_ << std::endl;
+        //std::cout << "Torque values : " << torque_ << std::endl;
+        //yInfo() << "Wrench duration : " << wrenchPtr->duration;
         return true;
     }
     else return false;
@@ -102,7 +102,7 @@ void ExternalWrench::applyWrench()
         //yInfo() << "Applying external wrench";
         wrenchPtr->force = *force_;
         wrenchPtr->torque = *torque_;
-        std::cout << wrenchPtr->force << " , " << wrenchPtr->torque << std::endl;
+        //std::cout << wrenchPtr->force << " , " << wrenchPtr->torque << std::endl;
        
         link->AddForce(wrenchPtr->force);
         link->AddTorque(wrenchPtr->torque);
@@ -136,10 +136,9 @@ void ExternalWrench::applyWrench()
 
 ExternalWrench::~ExternalWrench()
 {
+    yInfo() << "ExternalWrench Destructor";
     delete force_;
     delete torque_;
-    
-    //yInfo() << "ExternalWrench Destructor";
     count--;
 }
 

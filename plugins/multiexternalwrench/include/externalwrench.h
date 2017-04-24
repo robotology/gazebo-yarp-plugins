@@ -62,7 +62,7 @@ private:
    
    transport::NodePtr m_node;
    transport::PublisherPtr m_visPub;
-   msgs::Visual            m_visualMsg;
+   msgs::Visual m_visualMsg;
    
    event::ConnectionPtr updateConnection;
     

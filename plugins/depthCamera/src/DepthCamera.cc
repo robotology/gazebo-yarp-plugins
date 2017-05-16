@@ -80,8 +80,6 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     // Add scoped name to list of params
     m_driverParameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
 
-    yarp::dev::IMultipleWrapper* m_iWrap;
-
     ///////////////////////////
     //Open the wrapper, forcing it to be a "RGBDSensorWrapper"
     wrapper_properties.put("device","RGBDSensorWrapper");

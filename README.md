@@ -3,6 +3,7 @@ gazebo-yarp-plugins [![Build Status](https://travis-ci.org/robotology/gazebo-yar
 
 Plugins for exposing [Yarp](http://yarp.it/) interfaces on [Gazebo simulator](http://gazebosim.org/) models.
 
+
 Plugin List
 ------------
 

@@ -89,17 +89,17 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     }
     if (key == "SHORTCUT_all_pos_kp")
     {   
-        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.kp); }
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);  r.addDouble(tmp_pid.kp); }
         return true;
     }
     if (key == "SHORTCUT_all_pos_kd")
     {   
-        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.kd); }
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);  r.addDouble(tmp_pid.kd); }
         return true;
     }
     if (key == "SHORTCUT_all_pos_ki")
     {   
-        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(i,&tmp_pid);  r.addDouble(tmp_pid.ki); }
+        yarp::os::Bottle& r = val.addList(); for (int i = 0; i< m_numberOfJoints; i++) { yarp::dev::Pid tmp_pid; getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);  r.addDouble(tmp_pid.ki); }
         return true;
     }
     if (key == "VelocityTimeout")
@@ -222,9 +222,9 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         for (int i = 0; i < m_numberOfJoints; i++)
         {
             yarp::dev::Pid tmp_pid;
-            getPid(i,&tmp_pid);
+            getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);
             tmp_pid.kp = bval->get(i).asDouble();
-            setPid(i,tmp_pid);
+            setPid(VOCAB_PIDTYPE_POSITION, i,tmp_pid);
         }
         return true;
     }
@@ -233,9 +233,9 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         for (int i = 0; i < m_numberOfJoints; i++)
         {
             yarp::dev::Pid tmp_pid;
-            getPid(i,&tmp_pid);
+            getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);
             tmp_pid.kd = bval->get(i).asDouble();
-            setPid(i,tmp_pid);
+            setPid(VOCAB_PIDTYPE_POSITION, i,tmp_pid);
         }
         return true;
     }
@@ -244,9 +244,9 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, 
         for (int i = 0; i < m_numberOfJoints; i++)
         {
             yarp::dev::Pid tmp_pid;
-            getPid(i,&tmp_pid);
+            getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);
             tmp_pid.ki = bval->get(i).asDouble();
-            setPid(i,tmp_pid);
+            setPid(VOCAB_PIDTYPE_POSITION, i,tmp_pid);
         }
         return true;
     }

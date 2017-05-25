@@ -1479,7 +1479,7 @@ double GazeboYarpControlBoardDriver::convertUserGainToGazeboGain(int joint, doub
             newValue = value;
             break;
         }
-
+        case JointType_Unknown:
         default:
         {
             yError() << "Cannot convert measure from User to Gazebo units, type of joint not supported";

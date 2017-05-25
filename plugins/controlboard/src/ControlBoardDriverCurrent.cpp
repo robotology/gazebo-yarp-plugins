@@ -80,7 +80,6 @@ namespace yarp {
         }
         */
 
-
         bool GazeboYarpControlBoardDriver::getRefCurrent(int j, double *v)
         {
             if (v && j >= 0 && j < (int)m_numberOfJoints) {
@@ -97,61 +96,6 @@ namespace yarp {
                 v[j] = m_jntReferenceTorques[j];
             }
             return true;
-        }
-
-        bool GazeboYarpControlBoardDriver::setCurrentPid(int j, const Pid &pid)
-        {
-            return NOT_YET_IMPLEMENTED("setCurrentPidRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::setCurrentPids(const Pid *pids)
-        {
-            return NOT_YET_IMPLEMENTED("setCurrentPidsRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::getCurrentError(int j, double *err)
-        {
-            return NOT_YET_IMPLEMENTED("getCurrentErrorRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::getCurrentErrors(double *errs)
-        {
-            return NOT_YET_IMPLEMENTED("getCurrentErrorsRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::getCurrentPidOutput(int j, double *out)
-        {
-            return NOT_YET_IMPLEMENTED("getCurrentPidOutputRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::getCurrentPidOutputs(double *outs)
-        {
-            return NOT_YET_IMPLEMENTED("getCurrentPidOutputsRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::getCurrentPid(int j, Pid *pid)
-        {
-            return NOT_YET_IMPLEMENTED("getCurrentPidRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::getCurrentPids(Pid *pids)
-        {
-            return NOT_YET_IMPLEMENTED("getCurrentPidsRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::resetCurrentPid(int j)
-        {
-            return NOT_YET_IMPLEMENTED("resetCurrentPidRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::disableCurrentPid(int j)
-        {
-            return NOT_YET_IMPLEMENTED("disableCurrentPidRaw");
-        }
-
-        bool GazeboYarpControlBoardDriver::enableCurrentPid(int j)
-        {
-            return NOT_YET_IMPLEMENTED("enableCurrentPidRaw");
         }
 
     }

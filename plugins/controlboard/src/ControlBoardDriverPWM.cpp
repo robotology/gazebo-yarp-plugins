@@ -19,7 +19,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::setRefDutyCycle(int j, double v)
         {
-            if (j >= 0 && j < (int)m_numberOfJoints) {
+            if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 m_jntReferenceTorques[j] = v*m_kPWM[j];
                 return true;
             }
@@ -29,7 +29,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::setRefDutyCycles(const double* v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 m_jntReferenceTorques[j] = v[j]*m_kPWM[j];
             }
             return true;
@@ -37,7 +37,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getDutyCycle(int j, double *v)
         {
-            if (v && j >= 0 && j < (int)m_numberOfJoints) {
+            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *v = m_torques[j];
                 return true;
             }
@@ -47,7 +47,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getDutyCycles(double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_torques[j];
             }
             return true;
@@ -55,7 +55,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getRefDutyCycle(int j, double *v)
         {
-            if (v && j >= 0 && j < (int)m_numberOfJoints) {
+            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *v = m_jntReferenceTorques[j];
                 return true;
             }
@@ -65,7 +65,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getRefDutyCycles(double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_jntReferenceTorques[j];
             }
             return true;

@@ -37,7 +37,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode(int j)
 
 bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode)
 {
-    if (!mode || j < 0 || j >= (int)m_numberOfJoints)
+    if (!mode || j < 0 || static_cast<size_t>(j) >= m_numberOfJoints)
         return false;
     *mode = m_controlMode[j];
     return true;
@@ -46,7 +46,7 @@ bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode)
 bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
 {
     if (!modes) return false;
-    for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
+    for(size_t j = 0; j < m_numberOfJoints; ++j) {
         modes[j] = m_controlMode[j];
     }
     return true;
@@ -74,14 +74,15 @@ bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENT
 bool GazeboYarpControlBoardDriver::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     bool ret = true;
-    for (int i = 0; i < n_joint; i++)
+    for (int i = 0; i < n_joint; i++) {
         ret = ret && getControlMode(joints[i], &modes[i]);
+    }
     return ret;
 }
 
 bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
+    if (j < 0 || static_cast<size_t>(j) >= m_numberOfJoints) return false;
 
     // Only accept supported control modes
     // The only not supported control mode is
@@ -101,17 +102,17 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
         return false;
     }
 
-    for (int cpl_i=0; cpl_i<(int)m_coupling_handler.size(); cpl_i++)
+    for (size_t cpl_i = 0; cpl_i < m_coupling_handler.size(); ++cpl_i)
     {
-      if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
-      {
-        yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
-        for (int coupled_j=0; coupled_j<coupling_vector.size(); coupled_j++)
+        if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
         {
-          changeControlMode(coupling_vector[coupled_j], mode);
+            yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
+            for (size_t coupled_j = 0; coupled_j < coupling_vector.size(); ++coupled_j)
+            {
+                changeControlMode(coupling_vector[coupled_j], mode);
+            }
+            return true;
         }
-        return true;
-      }
     }
     changeControlMode(j,mode);
     return true;
@@ -182,15 +183,17 @@ bool GazeboYarpControlBoardDriver::setControlModes(const int n_joint, const int 
 {
 
     bool ret = true;
-    for (int i = 0; i < n_joint; i++)
+    for (int i = 0; i < n_joint; i++) {
         ret = ret && setControlMode(joints[i], modes[i]);
+    }
     return ret;
 }
 
 bool GazeboYarpControlBoardDriver::setControlModes(int *modes)
 {
     bool ret = true;
-    for (int i = 0; i < (int)m_numberOfJoints; i++)
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         ret = ret && setControlMode(i, modes[i]);
+    }
     return ret;
 }

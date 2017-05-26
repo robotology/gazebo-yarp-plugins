@@ -22,7 +22,7 @@ bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
-    if (j >= 0 && j < (int)m_numberOfJoints)
+    if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints)
     {
         m_jntReferenceVelocities[j] = sp;
         m_velocity_watchdog[j]->reset();
@@ -36,7 +36,7 @@ bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 bool GazeboYarpControlBoardDriver::velocityMove(const double *sp) //NOT TESTED
 {
     if (!sp) return false;
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i)
+    for (size_t i = 0; i < m_numberOfJoints; ++i)
     {
         velocityMove(i, sp[i]);
     }
@@ -56,7 +56,7 @@ bool GazeboYarpControlBoardDriver::velocityMove(const int n_joint, const int *jo
 
 bool GazeboYarpControlBoardDriver::getRefVelocity(const int joint, double *vel) 
 {
-    if (vel && joint >= 0 && joint < (int)m_numberOfJoints)
+    if (vel && joint >= 0 && static_cast<size_t>(joint) < m_numberOfJoints)
     {
       *vel = m_jntReferenceVelocities[joint];
       return true;
@@ -69,7 +69,7 @@ bool GazeboYarpControlBoardDriver::getRefVelocities(double *vels)
 {
     if (!vels) return false; //check or not check?
     bool ret = true;
-    for (int i = 0; i < this->m_numberOfJoints && ret; i++) {
+    for (size_t i = 0; i < this->m_numberOfJoints && ret; i++) {
         ret = getRefVelocity(i, &vels[i]);
     }
     return ret; 

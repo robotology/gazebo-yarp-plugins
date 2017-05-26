@@ -11,7 +11,7 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getEncoder(int j, double *v) //WORKS
 {
-    if (v && j >= 0 && j < (int)m_numberOfJoints) {
+    if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         *v = m_positions[j]-m_zeroPosition[j];
         return true;
     }
@@ -21,7 +21,7 @@ bool GazeboYarpControlBoardDriver::getEncoder(int j, double *v) //WORKS
 bool GazeboYarpControlBoardDriver::getEncoders(double *encs) //WORKS
 {
     if (!encs) return false;
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         encs[i] = m_positions[i]-m_zeroPosition[i];  //should we just use memcopy here?
     }
     return true;
@@ -30,7 +30,7 @@ bool GazeboYarpControlBoardDriver::getEncoders(double *encs) //WORKS
 bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
 {
     double my_time = m_lastTimestamp.getTime();
-    for (unsigned int i = 0; i <m_numberOfJoints; ++i) {
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         encs[i] = m_positions[i]-m_zeroPosition[i];  //should we just use memcopy here?
         time[i] = my_time;
     }
@@ -47,7 +47,7 @@ bool GazeboYarpControlBoardDriver::getEncodersTimed(double *encs, double *time)
  */
 bool GazeboYarpControlBoardDriver::getEncoderTimed(int j, double *encs, double *time)
 {
-    if (time && encs && j >= 0 && j < (int)m_numberOfJoints) {
+    if (time && encs && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         *encs = m_positions[j]-m_zeroPosition[j];
         *time = m_lastTimestamp.getTime();
         return true;
@@ -61,7 +61,7 @@ bool GazeboYarpControlBoardDriver::getEncoderTimed(int j, double *encs, double *
  */
 bool GazeboYarpControlBoardDriver::resetEncoder(int j) //WORKS
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
+    if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         m_zeroPosition[j] = m_positions[j];
         return true;
     }
@@ -70,7 +70,7 @@ bool GazeboYarpControlBoardDriver::resetEncoder(int j) //WORKS
 
 bool GazeboYarpControlBoardDriver::resetEncoders() //WORKS
 {
-    for (unsigned int i=0; i<m_numberOfJoints; ++i) {
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         m_zeroPosition[i] = m_positions[i];
     }
     return true;
@@ -78,7 +78,7 @@ bool GazeboYarpControlBoardDriver::resetEncoders() //WORKS
 
 bool GazeboYarpControlBoardDriver::setEncoder(int j, double val) //WORKS
 {
-    if (j >= 0 && j < (int)m_numberOfJoints) {
+    if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         m_zeroPosition[j] = m_positions[j]-val;
         return true;
     }
@@ -87,7 +87,7 @@ bool GazeboYarpControlBoardDriver::setEncoder(int j, double val) //WORKS
 
 bool GazeboYarpControlBoardDriver::setEncoders(const double *vals) //WORKS
 {
-    for (unsigned int i=0; i<m_numberOfJoints; ++i) {
+    for (size_t i=0; i < m_numberOfJoints; ++i) {
         m_zeroPosition[i] = m_positions[i]-vals[i];
     }
     return true;
@@ -96,7 +96,7 @@ bool GazeboYarpControlBoardDriver::setEncoders(const double *vals) //WORKS
 
 bool GazeboYarpControlBoardDriver::getEncoderSpeed(int j, double *sp) //NOT TESTED
 {
-    if (sp && j >= 0 && j < (int)m_numberOfJoints) {
+    if (sp && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         *sp = m_velocities[j];
         return true;
     }
@@ -106,7 +106,7 @@ bool GazeboYarpControlBoardDriver::getEncoderSpeed(int j, double *sp) //NOT TEST
 bool GazeboYarpControlBoardDriver::getEncoderSpeeds(double *spds) //NOT TESTED
 {
     if (!spds) return false;
-    for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         getEncoderSpeed(i, &spds[i]);
     }
     return true;
@@ -114,7 +114,7 @@ bool GazeboYarpControlBoardDriver::getEncoderSpeeds(double *spds) //NOT TESTED
 
 bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) //NOT IMPLEMENTED
 {
-    if (spds && j >= 0 && j < (int)m_numberOfJoints) {
+    if (spds && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         *spds = 0.0;
         return true;
     }
@@ -124,7 +124,7 @@ bool GazeboYarpControlBoardDriver::getEncoderAcceleration(int j, double *spds) /
 bool GazeboYarpControlBoardDriver::getEncoderAccelerations(double *accs) //NOT IMPLEMENTED
 {
     if (!accs) return false;
-    for (unsigned int i=0; i<m_numberOfJoints; ++i) {
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         accs[i] = 0.0;
     }
     return true;

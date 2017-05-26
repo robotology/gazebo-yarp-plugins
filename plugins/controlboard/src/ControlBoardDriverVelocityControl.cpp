@@ -14,7 +14,7 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
 {
     bool ret = true;
-    for (unsigned int j = 0; j < m_numberOfJoints; j++) {
+    for (size_t j = 0; j < m_numberOfJoints; j++) {
         ret = ret && this->setControlMode(j, VOCAB_CM_VELOCITY);
     }
     return ret;
@@ -27,7 +27,9 @@ bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
         m_jntReferenceVelocities[j] = sp;
         m_velocity_watchdog[j]->reset();
         if (m_speed_ramp_handler[j])
-          {  m_speed_ramp_handler[j]->setReference(m_jntReferenceVelocities[j], m_trajectoryGenerationReferenceAcceleration[j]); }
+        {
+            m_speed_ramp_handler[j]->setReference(m_jntReferenceVelocities[j], m_trajectoryGenerationReferenceAcceleration[j]);
+        }
         return true;
     }
     return false;
@@ -54,28 +56,28 @@ bool GazeboYarpControlBoardDriver::velocityMove(const int n_joint, const int *jo
     return ret;
 }
 
-bool GazeboYarpControlBoardDriver::getRefVelocity(const int joint, double *vel) 
+bool GazeboYarpControlBoardDriver::getRefVelocity(const int joint, double *vel)
 {
     if (vel && joint >= 0 && static_cast<size_t>(joint) < m_numberOfJoints)
     {
-      *vel = m_jntReferenceVelocities[joint];
-      return true;
+        *vel = m_jntReferenceVelocities[joint];
+        return true;
     }
     return false;
-  
+
 }
 
-bool GazeboYarpControlBoardDriver::getRefVelocities(double *vels) 
+bool GazeboYarpControlBoardDriver::getRefVelocities(double *vels)
 {
     if (!vels) return false; //check or not check?
     bool ret = true;
     for (size_t i = 0; i < this->m_numberOfJoints && ret; i++) {
         ret = getRefVelocity(i, &vels[i]);
     }
-    return ret; 
+    return ret;
 }
 
-bool GazeboYarpControlBoardDriver::getRefVelocities(const int n_joint, const int *joints, double *vels) 
+bool GazeboYarpControlBoardDriver::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
     if (!joints || !vels) return false; //check or not check?
     bool ret = true;

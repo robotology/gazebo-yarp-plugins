@@ -368,14 +368,14 @@ namespace yarp {
                 yWarning() << "Could not find PID for type " << pidtype;
                 return false;
             }
-
+            
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
                 yWarning() << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
-
+            
             return false; //not implemented
         }
-
+        
     }
 }

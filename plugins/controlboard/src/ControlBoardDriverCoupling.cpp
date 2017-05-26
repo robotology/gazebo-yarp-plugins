@@ -54,7 +54,7 @@ std::string BaseCouplingHandler::getCoupledJointName(int joint)
     {
         if (m_coupledJoints[i]==joint) c_joint = i;
     }
-               
+
     if (c_joint >= 0 && static_cast<size_t>(c_joint) < m_coupledJoints.size())
     {
         return m_coupledJointNames[c_joint];
@@ -441,7 +441,7 @@ bool FingersAbductionCouplingHandler::decoupleVel (yarp::sig::Vector& current_ve
 
 bool FingersAbductionCouplingHandler::decoupleAcc (yarp::sig::Vector& current_acc)
 {
-    
+
     if (m_coupledJoints.size()!=m_couplingSize) return false;
     current_acc[m_coupledJoints[0]] = current_acc[m_coupledJoints[3]];
     return true;
@@ -518,7 +518,7 @@ bool CerHandCouplingHandler::decoupleVel (yarp::sig::Vector& current_vel)
 
 bool CerHandCouplingHandler::decoupleAcc (yarp::sig::Vector& current_acc)
 {
-    
+
     if (m_coupledJoints.size()!=m_couplingSize) return false;
     double temp0 = current_acc[m_coupledJoints[0]];
     double temp2 = current_acc[m_coupledJoints[2]];

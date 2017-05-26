@@ -168,7 +168,7 @@ bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 }
 
 
-bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc) 
+bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc)
 {
     if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         m_trajectoryGenerationReferenceAcceleration[j] = acc;
@@ -177,7 +177,7 @@ bool GazeboYarpControlBoardDriver::setRefAcceleration(int j, double acc)
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs) 
+bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs)
 {
     for (size_t i = 0; i < m_numberOfJoints; ++i) {
         m_trajectoryGenerationReferenceAcceleration[i] = accs[i];
@@ -185,7 +185,7 @@ bool GazeboYarpControlBoardDriver::setRefAccelerations(const double *accs)
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc) 
+bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc)
 {
     if (acc && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         *acc = m_trajectoryGenerationReferenceAcceleration[j];
@@ -194,7 +194,7 @@ bool GazeboYarpControlBoardDriver::getRefAcceleration(int j, double *acc)
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs) 
+bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs)
 {
     if (!accs) return false;
     for (size_t i = 0; i < m_numberOfJoints; ++i) {
@@ -343,8 +343,8 @@ bool GazeboYarpControlBoardDriver::getTargetPosition(const int joint, double *re
 {
     if (ref && joint >= 0 && static_cast<size_t>(joint) < m_numberOfJoints)
     {
-      *ref = m_trajectoryGenerationReferencePosition[joint];
-      return true;
+        *ref = m_trajectoryGenerationReferencePosition[joint];
+        return true;
     }
     return false;
 }
@@ -368,4 +368,3 @@ bool GazeboYarpControlBoardDriver::getTargetPositions(const int n_joint, const i
     }
     return ret;
 }
-    

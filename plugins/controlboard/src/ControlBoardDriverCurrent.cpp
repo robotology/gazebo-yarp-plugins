@@ -57,28 +57,28 @@ namespace yarp {
         }
 
         /*
-        //Already implemented by another interface
-        bool GazeboYarpControlBoardDriver::getCurrent(int j, double *v)
-        {
-            if (val && j >= 0 && j < (int)m_numberOfJoints) {
-                *val = amp[j];
-                return true;
-            }
-            return false;
-        }
-        */
+         //Already implemented by another interface
+         bool GazeboYarpControlBoardDriver::getCurrent(int j, double *v)
+         {
+         if (val && j >= 0 && j < (int)m_numberOfJoints) {
+         *val = amp[j];
+         return true;
+         }
+         return false;
+         }
+         */
 
         /*
-        //Already implemented by another interface
-        bool GazeboYarpControlBoardDriver::getCurrents(double *v)
-        {
-            if (!vals) return false;
-            for (unsigned int i=0; i<m_numberOfJoints; i++) {
-                vals[i] = amp[i];
-            }
-            return true;
-        }
-        */
+         //Already implemented by another interface
+         bool GazeboYarpControlBoardDriver::getCurrents(double *v)
+         {
+         if (!vals) return false;
+         for (unsigned int i=0; i<m_numberOfJoints; i++) {
+         vals[i] = amp[i];
+         }
+         return true;
+         }
+         */
 
         bool GazeboYarpControlBoardDriver::getRefCurrent(int j, double *v)
         {
@@ -97,6 +97,6 @@ namespace yarp {
             }
             return true;
         }
-
+        
     }
 }

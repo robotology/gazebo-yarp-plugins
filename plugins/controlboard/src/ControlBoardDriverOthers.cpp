@@ -11,17 +11,17 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
-    
+
     for (unsigned int cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
     {
-      if (m_coupling_handler[cpl_cnt])
-      {
-         if (m_coupling_handler[cpl_cnt]->checkJointIsCoupled(axis))
-         {
-            name = m_coupling_handler[cpl_cnt]->getCoupledJointName(axis);
-            return true;
-         }
-      }
+        if (m_coupling_handler[cpl_cnt])
+        {
+            if (m_coupling_handler[cpl_cnt]->checkJointIsCoupled(axis))
+            {
+                name = m_coupling_handler[cpl_cnt]->getCoupledJointName(axis);
+                return true;
+            }
+        }
     }
     name = yarp::os::ConstString(controlboard_joint_names.at(axis));
     return true;

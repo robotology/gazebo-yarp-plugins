@@ -97,8 +97,8 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_IDLE
           || mode == VOCAB_CM_FORCE_IDLE)) {
         yWarning() << "request control mode "
-                  << yarp::os::Vocab::decode(mode) << " that is not supported by "
-                  << " gazebo_yarp_controlboard plugin.";
+        << yarp::os::Vocab::decode(mode) << " that is not supported by "
+        << " gazebo_yarp_controlboard plugin.";
         return false;
     }
 
@@ -125,7 +125,7 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
     //if joint is in hw fault, only a force idle command can recover it
     if (m_controlMode[j] == VOCAB_CM_HW_FAULT && mode != VOCAB_CM_FORCE_IDLE)
     {
-      return true;
+        return true;
     }
 
     if (mode == VOCAB_CM_FORCE_IDLE)
@@ -148,33 +148,33 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
-        break;
+            break;
         case VOCAB_CM_POSITION_DIRECT :
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
-        break;
+            break;
         case VOCAB_CM_VELOCITY :
             m_jntReferenceVelocities[j] = 0.0;
             m_speed_ramp_handler[j]->stop();
-        break;
+            break;
         case VOCAB_CM_MIXED:
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_jntReferenceVelocities[j] = 0.0;
-             m_speed_ramp_handler[j]->stop();
+            m_speed_ramp_handler[j]->stop();
             m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
-        break;
+            break;
         case VOCAB_CM_TORQUE :
         case VOCAB_CM_PWM :
         case VOCAB_CM_CURRENT :
             m_jntReferenceTorques[j] = m_torques[j];
-        break;
+            break;
         case VOCAB_CM_IDLE:
             m_jntReferenceTorques[j] = 0.0;
-        break;
+            break;
         default :
-        break;
+            break;
     }
     return true;
 }

@@ -79,10 +79,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_jntReferenceTorques.resize(m_numberOfJoints);
     m_jointPosLimits.resize(m_numberOfJoints);
     m_jointVelLimits.resize(m_numberOfJoints);
-    m_positionPIDs.reserve(m_numberOfJoints);
-    m_velocityPIDs.reserve(m_numberOfJoints);
     m_impedancePosPDs.reserve(m_numberOfJoints);
-    m_torquePIDs.resize(m_numberOfJoints);
     m_position_control_law.resize(m_numberOfJoints,"none");
     m_velocity_control_law.resize(m_numberOfJoints,"none");
     m_torque_control_law.resize(m_numberOfJoints,"none");
@@ -95,6 +92,11 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_kPWM.resize(m_numberOfJoints,1.0);
     m_jointTypes.resize(m_numberOfJoints);
     m_positionThreshold.resize(m_numberOfJoints);
+
+    // Prepare PID structures
+    m_pids[VOCAB_PIDTYPE_POSITION].reserve(m_numberOfJoints);
+    m_pids[VOCAB_PIDTYPE_VELOCITY].reserve(m_numberOfJoints);
+    m_pids[VOCAB_PIDTYPE_TORQUE].reserve(m_numberOfJoints);
 
     // Initial zeroing of all vectors
     m_positions.zero();
@@ -1193,12 +1195,10 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
 bool GazeboYarpControlBoardDriver::setPIDs()
 {
     //POSITION PARAMETERS
+    PIDMap::mapped_type& positionPIDs = m_pids[VOCAB_PIDTYPE_POSITION];
     if (m_pluginParameters.check("POSITION_CONTROL"))
     {
-        if (setPIDsForGroup_POSITION(m_position_control_law, m_positionPIDs))
-        {
-        }
-        else
+        if (!setPIDsForGroup_POSITION(m_position_control_law, positionPIDs))
         {
             yError() << "Error in one parameter of POSITION_CONTROL section";
             return false;
@@ -1207,23 +1207,21 @@ bool GazeboYarpControlBoardDriver::setPIDs()
     else if (m_pluginParameters.check("GAZEBO_PIDS"))
     {
         yWarning ("'POSITION_CONTROL' group not found. Using DEPRECATED GAZEBO_PIDS section");
-        setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
+        setPIDsForGroup("GAZEBO_PIDS", positionPIDs, PIDFeedbackTermAllTerms);
         for (size_t i = 0; i < m_numberOfJoints; ++i) {m_position_control_law[i] = "joint_pid_gazebo_v1";}
     }
     else
     {
         yWarning() << "Unable to find a valid section containing position control gains, use default values";
-        setPIDsForGroup("GAZEBO_PIDS", m_positionPIDs, PIDFeedbackTermAllTerms);
+        setPIDsForGroup("GAZEBO_PIDS", positionPIDs, PIDFeedbackTermAllTerms);
         for (size_t i = 0; i < m_numberOfJoints; ++i) {m_position_control_law[i] = "joint_pid_gazebo_v1";}
     }
 
     //VELOCITY PARAMETERS
+    PIDMap::mapped_type& velocityPIDs = m_pids[VOCAB_PIDTYPE_VELOCITY];
     if (m_pluginParameters.check("VELOCITY_CONTROL"))
     {
-        if (setPIDsForGroup_VELOCITY(m_velocity_control_law, m_velocityPIDs))
-        {
-        }
-        else
+        if (!setPIDsForGroup_VELOCITY(m_velocity_control_law, velocityPIDs))
         {
             yError() << "Error in one parameter of VELOCITY_CONTROL section";
             return false;
@@ -1232,23 +1230,20 @@ bool GazeboYarpControlBoardDriver::setPIDs()
     else if (m_pluginParameters.check("GAZEBO_VELOCITY_PIDS"))
     {
         yWarning ("'VELOCITY_CONTROL' group not found. Using DEPRECATED GAZEBO_VELOCITY_PIDS section");
-        setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+        setPIDsForGroup("GAZEBO_VELOCITY_PIDS", velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
         for (size_t i = 0; i < m_numberOfJoints; ++i) {m_velocity_control_law[i] = "joint_pid_gazebo_v1";}
     }
     else
     {
         yWarning() << "Unable to find a valid section containing velocity control gains, use default values";
-        setPIDsForGroup("GAZEBO_VELOCITY_PIDS", m_velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
+        setPIDsForGroup("GAZEBO_VELOCITY_PIDS", velocityPIDs, PIDFeedbackTerm(PIDFeedbackTermProportionalTerm | PIDFeedbackTermIntegrativeTerm));
         for (size_t i = 0; i < m_numberOfJoints; ++i) {m_velocity_control_law[i] = "joint_pid_gazebo_v1";}
     }
 
     //IMPEDANCE PARAMETERS
     if (m_pluginParameters.check("IMPEDANCE_CONTROL"))
     {
-        if (setPIDsForGroup_IMPEDANCE(m_impedance_control_law, m_impedancePosPDs))
-        {
-        }
-        else
+        if (!setPIDsForGroup_IMPEDANCE(m_impedance_control_law, m_impedancePosPDs))
         {
             yError() << "Error in one parameter of IMPEDANCE section";
             return false;
@@ -1308,7 +1303,8 @@ bool GazeboYarpControlBoardDriver::sendPositionToGazebo(int j,double ref)
 
 void GazeboYarpControlBoardDriver::prepareJointPositionMsg(gazebo::msgs::JointCmd& j_cmd, const int joint_index, const double ref)
 {
-    GazeboYarpControlBoardDriver::PID positionPID = m_positionPIDs[joint_index];
+
+    const GazeboYarpControlBoardDriver::PID& positionPID = m_pids[VOCAB_PIDTYPE_POSITION][joint_index];
 
     j_cmd.set_name(m_jointPointers[joint_index]->GetScopedName());
     j_cmd.mutable_position()->set_target(convertUserToGazebo(joint_index, ref));
@@ -1340,7 +1336,9 @@ bool GazeboYarpControlBoardDriver::sendVelocityToGazebo(int j,double ref)
 
 bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int i, double& ref)
 {
-    int   signKp = (m_positionPIDs[i].p>0?1:-1);
+    const GazeboYarpControlBoardDriver::PID& positionPID = m_pids[VOCAB_PIDTYPE_POSITION][i];
+
+    int   signKp = (positionPID.p>0?1:-1);
     int   signRef = (ref>0?1:-1);
     //if (m_controlMode[i] == VOCAB_CM_TORQUE || m_interactionMode[i] == VOCAB_IM_COMPLIANT)
     if (m_controlMode[i] != VOCAB_CM_IDLE && m_controlMode[i] != VOCAB_CM_FORCE_IDLE)
@@ -1349,9 +1347,9 @@ bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int
         {
             if (signKp*signRef >0 )
             {
-                ref = ( (m_jointPosLimits[i].max-m_positions[i]) * (m_positionPIDs[i].p));
-                if (ref > m_positionPIDs[i].maxOut) ref = m_positionPIDs[i].maxOut;
-                else if (ref < -m_positionPIDs[i].maxOut) ref = -m_positionPIDs[i].maxOut;
+                ref = ( (m_jointPosLimits[i].max-m_positions[i]) * (positionPID.p));
+                if (ref > positionPID.maxOut) ref = positionPID.maxOut;
+                else if (ref < -positionPID.maxOut) ref = -positionPID.maxOut;
                 //_integral[i] = 0;
 #ifdef DEBUG_LIMITS
                 yDebug() << "TTT TMAX" << m_positions[i] ">" <<  m_jointPosLimits[i].max;
@@ -1363,9 +1361,9 @@ bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int
         {
             if (signKp*signRef <0 )
             {
-                ref = ( (m_jointPosLimits[i].min-m_positions[i]) * (m_positionPIDs[i].p));
-                if (ref > m_positionPIDs[i].maxOut) ref = m_positionPIDs[i].maxOut;
-                else if (ref < -m_positionPIDs[i].maxOut) ref = -m_positionPIDs[i].maxOut;
+                ref = ( (m_jointPosLimits[i].min-m_positions[i]) * (positionPID.p));
+                if (ref > positionPID.maxOut) ref = positionPID.maxOut;
+                else if (ref < -positionPID.maxOut) ref = -positionPID.maxOut;
                 //_integral[i] = 0;
 #ifdef DEBUG_LIMITS
                 yDebug() << "TTT TMIN" << m_positions[i] "<" <<  m_jointPosLimits[i].min;
@@ -1379,7 +1377,7 @@ bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int
 
 void GazeboYarpControlBoardDriver::prepareJointVelocityMsg(gazebo::msgs::JointCmd& j_cmd, const int j, const double ref) //NOT TESTED
 {
-    GazeboYarpControlBoardDriver::PID velocityPID = m_velocityPIDs[j];
+    const GazeboYarpControlBoardDriver::PID& velocityPID = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
 
     j_cmd.set_name(m_jointPointers[j]->GetScopedName());
     j_cmd.mutable_velocity()->set_p_gain(velocityPID.p);

@@ -463,10 +463,8 @@ private:
     yarp::dev::PidControlTypeEnumHashFunction> PIDMap;
     PIDMap m_pids;
 
-    std::vector<GazeboYarpControlBoardDriver::PID> m_positionPIDs;
-    std::vector<GazeboYarpControlBoardDriver::PID> m_velocityPIDs;
     std::vector<GazeboYarpControlBoardDriver::PID> m_impedancePosPDs;
-    std::vector<GazeboYarpControlBoardDriver::PID> m_torquePIDs;
+
     std::vector<std::string> m_position_control_law;
     std::vector<std::string> m_velocity_control_law;
     std::vector<std::string> m_impedance_control_law;

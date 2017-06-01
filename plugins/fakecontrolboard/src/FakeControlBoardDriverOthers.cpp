@@ -58,15 +58,4 @@ bool GazeboYarpFakeControlBoardDriver::setRefCurrent(int j, double t) {return fa
 bool GazeboYarpFakeControlBoardDriver::setRefCurrents(const int n_joint, const int *joints, const double *t) { return (n_joint == 0); }
 bool GazeboYarpFakeControlBoardDriver::getRefCurrents(double *t) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefCurrent(int j, double *t) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setCurrentPid(int j, const Pid &pid) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setCurrentPids(const Pid *pids) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getCurrentError(int j, double *err) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getCurrentErrors(double *errs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getCurrentPidOutput(int j, double *out) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getCurrentPidOutputs(double *outs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getCurrentPid(int j, Pid *pid) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getCurrentPids(Pid *pids) {return false;}
-bool GazeboYarpFakeControlBoardDriver::resetCurrentPid(int j) {return false;}
-bool GazeboYarpFakeControlBoardDriver::disableCurrentPid(int j) {return false;}
-bool GazeboYarpFakeControlBoardDriver::enableCurrentPid(int j) {return false;}
 

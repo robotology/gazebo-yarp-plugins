@@ -178,10 +178,6 @@ public:
     virtual bool velocityMove(const double *sp); //NOT TESTED
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
 
-    virtual bool setVelPid(int j, const yarp::dev::Pid &pid);
-    virtual bool setVelPids(const yarp::dev::Pid *pids);
-    virtual bool getVelPid(int j, yarp::dev::Pid *pid);
-    virtual bool getVelPids(yarp::dev::Pid *pids);
     virtual bool getRefVelocity(const int joint, double *vel);
     virtual bool getRefVelocities(double *vels);
     virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
@@ -216,23 +212,8 @@ public:
 
     virtual bool getBemfParam(int j, double *bemf);
     virtual bool setBemfParam(int j, double bemf);
-    virtual bool setTorquePid(int j, const Pid &pid);
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
-    virtual bool setTorquePids(const Pid *pids);
-    virtual bool setTorqueErrorLimit(int j, double limit);
-    virtual bool setTorqueErrorLimits(const double *limits);
-    virtual bool getTorqueError(int j, double *err);
-    virtual bool getTorqueErrors(double *errs);
-    virtual bool getTorquePidOutput(int j, double *out);
-    virtual bool getTorquePidOutputs(double *outs);
-    virtual bool getTorquePid(int j, Pid *pid);
-    virtual bool getTorquePids(Pid *pids);
-    virtual bool getTorqueErrorLimit(int j, double *limit);
-    virtual bool getTorqueErrorLimits(double *limits);
-    virtual bool resetTorquePid(int j);
-    virtual bool disableTorquePid(int j);
-    virtual bool enableTorquePid(int j);
     virtual bool setTorqueOffset(int j, double v);
 
     //IMPEDANCE CTRL
@@ -262,41 +243,31 @@ public:
     virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t);
     virtual bool getRefCurrents(double *t);
     virtual bool getRefCurrent(int j, double *t);
-    virtual bool setCurrentPid(int j, const Pid &pid);
-    virtual bool setCurrentPids(const Pid *pids);
-    virtual bool getCurrentError(int j, double *err);
-    virtual bool getCurrentErrors(double *errs);
-    virtual bool getCurrentPidOutput(int j, double *out);
-    virtual bool getCurrentPidOutputs(double *outs);
-    virtual bool getCurrentPid(int j, Pid *pid);
-    virtual bool getCurrentPids(Pid *pids);
-    virtual bool resetCurrentPid(int j);
-    virtual bool disableCurrentPid(int j);
-    virtual bool enableCurrentPid(int j);
 
     /*
      * IPidControl Interface methods
      */
-    virtual bool setPid (int j, const Pid &pid);
-    virtual bool setPids (const Pid *pids);
-    virtual bool setReference (int j, double ref);
-    virtual bool setReferences (const double *refs);
-    virtual bool setErrorLimit (int j, double limit);
-    virtual bool setErrorLimits (const double *limits);
-    virtual bool getError (int j, double *err);
-    virtual bool getErrors (double *errs);
-    virtual bool getPid (int j, Pid *pid);
-    virtual bool getPids (Pid *pids);
-    virtual bool getReference (int j, double *ref);
-    virtual bool getReferences (double *refs);
-    virtual bool getErrorLimit (int j, double *limit);
-    virtual bool getErrorLimits (double *limits);
-    virtual bool resetPid (int j);
-    virtual bool disablePid (int j);
-    virtual bool enablePid (int j);
-    virtual bool setOffset (int j, double v);
-    virtual bool getOutput(int j, double *out);
-    virtual bool getOutputs(double *outs);
+    virtual bool setPid (const PidControlTypeEnum& pidtype, int j, const Pid &pid);
+    virtual bool setPids (const PidControlTypeEnum& pidtype, const Pid *pids);
+    virtual bool setPidReference (const PidControlTypeEnum& pidtype, int j, double ref);
+    virtual bool setPidReferences (const PidControlTypeEnum& pidtype, const double *refs);
+    virtual bool setPidErrorLimit (const PidControlTypeEnum& pidtype, int j, double limit);
+    virtual bool setPidErrorLimits (const PidControlTypeEnum& pidtype, const double *limits);
+    virtual bool getPidError (const PidControlTypeEnum& pidtype, int j, double *err);
+    virtual bool getPidErrors (const PidControlTypeEnum& pidtype, double *errs);
+    virtual bool getPid (const PidControlTypeEnum& pidtype, int j, Pid *pid);
+    virtual bool getPids (const PidControlTypeEnum& pidtype, Pid *pids);
+    virtual bool getPidReference (const PidControlTypeEnum& pidtype, int j, double *ref);
+    virtual bool getPidReferences (const PidControlTypeEnum& pidtype, double *refs);
+    virtual bool getPidErrorLimit (const PidControlTypeEnum& pidtype, int j, double *limit);
+    virtual bool getPidErrorLimits (const PidControlTypeEnum& pidtype, double *limits);
+    virtual bool resetPid (const PidControlTypeEnum& pidtype, int j);
+    virtual bool disablePid (const PidControlTypeEnum& pidtype, int j);
+    virtual bool enablePid (const PidControlTypeEnum& pidtype, int j);
+    virtual bool setPidOffset (const PidControlTypeEnum& pidtype, int j, double v);
+    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out);
+    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs);
+    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled);
 
     /*
      * Probably useless stuff here

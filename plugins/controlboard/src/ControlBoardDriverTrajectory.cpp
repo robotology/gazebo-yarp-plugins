@@ -41,12 +41,12 @@ Watchdog::Watchdog (double expireTime)
 
 void Watchdog::modifyDuration(double expireTime)
 {
-     m_duration=expireTime; 
+    m_duration=expireTime;
 }
 
 double Watchdog::getDuration()
 {
-     return m_duration; 
+    return m_duration;
 }
 
 
@@ -119,14 +119,14 @@ TrajectoryGenerator::~TrajectoryGenerator() {}
 
 bool TrajectoryGenerator::isMotionDone()
 {
-  return m_trajectory_complete;
+    return m_trajectory_complete;
 }
 
 bool  TrajectoryGenerator::setLimits(double min, double max)
 {
-  m_joint_min = min;
-  m_joint_max = max;
-  return true;
+    m_joint_min = min;
+    m_joint_max = max;
+    return true;
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -206,15 +206,15 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
     m_mutex.wait();
-    m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
+    m_controllerPeriod = static_cast<unsigned>(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     double speedf = fabs(speed);
     double dx0 =0;
     m_computed_reference = current_pos;
 
     if (speed <= 0)
     {
-      m_mutex.post();
-      return false; 
+        m_mutex.post();
+        return false;
     }
 
     m_dx0 = p_compute_current_vel();
@@ -249,7 +249,7 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
     m_cur_t = 0;
     m_cur_step = 0;
     m_trajectory_complete =  false;
-    
+
     m_mutex.post();
     return true;
 }
@@ -353,11 +353,11 @@ double MinJerkTrajectoryGenerator::p_computeTrajectory()
     //yDebug()<<"last";
     m_trajectory_complete = true;
     target =m_xf;
-    return target;  
+    return target;
 }
 
 double MinJerkTrajectoryGenerator::computeTrajectory()
-{   
+{
     m_mutex.wait();
     double ret = p_computeTrajectory();
     m_mutex.post();
@@ -382,7 +382,7 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
     m_mutex.wait();
-    m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
+    m_controllerPeriod = static_cast<unsigned>(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
     m_x0 = current_pos;
     m_xf = final_pos;
     if (m_xf > m_joint_max) m_xf = m_joint_max;
@@ -396,7 +396,7 @@ bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double f
 bool ConstSpeedTrajectoryGenerator::p_abortTrajectory(double limit)
 {
     //to be implemented
-  return true;
+    return true;
 }
 
 bool ConstSpeedTrajectoryGenerator::abortTrajectory(double limit)
@@ -450,11 +450,11 @@ double ConstSpeedTrajectoryGenerator::p_computeTrajectory()
 {
     double step = (m_speed / 1000.0) * m_controllerPeriod; //* _T_controller;
     double error_abs = fabs(m_computed_reference - m_xf);
-    
+
     if(error_abs)
     {
-        m_computed_reference += p_computeTrajectoryStep(); 
-        if( error_abs < step)  
+        m_computed_reference += p_computeTrajectoryStep();
+        if( error_abs < step)
         {
             m_trajectory_complete = true;
         }
@@ -463,7 +463,7 @@ double ConstSpeedTrajectoryGenerator::p_computeTrajectory()
             m_trajectory_complete = false;
         }
     }
-    
+
     //yDebug() << m_computed_reference;
     return m_computed_reference;
 }

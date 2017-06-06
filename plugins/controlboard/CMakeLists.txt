@@ -6,6 +6,18 @@ cmake_minimum_required(VERSION 2.8.7)
 
 PROJECT(Plugin_ControlBoard)
 
+# Copied from YARP
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED 11)
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(${CMAKE_VERSION} VERSION_LESS 3.1)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+endif()
+
+
 include(AddGazeboYarpPluginTarget)
 
 set(controlBoard_source     src/ControlBoard.cc

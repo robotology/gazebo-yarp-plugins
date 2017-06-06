@@ -132,10 +132,6 @@ bool GazeboYarpFakeControlBoardDriver::velocityMove(const int n_joint, const int
 bool GazeboYarpFakeControlBoardDriver::setVelocityMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::velocityMove(int j, double sp) {return false;}
 bool GazeboYarpFakeControlBoardDriver::velocityMove(const double *sp) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setVelPid(int j, const yarp::dev::Pid &pid) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setVelPids(const yarp::dev::Pid *pids) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getVelPid(int j, yarp::dev::Pid *pid) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getVelPids(yarp::dev::Pid *pids) {return false;} 
 
 //////////////////////////////////////////////////////////////////////////////
 // ITorqueControl
@@ -167,23 +163,8 @@ bool GazeboYarpFakeControlBoardDriver::getRefTorques(double* rt) { return getZer
 bool GazeboYarpFakeControlBoardDriver::setRefTorque(int, double) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setRefTorques(const double*) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setTorqueMode() {return false;}
-bool GazeboYarpFakeControlBoardDriver::setTorquePid(int, const Pid &) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setTorquePids(const Pid *) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getTorquePid(int, Pid *) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getTorquePids(Pid *) {return false;}
-bool GazeboYarpFakeControlBoardDriver::getTorqueRange(int, double*, double *){return false;} 
+bool GazeboYarpFakeControlBoardDriver::getTorqueRange(int, double*, double *){return false;}
 bool GazeboYarpFakeControlBoardDriver::getTorqueRanges(double *, double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::setTorqueErrorLimit(int , double ){return false;} 
-bool GazeboYarpFakeControlBoardDriver::setTorqueErrorLimits(const double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getTorqueError(int , double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getTorqueErrors(double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getTorquePidOutput(int , double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getTorquePidOutputs(double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getTorqueErrorLimit(int , double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getTorqueErrorLimits(double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::resetTorquePid(int ){return false;} 
-bool GazeboYarpFakeControlBoardDriver::disableTorquePid(int ){return false;} 
-bool GazeboYarpFakeControlBoardDriver::enableTorquePid(int ){return false;} 
 bool GazeboYarpFakeControlBoardDriver::setTorqueOffset(int , double ){return false;} 
 bool GazeboYarpFakeControlBoardDriver::getBemfParam(int , double *){return false;} 
 bool GazeboYarpFakeControlBoardDriver::setBemfParam(int , double ){return false;} 

@@ -9,6 +9,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Time.h>
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
@@ -82,7 +83,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 
     if (!m_depthCameraSensorPtr)
     {
-        myError("camera sensor was not found");
+        yError("camera sensor was not found (sensor's scoped name %s!)", sensorScopedName.c_str());
         return false;
     }
 
@@ -287,12 +288,17 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
     if(m_width == 0 || m_height == 0)
     {
         myError("gazebo returned an invalid image size");
+        m_colorFrameMutex.post();
         return false;
     }
     rgbImage.setPixelCode(m_imageFormat);
     rgbImage.resize(m_width, m_height);
     memcpy(rgbImage.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);
-    timeStamp->getTime();
+#if GAZEBO_MAJOR_VERSION >= 7
+    timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+#else
+    timeStamp->update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
+#endif
 
     m_colorFrameMutex.post();
     return true;
@@ -391,13 +397,19 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
     if(m_width == 0 || m_height == 0)
     {
         myError("gazebo returned an invalid image size");
+        m_depthFrameMutex.post();
         return false;
     }
 
     depthImage.resize(m_width, m_height);
     //depthImage.setPixelCode(m_depthFormat);
     memcpy(depthImage.getRawImage(), m_depthFrame_Buffer, m_width * m_height * sizeof(float));
-    timeStamp->getTime();
+
+#if GAZEBO_MAJOR_VERSION >= 7
+    timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+#else
+    timeStamp->update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
+#endif
 
     m_depthFrameMutex.post();
     return true;
@@ -420,13 +432,13 @@ IRGBDSensor::RGBDSensor_status GazeboYarpDepthCameraDriver::getSensorStatus()
 }
 yarp::os::ConstString GazeboYarpDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
-    if(!timeStamp)
+    if(timeStamp)
     {
-        myError("timeStamp pointer invalid");
-    }
-    else
-    {
-        timeStamp->update();
+#if GAZEBO_MAJOR_VERSION >= 7
+	timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+#else
+	timeStamp->update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
+#endif
     }
     return m_error;
 }

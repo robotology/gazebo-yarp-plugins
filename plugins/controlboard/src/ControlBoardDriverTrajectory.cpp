@@ -206,7 +206,7 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
     m_mutex.wait();
-    m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
+    m_controllerPeriod = this->m_robot->GetWorld()->GetPhysicsEngine()->GetMaxStepSize() * 1000.0;
     double speedf = fabs(speed);
     double dx0 =0;
     m_computed_reference = current_pos;
@@ -227,7 +227,7 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
 
     //double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
 
-    m_tf = (1000 * fabs(m_xf - m_x0) / speedf) / double (m_controllerPeriod);
+    m_tf = (1000 * fabs(m_xf - m_x0) / speedf) / m_controllerPeriod;
     m_dx0 = m_dx0 * m_tf;
 
     dx0  = m_dx0;
@@ -382,7 +382,7 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
     m_mutex.wait();
-    m_controllerPeriod = (unsigned)(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
+    m_controllerPeriod = this->m_robot->GetWorld()->GetPhysicsEngine()->GetMaxStepSize() * 1000.0;
     m_x0 = current_pos;
     m_xf = final_pos;
     if (m_xf > m_joint_max) m_xf = m_joint_max;

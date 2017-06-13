@@ -98,11 +98,12 @@ void GazeboYarpInertialMTBPartDriver::onUpdate(const gazebo::common::UpdateInfo 
         double sensorLastTimestamp = (*sensorIter)->GetLastUpdateTime().Double();
 #endif
 
-        //Fill the 3 channels measurement data
+        //Fill the 3 channels measurement data, applying the m/s^2 to raw
+        //fullscale gain
         m_dataMutex.wait();
         m_inertialmtbOutBuffer[bufferOffset] = sensorLastTimestamp;
         for (unsigned idx = 0; idx < 3; idx++) {
-            m_inertialmtbOutBuffer[bufferOffset+1+idx] = linear_acceleration[idx];
+            m_inertialmtbOutBuffer[bufferOffset+1+idx] = 1e04/5.9855*linear_acceleration[idx];
         }
         m_dataMutex.post();
     }

@@ -97,19 +97,12 @@ private:
     inline bool buildOutBufferFixedData(std::string robotPart,
                                         yarp::os::Bottle & enabledSensors);
 
-    /**
-     *
-     * Generate the mapping from MTB sensor labels to position Ids (there is a
-     * unique id for every possible inertial sensor positioned on iCub)
-     */
-    static std::map<std::string,int> generateLUTmtbId2PosEnum();
-
     //Yarp interface parameters
     yarp::sig::Vector m_inertialmtbOutBuffer; //buffer for the exported data
     yarp::os::Stamp m_lastGazeboTimestamp; //buffer for last timestamp data
     int m_nbChannels; //depends on the part to which the sensors
                       //are attached. This size is fixed. If a
-                      //senso is deactivated, the respective slot
+                      //sensor is deactivated, the respective slot
                       //is set to all zeros.
 
     //Inner parameters
@@ -137,6 +130,7 @@ private:
      * xi,yi,zi = the 3 measurement channels of the accelerometer (non calibrated)
      *
      */
+    static const double version;
     static const int sensorDataLength = 6;
     static const int sensorDataStartOffset = 2;
     static const int sensorTypeOffset = 1;
@@ -225,13 +219,20 @@ private:
 
     } eOas_inertial_position_t;
 
-    // LUT of MTB IDs indexed by the MTB enum defined above.
+    // LUT of MTB IDs (LUT output) indexed by the MTB enum defined above (LUT input).
     static const std::string LUTmtbPosEnum2Id[1+eoas_inertial_pos_offsetcentral+4];
 
-    static const double version;
+    /**
+     *
+     * Generate the mapping from MTB sensor labels to position Ids (there is a
+     * unique id for every possible inertial sensor positioned on iCub)
+     */
+    static std::map<std::string,int> generateLUTmtbId2PosEnum();
 
+    // LUT mapping from MTB sensor labels (input) to position Ids (output)
     static std::map<std::string,int> LUTmtbId2PosEnum;
 
+    // LUT mapping from MTB sensor type (input) to a type Id (output)
     static std::map<std::string,int> LUTmtbType2enum;
 };
 

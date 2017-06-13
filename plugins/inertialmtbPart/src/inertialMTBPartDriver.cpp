@@ -18,6 +18,16 @@ using namespace yarp::dev;
 
 const std::string MTBPartDriverParentScopedName = "ModelScopedName";
 
+std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTpart2maxSensors{
+    {"left_arm",8},
+    {"right_arm",8},
+    {"left_leg",13},
+    {"right_leg",13},
+    {"torso",4}
+};
+
+const double GazeboYarpInertialMTBPartDriver::version = 6.0;
+
 const std::string GazeboYarpInertialMTBPartDriver::LUTmtbPosEnum2Id[1+eoas_inertial_pos_offsetcentral+4] = {"none",
     "1b7","1b8","1b9","1b10","1b11","1b12","1b13",
     "10b12","10b13","10b8","10b9","10b10","10b11","10b1","10b2","10b3","10b4","10b5","10b6","10b7",
@@ -26,8 +36,6 @@ const std::string GazeboYarpInertialMTBPartDriver::LUTmtbPosEnum2Id[1+eoas_inert
     "11b12","11b13","11b8","11b9","11b10","11b11","11b1","11b2","11b3","11b5","11b4","11b6","11b7",
     "none","none","none","none",
     "9b7","9b8","9b9","9b10"};
-
-const double GazeboYarpInertialMTBPartDriver::version = 6.0;
 
 std::map<std::string,int> GazeboYarpInertialMTBPartDriver::generateLUTmtbId2PosEnum()
 {
@@ -41,14 +49,6 @@ std::map<std::string,int> GazeboYarpInertialMTBPartDriver::generateLUTmtbId2PosE
 }
 
 std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTmtbId2PosEnum = generateLUTmtbId2PosEnum();
-
-std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTpart2maxSensors{
-    {"left_arm",8},
-    {"right_arm",8},
-    {"left_leg",13},
-    {"right_leg",13},
-    {"torso",4}
-};
 
 std::map<std::string,int> GazeboYarpInertialMTBPartDriver::LUTmtbType2enum{
     {"none",eoas_inertial_type_none},
@@ -71,6 +71,10 @@ void GazeboYarpInertialMTBPartDriver::onUpdate(const gazebo::common::UpdateInfo 
     // Get current Gazebo timestamp (ms). This is a global timestamp.
     // The individual timestamps of each sensor might slightly differ
     // as it is the case on the real robot.
+    // This timestamp can be accessed by the wrapper via the IPreciselyTimed
+    // interface. Instead, the Analog wrapper is using the its own stamp
+    // along with the Yarp clock. If Gazebo is launched with the clock plugin,
+    // the MTB driver and the wrapper will have the same timestamp.
     m_lastGazeboTimestamp.update(updateInfo.simTime.Double());
 
     // Get all sensors data

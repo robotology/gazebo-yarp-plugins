@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2016 Istituto Italiano di Tecnologia ADVR & iCub Facility & RBCS Department
+# Copyright (C) 2007-2017 Istituto Italiano di Tecnologia ADVR & iCub Facility & RBCS Department
 # Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro, Alessandro Settimi, Francesco Romano and Nuno Guedelha
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 

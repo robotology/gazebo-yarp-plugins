@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
+ * Copyright (C) 2013-2017 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
  * Authors: see AUTHORS file.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
@@ -133,10 +133,7 @@ bool GazeboYarpInertialMTBPartDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpInertialMTBPartDriver::close()
 {
-    if (m_updateConnection.get()) {
-        gazebo::event::Events::DisconnectWorldUpdateBegin(m_updateConnection);
-        m_updateConnection = gazebo::event::ConnectionPtr();
-    }
+    this->m_updateConnection.reset();
     return true;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
+ * Copyright (C) 2013-2017 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
  * Authors: see AUTHORS file.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
@@ -25,9 +25,9 @@ namespace gazebo
     /// \class GazeboYarpInertialMTBPart
     /// Gazebo Plugin emulating the yarp inertial MTB sensors device in Gazebo.
     ///
-    /// This plugin instantiate a yarp imu driver for the Gazebo simulator
+    /// This plugin instantiate a yarp MTB board driver for the Gazebo simulator
     /// and instantiate a network wrapper (provided by yarp::dev::AnalogWrapper)
-    /// to expose the sensors a whole model part (ex: the leg) on the yarp network.
+    /// to expose the sensors of a whole model part (ex: the leg) on the yarp network.
     /// Since a part can include several links (ex: upper_leg, lower_leg and
     /// foot), the plugin is tied to the model.
     ///

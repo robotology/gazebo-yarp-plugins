@@ -10,68 +10,65 @@
 namespace yarp {
     namespace dev {
 
-        bool GazeboYarpControlBoardDriver::setRefOutput(int j, double v)
+        bool GazeboYarpControlBoardDriver::getNumberOfMotors(int *ax)
         {
-            if (j >= 0 && j < (int)m_numberOfJoints) {
+            if (!ax) return false;
+            *ax = m_numberOfJoints;
+            return true;
+        }
+
+        bool GazeboYarpControlBoardDriver::setRefDutyCycle(int j, double v)
+        {
+            if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 m_jntReferenceTorques[j] = v*m_kPWM[j];
                 return true;
             }
             return false;
         }
 
-        bool GazeboYarpControlBoardDriver::setRefOutputs(const double* v)
+        bool GazeboYarpControlBoardDriver::setRefDutyCycles(const double* v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 m_jntReferenceTorques[j] = v[j]*m_kPWM[j];
             }
             return true;
         }
 
-        bool GazeboYarpControlBoardDriver::getOutput(int j, double *v)
+        bool GazeboYarpControlBoardDriver::getDutyCycle(int j, double *v)
         {
-            if (v && j >= 0 && j < (int)m_numberOfJoints) {
+            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *v = m_torques[j];
                 return true;
             }
             return false;
         }
 
-        bool GazeboYarpControlBoardDriver::getOutputs(double *v)
+        bool GazeboYarpControlBoardDriver::getDutyCycles(double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_torques[j];
             }
             return true;
         }
 
-        bool GazeboYarpControlBoardDriver::getRefOutput(int j, double *v)
+        bool GazeboYarpControlBoardDriver::getRefDutyCycle(int j, double *v)
         {
-            if (v && j >= 0 && j < (int)m_numberOfJoints) {
+            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *v = m_jntReferenceTorques[j];
                 return true;
             }
             return false;
         }
 
-        bool GazeboYarpControlBoardDriver::getRefOutputs(double *v)
+        bool GazeboYarpControlBoardDriver::getRefDutyCycles(double *v)
         {
             if (!v) return false;
-            for (unsigned int j = 0; j < m_numberOfJoints; ++j) {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_jntReferenceTorques[j];
             }
             return true;
         }
-
-        bool GazeboYarpControlBoardDriver::setOpenLoopMode()
-        {
-            bool ret = true;
-            for (unsigned int j = 0; j < m_numberOfJoints; j++) {
-                ret = ret && this->setControlMode(j, VOCAB_CM_OPENLOOP);
-            }
-            return ret;
-        }
-
     }
 }

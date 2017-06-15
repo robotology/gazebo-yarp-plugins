@@ -8,14 +8,21 @@
 #ifndef GAZEBOYARP_DEPTHCAMERA_HH
 #define GAZEBOYARP_DEPTHCAMERA_HH
 
+#include <string>
+
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/plugins/DepthCameraPlugin.hh>
+
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
-
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
-#include <string>
+
+namespace yarp {
+    namespace dev {
+        class IMultipleWrapper;
+    }
+}
 
 namespace gazebo
 {
@@ -51,10 +58,13 @@ namespace gazebo
 
     private:
         yarp::os::Network m_yarp;
-        yarp::os::Property m_parameters;
+        yarp::os::Property m_driverParameters;
         yarp::dev::PolyDriver m_cameraDriver;
         std::string m_sensorName;
         sensors::DepthCameraSensor *m_sensor;
+
+        yarp::dev::PolyDriver m_cameraWrapper;
+        yarp::dev::IMultipleWrapper* m_iWrap;
 
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
     };

@@ -14,95 +14,368 @@
 namespace yarp {
     namespace dev {
 
-        bool GazeboYarpControlBoardDriver::setPid (int j, const Pid &pid)
+        bool GazeboYarpControlBoardDriver::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
         {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            GazeboYarpControlBoardDriver::PID& currentPID = pidType->second[j];
             // Converting all gains for degrees-based unit to radians-based
-            m_positionPIDs[j].p = convertUserGainToGazeboGain(j, pid.kp);
-            m_positionPIDs[j].i = convertUserGainToGazeboGain(j, pid.ki);
-            m_positionPIDs[j].d = convertUserGainToGazeboGain(j, pid.kd);
+            currentPID.p = convertUserGainToGazeboGain(j, pid.kp);
+            currentPID.i = convertUserGainToGazeboGain(j, pid.ki);
+            currentPID.d = convertUserGainToGazeboGain(j, pid.kd);
             // The output limits are only related to the output, so they don't need to be converted
-            m_positionPIDs[j].maxInt = pid.max_int;
-            m_positionPIDs[j].maxOut = pid.max_output;
+            currentPID.maxInt = pid.max_int;
+            currentPID.maxOut = pid.max_output;
 
-            gazebo::msgs::JointCmd j_cmd;
-            j_cmd.set_name(m_jointPointers[j]->GetScopedName());
-            j_cmd.mutable_position()->clear_target();       // This function marks the target field as unused (and it sets internal value to zero)
-            j_cmd.mutable_position()->set_p_gain(m_positionPIDs[j].p);
-            j_cmd.mutable_position()->set_i_gain(m_positionPIDs[j].i );
-            j_cmd.mutable_position()->set_d_gain( m_positionPIDs[j].d);
-            j_cmd.mutable_position()->set_i_max(m_positionPIDs[j].maxInt);
-            j_cmd.mutable_position()->set_i_min(-m_positionPIDs[j].maxInt);
-            j_cmd.mutable_position()->set_limit(m_positionPIDs[j].maxOut);
-
-            m_jointCommandPublisher->WaitForConnection();
-            m_jointCommandPublisher->Publish(j_cmd);
             return true;
         }
 
-        bool GazeboYarpControlBoardDriver::setPids (const Pid *pids)
+        bool GazeboYarpControlBoardDriver::setPids(const PidControlTypeEnum& pidtype, const Pid *pids)
         {
-            for(int j=0; j< m_numberOfJoints; j++)
-                setPid(j, (pids[j]));
-            return true;
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && setPid(pidtype, j, pids[j]);
+            }
+            return result;
         }
 
-        bool GazeboYarpControlBoardDriver::setReference (int /*j*/, double /*ref*/) { return false; }
-        bool GazeboYarpControlBoardDriver::setReferences (const double */*refs*/) { return false; }
-        bool GazeboYarpControlBoardDriver::setErrorLimit (int /*j*/, double /*limit*/) { return false; }
-        bool GazeboYarpControlBoardDriver::setErrorLimits (const double */*limits*/) { return false; }
-
-        bool GazeboYarpControlBoardDriver::getError (int j, double *err)
+        bool GazeboYarpControlBoardDriver::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
         {
-            *err=(m_positions[j]-m_zeroPosition[j])-m_motReferencePositions[j];
-            return true;
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+            // Not implemented yet
+            return false;
         }
 
-        bool GazeboYarpControlBoardDriver::getErrors (double *errs)
+        bool GazeboYarpControlBoardDriver::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
         {
-            for(int j=0; j< m_numberOfJoints; j++)
-                getError(j, &errs[j]);
-            return true;
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && setPidReference(pidtype, j, refs[j]);
+            }
+            return result;
         }
 
-        bool GazeboYarpControlBoardDriver::getPid (int j, Pid *pid)
+        bool GazeboYarpControlBoardDriver::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
         {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+            // Not implemented yet
+            return false;
+        }
+
+        bool GazeboYarpControlBoardDriver::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && setPidErrorLimit(pidtype, j, limits[j]);
+            }
+            return result;
+        }
+
+        bool GazeboYarpControlBoardDriver::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            *err = (m_positions[j] - m_zeroPosition[j]) - m_motReferencePositions[j];
+            return true;
+
+        }
+
+        bool GazeboYarpControlBoardDriver::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && getPidError(pidtype, j, &errs[j]);
+            }
+            return result;
+
+        }
+
+        bool GazeboYarpControlBoardDriver::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            if (!out) return false;
+            out[j] = m_torques[j];
+
+            return true;
+
+        }
+
+        bool GazeboYarpControlBoardDriver::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && getPidOutput(pidtype, j, &outs[j]);
+            }
+            return result;
+        }
+
+        bool GazeboYarpControlBoardDriver::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+            if (!pid) return false;
+
+            const GazeboYarpControlBoardDriver::PID& currentPID = pidType->second[j];
+
             // Converting all gains for degrees-based unit to radians-based
-            pid->kp = convertGazeboGainToUserGain(j, m_positionPIDs[j].p);
-            pid->ki = convertGazeboGainToUserGain(j, m_positionPIDs[j].i);
-            pid->kd = convertGazeboGainToUserGain(j, m_positionPIDs[j].d);
+            pid->kp = convertGazeboGainToUserGain(j, currentPID.p);
+            pid->ki = convertGazeboGainToUserGain(j, currentPID.i);
+            pid->kd = convertGazeboGainToUserGain(j, currentPID.d);
 
             // The output limits are only related to the output, so they don't need to be converted
-            pid->max_int = m_positionPIDs[j].maxInt;
-            pid->max_output = m_positionPIDs[j].maxOut;
+            pid->max_int = currentPID.maxInt;
+            pid->max_output = currentPID.maxOut;
             return true;
+
         }
 
-        bool GazeboYarpControlBoardDriver::getPids (Pid * pids)
+        bool GazeboYarpControlBoardDriver::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
         {
-            for(int j=0; j< m_numberOfJoints; j++)
-                getPid(j, &(pids[j]));
-            return true;
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && getPid(pidtype, j, &pids[j]);
+            }
+            return result;
         }
 
-        bool GazeboYarpControlBoardDriver::getReference (int j, double *ref)
+        bool GazeboYarpControlBoardDriver::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
         {
-            *ref = m_jntReferencePositions[j];
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            switch (pidtype)
+            {
+                case VOCAB_PIDTYPE_POSITION:
+                    *ref = m_jntReferencePositions[j];
+                    break;
+                case VOCAB_PIDTYPE_VELOCITY:
+                    *ref = m_jntReferenceVelocities[j];
+                    break;
+                case VOCAB_PIDTYPE_TORQUE:
+                case VOCAB_PIDTYPE_CURRENT:
+                    *ref = m_jntReferenceTorques[j];
+                    break;
+            }
             return true;
+
         }
 
-        bool GazeboYarpControlBoardDriver::getReferences (double *refs)
+        bool GazeboYarpControlBoardDriver::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
         {
-            for(int j=0; j< m_numberOfJoints; j++)
-                getReference(j, &refs[j]);
-            return true;
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && getPidReference(pidtype, j, &refs[j]);
+            }
+            return result;
         }
 
-        bool GazeboYarpControlBoardDriver::getErrorLimit (int /*j*/, double */*limit*/) { return false; }
-        bool GazeboYarpControlBoardDriver::getErrorLimits (double */*limits*/) { return false; }
-        bool GazeboYarpControlBoardDriver::resetPid (int /*j*/) { return false; }
-        bool GazeboYarpControlBoardDriver::disablePid (int /*j*/) { return false; }
-        bool GazeboYarpControlBoardDriver::enablePid (int /*j*/) { return false; }
-        bool GazeboYarpControlBoardDriver::setOffset (int /*j*/, double /*v*/) { return false; }
+        bool GazeboYarpControlBoardDriver::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
 
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            if (!limit) return false;
+
+            return false; //not implemented
+        }
+
+        bool GazeboYarpControlBoardDriver::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            bool result = true;
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
+                result = result && getPidErrorLimit(pidtype, j, &limits[j]);
+            }
+            return result;
+        }
+
+        bool GazeboYarpControlBoardDriver::resetPid(const PidControlTypeEnum& pidtype, int j)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            return false; //not implemented
+        }
+
+        bool GazeboYarpControlBoardDriver::disablePid(const PidControlTypeEnum& pidtype, int j)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            return false; //not implemented
+        }
+
+        bool GazeboYarpControlBoardDriver::enablePid(const PidControlTypeEnum& pidtype, int j)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            return false; //not implemented
+        }
+
+        bool GazeboYarpControlBoardDriver::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+
+            return false; //not implemented
+        }
+
+        bool GazeboYarpControlBoardDriver::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
+        {
+            PIDMap::iterator pidType = m_pids.find(pidtype);
+            if (pidType == m_pids.end()) {
+                yWarning() << "Could not find PID for type " << pidtype;
+                return false;
+            }
+            
+            if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
+                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                return false;
+            }
+            
+            return false; //not implemented
+        }
+        
     }
 }

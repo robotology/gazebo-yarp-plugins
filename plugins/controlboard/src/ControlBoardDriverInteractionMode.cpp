@@ -16,7 +16,7 @@ using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
 {
-    *mode = (yarp::dev::InteractionModeEnum) m_interactionMode[j];
+    *mode = static_cast<yarp::dev::InteractionModeEnum>(m_interactionMode[j]);
     return true;
 }
 
@@ -24,7 +24,7 @@ bool GazeboYarpControlBoardDriver::getInteractionModes(int n_joints, int *joints
 {
     if (!modes) return false;
     bool ret = true;
-    for(int i=0; i<n_joints; i++)
+    for(int i = 0; i < n_joints; ++i)
         ret = ret && getInteractionMode(joints[i], &modes[i]);
     return ret;
 }
@@ -32,80 +32,81 @@ bool GazeboYarpControlBoardDriver::getInteractionModes(int n_joints, int *joints
 bool GazeboYarpControlBoardDriver::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     if (!modes) return false;
-    for(unsigned int j = 0; j < m_numberOfJoints; ++j) {
-        modes[j] = (yarp::dev::InteractionModeEnum) m_interactionMode[j];
+    for (size_t j = 0; j < m_numberOfJoints; ++j) {
+        modes[j] = static_cast<yarp::dev::InteractionModeEnum>(m_interactionMode[j]);
     }
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
-   prepareResetJointMsg(j);
-   m_interactionMode[j] = (int) mode;
-     
-   //the following code (copy and pasted from changeControlMode) is used to reset control references / trajectory generator to the current position etc.
-   switch (m_controlMode[j])
-   {
+    prepareResetJointMsg(j);
+    m_interactionMode[j] = static_cast<int>(mode);
+
+    //the following code (copy and pasted from changeControlMode) is used to reset control references / trajectory generator to the current position etc.
+    switch (m_controlMode[j])
+    {
         case VOCAB_CM_POSITION :
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
-        break;
+            break;
         case VOCAB_CM_POSITION_DIRECT :
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
-        break;
+            break;
         case VOCAB_CM_VELOCITY :
             m_jntReferenceVelocities[j] = 0.0;
-        break;
+            break;
         case VOCAB_CM_MIXED:
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_jntReferenceVelocities[j] = 0.0;
             m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
-        break;
+            break;
         case VOCAB_CM_TORQUE :
-        case VOCAB_CM_OPENLOOP :
+        case VOCAB_CM_PWM :
+        case VOCAB_CM_CURRENT :
             m_jntReferenceTorques[j] = m_torques[j];
-        break;
+            break;
         case VOCAB_CM_IDLE:
             m_jntReferenceTorques[j] = 0.0;
-        break;
+            break;
         default :
-        break;
-   }
+            break;
+    }
 
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
-    if (j < 0 || j >= (int)m_numberOfJoints) return false;
+    if (j < 0 || static_cast<size_t>(j) >= m_numberOfJoints) return false;
 
-    
-    for (int cpl_i=0; cpl_i<(int)m_coupling_handler.size(); cpl_i++)
+
+    for (size_t cpl_i=0; cpl_i < m_coupling_handler.size(); cpl_i++)
     {
-      if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
-      {
-        yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
-        for (int coupled_j=0; coupled_j<coupling_vector.size(); coupled_j++)
+        if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
         {
-          changeInteractionMode(coupling_vector[coupled_j], mode);
+            yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
+            for (size_t coupled_j=0; coupled_j < coupling_vector.size(); coupled_j++)
+            {
+                changeInteractionMode(coupling_vector[coupled_j], mode);
+            }
+            return true;
         }
-        return true;
-      }
     }
     changeInteractionMode(j,mode);
-    
+
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     bool ret = true;
-    for(int i=0; i<n_joints; i++)
+    for (int i = 0; i < n_joints; i++)
         ret = ret && setInteractionMode(joints[i], modes[i]);
     return ret;
 }
@@ -113,7 +114,8 @@ bool GazeboYarpControlBoardDriver::setInteractionModes(int n_joints, int *joints
 bool GazeboYarpControlBoardDriver::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     bool ret = true;
-    for(int i=0; i<(int)m_numberOfJoints; i++)
+    for (size_t i = 0; i < m_numberOfJoints; ++i) {
         ret = ret && setInteractionMode(i, modes[i]);
+    }
     return ret;
 }

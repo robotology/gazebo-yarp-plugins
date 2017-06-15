@@ -141,7 +141,7 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
     std::string sensorName = _sensor->GetName();
 #endif
             yError()  << "GazeboYarpPlugins error: failure in loading configuration for sensor " << sensorName << "\n"
-                      << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name 
+                      << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << "\n"
                       << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path ;
             return false;
         }

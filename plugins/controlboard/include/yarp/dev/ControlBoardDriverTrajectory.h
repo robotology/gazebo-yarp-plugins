@@ -59,7 +59,7 @@ protected:
     double m_xf;
     double m_speed;
     double m_computed_reference;
-    unsigned int m_controllerPeriod;
+    double m_controllerPeriod;
     double m_joint_min;
     double m_joint_max;
     TrajectoryGenerator(gazebo::physics::Model* model);

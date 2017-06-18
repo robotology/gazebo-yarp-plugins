@@ -13,7 +13,6 @@
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/transport.hh>
-#include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>
 
@@ -325,7 +324,12 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     gazebo::event::Events::ConnectWorldReset(boost::bind(&GazeboYarpControlBoardDriver::onReset, this));
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
-    m_gazeboNode->Init(this->m_robot->GetWorld()->GetName());
+#if GAZEBO_MAJOR_VERSION >= 8
+    std::string worldName = this->m_robot->GetWorld()->Name(); 
+#else
+    std::string worldName = this->m_robot->GetWorld()->GetName(); 
+#endif
+    m_gazeboNode->Init(worldName);
     m_jointCommandPublisher = m_gazeboNode->Advertise<gazebo::msgs::JointCmd>(std::string("~/") + this->m_robot->GetName() + "/joint_cmd");
 
     _T_controller = 1;
@@ -378,7 +382,12 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
         yDebug() << "Initializing Trajectory Generator with current values";
         for (unsigned int i = 0; i < m_numberOfJoints; ++i)
         {
-            m_positions[i] = convertGazeboToUser(i, m_jointPointers[i]->GetAngle(0));
+#if GAZEBO_MAJOR_VERSION >= 8
+            double gazeboPos = m_jointPointers[i]->Position(0);
+#else
+            double gazeboPos = m_jointPointers[i]->GetAngle(0).Radian();
+#endif
+            m_positions[i] = convertGazeboToUser(i, gazeboPos);
             m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
             m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
         }
@@ -440,8 +449,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     // measurements acquisition
     for (size_t jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
     {
-        //TODO: consider multi-dof joint ?
-        m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
+#if GAZEBO_MAJOR_VERSION >= 8
+        double gazeboPos = m_jointPointers[jnt_cnt]->Position(0);
+#else
+        double gazeboPos = m_jointPointers[jnt_cnt]->GetAngle(0).Radian();
+#endif
+        m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, gazeboPos);
         m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
         m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
     }
@@ -635,8 +648,13 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
 {
     for (size_t i = 0; i < m_numberOfJoints; ++i)
     {
-        m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0));
-        m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0));
+#if GAZEBO_MAJOR_VERSION >= 8
+        m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->UpperLimit(0));
+        m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->LowerLimit(0));
+#else
+        m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0).Radian());
+        m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0).Radian());
+#endif
     }
 
     //...if the yarp plugin configuration file specifies a different velocity, override it...
@@ -1445,34 +1463,6 @@ void GazeboYarpControlBoardDriver::sendImpPositionsToGazebo (Vector &dess)
 }
 
 
-double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, gazebo::math::Angle value)
-{
-    double newValue = 0;
-    switch(m_jointTypes[joint])
-    {
-        case JointType_Revolute:
-        {
-            newValue = value.Degree();
-            break;
-        }
-
-        case JointType_Prismatic:
-        {
-            // For prismatic joints there is no getMeter() or something like that. The only way is to use .radiant() to get internal
-            // value without changes
-            newValue = value.Radian();
-            break;
-        }
-
-        case JointType_Unknown:
-        {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported for axes " <<
-            m_jointNames[joint] << " type is " << m_jointTypes[joint];
-            break;
-        }
-    }
-    return newValue;
-}
 
 double GazeboYarpControlBoardDriver::convertGazeboToUser(int joint, double value)
 {

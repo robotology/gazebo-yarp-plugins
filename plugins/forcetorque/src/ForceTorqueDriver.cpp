@@ -8,7 +8,6 @@
 #include "ForceTorqueDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
 
-#include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -29,14 +28,8 @@ GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
  */
 void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_info*/)
 {
-
-#if GAZEBO_MAJOR_VERSION >= 6
     ignition::math::Vector3d force = this->m_parentSensor->Force();
     ignition::math::Vector3d torque = this->m_parentSensor->Torque();
-#else
-    gazebo::math::Vector3 force = this->m_parentSensor->GetForce();
-    gazebo::math::Vector3 torque = this->m_parentSensor->GetTorque();
-#endif
 
     /** \todo ensure that the timestamp is the right one */
     /** \todo TODO use GetLastMeasureTime, not GetLastUpdateTime */

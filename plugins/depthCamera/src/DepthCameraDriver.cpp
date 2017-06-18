@@ -13,7 +13,6 @@
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
-#include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/sensors/DepthCameraSensor.hh>
 #include <gazebo/rendering/Distortion.hh>
@@ -341,6 +340,15 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
         {
             intrinsic.put("focalLengthX",    camPtr->OgreCamera()->getFocalLength());
             intrinsic.put("focalLengthY",    camPtr->OgreCamera()->getFocalLength() * camPtr->OgreCamera()->getAspectRatio());
+#if GAZEBO_MAJOR_VERSION >= 8
+            intrinsic.put("k1",              distModel->K1());
+            intrinsic.put("k2",              distModel->K2());
+            intrinsic.put("k3",              distModel->K3());
+            intrinsic.put("t1",              distModel->P1());
+            intrinsic.put("t2",              distModel->P2());
+            intrinsic.put("principalPointX", distModel->Center().X());
+            intrinsic.put("principalPointY", distModel->Center().Y());
+#else
             intrinsic.put("k1",              distModel->GetK1());
             intrinsic.put("k2",              distModel->GetK2());
             intrinsic.put("k3",              distModel->GetK3());
@@ -348,6 +356,7 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
             intrinsic.put("t2",              distModel->GetP2());
             intrinsic.put("principalPointX", distModel->GetCenter().x);
             intrinsic.put("principalPointY", distModel->GetCenter().y);
+#endif
         }
     }
     intrinsic.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));

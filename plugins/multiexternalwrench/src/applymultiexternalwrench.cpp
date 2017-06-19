@@ -138,15 +138,13 @@ void RPCServerThread::run()
                 m_cmd = command;
                 m_lock.unlock();
                
-               //yInfo() << "Creating new instance of external wrench";
                //Creating new instances of external wrenches
-               //newWrench = std::unique_ptr<ExternalWrench>(new ExternalWrench());
                boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
                if(newWrench->setWrench(m_robotModel,m_cmd))
                {
                    wrenchesVectorPtr->push_back(newWrench);            
                }
-               else yError() << "Failed to set new wrech values!";
+               else yError() << "Failed to set new wrench values!";
             } else {
                 this->m_reply.clear();
                 this->m_reply.addString ( "ERROR: Incorrect command format" );

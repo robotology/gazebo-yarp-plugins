@@ -18,7 +18,6 @@ endif()
 find_package(OpenCV REQUIRED)
 
 add_gazebo_yarp_plugin_target(LIBRARY_NAME videotexture
-                              INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
                               INCLUDE_DIRS include/gazebo include/yarp/dev
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS}
                                                   ${YARP_INCLUDE_DIRS}

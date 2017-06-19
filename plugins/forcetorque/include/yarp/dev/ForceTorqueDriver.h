@@ -39,6 +39,12 @@ namespace gazebo {
 extern const unsigned YarpForceTorqueChannelsNumber;
 extern const std::string YarpForceTorqueScopedName;
 
+/**
+ * YARP Force Torque Driver for Gazebo
+ *
+ * This driver does not accept any parameter, see
+ * gazebo::GazeboYarpForceTorque for details on how to use it.
+ */
 class yarp::dev::GazeboYarpForceTorqueDriver: 
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,

@@ -1,3 +1,9 @@
+Contributing {#contributing}
+----------------------------
+
+Contributing
+------------
+
 This page is used as a starting point for contributing to the development of `gazebo-yarp-plugins`.
 
 If you would like to contribute to the development of `gazebo-yarp-plugins`, please get in contact with the development team using [GitHub issues](https://github.com/robotology/gazebo-yarp-plugins/issues).

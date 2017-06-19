@@ -26,7 +26,7 @@ namespace gazebo
     }
 
     /// \class GazeboYarpForceTorque
-    /// Gazebo Plugin emulating the yarp device exposing a 6 axis force-torque sensor.
+    /// \brief Gazebo Plugin emulating the yarp device exposing a 6 axis force-torque sensor.
     ///
     /// This plugin instantiate a yarp 6-axis force torque sensor driver for the Gazebo simulator
     /// and instantiate a network wrapper (provided by yarp::dev::AnalogWrapper)
@@ -34,22 +34,23 @@ namespace gazebo
     ///
     /// It can be configurated using the yarpConfigurationFile sdf tag,
     /// that contains a Gazebo URI pointing at a yarp .ini configuration file
-    /// containing the configuration parameters of the controlBoard
+    /// containing the configuration parameters of the sensor.
     ///
-    /// The parameter that the yarpConfigurationFile must contain are:
-    ///  <TABLE>
-    ///  <TR><TD> robotName </TD><TD> Robot name, used to form the prefix for the opened ports. </TD></TR>
-    ///  <TR><TD> deviceId </TD><TD> Id of the device, used to form the prefix for the opened ports. </TD></TR>
-    ///  <TR><TD> period </TD><TD> Update period (in ms) of yarp port that publish the measure. It must be an integer </TD></TR>
-    ///  </TABLE>
-    /// If the required parameters are not specified, their value will be the
+    /// The parameter that the yarpConfigurationFile should contain are:
+    ///  | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
+    ///  |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+    ///  |  name          | string |   -   | See  yarp::dev::AnalogWrapper  | No      | Robot name, used to form the prefix for the opened ports. | |
+    ///  |  period        | int    |   ms  | See  yarp::dev::AnalogWrapper   | No      | Update period (in ms) of yarp port that publish the measure. | |
+    ///
+    /// If this parameters are not specified, their value will be the
     /// default one assigned by the yarp::dev::AnalogWrapper .
     ///
     /// The port opened by the yarp::dev::AnalogWrapper will be:
-    ///  <TABLE>
-    ///  <TR><TD> /{robotName}/{deviceId}/analog:o  </TD><TD> (port streaming the measure) </TD></TR>
-    ///  <TR><TD> /{robotName}/{deviceId}/analog/rpc:i  </TD><TD> (rpc port) </TD></TR>
-    ///  </TABLE>
+    ///  | Port name |  Description |
+    ///  |:----------:|:------------:|
+    ///  | {name}    | Port streaming the measure |
+    ///  | {name}/rpc:i | RPC Port |
+    ///
     ///
     class GazeboYarpForceTorque : public SensorPlugin
     {

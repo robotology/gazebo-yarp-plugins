@@ -9,7 +9,6 @@
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
-#include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/ImuSensor.hh>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>

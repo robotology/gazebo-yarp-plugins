@@ -10,7 +10,6 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
-#include <gazebo/math/Vector3.hh>
 #include <gazebo/sensors/sensors.hh>
 #include <yarp/os/LogStream.h>
 

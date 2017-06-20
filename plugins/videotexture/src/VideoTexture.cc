@@ -105,10 +105,16 @@ namespace gazebo
     }
 
     std::string sourcePortName;
-    m_VideoPort.open("/"+m_model->GetName());
+    
+#if GAZEBO_MAJOR_VERSION >= 8
+    m_texName      = m_model->Name();
+#else
+    m_texName      = m_model->GetName();
+#endif
+
+    m_VideoPort.open("/"+m_texName);
     m_VideoPort.setReadOnly();
 
-    m_texName      = m_model->GetName();
     m_connection   = event::Events::ConnectPreRender(std::bind(&VideoTexture::Update, this));
     m_width        = 480;
     m_height       = 640;
@@ -138,7 +144,7 @@ namespace gazebo
         sourcePortName = m_parameters.find("defaultSourcePortName").asString();
         if(!sourcePortName.empty() && yarp::os::NetworkBase::exists(sourcePortName))
         {
-            yarp::os::NetworkBase::connect(sourcePortName, "/"+m_model->GetName());
+            yarp::os::NetworkBase::connect(sourcePortName, "/"+m_texName);
             Update();
         }
     }

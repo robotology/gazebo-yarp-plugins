@@ -25,7 +25,6 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <gazebo/math/Angle.hh>
 
 extern const double RobotPositionTolerance;
 

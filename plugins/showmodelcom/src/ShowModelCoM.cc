@@ -50,33 +50,60 @@ namespace gazebo
         gazebo::physics::Link_V links = m_myModel->GetLinks();
 
         double mass_acc = 0.0;
+#if GAZEBO_MAJOR_VERSION >= 8
+        ignition::math::Vector3d weighted_position_acc = ignition::math::Vector3d::Zero;
+#else
         gazebo::math::Vector3 weighted_position_acc = gazebo::math::Pose::Zero.pos;
+#endif
         for(unsigned int i = 0; i < links.size(); ++i)
         {
             gazebo::physics::LinkPtr link = links[i];
+#if GAZEBO_MAJOR_VERSION >= 8
+            ignition::math::Vector3d wordlCoG_i = link->WorldCoGPose().Pos();
+#else
             gazebo::math::Vector3 wordlCoG_i = link->GetWorldCoGPose().pos;
+#endif
+
+#if GAZEBO_MAJOR_VERSION >= 8
+            double mass_i = link->GetInertial()->Mass();
+#else
             double mass_i = link->GetInertial()->GetMass();
+#endif
 
             weighted_position_acc += mass_i*wordlCoG_i;
             mass_acc += mass_i;
         }
 
-
+#if GAZEBO_MAJOR_VERSION >= 8
+        ignition::math::Vector3d wordlCoGModel = weighted_position_acc/mass_acc;
+#else
         gazebo::math::Vector3 wordlCoGModel = weighted_position_acc/mass_acc;
+#endif
 
         if (m_comOutputPort) {
             yarp::os::Bottle &bot = m_comOutputPort->prepare();
             bot.clear();
+#if GAZEBO_MAJOR_VERSION >= 8
+            bot.addDouble(wordlCoGModel.X());
+            bot.addDouble(wordlCoGModel.Y());
+            bot.addDouble(wordlCoGModel.Z());
+#else
             bot.addDouble(wordlCoGModel.x);
             bot.addDouble(wordlCoGModel.y);
             bot.addDouble(wordlCoGModel.z);
+#endif
             m_comOutputPort->write();
         }
 
+#if GAZEBO_MAJOR_VERSION >= 8
+        ignition::math::Pose3d WorldCoGPose = ignition::math::Pose3d::Zero;
+        WorldCoGPose.Pos() = wordlCoGModel;
+#else
         gazebo::math::Pose WorldCoGPose = gazebo::math::Pose::Zero;
         WorldCoGPose.pos = wordlCoGModel;
+#endif
 
-#if GAZEBO_MAJOR_VERSION >= 7
+#if GAZEBO_MAJOR_VERSION == 7
         msgs::Set(m_visualMsg.mutable_pose(), WorldCoGPose.Ign());
 #else
         msgs::Set(m_visualMsg.mutable_pose(), WorldCoGPose);
@@ -110,7 +137,12 @@ namespace gazebo
 
         this->m_node = transport::NodePtr(new gazebo::transport::Node());
 
-        this->m_node->Init ( _model->GetWorld()->GetName() );
+#if GAZEBO_MAJOR_VERSION >= 8
+        std::string worldName = _model->GetWorld()->Name();
+#else
+        std::string worldName = _model->GetWorld()->GetName();
+#endif
+        this->m_node->Init ( worldName );
         m_visPub = this->m_node->Advertise<msgs::Visual> ("~/visual", 10);
 
         // Set the visual's name. This should be unique.

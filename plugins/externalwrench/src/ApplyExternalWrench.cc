@@ -78,9 +78,6 @@ void ApplyExternalWrench::UpdateChild()
     // Get wrench duration
     this->m_wrenchToApply.duration = tmpBottle.get ( 7 ).asDouble();
 
-    // Copying command to force and torque Vector3 variables
-    math::Vector3 force ( this->m_wrenchToApply.force[0], this->m_wrenchToApply.force[1], this->m_wrenchToApply.force[2] );
-    math::Vector3 torque ( this->m_wrenchToApply.torque[0], this->m_wrenchToApply.torque[1], this->m_wrenchToApply.torque[2] );
 
     // Taking duration of the applied force into account
     static bool applying_force_flag = 0;
@@ -95,7 +92,23 @@ void ApplyExternalWrench::UpdateChild()
 
     // This has to be done during the specified duration
     if ( applying_force_flag && ( time_current - timeIni ) < m_wrenchToApply.duration ) {
-//      yError ( "Applying external force on the robot for %f seconds...", this->m_duration );
+#if GAZEBO_MAJOR_VERSION >= 8
+        // Copying command to force and torque Vector3 variables
+        ignition::math::Vector3d force ( this->m_wrenchToApply.force[0], this->m_wrenchToApply.force[1], this->m_wrenchToApply.force[2] );
+        ignition::math::Vector3d torque ( this->m_wrenchToApply.torque[0], this->m_wrenchToApply.torque[1], this->m_wrenchToApply.torque[2] );
+        this->m_onLink->AddForce ( force );
+        this->m_onLink->AddTorque ( torque );
+        ignition::math::Vector3d linkCoGPos = this->m_onLink->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
+        ignition::math::Vector3d newZ = force.Normalize(); // normalized force. I want the z axis of the cylinder's reference frame to coincide with my force vector
+        ignition::math::Vector3d newX = newZ.Cross ( ignition::math::Vector3d::UnitZ );
+        ignition::math::Vector3d newY = newZ.Cross ( newX );
+        ignition::math::Matrix4d rotation = ignition::math::Matrix4d ( newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1 );
+        ignition::math::Quaterniond forceOrientation = rotation.Rotation();
+        ignition::math::Pose3d linkCoGPose ( linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation );
+#else
+        // Copying command to force and torque Vector3 variables
+        math::Vector3 force ( this->m_wrenchToApply.force[0], this->m_wrenchToApply.force[1], this->m_wrenchToApply.force[2] );
+        math::Vector3 torque ( this->m_wrenchToApply.torque[0], this->m_wrenchToApply.torque[1], this->m_wrenchToApply.torque[2] );
         this->m_onLink->AddForce ( force );
         this->m_onLink->AddTorque ( torque );
         math::Vector3 linkCoGPos = this->m_onLink->GetWorldCoGPose().pos; // Get link's COG position where wrench will be applied
@@ -105,7 +118,8 @@ void ApplyExternalWrench::UpdateChild()
         math::Matrix4 rotation = math::Matrix4 ( newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1 );
         math::Quaternion forceOrientation = rotation.GetRotation();
         math::Pose linkCoGPose ( linkCoGPos - rotation*math::Vector3 ( 0,0,.15 ), forceOrientation );
-#if GAZEBO_MAJOR_VERSION >= 7
+#endif
+#if GAZEBO_MAJOR_VERSION == 7
         msgs::Set ( m_visualMsg.mutable_pose(), linkCoGPose.Ign() );
 #else
         msgs::Set ( m_visualMsg.mutable_pose(), linkCoGPose );
@@ -178,7 +192,13 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 
     this->m_node = transport::NodePtr ( new gazebo::transport::Node() );
 
-    this->m_node->Init ( _model->GetWorld()->GetName() );
+#if GAZEBO_MAJOR_VERSION >= 8
+    std::string worldName = _model->GetWorld()->Name();
+#else
+    std::string worldName = _model->GetWorld()->GetName();
+#endif
+    
+    this->m_node->Init ( worldName );
     m_visPub = this->m_node->Advertise<msgs::Visual> ( "~/visual", 10 );
 
     // Set the visual's name. This should be unique.

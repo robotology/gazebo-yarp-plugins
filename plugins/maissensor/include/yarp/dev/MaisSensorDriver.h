@@ -22,7 +22,6 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <gazebo/math/Angle.hh>
 
 namespace yarp {
     namespace dev {
@@ -140,10 +139,9 @@ private:
      * \brief convert data read from Gazebo to user unit sistem,
      *  e.g. degrees for revolute joints and meters for prismatic joints
      * \param joint joint number
-     * \param value Raw value read from Gazebo function like 'GetAngle'
+     * \param value Raw value read from Gazebo function like 'Position'
      * \return value in user units
      */
-    double convertGazeboToUser(int joint, gazebo::math::Angle value);
     double convertGazeboToUser(int joint, double value);
     double *convertGazeboToUser(double *values);
 
@@ -151,7 +149,7 @@ private:
      * \brief convert data read from user unit sistem to Gazebo one
      *  e.g. radiants for revolute joints and meters for prismatic joints
      * \param joint joint number
-     * \param value Raw value read from Gazebo function like 'GetAngle'
+     * \param value Raw value in user units
      * \return value in Gazebo units (SI)
      */
     double convertUserToGazebo(int joint, double value);

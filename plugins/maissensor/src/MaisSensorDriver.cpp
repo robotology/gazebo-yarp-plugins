@@ -13,7 +13,6 @@
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/transport/Node.hh>
-#include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
@@ -80,7 +79,12 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
     this->m_updateConnection =  gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpMaisSensorDriver::onUpdate,  this, _1));
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
+
+#if GAZEBO_MAJOR_VERSION >= 8
+    m_gazeboNode->Init(this->m_robot->GetWorld()->Name());
+#else
     m_gazeboNode->Init(this->m_robot->GetWorld()->GetName());
+#endif
 
     _T_controller = 1;
 
@@ -127,8 +131,12 @@ void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _inf
     // measurements acquisition
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
     {
-        m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetAngle(0));
-       // yDebug() << jnt_cnt << m_positions[jnt_cnt];
+#if GAZEBO_MAJOR_VERSION >= 8
+        double gazeboPos = m_jointPointers[jnt_cnt]->Position(0);
+#else
+        double gazeboPos = m_jointPointers[jnt_cnt]->GetAngle(0).Radian();
+#endif
+        m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, gazeboPos);
     }
 
     // Updating timestamp
@@ -192,36 +200,6 @@ bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
         }
     }
     return true;
-}
-
-
-double GazeboYarpMaisSensorDriver::convertGazeboToUser(int joint, gazebo::math::Angle value)
-{
-    double newValue = 0;
-    switch(m_jointTypes[joint])
-    {
-        case JointType_Revolute:
-        {
-            newValue = value.Degree();
-            break;
-        }
-
-        case JointType_Prismatic:
-        {
-            // For prismatic joints there is no getMeter() or something like that. The only way is to use .radiant() to get internal
-            // value without changes
-            newValue = value.Radian();
-            break;
-        }
-
-        default:
-        {
-            yError() << "Cannot convert measure from Gazebo to User units, type of joint not supported for axes " <<
-                                m_jointNames[joint] << " type is " << m_jointTypes[joint];
-            break;
-        }
-    }
-    return newValue;
 }
 
 double GazeboYarpMaisSensorDriver::convertGazeboToUser(int joint, double value)

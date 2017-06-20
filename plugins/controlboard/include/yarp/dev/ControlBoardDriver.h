@@ -26,7 +26,6 @@
 #include <boost/shared_ptr.hpp>
 #include <ControlBoardDriverTrajectory.h>
 #include <ControlBoardDriverCoupling.h>
-#include <gazebo/math/Angle.hh>
 
 #include <string>
 #include <functional>
@@ -518,10 +517,9 @@ private:
      * \brief convert data read from Gazebo to user unit sistem,
      *  e.g. degrees for revolute joints and meters for prismatic joints
      * \param joint joint number
-     * \param value Raw value read from Gazebo function like 'GetAngle'
+     * \param value value read from the Position method in Gazebo
      * \return value in user units
      */
-    double convertGazeboToUser(int joint, gazebo::math::Angle value);
     double convertGazeboToUser(int joint, double value);
     double *convertGazeboToUser(double *values);
     double convertGazeboGainToUserGain(int joint, double value);

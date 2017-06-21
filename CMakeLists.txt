@@ -74,3 +74,7 @@ install_basic_package_files(${PROJECT_NAME}
                             COMPATIBILITY AnyNewerVersion
                             TARGETS_PROPERTY ${PROJECT_NAME}_TARGETS
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+
+# add a dox target to generate doxygen documentation
+add_subdirectory(doc)

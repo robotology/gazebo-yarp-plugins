@@ -12,7 +12,6 @@
 #include <cstdio>
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
-#include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
@@ -206,7 +205,12 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
     m_mutex.wait();
-    m_controllerPeriod = static_cast<unsigned>(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
+#if GAZEBO_MAJOR_VERSION >= 8
+    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
+#else
+    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
+#endif
+    m_controllerPeriod = static_cast<unsigned>(physics->GetUpdatePeriod() * 1000.0);
     double speedf = fabs(speed);
     double dx0 =0;
     m_computed_reference = current_pos;
@@ -382,7 +386,12 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
     m_mutex.wait();
-    m_controllerPeriod = static_cast<unsigned>(this->m_robot->GetWorld()->GetPhysicsEngine()->GetUpdatePeriod() * 1000.0);
+#if GAZEBO_MAJOR_VERSION >= 8
+    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
+#else
+    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
+#endif
+    m_controllerPeriod = static_cast<unsigned>(physics->GetUpdatePeriod() * 1000.0);
     m_x0 = current_pos;
     m_xf = final_pos;
     if (m_xf > m_joint_max) m_xf = m_joint_max;

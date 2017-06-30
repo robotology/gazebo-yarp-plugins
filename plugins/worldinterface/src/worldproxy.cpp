@@ -22,6 +22,14 @@ using namespace gazebo;
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
+// typedef for compatibility with GAZEBO_MAJOR_VERSION < 8,
+// remove when we stop supporting Gazebo 7
+#if GAZEBO_MAJOR_VERSION >= 8
+typedef ignition::math::Pose3d YarpWorldPose;
+#else
+typedef gazebo::math::Pose YarpWorldPose;
+#endif
+
 void replace(string &str, string key, double value)
 {
   ostringstream tmp;
@@ -82,7 +90,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
           </model>\
         </sdf>");
 
-  math::Pose relative_link_pose;
+  YarpWorldPose relative_link_pose;
   if (frame_name!="")
   {
     physics::LinkPtr relative_link = HELPER_getLink(frame_name);
@@ -91,21 +99,37 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
       yError() << "Unable to find specified link";
       return "";
     }
+#if GAZEBO_MAJOR_VERSION >= 8
+    relative_link_pose = relative_link->WorldPose();
+#else
     relative_link_pose = relative_link->GetWorldPose();
+#endif
   }
-  math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
+  YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
-  
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  replace(sphereSDF_string, "POSEX", final_pose.Pos()[0]);
+  replace(sphereSDF_string, "POSEY", final_pose.Pos()[1]);
+  replace(sphereSDF_string, "POSEZ", final_pose.Pos()[2]);
+#else
   replace(sphereSDF_string, "POSEX", final_pose.pos[0]);
   replace(sphereSDF_string, "POSEY", final_pose.pos[1]);
   replace(sphereSDF_string, "POSEZ", final_pose.pos[2]);
+#endif
   replace(sphereSDF_string, "RADIUS", radius);
   if (gravity_enable) {replace (sphereSDF_string, "GRAVITY", 1);}
-  else {replace (sphereSDF_string, "GRAVITY", 0);}  
-    
+  else {replace (sphereSDF_string, "GRAVITY", 0);}
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  replace(sphereSDF_string, "ROLL", final_pose.Rot().Roll());
+  replace(sphereSDF_string, "PITCH", final_pose.Rot().Pitch());
+  replace(sphereSDF_string, "YAW", final_pose.Rot().Yaw());
+#else
   replace(sphereSDF_string, "ROLL", final_pose.rot.GetRoll());
   replace(sphereSDF_string, "PITCH", final_pose.rot.GetPitch());
   replace(sphereSDF_string, "YAW", final_pose.rot.GetYaw());
+#endif
 
   replace(sphereSDF_string, "RED", color.r/255.0);
   replace(sphereSDF_string, "GREEN", color.g/255.0);
@@ -121,8 +145,12 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(sphereSDF);
-  
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  physics::ModelPtr tmp=world->ModelByName(objlabel.str());
+#else
   physics::ModelPtr tmp=world->GetModel(objlabel.str());
+#endif
   if (tmp==0)
   {
     yWarning() << "Internal error during object creation. Unimplemented feature in gazebo 7.";
@@ -134,10 +162,10 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   }
   //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return objlabel.str();
 }
 
@@ -171,7 +199,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
       </model>\
   </sdf>");
 
-  math::Pose relative_link_pose;
+  YarpWorldPose relative_link_pose;
   if (frame_name!="")
   {
     physics::LinkPtr relative_link = HELPER_getLink(frame_name);
@@ -180,18 +208,30 @@ string WorldProxy::makeBox(const double width, const double height, const double
       yError() << "Unable to find specified link";
       return "";
     }
+#if GAZEBO_MAJOR_VERSION >= 8
+    relative_link_pose = relative_link->WorldPose();
+#else
     relative_link_pose = relative_link->GetWorldPose();
+#endif
   }
-  math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
+  YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
-  
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  replace(boxSDF_String, "POSEX", final_pose.Pos()[0]);
+  replace(boxSDF_String, "POSEY", final_pose.Pos()[1]);
+  replace(boxSDF_String, "POSEZ", final_pose.Pos()[2]);
+  replace(boxSDF_String, "ROLL", final_pose.Rot().Roll());
+  replace(boxSDF_String, "PITCH", final_pose.Rot().Pitch());
+  replace(boxSDF_String, "YAW", final_pose.Rot().Yaw());
+#else
   replace(boxSDF_String, "POSEX", final_pose.pos[0]);
   replace(boxSDF_String, "POSEY", final_pose.pos[1]);
   replace(boxSDF_String, "POSEZ", final_pose.pos[2]);
-
   replace(boxSDF_String, "ROLL", final_pose.rot.GetRoll());
   replace(boxSDF_String, "PITCH", final_pose.rot.GetPitch());
   replace(boxSDF_String, "YAW", final_pose.rot.GetYaw());
+#endif
 
   replace(boxSDF_String, "WIDTH", width);
   replace(boxSDF_String, "HEIGHT", height);
@@ -200,9 +240,9 @@ string WorldProxy::makeBox(const double width, const double height, const double
   replace(boxSDF_String, "RED", color.r/255.0);
   replace(boxSDF_String, "GREEN", color.g/255.0);
   replace(boxSDF_String, "BLUE", color.b/255.0);
-  
+
   if (gravity_enable) {replace (boxSDF_String, "GRAVITY", 1);}
-  else {replace (boxSDF_String, "GRAVITY", 0);}  
+  else {replace (boxSDF_String, "GRAVITY", 0);}
 
   boxSDF.SetFromString(boxSDF_String);
 
@@ -216,13 +256,16 @@ string WorldProxy::makeBox(const double width, const double height, const double
   {
     objlabel << "box" << nobjects;
   }
-  
+
   sdf::ElementPtr model = getSDFRoot(boxSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(boxSDF);
-
+#if GAZEBO_MAJOR_VERSION >= 8
+  physics::ModelPtr tmp=world->ModelByName(objlabel.str());
+#else
   physics::ModelPtr tmp=world->GetModel(objlabel.str());
+#endif
   if (tmp==0)
   {
     yWarning() << "Internal error during object creation. Unimplemented feature in gazebo 7.";
@@ -234,10 +277,10 @@ string WorldProxy::makeBox(const double width, const double height, const double
   }
   //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return objlabel.str();
 }
 
@@ -271,7 +314,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
       </model>\
   </sdf>");
 
-  math::Pose relative_link_pose;
+  YarpWorldPose relative_link_pose;
   if (frame_name!="")
   {
     physics::LinkPtr relative_link = HELPER_getLink(frame_name);
@@ -280,27 +323,40 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
       yError() << "Unable to find specified link";
       return "";
     }
+#if GAZEBO_MAJOR_VERSION >= 8
+    relative_link_pose = relative_link->WorldPose();
+#else
     relative_link_pose = relative_link->GetWorldPose();
+#endif
   }
-  math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
+  YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
-  
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  replace(cylSDF_String, "POSEX", final_pose.Pos()[0]);
+  replace(cylSDF_String, "POSEY", final_pose.Pos()[1]);
+  replace(cylSDF_String, "POSEZ", final_pose.Pos()[2]);
+  replace(cylSDF_String, "ROLL", final_pose.Rot().Roll());
+  replace(cylSDF_String, "PITCH", final_pose.Rot().Pitch());
+  replace(cylSDF_String, "YAW", final_pose.Rot().Yaw());
+#else
   replace(cylSDF_String, "POSEX", final_pose.pos[0]);
   replace(cylSDF_String, "POSEY", final_pose.pos[1]);
   replace(cylSDF_String, "POSEZ", final_pose.pos[2]);
-  replace(cylSDF_String, "RADIUS", radius);
-  replace(cylSDF_String, "LENGTH", length);
-
   replace(cylSDF_String, "ROLL", final_pose.rot.GetRoll());
   replace(cylSDF_String, "PITCH", final_pose.rot.GetPitch());
   replace(cylSDF_String, "YAW", final_pose.rot.GetYaw());
+#endif
+
+  replace(cylSDF_String, "RADIUS", radius);
+  replace(cylSDF_String, "LENGTH", length);
 
   replace(cylSDF_String, "RED", color.r/255.0);
   replace(cylSDF_String, "GREEN", color.g/255.0);
   replace(cylSDF_String, "BLUE", color.b/255.0);
-  
+
   if (gravity_enable) {replace (cylSDF_String, "GRAVITY", 1);}
-  else {replace (cylSDF_String, "GRAVITY", 0);}  
+  else {replace (cylSDF_String, "GRAVITY", 0);}
 
   cylSDF.SetFromString(cylSDF_String);
 
@@ -321,7 +377,11 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(cylSDF);
 
+#if GAZEBO_MAJOR_VERSION >= 8
+  physics::ModelPtr tmp=world->ModelByName(objlabel.str());
+#else
   physics::ModelPtr tmp=world->GetModel(objlabel.str());
+#endif
   if (tmp==0)
   {
     yWarning() << "Internal error during object creation. Unimplemented feature in gazebo 7.";
@@ -340,7 +400,11 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
 
 bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& pose, const std::string& frame_name)
 {
-  physics::ModelPtr model=world->GetModel(id);
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(id);
+#else
+    physics::ModelPtr model=world->GetModel(id);
+#endif
     if (!model)
     {
       yError()<<"Object " << id << " does not exist in gazebo\n";
@@ -350,7 +414,7 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
   PoseCmd cmd;
   cmd.name=id;
 
-  math::Pose relative_link_pose;
+  YarpWorldPose relative_link_pose;
   if (frame_name!="")
   {
     physics::LinkPtr relative_link = HELPER_getLink(frame_name);
@@ -359,11 +423,15 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
       yError() << "Unable to find specified link";
       return false;
     }
+#if GAZEBO_MAJOR_VERSION >= 8
+    relative_link_pose = relative_link->WorldPose();
+#else
     relative_link_pose = relative_link->GetWorldPose();
+#endif
   }
-  math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
+  YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
-  
+
   cmd.pose=final_pose;
   mutex.lock();
   posecommands.push(cmd);
@@ -377,7 +445,11 @@ bool WorldProxy::setPose(const std::string& id, const GazeboYarpPlugins::Pose& p
 
 bool WorldProxy::enableGravity(const std::string& id, const bool enable)
 {
-  physics::ModelPtr model=world->GetModel(id);
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(id);
+#else
+    physics::ModelPtr model=world->GetModel(id);
+#endif
     if (!model)
     {
       yError() <<"Object " << id << " does not exist in gazebo";
@@ -387,7 +459,7 @@ bool WorldProxy::enableGravity(const std::string& id, const bool enable)
   model->SetGravityMode(enable);
   if (enable==true) yInfo("Gravity enabled for model %s", id.c_str());
   else yInfo("Gravity disabled for model %s", id.c_str());
-    
+
   if (isSynchronous())
      waitForEngine();
 
@@ -459,7 +531,7 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
           </model>\
         </sdf>");
 
-  math::Pose relative_link_pose;
+  YarpWorldPose relative_link_pose;
   if (frame_name!="")
   {
     physics::LinkPtr relative_link = HELPER_getLink(frame_name);
@@ -468,29 +540,42 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
       yError() << "Unable to find specified link";
       return "";
     }
+#if GAZEBO_MAJOR_VERSION >= 8
+    relative_link_pose = relative_link->WorldPose();
+#else
     relative_link_pose = relative_link->GetWorldPose();
+#endif
   }
-  math::Pose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
+  YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
-  
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  replace(frameSDF_string, "POSEX", final_pose.Pos()[0]);
+  replace(frameSDF_string, "POSEY", final_pose.Pos()[1]);
+  replace(frameSDF_string, "POSEZ", final_pose.Pos()[2]);
+  replace(frameSDF_string, "ROLL", final_pose.Rot().Roll());
+  replace(frameSDF_string, "PITCH", final_pose.Rot().Pitch());
+  replace(frameSDF_string, "YAW", final_pose.Rot().Yaw());
+#else
   replace(frameSDF_string, "POSEX", final_pose.pos[0]);
   replace(frameSDF_string, "POSEY", final_pose.pos[1]);
   replace(frameSDF_string, "POSEZ", final_pose.pos[2]);
+  replace(frameSDF_string, "ROLL", final_pose.rot.GetRoll());
+  replace(frameSDF_string, "PITCH", final_pose.rot.GetPitch());
+  replace(frameSDF_string, "YAW", final_pose.rot.GetYaw());
+#endif
+
   replace(frameSDF_string, "HLENGHT", size/2);
   replace(frameSDF_string, "LENGHT", size);
   replace(frameSDF_string, "BRADIUS", 0.06);
   replace(frameSDF_string, "RADIUS", 0.04);
-    
-  replace(frameSDF_string, "ROLL", final_pose.rot.GetRoll());
-  replace(frameSDF_string, "PITCH", final_pose.rot.GetPitch());
-  replace(frameSDF_string, "YAW", final_pose.rot.GetYaw());
 
   replace(frameSDF_string, "RED", color.r/255.0);
   replace(frameSDF_string, "GREEN", color.g/255.0);
   replace(frameSDF_string, "BLUE", color.b/255.0);
   if (gravity_enable) {replace (frameSDF_string, "GRAVITY", 1);}
-  else {replace (frameSDF_string, "GRAVITY", 0);}  
-  
+  else {replace (frameSDF_string, "GRAVITY", 0);}
+
   frameSDF.SetFromString(frameSDF_string);
 
   int nobjects=++objects.count;
@@ -509,7 +594,11 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(frameSDF);
 
-  physics::ModelPtr tmp=world->GetModel(objlabel.str());
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr tmp=world->ModelByName(objlabel.str());
+#else
+    physics::ModelPtr tmp=world->GetModel(objlabel.str());
+#endif
   if (tmp==0)
   {
     yWarning() << "Internal error during object creation. Unimplemented feature in gazebo 7.";
@@ -521,39 +610,47 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   }
   //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  
+
   if (isSynchronous())
      waitForEngine();
-  
+
   return objlabel.str();
 }
 
 bool WorldProxy::changeColor(const std::string& id, const GazeboYarpPlugins::Color& color)
 {
-  physics::ModelPtr model=world->GetModel(id);
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(id);
+#else
+    physics::ModelPtr model=world->GetModel(id);
+#endif
     if (!model)
     {
       yError() <<"Object " << id << " does not exist in gazebo";
       return false;
     }
-    
-  
+
+
   // TO BE COMPLETED
   // msgs::Visual visualMsg;
   // visualMsg.set_name(_name);
   // visualMsg.set_parent_name(_parentName);
   // visualMsg.set_transparency(0);
   // this->visualPub->Publish(visualMsg);
-  
+
   if (isSynchronous())
      waitForEngine();
 
   return true;
 }
-  
+
 bool WorldProxy::enableCollision(const std::string& id, const bool enable)
 {
-  physics::ModelPtr model=world->GetModel(id);
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(id);
+#else
+    physics::ModelPtr model=world->GetModel(id);
+#endif
     if (!model)
     {
       yError() <<"Object " << id << " does not exist in gazebo";
@@ -562,7 +659,7 @@ bool WorldProxy::enableCollision(const std::string& id, const bool enable)
 
   if (enable==true) {model->SetCollideMode("all");yInfo("Collision detection enabled for model %s", id.c_str());}
   else {model->SetCollideMode("none");yInfo("Collision detection disabled for model %s", id.c_str());}
-    
+
   if (isSynchronous())
      waitForEngine();
 
@@ -577,14 +674,18 @@ gazebo::physics::LinkPtr WorldProxy::HELPER_getLink(std::string full_scoped_link
       yError () << "Unable to parse model name: " << full_scoped_link_name;
       return gazebo::physics::LinkPtr();
     }
-    std::string model_name = full_scoped_link_name.substr(0,lastcolon-1); 
+    std::string model_name = full_scoped_link_name.substr(0,lastcolon-1);
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr p_model=world->ModelByName(model_name);
+#else
     physics::ModelPtr p_model=world->GetModel(model_name);
+#endif
     if (!p_model)
     {
       yError () << "Unable to find model: " << model_name;
       return gazebo::physics::LinkPtr();
     }
-    
+
     gazebo::physics::Link_V model_links = p_model->GetLinks();
     for(int i=0; i < model_links.size(); i++ )
     {
@@ -623,24 +724,32 @@ bool WorldProxy::HELPER_hasEnding (std::string const &fullString, std::string co
 
 bool WorldProxy::rename(const std::string& old_name, const std::string& new_name)
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr object_model_1=world->ModelByName(old_name);
+#else
     physics::ModelPtr object_model_1=world->GetModel(old_name);
+#endif
     if (!object_model_1)
     {
       yError() <<"Object " << old_name << " does not exist in gazebo";
       return false;
     }
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr object_model_2=world->ModelByName(new_name);
+#else
     physics::ModelPtr object_model_2=world->GetModel(new_name);
+#endif
     if (object_model_2)
     {
       yError() <<"Object " << new_name << " already exists in gazebo";
       return false;
     }
-    
+
     ObjectsListIt old_it=objects.begin();
     bool found_old = false;
     ObjectsListIt new_it=objects.begin();
     bool found_new = false;
-    
+
     while(old_it!=objects.end())
     {
        string obj=old_it->first;
@@ -671,25 +780,29 @@ bool WorldProxy::rename(const std::string& old_name, const std::string& new_name
        yError() <<"Object " << new_name << " already exists in objects list";
        return false;
     }
-    
+
     yWarning()<<"model->setName() not fully implemented by gazebo";
     object_model_1->SetName(new_name);
     objects.erase(old_it);
     objects.insert(pair<string,physics::ModelPtr>(new_name, object_model_1));
-               
+
     yInfo() << "Object "<< old_name << " renamed to: " << new_name;
     return true;
 }
 
 bool WorldProxy::attach(const std::string& id, const std::string& link_name)
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr object_model_1=world->ModelByName(id);
+#else
     physics::ModelPtr object_model_1=world->GetModel(id);
+#endif
     if (!object_model_1)
     {
       yError() <<"Object " << id << " does not exist in gazebo";
       return false;
     }
-    
+
     /*
     size_t lastcolon = link_name.rfind(":");
     if (lastcolon == std::string::npos)
@@ -697,16 +810,21 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
       yError () << "Unable to parse model name: " << link_name;
       return false;
     }
-    std::string model_name = link_name.substr(0,lastcolon-1); 
+    std::string model_name = link_name.substr(0,lastcolon-1);
     physics::ModelPtr object_model_2=world->GetModel(model_name);
     if (!object_model_2)
     {
       yError() <<"Object " << model_name << " does not exist in gazebo";
       return false;
     }*/
-    
+
     physics::JointPtr joint;
-    joint = world->GetPhysicsEngine()->CreateJoint("revolute", object_model_1);
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::PhysicsEnginePtr physics=world->Physics();
+#else
+    physics::PhysicsEnginePtr physics=world->GetPhysicsEngine();
+#endif
+    joint = physics->CreateJoint("revolute", object_model_1);
     if( !joint )
     {
         yError() << "Unable to create joint";
@@ -727,17 +845,22 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
         yError() << "Unable to get parent link: " << id;
         return false;
     }
-    
-    //math::Pose parent_link_pose = parent_link->GetWorldPose();
+
+    //YarpWorldPose parent_link_pose = parent_link->GetWorldPose();
     //object_link->SetWorldPose(parent_link_pose);
 
     //TODO add mutex
     joint->SetName("magnet_joint");
     joint->SetModel(object_model_1);
-    joint->Load(parent_link, object_link, gazebo::math::Pose());
+    joint->Load(parent_link, object_link, YarpWorldPose());
     joint->Attach(parent_link, object_link);
+#if GAZEBO_MAJOR_VERSION >= 8
+    joint->SetUpperLimit(0, 0);
+    joint->SetLowerLimit(0, 0);
+#else
     joint->SetHighStop(0, 0);
     joint->SetLowStop(0, 0);
+#endif
     //joint->SetParam("cfm", 0, 0);
     //yDebug() << object_model_1->GetJointCount() << object_model_2->GetJointCount();
 
@@ -746,7 +869,11 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
 
 bool WorldProxy::detach(const std::string& id)
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr object_model=world->ModelByName(id);
+#else
     physics::ModelPtr object_model=world->GetModel(id);
+#endif
     if (!object_model)
     {
       yError() <<"Object " << id << " does not exist in gazebo";
@@ -769,7 +896,11 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {
   GazeboYarpPlugins::Pose ret;
 
+#if GAZEBO_MAJOR_VERSION >= 8
+  physics::ModelPtr model=world->ModelByName(id);
+#else
   physics::ModelPtr model=world->GetModel(id);
+#endif
     if (!model)
     {
       yError()<<"Object " << id << " does not exist in gazebo\n";
@@ -777,14 +908,23 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
     }
 
 
-  math::Pose p=model->GetWorldPose();
-
+#if GAZEBO_MAJOR_VERSION >= 8
+  YarpWorldPose p=model->WorldPose();
+  ret.x=p.Pos()[0];
+  ret.y=p.Pos()[1];
+  ret.z=p.Pos()[2];
+  ret.roll=p.Rot().Roll();
+  ret.pitch=p.Rot().Pitch();
+  ret.yaw=p.Rot().Yaw();
+#else
+  YarpWorldPose p=model->GetWorldPose();
   ret.x=p.pos[0];
   ret.y=p.pos[1];
   ret.z=p.pos[2];
   ret.roll=p.rot.GetRoll();
   ret.pitch=p.rot.GetPitch();
   ret.yaw=p.rot.GetYaw();
+#endif
 
   return ret;
 }
@@ -795,7 +935,11 @@ bool WorldProxy::deleteObject(const std::string& id)
   while(it!=objects.end())
   {
     string obj=it->first;
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(obj);
+#else
     physics::ModelPtr model=world->GetModel(obj);
+#endif
     if (model)
     {
       world->RemoveModel(obj);
@@ -836,7 +980,11 @@ std::vector<std::string> WorldProxy::getList()
   while(it!=objects.end())
   {
     string obj=it->first;
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(obj);
+#else
     physics::ModelPtr model=world->GetModel(obj);
+#endif
     if (!model)
     {
       it=objects.erase(it);
@@ -872,8 +1020,11 @@ void WorldProxy::update(const common::UpdateInfo & _info)
   while(!posecommands.empty())
   {
     PoseCmd cmd=posecommands.front();
-
+#if GAZEBO_MAJOR_VERSION >= 8
+    physics::ModelPtr model=world->ModelByName(cmd.name);
+#else
     physics::ModelPtr model=world->GetModel(cmd.name);
+#endif
     if (!model)
     {
       yError()<<"Object " << cmd.name << " does not exist in gazebo\n";

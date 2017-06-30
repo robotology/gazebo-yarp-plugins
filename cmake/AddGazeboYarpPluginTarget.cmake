@@ -24,8 +24,7 @@ include(CMakeParseArguments)
 macro(ADD_GAZEBO_YARP_PLUGIN_TARGET)
 
 set(options BUILD_AS_MODULE)
-set(oneValueArgs    LIBRARY_NAME
-                    INSTALL_DESTINATION)
+set(oneValueArgs    LIBRARY_NAME)
 set(multiValueArgs  INCLUDE_DIRS
                     SYSTEM_INCLUDE_DIRS
                     LINKED_LIBRARIES
@@ -64,6 +63,7 @@ target_include_directories(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC
 
 # Add install target
 install(TARGETS ${GAZEBO_PLUGIN_LIBRARY_NAME}
-                LIBRARY DESTINATION ${GAZEBO_PLUGIN_INSTALL_DESTINATION})
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
 endmacro()

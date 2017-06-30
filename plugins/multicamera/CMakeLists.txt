@@ -17,7 +17,6 @@ endif()
 include_directories(/usr/local/src/robot/gazebo-yarp-plugins/libraries/singleton/include)
 
 add_gazebo_yarp_plugin_target(LIBRARY_NAME MultiCameraPlugin
-                              INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
                               INCLUDE_DIRS include
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_INCLUDE_DIRS}
                                                   ${Boost_INCLUDE_DIRS}
@@ -27,7 +26,6 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME MultiCameraPlugin
                               SOURCES src/MultiCameraPlugin.cpp)
 
 add_gazebo_yarp_plugin_target(LIBRARY_NAME multicamera
-                              INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
                               INCLUDE_DIRS include
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS}
                                                   ${YARP_INCLUDE_DIRS}

@@ -9,7 +9,6 @@ PROJECT(Library_Singleton)
 include(AddGazeboYarpPluginTarget)
 
 add_gazebo_yarp_plugin_target(LIBRARY_NAME singleton
-                              INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
                               INCLUDE_DIRS include/GazeboYarpPlugins
                               SYSTEM_INCLUDE_DIRS ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}
                               LINKED_LIBRARIES ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES}

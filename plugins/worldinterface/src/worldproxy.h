@@ -77,9 +77,12 @@ class WorldProxy:public GazeboYarpPlugins::WorldInterfaceServer
 
   struct PoseCmd
   {
-    //gazebo::physics::ModelPtr model;
     std::string name;
+#if GAZEBO_MAJOR_VERSION >= 8
+    ignition::math::Pose3d pose;
+#else
     gazebo::math::Pose pose;
+#endif
   };
 
   class PositionCmdList: public std::queue<PoseCmd>

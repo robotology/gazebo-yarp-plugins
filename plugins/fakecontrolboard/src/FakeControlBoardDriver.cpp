@@ -13,7 +13,6 @@
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/transport.hh>
-#include <gazebo/math/Angle.hh>
 
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>

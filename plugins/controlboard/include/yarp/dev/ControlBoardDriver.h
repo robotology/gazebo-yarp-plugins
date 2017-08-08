@@ -447,6 +447,7 @@ private:
     yarp::sig::Vector m_maxStiffness;
     yarp::sig::Vector m_maxDamping;
     yarp::sig::Vector m_kPWM;
+    yarp::os::Bottle m_kinematic_mj;
 
     double m_robotPositionToleranceRevolute {0.9};      // Degrees
     double m_robotPositionToleranceLinear   {0.004};    // Meters
@@ -473,6 +474,8 @@ private:
     bool setPIDsForGroup_IMPEDANCE( std::vector<std::string>& control_law, std::vector<gazebo::common::PID>&);
     bool setMinMaxImpedance();
     bool setPIDs(); //WORKS
+    bool setKinematic_mj(yarp::os::Bottle* srcCouplingMat);
+    void getKinematic_mj(yarp::os::Bottle& expCouplingMat);
     bool setMaxTorques();
     bool setPositionsToleranceRevolute();
     bool setPositionsToleranceLinear();

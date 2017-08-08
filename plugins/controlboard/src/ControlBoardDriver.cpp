@@ -186,7 +186,26 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         {
             yarp::os::Bottle* coupling_bottle = coupling_group_bottle.get(cnt).asList();
 
-            if (coupling_bottle == 0 || coupling_bottle->size() != 3)
+            if (coupling_bottle == 0 || coupling_bottle->size() < 2)
+            {
+                yError() << "Error parsing coupling parameter"; return false;
+            }
+            // In case of coupling matrices...
+            if (coupling_bottle->get(0).asString()=="matrixJ2M")
+            {
+                if (this->setKinematic_mj(coupling_bottle))
+                {
+                    continue;
+                }
+                else
+                {
+                    yError() << "Error parsing coupling parameter"; return false;
+                }
+            }
+
+            // Else we are parsing one of the following:
+            // "eyes_vergence_control", "fingers_abduction_control", "thumb_control"...
+            if (coupling_bottle->size() != 3)
             {
                 yError() << "Error parsing coupling parameter"; return false;
             }
@@ -1367,6 +1386,45 @@ bool GazeboYarpControlBoardDriver::setPIDs()
         }
     }
     return true;
+}
+
+bool GazeboYarpControlBoardDriver::setKinematic_mj(yarp::os::Bottle* srcCouplingMat)
+{
+    /*
+     * Example of coupling set of parameters 'srcCouplingMat':
+     * matrixJ2M
+     * (1.000   1.000
+     * -1.000   1.000)
+     * (1.000   0.000   0.000   0.000
+     *  0.000   1.000   0.000   0.000
+     *  0.000   0.000   1.000  -1.000
+     *  0.000   0.000   1.000   1.000)
+     * 
+     * Here, when copying the parameters, we shall skip the srcCouplingMat first 
+     * element which is the param name "matrixJ2M". The first table is relative 
+     * to 2 joints (indexes 0, 1), and the second table relative to 4 joints 
+     * (indexes 2, 3, 4, 5). Thus, the total number of colums should match the 
+     * size of "m_jointNames".
+     */
+    size_t totalSize = 0; // total size of couplings (total nb of columns)
+
+    for (int mIdx=1; mIdx<srcCouplingMat->size(); mIdx++) // import each matirx
+    {
+        Bottle* b = srcCouplingMat->get(mIdx).asList();
+        double nbColumns = sqrt(b->size());            // get the number of columns
+        if (round(nbColumns) != nbColumns) {return false;} // check it's a square matrix
+        totalSize += size_t(nbColumns);                   // update total size
+    }
+    if (totalSize != m_numberOfJoints) {return false;}   // compare total size against the number of joints
+    m_kinematic_mj.copy(*srcCouplingMat,1,-1);         // copy all. Skip first element
+    yDebug() << "Saved coupling: " << m_kinematic_mj.toString(); // Debug
+
+    return true;
+}
+
+void GazeboYarpControlBoardDriver::getKinematic_mj(yarp::os::Bottle& expCouplingMat)
+{
+    expCouplingMat = m_kinematic_mj; // copy remote variable
 }
 
 bool GazeboYarpControlBoardDriver::check_joint_within_limits_override_torque(int i, double& ref)

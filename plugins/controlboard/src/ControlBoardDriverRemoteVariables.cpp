@@ -31,6 +31,8 @@ bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* list
     listOfKeys->addString("SHORTCUT_all_pos_ki");
 
     listOfKeys->addString("VelocityTimeout");
+
+    listOfKeys->addString("kinematic_mj");
     return true;
 }
 
@@ -124,6 +126,11 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(std::string key, yarp::os::
     if (key == "VelocityTimeout")
     {
         yarp::os::Bottle& r = val.addList(); for (size_t i = 0; i< m_numberOfJoints; i++) { r.addFloat64(m_velocity_watchdog[i]->getDuration()); }
+        return true;
+    }
+    if (key == "kinematic_mj")
+    {
+        this->getKinematic_mj(val);
         return true;
     }
     yWarning("getRemoteVariable(): Unknown variable %s", key.c_str());

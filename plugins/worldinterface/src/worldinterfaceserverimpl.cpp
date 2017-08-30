@@ -22,8 +22,7 @@ WorldInterfaceServerImpl::~WorldInterfaceServerImpl()
 
 std::string WorldInterfaceServerImpl::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color,const std::string& frame_name , const std::string& object_name,const bool gravity_enable , const bool collision_enable )
 {
-  return proxy->makeSphere(radius, pose, color,frame_name,object_name,gravity_enable, collision_enable);
-  
+  return proxy->makeSphere(radius, pose, color,frame_name,object_name,gravity_enable, collision_enable);  
 }
 
 std::string WorldInterfaceServerImpl::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color,const std::string& frame_name , const std::string& object_name,const bool gravity_enable , const bool collision_enable )

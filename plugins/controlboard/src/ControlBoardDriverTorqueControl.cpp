@@ -28,6 +28,16 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const double* t)
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::setRefTorques(const int n_joint, const int *joints, const double *t)
+{
+    if (!joints || !t) return false;
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        m_jntReferenceTorques[joints[i]] = t[i];
+    }
+    return ret;
+}
+
 bool GazeboYarpControlBoardDriver::setTorqueMode()
 {
     bool ret = true;
@@ -73,7 +83,9 @@ bool GazeboYarpControlBoardDriver::getTorques(double* t)
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::getTorqueRange(int, double*, double *){return false;} //NOT IMPLEMENTED
-bool GazeboYarpControlBoardDriver::getTorqueRanges(double *, double *){return false;} //NOT IMPLEMENTED
-bool GazeboYarpControlBoardDriver::getBemfParam(int , double *){return false;} //NOT IMPLEMENTED
-bool GazeboYarpControlBoardDriver::setBemfParam(int , double ){return false;} //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::getTorqueRange(int, double*, double *){return false;}
+bool GazeboYarpControlBoardDriver::getTorqueRanges(double *, double *){return false;}
+bool GazeboYarpControlBoardDriver::getBemfParam(int , double *){return false;}
+bool GazeboYarpControlBoardDriver::setBemfParam(int , double ){return false;}
+bool GazeboYarpControlBoardDriver::getMotorTorqueParams(int ,  yarp::dev::MotorTorqueParameters *){return false;}
+bool GazeboYarpControlBoardDriver::setMotorTorqueParams(int , const yarp::dev::MotorTorqueParameters ){return false;}

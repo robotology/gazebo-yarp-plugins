@@ -206,10 +206,6 @@ void Handler::removeDevice(const std::string& deviceName)
             device->second.object()->close();
             m_devicesMap.erase(device);
         }
-        else
-        {
-            yError() << "Not removing device '" << deviceName << "' yet because it is still used by other devices, Decremented counter to " << device->second.count();
-        }
     } else {
         yError() << "Could not remove device " << deviceName << ". Device was not found";
     }

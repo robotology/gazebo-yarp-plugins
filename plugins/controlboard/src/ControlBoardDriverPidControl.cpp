@@ -27,14 +27,16 @@ namespace yarp {
                 return false;
             }
 
-            GazeboYarpControlBoardDriver::PID& currentPID = pidType->second[j];
+            gazebo::common::PID& currentPID = pidType->second[j];
             // Converting all gains for degrees-based unit to radians-based
-            currentPID.p = convertUserGainToGazeboGain(j, pid.kp);
-            currentPID.i = convertUserGainToGazeboGain(j, pid.ki);
-            currentPID.d = convertUserGainToGazeboGain(j, pid.kd);
+            currentPID.SetPGain(convertUserGainToGazeboGain(j, pid.kp));
+            currentPID.SetIGain(convertUserGainToGazeboGain(j, pid.ki));
+            currentPID.SetDGain(convertUserGainToGazeboGain(j, pid.kd));
             // The output limits are only related to the output, so they don't need to be converted
-            currentPID.maxInt = pid.max_int;
-            currentPID.maxOut = pid.max_output;
+            currentPID.SetIMax(pid.max_int);
+            currentPID.SetIMin(-pid.max_int);
+            currentPID.SetCmdMax(pid.max_output);
+            currentPID.SetCmdMin(-pid.max_output);
 
             return true;
         }
@@ -196,16 +198,16 @@ namespace yarp {
             }
             if (!pid) return false;
 
-            const GazeboYarpControlBoardDriver::PID& currentPID = pidType->second[j];
+            const gazebo::common::PID& currentPID = pidType->second[j];
 
             // Converting all gains for degrees-based unit to radians-based
-            pid->kp = convertGazeboGainToUserGain(j, currentPID.p);
-            pid->ki = convertGazeboGainToUserGain(j, currentPID.i);
-            pid->kd = convertGazeboGainToUserGain(j, currentPID.d);
+            pid->kp = convertGazeboGainToUserGain(j, currentPID.GetPGain());
+            pid->ki = convertGazeboGainToUserGain(j, currentPID.GetIGain());
+            pid->kd = convertGazeboGainToUserGain(j, currentPID.GetDGain());
 
             // The output limits are only related to the output, so they don't need to be converted
-            pid->max_int = currentPID.maxInt;
-            pid->max_output = currentPID.maxOut;
+            pid->max_int = currentPID.GetIMax();
+            pid->max_output = currentPID.GetCmdMax();
             return true;
 
         }

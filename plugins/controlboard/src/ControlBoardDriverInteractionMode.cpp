@@ -40,7 +40,7 @@ bool GazeboYarpControlBoardDriver::getInteractionModes(yarp::dev::InteractionMod
 
 bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
-    prepareResetJointMsg(j);
+    resetAllPidsForJointAtIndex(j);
     m_interactionMode[j] = static_cast<int>(mode);
 
     //the following code (copy and pasted from changeControlMode) is used to reset control references / trajectory generator to the current position etc.

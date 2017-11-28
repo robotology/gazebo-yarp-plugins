@@ -229,18 +229,21 @@ public:
     bool changeInteractionMode(int j, yarp::dev::InteractionModeEnum mode); //private function
 
     //TORQUE CONTROL
-    virtual bool setRefTorque(int j, double t); //NOT TESTED
-    virtual bool setRefTorques(const double *t); //NOT TESTED
-    virtual bool setTorqueMode(); //NOT TESTED
-    virtual bool getRefTorque(int j, double *t);    //NOT TESTED
-    virtual bool getRefTorques(double *t);//NOT TESTED
-    virtual bool getTorque(int j, double *t); //NOT TESTED
-    virtual bool getTorques(double *t); //NOT TESTED
+    virtual bool setRefTorque(int j, double t);
+    virtual bool setRefTorques(const double *t);
+    virtual bool setTorqueMode();
+    virtual bool getRefTorque(int j, double *t);
+    virtual bool getRefTorques(double *t);
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
+    virtual bool getTorque(int j, double *t);
+    virtual bool getTorques(double *t);
 
-    virtual bool getBemfParam(int j, double *bemf); //NOT IMPLEMENTED
-    virtual bool setBemfParam(int j, double bemf); //NOT IMPLEMENTED
-    virtual bool getTorqueRange(int j, double *min, double *max); //NOT IMPLEMENTED
-    virtual bool getTorqueRanges(double *min, double *max); //NOT IMPLEMENTED
+    virtual bool getBemfParam(int j, double *bemf);
+    virtual bool setBemfParam(int j, double bemf);
+    virtual bool getTorqueRange(int j, double *min, double *max);
+    virtual bool getTorqueRanges(double *min, double *max);
+    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params);
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
 
     //IMPEDANCE CTRL
     virtual bool getImpedance(int j, double *stiffness, double *damping); // [Nm/deg] & [Nm*sec/deg]

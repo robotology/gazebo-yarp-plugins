@@ -91,6 +91,11 @@ public:
      */
     gazebo::sensors::Sensor* getSensor(const std::string& sensorScopedName) const;
 
+    /** Returns the vector of all sensor names
+     * \return vector of all sensor names
+     */
+    std::vector<std::string> getSensors() const;
+    
     /** \brief Removes a sensor from the internal database
      *  \param sensorName the name of the sensor to be removed
      */

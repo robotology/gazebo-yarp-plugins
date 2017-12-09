@@ -91,6 +91,18 @@ private:
 
     /**
      *
+     * @brief search the list of strings for a string matching the given end string.
+     *
+     * @param [in]  stringList   pick list of strings
+     * @param [in]  endingString end string
+     * @param [out] fullString   completed string if there is a match
+     * @return                   'true' if a match was found
+     */
+    inline bool getNameCompletionFromList(std::vector<std::string> &stringList,
+                                          std::string const &endingString,
+                                          std::string &fullString);
+    /**
+     *
      * Fill the output buffer with the inertial sensors fixed metadata as per
      * EMS data format specified further below: n, VER, ai, bi.
      */

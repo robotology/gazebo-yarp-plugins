@@ -141,6 +141,23 @@ gazebo::sensors::Sensor* Handler::getSensor(const std::string& sensorScopedName)
     return tmp;
 }
 
+std::vector<std::string> Handler::getSensors() const
+{
+    // define the output vector of sensor names
+    std::vector<std::string> sensorsV(m_sensorsMap.size());
+    
+    // iterate over the sensor map and get all the names
+    SensorsMap::const_iterator sensor; int idx;
+    for (sensor=m_sensorsMap.begin(), idx=0;
+         sensor!=m_sensorsMap.end();
+         sensor++,idx++)
+    {
+        sensorsV[idx] = sensor->first;
+    }
+    
+    return sensorsV;
+}
+
 void Handler::removeSensor(const std::string& sensorName)
 {
     SensorsMap::iterator sensor = m_sensorsMap.find(sensorName);

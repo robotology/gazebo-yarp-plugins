@@ -189,6 +189,9 @@ yarp::os::Stamp GazeboYarpInertialMTBPartDriver::getLastInputStamp()
 bool GazeboYarpInertialMTBPartDriver::buildEnabledSensorsVector(std::string robotScopedName,
                                                                 yarp::os::Bottle & enabledSensors)
 {
+    // get the list of registered active sensors (connected to a sensor plugin)
+    std::vector<std::string> activeSensors = GazeboYarpPlugins::Handler::getHandler()->getSensors();
+    
     // resize the sensors vector
     m_enabledSensors.resize(enabledSensors.size());
 
@@ -196,13 +199,24 @@ bool GazeboYarpInertialMTBPartDriver::buildEnabledSensorsVector(std::string robo
     for (int sensorIter = 0; sensorIter < enabledSensors.size(); sensorIter++)
     {
         // get the next sensor scoped name from the input list
-        std::string sensorScopedName = robotScopedName + "::" + enabledSensors.get(sensorIter).asString();
-
+        std::string sensorScopedName;
+        if (!GazeboYarpInertialMTBPartDriver::
+            getNameCompletionFromList(activeSensors,
+                                      enabledSensors.get(sensorIter).asString(),
+                                      sensorScopedName))
+        {
+            yError() << "GazeboYarpInertialMTBPartDriver Error: required sensor name "
+            << enabledSensors.get(sensorIter).asString() << " was not found";
+            return false;
+        }
+        
         //Get the gazebo pointer (we assume it has been previously added by a sensor plugin)
-        gazebo::sensors::ImuSensor* sensor = dynamic_cast<gazebo::sensors::ImuSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
+        gazebo::sensors::ImuSensor* sensor =
+        dynamic_cast<gazebo::sensors::ImuSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
 
         if (!sensor) {
-            yError() << "GazeboYarpInertialMTBPartDriver Error: required sensor " << sensorScopedName << " was not found";
+            yError() << "GazeboYarpInertialMTBPartDriver Error: required sensor scoped name "
+            << sensorScopedName << " was not found";
             return false;
         }
 
@@ -250,4 +264,24 @@ bool GazeboYarpInertialMTBPartDriver::buildOutBufferFixedData(std::string robotP
     m_dataMutex.post();
 
     return true;
+}
+
+bool GazeboYarpInertialMTBPartDriver::getNameCompletionFromList(std::vector<std::string> &stringList,
+                                                           std::string const &endingString,
+                                                           std::string &fullString)
+{
+    // search the list
+    bool found = false;
+    for (std::vector<std::string>::iterator iter=stringList.begin();
+         iter<stringList.end() && !found;
+         iter++)
+    {
+        found=GazeboYarpPlugins::hasEnding(*iter,endingString);
+        if (found)
+        {
+            fullString = *iter;
+            stringList.erase(iter);
+        }
+    }
+    return found;
 }

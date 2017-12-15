@@ -539,6 +539,9 @@ private:
 
     double convertUserToGazebo(double value);
     double *convertUserToGazebo(double *values);
+
+    bool checkIfTorqueIsValid(const double* torques) const;
+    bool checkIfTorqueIsValid(double torques) const;
 };
 
 #endif //GAZEBOYARP_CONTROLBOARDDRIVER_HH

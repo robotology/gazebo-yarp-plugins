@@ -6,12 +6,17 @@
 
 
 #include "ControlBoardDriver.h"
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 
 using namespace yarp::dev;
 
 bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t)
 {
+    if (!checkIfTorqueIsValid(t))
+        return false;
+
     if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
         m_jntReferenceTorques[j] = t;
         return true;
@@ -22,6 +27,10 @@ bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t)
 bool GazeboYarpControlBoardDriver::setRefTorques(const double* t)
 {
     if (!t) return false;
+
+    if (!checkIfTorqueIsValid(t))
+        return false;
+
     for (size_t j = 0; j < m_numberOfJoints; ++j) {
         m_jntReferenceTorques[j] = t[j];
     }
@@ -31,6 +40,10 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const double* t)
 bool GazeboYarpControlBoardDriver::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
     if (!joints || !t) return false;
+
+    if (!checkIfTorqueIsValid(t))
+        return false;
+
     bool ret = true;
     for (int i = 0; i < n_joint && ret; i++) {
         m_jntReferenceTorques[joints[i]] = t[i];
@@ -89,3 +102,26 @@ bool GazeboYarpControlBoardDriver::getBemfParam(int , double *){return false;}
 bool GazeboYarpControlBoardDriver::setBemfParam(int , double ){return false;}
 bool GazeboYarpControlBoardDriver::getMotorTorqueParams(int ,  yarp::dev::MotorTorqueParameters *){return false;}
 bool GazeboYarpControlBoardDriver::setMotorTorqueParams(int , const yarp::dev::MotorTorqueParameters ){return false;}
+
+bool GazeboYarpControlBoardDriver::checkIfTorqueIsValid(const double* torques) const
+{
+    if (!torques)
+        return false;
+
+    bool out=true;
+    for (int index=0;index<m_numberOfJoints;++index)
+    {
+        out=out && checkIfTorqueIsValid(torques[index]);
+    }        
+    return out;
+}
+
+bool GazeboYarpControlBoardDriver::checkIfTorqueIsValid(double torque) const
+{
+    if (std::isnan(torque) || std::isinf(torque))
+    {
+        yError() << "GazeboYarpControlBoard : controlBoard  invalid torque value:" << torque;
+        return false;
+    }
+    return true;
+}

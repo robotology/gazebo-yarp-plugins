@@ -361,7 +361,7 @@ private:
         double max;
     };
 
-    std::string deviceName;
+    std::string m_deviceName;
     gazebo::physics::Model* m_robot;
 
     /**
@@ -389,14 +389,15 @@ private:
      */
     yarp::sig::Vector m_zeroPosition;
 
-    yarp::sig::Vector m_positions; /**< joint positions [Degrees] */
-    yarp::sig::Vector m_velocities; /**< joint velocities [Degrees/Seconds] */
-    yarp::sig::Vector m_torques; /**< joint torques [Netwon Meters] */
-    yarp::sig::Vector m_maxTorques; /**< joint torques [Netwon Meters] */
+    yarp::sig::Vector m_positions;          /**< joint positions [Degrees] */
+    yarp::sig::Vector m_motPositions;      /**< motor positions [Degrees] */
+    yarp::sig::Vector m_velocities;         /**< joint velocities [Degrees/Seconds] */
+    yarp::sig::Vector m_torques;            /**< joint torques [Netwon Meters] */
+    yarp::sig::Vector m_maxTorques;         /**< joint torques [Netwon Meters] */
 
-    yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
+    yarp::os::Stamp m_lastTimestamp;        /**< timestamp, updated with simulation time at each onUpdate call */
 
-    yarp::sig::Vector amp;
+    yarp::sig::Vector m_amp;
     yarp::sig::VectorOf<JointType> m_jointTypes;
 
     //Desired Control variables
@@ -455,7 +456,7 @@ private:
     int * m_controlMode;
     int * m_interactionMode;
 
-    bool started;
+    bool m_started;
     int m_clock;
     int _T_controller;
     gazebo::common::Time m_previousTime;

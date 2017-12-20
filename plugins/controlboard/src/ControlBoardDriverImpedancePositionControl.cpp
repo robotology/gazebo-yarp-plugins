@@ -14,8 +14,8 @@ using namespace yarp::dev;
 bool GazeboYarpControlBoardDriver::getImpedance(int j, double *stiffness, double *damping)
 {
     if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        *stiffness = m_impedancePosPDs[j].p;
-        *damping = m_impedancePosPDs[j].d;
+        *stiffness = m_impedancePosPDs[j].GetPGain();
+        *damping = m_impedancePosPDs[j].GetDGain();
         return true;
     }
     return false;
@@ -27,8 +27,8 @@ bool GazeboYarpControlBoardDriver::getImpedance(int j, double *stiffness, double
 bool GazeboYarpControlBoardDriver::setImpedance(int j, double stiffness, double damping)
 {
     if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        m_impedancePosPDs[j].p = stiffness;
-        m_impedancePosPDs[j].d = damping;
+        m_impedancePosPDs[j].SetPGain(stiffness);
+        m_impedancePosPDs[j].SetDGain(damping);
         return true;
     }
     return false;

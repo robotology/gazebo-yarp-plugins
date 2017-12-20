@@ -18,7 +18,7 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 {
     m_pluginParameters.fromString(config.toString().c_str());
 
-    deviceName = m_pluginParameters.find("name").asString().c_str();
+    m_deviceName = m_pluginParameters.find("name").asString().c_str();
 
     std::string robotName(m_pluginParameters.find("robotScopedName").asString().c_str());
 

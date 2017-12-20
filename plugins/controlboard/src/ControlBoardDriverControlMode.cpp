@@ -16,13 +16,10 @@
 
 using namespace yarp::dev;
 
-void GazeboYarpControlBoardDriver::prepareResetJointMsg(int j)
+void GazeboYarpControlBoardDriver::resetAllPidsForJointAtIndex(int j)
 {
-    gazebo::msgs::JointCmd j_cmd;
-    j_cmd.set_reset(true);
-    j_cmd.set_name(this->m_robot->GetJoint(m_jointNames[j])->GetScopedName());
-    this->m_jointCommandPublisher->WaitForConnection();
-    this->m_jointCommandPublisher->Publish(j_cmd);
+    m_pids[VOCAB_PIDTYPE_POSITION][j].Reset();
+    m_pids[VOCAB_PIDTYPE_VELOCITY][j].Reset();
 }
 
 bool GazeboYarpControlBoardDriver::setPositionMode(int j)
@@ -138,7 +135,7 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
     // don't perform switch specific actions
     if (m_controlMode[j] == desired_mode) return true;
 
-    prepareResetJointMsg(j);
+    resetAllPidsForJointAtIndex(j);
     m_controlMode[j] = desired_mode;
 
     // mode specific switching actions

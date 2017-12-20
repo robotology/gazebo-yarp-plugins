@@ -37,6 +37,11 @@ namespace yarp {
 namespace GazeboYarpPlugins {
 
 /**
+ * Split a string in a vector of string given a (single char) delimiter
+ */
+std::vector<std::string> splitString(const std::string &s, const std::string &delim);
+
+/**
  * Load the configuration for a given model plugin,
  * and save the configuration in the plugin_parameters output object.
  * This involves calling addGazeboEnviromentalVariablesModel and then loading

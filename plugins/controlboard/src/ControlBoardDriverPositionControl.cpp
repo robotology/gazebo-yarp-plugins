@@ -296,6 +296,36 @@ bool GazeboYarpControlBoardDriver::stop(const int n_joint, const int *joints) //
     return ret;
 }
 
+bool GazeboYarpControlBoardDriver::getTargetPosition(const int joint, double *ref)
+{
+    if (ref && joint >= 0 && static_cast<size_t>(joint) < m_numberOfJoints)
+    {
+        *ref = m_trajectoryGenerationReferencePosition[joint];
+        return true;
+    }
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::getTargetPositions(double *refs)
+{
+    if (!refs) return false; //check or not check?
+    bool ret = true;
+    for (size_t i = 0; i < this->m_numberOfJoints && ret; i++) {
+        ret = getTargetPosition(i, &refs[i]);
+    }
+    return ret;
+}
+
+bool GazeboYarpControlBoardDriver::getTargetPositions(const int n_joint, const int *joints, double *refs)
+{
+    if (!joints || !refs) return false; //check or not check?
+    bool ret = true;
+    for (int i = 0; i < n_joint && ret; i++) {
+        ret = getTargetPosition(joints[i], &refs[i]);
+    }
+    return ret;
+}
+
 
 // IPOSITION DIRECT
 bool GazeboYarpControlBoardDriver::setPositionDirectMode()
@@ -339,32 +369,37 @@ bool GazeboYarpControlBoardDriver::setPositions(const double *refs)
     return ret;
 }
 
-bool GazeboYarpControlBoardDriver::getTargetPosition(const int joint, double *ref)
+bool GazeboYarpControlBoardDriver::getRefPosition (const int joint, double *ref)
 {
-    if (ref && joint >= 0 && static_cast<size_t>(joint) < m_numberOfJoints)
-    {
-        *ref = m_trajectoryGenerationReferencePosition[joint];
-        return true;
-    }
-    return false;
+    if (joint < 0  || static_cast<size_t>(joint) >= m_numberOfJoints)
+        return false;
+
+    if (!ref) return false;
+
+    *ref = m_jntReferencePositions[joint];
+    return true;
 }
 
-bool GazeboYarpControlBoardDriver::getTargetPositions(double *refs)
+bool GazeboYarpControlBoardDriver::getRefPositions (double *refs)
 {
-    if (!refs) return false; //check or not check?
+    if (!refs) return false;
+    bool result = true;
+    for (size_t j = 0; j < this->m_numberOfJoints; j++ ) {
+        result = result && getRefPosition(j, &(refs[j]));
+    }
+
+    return result;
+}
+
+bool GazeboYarpControlBoardDriver::getRefPositions (const int n_joint, const int *joints, double *refs)
+{
+    if (n_joint == 0) return true;
+
     bool ret = true;
-    for (size_t i = 0; i < this->m_numberOfJoints && ret; i++) {
-        ret = getTargetPosition(i, &refs[i]);
+    for (int i = 0; i < n_joint; i++) {
+        ret = ret && getRefPosition(joints[i], &(refs[i]));
     }
     return ret;
 }
 
-bool GazeboYarpControlBoardDriver::getTargetPositions(const int n_joint, const int *joints, double *refs)
-{
-    if (!joints || !refs) return false; //check or not check?
-    bool ret = true;
-    for (int i = 0; i < n_joint && ret; i++) {
-        ret = getTargetPosition(joints[i], &refs[i]);
-    }
-    return ret;
-}
+

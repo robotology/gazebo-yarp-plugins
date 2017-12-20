@@ -668,13 +668,13 @@ bool WorldProxy::enableCollision(const std::string& id, const bool enable)
 
 gazebo::physics::LinkPtr WorldProxy::HELPER_getLink(std::string full_scoped_link_name)
 {
-    size_t lastcolon = full_scoped_link_name.rfind(":");
-    if (lastcolon == std::string::npos)
+    size_t firstcolon = full_scoped_link_name.find(":");
+    if (firstcolon == std::string::npos)
     {
       yError () << "Unable to parse model name: " << full_scoped_link_name;
       return gazebo::physics::LinkPtr();
     }
-    std::string model_name = full_scoped_link_name.substr(0,lastcolon-1);
+    std::string model_name = full_scoped_link_name.substr(0,firstcolon);
 #if GAZEBO_MAJOR_VERSION >= 8
     physics::ModelPtr p_model=world->ModelByName(model_name);
 #else

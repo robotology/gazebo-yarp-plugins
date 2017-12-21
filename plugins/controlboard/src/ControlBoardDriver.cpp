@@ -855,9 +855,9 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
             yError ("POSITION_CONTROL: 'controlLaw' param missing. Cannot continue");
             return false;
         }
+  
+        std::vector<dev::Pid> yarpPid(m_numberOfJoints);
 
-        yarp::dev::Pid* yarpPid;
-        yarpPid = new yarp::dev::Pid[m_numberOfJoints];
         bool error=false;
         size_t j=0;
 
@@ -928,7 +928,6 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
 
         if (error)
         {
-            delete [] yarpPid;
             return false;
         }
         else
@@ -1006,8 +1005,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
             return false;
         }
 
-        yarp::dev::Pid* yarpPid;
-        yarpPid = new yarp::dev::Pid[m_numberOfJoints];
+        std::vector<dev::Pid> yarpPid(m_numberOfJoints);
         bool error=false;
         size_t j=0;
 
@@ -1022,7 +1020,6 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
 
         if (error)
         {
-            delete [] yarpPid;
             return false;
         }
         else
@@ -1099,10 +1096,8 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
             return false;
         }
 
-        double* stiffness;
-        double* damping;
-        stiffness = new double[m_numberOfJoints];
-        damping   = new double[m_numberOfJoints];
+        std::vector<double> stiffness(m_numberOfJoints);
+        std::vector<double> damping(m_numberOfJoints);
         bool error=false;
         size_t j=0;
 
@@ -1112,8 +1107,6 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
 
         if (error)
         {
-            delete [] stiffness;
-            delete [] damping;
             return false;
         }
         else

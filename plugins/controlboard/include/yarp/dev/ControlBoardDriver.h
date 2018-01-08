@@ -479,6 +479,9 @@ private:
     yarp::sig::Vector m_maxDamping;
     yarp::sig::Vector m_kPWM;
 
+    double m_robotPositionToleranceRevolute {0.9};      // Degrees
+    double m_robotPositionToleranceLinear   {0.004};    // Meters
+
     bool* m_isMotionDone;
     int * m_controlMode;
     int * m_interactionMode;
@@ -500,6 +503,11 @@ private:
     bool setPIDsForGroup_IMPEDANCE( std::vector<std::string>& control_law, std::vector<GazeboYarpControlBoardDriver::PID>&);
     bool setMinMaxImpedance();
     bool setPIDs(); //WORKS
+    bool setMaxTorques();
+    bool setPositionsToleranceRevolute();
+    bool setPositionsToleranceLinear();
+
+    bool findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const;
 
     bool check_joint_within_limits_override_torque(int i, double&ref );
 

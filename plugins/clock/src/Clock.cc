@@ -169,11 +169,7 @@ namespace gazebo
 
     void GazeboYarpClock::clockStep(unsigned int step)
     {
-#if GAZEBO_MAJOR_VERSION >= 3
         m_world->Step(step);
-#else
-        m_world->StepWorld(step);
-#endif
     }
 
     void GazeboYarpClock::resetSimulationTime()

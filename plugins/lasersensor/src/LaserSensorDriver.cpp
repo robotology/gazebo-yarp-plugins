@@ -30,11 +30,8 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
 {
     yarp::os::LockGuard guard(m_mutex);
 
-#if GAZEBO_MAJOR_VERSION >= 7
     this->m_parentSensor->Ranges(m_sensorData);
-#else
-    this->m_parentSensor->GetRanges(m_sensorData);
-#endif
+
 
     m_lastTimestamp.update(_info.simTime.Double());
     m_first_run = false;
@@ -64,19 +61,12 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
 
     m_max_angle = m_parentSensor->AngleMax().Degree();            //m_max_angles is expressed in degrees
     m_min_angle = m_parentSensor->AngleMin().Degree();            //m_min_angles is expressed in degrees
-#if GAZEBO_MAJOR_VERSION >= 7
     m_max_gazebo_range = m_parentSensor->RangeMax();              //m
     m_min_gazebo_range = m_parentSensor->RangeMin();              //m
     m_resolution = m_parentSensor->AngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
     m_samples   = m_parentSensor->RangeCount();
     m_rate      = m_parentSensor->UpdateRate();
-#else
-    m_max_gazebo_range = m_parentSensor->GetRangeMax();              //m
-    m_min_gazebo_range = m_parentSensor->GetRangeMin();              //m
-    m_resolution = m_parentSensor->GetAngleResolution()*180.0/M_PI;  //m_resolution is expressed in degrees
-    m_samples   = m_parentSensor->GetRangeCount();
-    m_rate      = m_parentSensor->GetUpdateRate();
-#endif
+
     m_sensorData.resize(m_samples, 0.0);
 
     bool bg = config.check("GENERAL");

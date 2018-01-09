@@ -61,11 +61,7 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
-#if GAZEBO_MAJOR_VERSION >= 7
     m_sensorName = _sensor->ScopedName();
-#else
-    m_sensorName = _sensor->GetScopedName();
-#endif
 
     yDebug() << "GazeboYarpMultiCamera Plugin: sensor scoped name is" << m_sensorName.c_str();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver

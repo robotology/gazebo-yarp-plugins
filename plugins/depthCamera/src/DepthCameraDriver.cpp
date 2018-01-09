@@ -293,11 +293,7 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
     rgbImage.setPixelCode(m_imageFormat);
     rgbImage.resize(m_width, m_height);
     memcpy(rgbImage.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);
-#if GAZEBO_MAJOR_VERSION >= 7
     timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-#else
-    timeStamp->update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
-#endif
 
     m_colorFrameMutex.post();
     return true;
@@ -414,11 +410,7 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
     //depthImage.setPixelCode(m_depthFormat);
     memcpy(depthImage.getRawImage(), m_depthFrame_Buffer, m_width * m_height * sizeof(float));
 
-#if GAZEBO_MAJOR_VERSION >= 7
     timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-#else
-    timeStamp->update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
-#endif
 
     m_depthFrameMutex.post();
     return true;
@@ -443,11 +435,8 @@ yarp::os::ConstString GazeboYarpDepthCameraDriver::getLastErrorMsg(Stamp* timeSt
 {
     if(timeStamp)
     {
-#if GAZEBO_MAJOR_VERSION >= 7
 	timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-#else
-	timeStamp->update(this->m_depthCameraSensorPtr->GetLastUpdateTime().Double());
-#endif
+
     }
     return m_error;
 }

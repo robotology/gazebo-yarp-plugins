@@ -21,9 +21,6 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-const double RobotPositionTolerance_revolute = 0.9;      // Degrees
-const double RobotPositionTolerance_linear   = 0.004;    // Meters
-
 GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : deviceName("") {}
 
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
@@ -302,6 +299,24 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         if (m_trajectoryGenerationReferenceSpeed[j] >  m_jointVelLimits[j].max) m_trajectoryGenerationReferenceSpeed[j]= m_jointVelLimits[j].max/10;
     }
 
+    if (!setPositionsToleranceLinear())
+    {
+        yError()<<"Failed PositionsToleranceLinear initialization";
+        return false;
+    }
+
+    if (!setPositionsToleranceRevolute())
+    {
+        yError()<<"Failed PositionsToleranceRevolute initialization";
+        return false;
+    }
+
+    if (!setMaxTorques())
+    {
+        yError()<<"Failed Max Torque initialization";
+        return false;
+    }
+
     if (!setMinMaxImpedance())
     {
         yError()<<"Failed Impedance initialization";
@@ -419,14 +434,14 @@ bool GazeboYarpControlBoardDriver::configureJointType()
             case ( gazebo::physics::Entity::HINGE_JOINT  |  gazebo::physics::Entity::JOINT):
             {
                 m_jointTypes[i] = JointType_Revolute;
-                m_positionThreshold[i] = RobotPositionTolerance_revolute;
+                m_positionThreshold[i] = m_robotPositionToleranceRevolute;
                 break;
             }
 
             case ( gazebo::physics::Entity::SLIDER_JOINT |  gazebo::physics::Entity::JOINT):
             {
                 m_jointTypes[i] = JointType_Prismatic;
-                m_positionThreshold[i] = RobotPositionTolerance_linear;
+                m_positionThreshold[i] = m_robotPositionToleranceLinear;
                 break;
             }
 
@@ -1144,13 +1159,116 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
     }
 }
 
-bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
+bool GazeboYarpControlBoardDriver::findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const
 {
+    if (!m_pluginParameters.check("WRAPPER"))
+    {
+        yError()<<"Missing WRAPPER group";
+        return false;
+    }
+
+    if (!m_pluginParameters.findGroup("WRAPPER").check("networks"))
+    {
+        yError()<<"Missing networks group";
+        return false;
+    }
 
     yarp::os::Bottle& name_bot = m_pluginParameters.findGroup("WRAPPER").findGroup("networks");
     std::string name = name_bot.get(1).toString();
 
-    yarp::os::Bottle& kin_chain_bot = m_pluginParameters.findGroup(name);
+    motorControlGroup_bot = m_pluginParameters.findGroup(name);
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setPositionsToleranceLinear()
+{
+    yarp::os::Bottle kin_chain_bot;
+    if (!findMotorControlGroup(kin_chain_bot))
+        return false;
+
+    if (!kin_chain_bot.check("positionToleranceLinear")) {
+        yWarning()<<"No positionToleranceLinear value found in ini file, default one will be used!";
+        return true;
+    }
+
+    yarp::os::Bottle& positionToleranceLinear_bot = kin_chain_bot.findGroup("positionToleranceLinear");
+    if (static_cast<size_t>(positionToleranceLinear_bot.size()) != 2) {
+        yError()<<"Invalid number of params:positionToleranceLinear:"<<static_cast<size_t>(positionToleranceLinear_bot.size());
+        return false;
+    }
+
+    yarp::os::Value tmp=positionToleranceLinear_bot.get(1);
+    if (!tmp.isDouble())
+    {
+        yError()<<"Invalid param type:positionToleranceLinear";
+        return false;
+    }
+
+    m_robotPositionToleranceLinear=tmp.asDouble();       
+
+    yDebug()<<"positionToleranceLinear: [ "<<m_robotPositionToleranceLinear<<" ]";
+
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setPositionsToleranceRevolute()
+{
+    yarp::os::Bottle kin_chain_bot;
+    if (!findMotorControlGroup(kin_chain_bot))
+        return false;
+
+    if (!kin_chain_bot.check("positionToleranceRevolute")) {
+        yWarning()<<"No positionToleranceRevolute value found in ini file, default one will be used!";
+        return true;
+    }
+
+    yarp::os::Bottle& positionToleranceRevolute_bot = kin_chain_bot.findGroup("positionToleranceRevolute");
+    if (static_cast<size_t>(positionToleranceRevolute_bot.size()) != 2) {
+        yError()<<"Invalid number of params:positionToleranceRevolute:"<<static_cast<size_t>(positionToleranceRevolute_bot.size());
+        return false;
+    }
+
+    yarp::os::Value tmp=positionToleranceRevolute_bot.get(1);
+    if (!tmp.isDouble())
+    {
+        yError()<<"Invalid param type:positionToleranceRevolute";
+        return false;
+    }
+
+    m_robotPositionToleranceRevolute=tmp.asDouble();       
+
+    yDebug()<<"positionToleranceRevolute: [ "<<m_robotPositionToleranceRevolute<<" ]";
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setMaxTorques()
+{
+    yarp::os::Bottle kin_chain_bot;
+    if (!findMotorControlGroup(kin_chain_bot))
+        return false;
+
+    if (kin_chain_bot.check("max_torques")) {
+        yInfo()<<"max_torques param found!";
+        yarp::os::Bottle& max_torque_bot = kin_chain_bot.findGroup("max_torques");
+        if(static_cast<size_t>(max_torque_bot.size()) - 1 == m_numberOfJoints) {
+            for(size_t i = 0; i < m_numberOfJoints; ++i)
+                m_maxTorques[i] = max_torque_bot.get(i+1).asDouble();
+        } else
+            yError()<<"Invalid number of params";
+    } else
+        yWarning()<<"No max torques value found in ini file, default one will be used!";
+
+    yDebug()<<"max_torques: [ "<<m_maxTorques.toString()<<" ]";
+
+    return true;
+}
+
+bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
+{
+    yarp::os::Bottle kin_chain_bot;
+    if (!findMotorControlGroup(kin_chain_bot))
+        return false;
+
     if (kin_chain_bot.check("min_stiffness")) {
         yInfo()<<"min_stiffness param found!";
         yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");

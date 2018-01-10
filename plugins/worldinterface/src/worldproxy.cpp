@@ -108,6 +108,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
 
+
 #if GAZEBO_MAJOR_VERSION >= 8
   replace(sphereSDF_string, "POSEX", final_pose.Pos()[0]);
   replace(sphereSDF_string, "POSEY", final_pose.Pos()[1]);
@@ -120,6 +121,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   replace(sphereSDF_string, "RADIUS", radius);
   if (gravity_enable) {replace (sphereSDF_string, "GRAVITY", 1);}
   else {replace (sphereSDF_string, "GRAVITY", 0);}
+
 
 #if GAZEBO_MAJOR_VERSION >= 8
   replace(sphereSDF_string, "ROLL", final_pose.Rot().Roll());
@@ -145,6 +147,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(sphereSDF);
+
 
 #if GAZEBO_MAJOR_VERSION >= 8
   physics::ModelPtr tmp=world->ModelByName(objlabel.str());
@@ -217,6 +220,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
   YarpWorldPose final_pose (pose.x, pose.y, pose.z, pose.roll, pose.pitch, pose.yaw) ;
   final_pose += relative_link_pose;
 
+
 #if GAZEBO_MAJOR_VERSION >= 8
   replace(boxSDF_String, "POSEX", final_pose.Pos()[0]);
   replace(boxSDF_String, "POSEY", final_pose.Pos()[1]);
@@ -256,7 +260,6 @@ string WorldProxy::makeBox(const double width, const double height, const double
   {
     objlabel << "box" << nobjects;
   }
-
   sdf::ElementPtr model = getSDFRoot(boxSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
@@ -277,10 +280,8 @@ string WorldProxy::makeBox(const double width, const double height, const double
   }
   //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-
   if (isSynchronous())
      waitForEngine();
-
   return objlabel.str();
 }
 
@@ -354,7 +355,6 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   replace(cylSDF_String, "RED", color.r/255.0);
   replace(cylSDF_String, "GREEN", color.g/255.0);
   replace(cylSDF_String, "BLUE", color.b/255.0);
-
   if (gravity_enable) {replace (cylSDF_String, "GRAVITY", 1);}
   else {replace (cylSDF_String, "GRAVITY", 0);}
 
@@ -372,7 +372,6 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   }
 
   sdf::ElementPtr model = getSDFRoot(cylSDF)->GetElement("model");
-
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
   world->InsertModelSDF(cylSDF);
@@ -570,6 +569,10 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   replace(frameSDF_string, "BRADIUS", 0.06);
   replace(frameSDF_string, "RADIUS", 0.04);
 
+  replace(frameSDF_string, "ROLL", final_pose.rot.GetRoll());
+  replace(frameSDF_string, "PITCH", final_pose.rot.GetPitch());
+  replace(frameSDF_string, "YAW", final_pose.rot.GetYaw());
+
   replace(frameSDF_string, "RED", color.r/255.0);
   replace(frameSDF_string, "GREEN", color.g/255.0);
   replace(frameSDF_string, "BLUE", color.b/255.0);
@@ -675,6 +678,7 @@ gazebo::physics::LinkPtr WorldProxy::HELPER_getLink(std::string full_scoped_link
       return gazebo::physics::LinkPtr();
     }
     std::string model_name = full_scoped_link_name.substr(0,lastcolon-1);
+
 #if GAZEBO_MAJOR_VERSION >= 8
     physics::ModelPtr p_model=world->ModelByName(model_name);
 #else
@@ -846,9 +850,6 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
         return false;
     }
 
-    //YarpWorldPose parent_link_pose = parent_link->GetWorldPose();
-    //object_link->SetWorldPose(parent_link_pose);
-
     //TODO add mutex
     joint->SetName("magnet_joint");
     joint->SetModel(object_model_1);
@@ -863,6 +864,81 @@ bool WorldProxy::attach(const std::string& id, const std::string& link_name)
 #endif
     //joint->SetParam("cfm", 0, 0);
     //yDebug() << object_model_1->GetJointCount() << object_model_2->GetJointCount();
+
+    return true;
+}
+
+bool WorldProxy::attachUnscoped(const string& object_name, const std::string& object_link_name, const std::string& robot_name, const string& robot_link_name)
+{
+    gazebo::physics::ModelPtr object_model = world->GetModel(object_name);
+    if(!object_model)
+    {
+        yError() << "GazeboYarpWorldInterface::Attach error --> Object " << object_name << " does not exist in gazebo";
+        return false;
+    }
+
+    gazebo::physics::LinkPtr object_link = object_model->GetLink(object_link_name);
+    if(!object_link)
+    {
+        yError() << "GazeboYarpWorldInterface::Attach error --> Object link " << object_link_name << " is not found";
+    }
+
+    gazebo::physics::ModelPtr robot_model = world->GetModel(robot_name);
+    if(!robot_model)
+    {
+        yError() << "GazeboYarpWorldInterface::Attach error --> Robot model " << robot_name << " does not exist in gazebo";
+        return false;
+    }
+
+    //Get the exact link with only link name instead of full_scoped_link_name
+    gazebo::physics::Link_V robot_model_links = robot_model->GetLinks();
+    for(int i=0; i < robot_model_links.size(); i++)
+    {
+        //E.g iCub::l_hand::l_hand_base_link
+
+        std::string candidate_robot_link_name = robot_model_links[i]->GetScopedName();
+
+        //Display all the links
+        //yInfo() << "Attach --> Full scoped Candidate robot link name: " << candidate_robot_link_name << " found";
+
+        std::size_t lastcolon = candidate_robot_link_name.rfind(":");
+        std::string unscoped_robot_link_name = candidate_robot_link_name.substr(lastcolon+1,std::string::npos);
+        //yInfo() << "Attach --> Unscoped robot link name " << unscoped_robot_link_name;
+
+        if(unscoped_robot_link_name == robot_link_name)
+        {
+            gazebo::physics::LinkPtr robot_link = robot_model_links[i];
+            if(!robot_link)
+            {
+                yError() << "GazeboYarpWorldInterface::Attach error --> Robot link " << robot_link_name << " is not found";
+                return false;
+            }
+
+            //This is joint creation
+            gazebo::physics::JointPtr joint;
+            joint = world->GetPhysicsEngine()->CreateJoint("fixed",object_model);
+            if(!joint)
+            {
+                yError() << "GazeboYarpWorldInterface::Attach error --> Unable to create joint";
+                return false;
+            }
+
+            std::string joint_name = object_link_name + "_magnet_joint";
+            joint->SetName(joint_name);
+
+            joint->SetModel(object_model);
+            joint->Load(object_link,robot_link,gazebo::math::Pose());
+
+            //Attach(prent_link,child_link)
+            joint->Attach(object_link,robot_link);
+
+            //Joint limits in case of joints other than fixed joint
+            //joint->SetHighStop(0,0);
+            //joint->SetLowStop(0,0);
+            //joint->SetLowerLimit(0,0);
+            break;
+        }
+    }
 
     return true;
 }
@@ -891,6 +967,49 @@ bool WorldProxy::detach(const std::string& id)
     return true;
 }
 
+bool WorldProxy::detachUnscoped(const string& object_name, const std::string& object_link_name)
+{
+    gazebo::physics::ModelPtr object_model = world->GetModel(object_name);
+    if(!object_model)
+    {
+        yError() << "GazeboYarpWorldInterface::Detach error --> Object " << object_name << " does not exist in gazebo";
+        return false;
+    }
+
+    gazebo::physics::LinkPtr object_link = object_model->GetLink(object_link_name);
+    if(!object_link)
+    {
+        yError() << "GazeboYarpWorldInterface::Detach error --> Object link " << object_link_name << " is not found";
+        return false;
+    }
+
+    std::string joint_name = object_name + "::" + object_link_name + "_magnet_joint";
+
+    //Get all the joints at the object link
+    gazebo::physics::Joint_V joints_v = object_link->GetChildJoints();
+
+    for(int i=0; i < joints_v.size(); i++)
+    {
+        std::string candidate_joint_name = joints_v[i]->GetScopedName();
+        if(candidate_joint_name == joint_name)
+        {
+            gazebo::physics::JointPtr joint = joints_v[i];
+
+            if(!joint)
+            {
+                yError() << "GazeboYarpWorldInterface::Detach error --> Joint not found";
+                return false;
+            }
+            else
+            {
+                joint->Detach();
+            }
+
+        }
+    }
+    return true;
+
+}
 
 GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
 {

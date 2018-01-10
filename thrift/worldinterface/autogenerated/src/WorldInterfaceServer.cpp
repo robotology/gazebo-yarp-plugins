@@ -164,11 +164,33 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
+class WorldInterfaceServer_attachUnscoped : public yarp::os::Portable {
+public:
+  std::string object_name;
+  std::string object_link_name;
+  std::string robot_name;
+  std::string robot_link_name;
+  bool _return;
+  void init(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
 class WorldInterfaceServer_detach : public yarp::os::Portable {
 public:
   std::string id;
   bool _return;
   void init(const std::string& id);
+  virtual bool write(yarp::os::ConnectionWriter& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+
+class WorldInterfaceServer_detachUnscoped : public yarp::os::Portable {
+public:
+  std::string object_name;
+  std::string object_link_name;
+  bool _return;
+  void init(const std::string& object_name, const std::string& object_link_name);
   virtual bool write(yarp::os::ConnectionWriter& connection);
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
@@ -577,6 +599,35 @@ void WorldInterfaceServer_attach::init(const std::string& id, const std::string&
   this->link_name = link_name;
 }
 
+bool WorldInterfaceServer_attachUnscoped::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(5)) return false;
+  if (!writer.writeTag("attachUnscoped",1,1)) return false;
+  if (!writer.writeString(object_name)) return false;
+  if (!writer.writeString(object_link_name)) return false;
+  if (!writer.writeString(robot_name)) return false;
+  if (!writer.writeString(robot_link_name)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_attachUnscoped::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_attachUnscoped::init(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name) {
+  _return = false;
+  this->object_name = object_name;
+  this->object_link_name = object_link_name;
+  this->robot_name = robot_name;
+  this->robot_link_name = robot_link_name;
+}
+
 bool WorldInterfaceServer_detach::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
@@ -598,6 +649,31 @@ bool WorldInterfaceServer_detach::read(yarp::os::ConnectionReader& connection) {
 void WorldInterfaceServer_detach::init(const std::string& id) {
   _return = false;
   this->id = id;
+}
+
+bool WorldInterfaceServer_detachUnscoped::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("detachUnscoped",1,1)) return false;
+  if (!writer.writeString(object_name)) return false;
+  if (!writer.writeString(object_link_name)) return false;
+  return true;
+}
+
+bool WorldInterfaceServer_detachUnscoped::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void WorldInterfaceServer_detachUnscoped::init(const std::string& object_name, const std::string& object_link_name) {
+  _return = false;
+  this->object_name = object_name;
+  this->object_link_name = object_link_name;
 }
 
 bool WorldInterfaceServer_rename::write(yarp::os::ConnectionWriter& connection) {
@@ -768,12 +844,32 @@ bool WorldInterfaceServer::attach(const std::string& id, const std::string& link
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
+bool WorldInterfaceServer::attachUnscoped(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name) {
+  bool _return = false;
+  WorldInterfaceServer_attachUnscoped helper;
+  helper.init(object_name,object_link_name,robot_name,robot_link_name);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::attachUnscoped(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
 bool WorldInterfaceServer::detach(const std::string& id) {
   bool _return = false;
   WorldInterfaceServer_detach helper;
   helper.init(id);
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","bool WorldInterfaceServer::detach(const std::string& id)");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool WorldInterfaceServer::detachUnscoped(const std::string& object_name, const std::string& object_link_name) {
+  bool _return = false;
+  WorldInterfaceServer_detachUnscoped helper;
+  helper.init(object_name,object_link_name);
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool WorldInterfaceServer::detachUnscoped(const std::string& object_name, const std::string& object_link_name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -1168,6 +1264,37 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "attachUnscoped") {
+      std::string object_name;
+      std::string object_link_name;
+      std::string robot_name;
+      std::string robot_link_name;
+      if (!reader.readString(object_name)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readString(object_link_name)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readString(robot_name)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readString(robot_link_name)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = attachUnscoped(object_name,object_link_name,robot_name,robot_link_name);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "detach") {
       std::string id;
       if (!reader.readString(id)) {
@@ -1176,6 +1303,27 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
       }
       bool _return;
       _return = detach(id);
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "detachUnscoped") {
+      std::string object_name;
+      std::string object_link_name;
+      if (!reader.readString(object_name)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readString(object_link_name)) {
+        reader.fail();
+        return false;
+      }
+      bool _return;
+      _return = detachUnscoped(object_name,object_link_name);
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
@@ -1253,7 +1401,9 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
     helpString.push_back("deleteAll");
     helpString.push_back("getList");
     helpString.push_back("attach");
+    helpString.push_back("attachUnscoped");
     helpString.push_back("detach");
+    helpString.push_back("detachUnscoped");
     helpString.push_back("rename");
     helpString.push_back("help");
   }
@@ -1372,10 +1522,26 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("@param link_name name of a link of the robot ");
       helpString.push_back("@return true if success, false otherwise ");
     }
+    if (functionName=="attachUnscoped") {
+      helpString.push_back("bool attachUnscoped(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name) ");
+      helpString.push_back("Attach an object to a link of the robot - takes unscoped names as arguments ");
+      helpString.push_back("@param object_name string that identifies object in gazebo (returned after creation or spawning) ");
+      helpString.push_back("@param object_link_name name of the link of the object ");
+      helpString.push_back("@param robot_name name of the robot ");
+      helpString.push_back("@param robot_link_name name of the link to which the object_link_name has to be attached ");
+      helpString.push_back("@return true if success, false otherwise ");
+    }
     if (functionName=="detach") {
       helpString.push_back("bool detach(const std::string& id) ");
       helpString.push_back("Detach a previously attached object. ");
       helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
+      helpString.push_back("@return true if success, false otherwise ");
+    }
+    if (functionName=="detachUnscoped") {
+      helpString.push_back("bool detachUnscoped(const std::string& object_name, const std::string& object_link_name) ");
+      helpString.push_back("Detach a previously attached object. ");
+      helpString.push_back("@param object_name string that identifies object in gazebo (returned after creation or spawning) ");
+      helpString.push_back("@param object_link_name name of the link from which to detach the joint created using attachUnscoped ");
       helpString.push_back("@return true if success, false otherwise ");
     }
     if (functionName=="rename") {

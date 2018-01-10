@@ -91,9 +91,19 @@ bool WorldInterfaceServerImpl:: attach(const std::string& id, const std::string&
   return proxy->attach(id,link_name);
 }
 
+bool WorldInterfaceServerImpl:: attachUnscoped(const std::string& object_name, const std::string& object_link_name, const std::string& robot_name, const std::string& robot_link_name)
+{
+  return proxy->attachUnscoped(object_name, object_link_name, robot_name, robot_link_name);
+}
+
 bool WorldInterfaceServerImpl:: detach(const std::string& id)
 {
   return proxy->detach(id);
+}
+
+bool WorldInterfaceServerImpl:: detachUnscoped(const std::string& object_name, const std::string& object_link_name)
+{
+  return proxy->detachUnscoped(object_name, object_link_name);
 }
 
 bool WorldInterfaceServerImpl:: rename(const std::string& old_name, const std::string& new_name )

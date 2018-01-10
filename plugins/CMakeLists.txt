@@ -27,22 +27,8 @@ else()
     message(STATUS "GAZEBO_YARP_PLUGINS_HAS_OPENCV CMake option set to off, disabling videotexture plugin.")
 endif()
 
-if( GAZEBO_VERSION VERSION_GREATER 3.9 )
-    add_subdirectory(worldinterface)
-else()
-    message(WARNING "Gazebo version is lower than 4.0, disabling worldinterface plugin.")
-endif()
+add_subdirectory(worldinterface)
+add_subdirectory(lasersensor)
+add_subdirectory(depthCamera)
 
-if( (NOT (GAZEBO_VERSION VERSION_LESS 6)) AND (NOT (YARP_VERSION VERSION_LESS 2.3.68)) )
-    add_subdirectory(lasersensor)
-else()
-    message(STATUS "Gazebo version is lower than 6 or YARP version is lower than 2.3.68, disabling  lasersensor plugin.")
-endif()
-
-# disabling depthCamera plugin until it is updated to latest changes in yarp
-if( (NOT (GAZEBO_VERSION VERSION_LESS 7)) AND (NOT (YARP_VERSION VERSION_LESS 2.3.67)) )
-    add_subdirectory(depthCamera)
-else()
-    message(STATUS "Gazebo version is lower than 7 or YARP version is lower than 2.3.67, disabling depthCamera  plugin.")
-endif()
 

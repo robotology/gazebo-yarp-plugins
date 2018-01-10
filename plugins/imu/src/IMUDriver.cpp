@@ -35,22 +35,13 @@ GazeboYarpIMUDriver::~GazeboYarpIMUDriver() {}
  */
 void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
 {
-#if GAZEBO_MAJOR_VERSION >= 6
     ignition::math::Vector3d euler_orientation = this->m_parentSensor->Orientation().Euler();
     ignition::math::Vector3d linear_acceleration = this->m_parentSensor->LinearAcceleration();
     ignition::math::Vector3d angular_velocity = this->m_parentSensor->AngularVelocity();
-#else
-    gazebo::math::Vector3 euler_orientation = this->m_parentSensor->GetOrientation().GetAsEuler();
-    gazebo::math::Vector3 linear_acceleration = this->m_parentSensor->GetLinearAcceleration();
-    gazebo::math::Vector3 angular_velocity = this->m_parentSensor->GetAngularVelocity();
-#endif
 
     /** \todo TODO ensure that the timestamp is the right one */
-#if GAZEBO_MAJOR_VERSION >= 7
     m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
-#else
-    m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
-#endif
+
     m_dataMutex.wait();
 
     for (unsigned i = 0; i < 3; i++) {

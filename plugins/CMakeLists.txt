@@ -44,3 +44,4 @@ else()
     message(STATUS "Gazebo version is lower than 7 or YARP version is lower than 2.3.67, disabling depthCamera  plugin.")
 endif()
 
+add_subdirectory(contactloadcellarray)

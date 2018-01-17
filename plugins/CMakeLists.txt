@@ -32,3 +32,4 @@ add_subdirectory(lasersensor)
 add_subdirectory(depthCamera)
 
 
+add_subdirectory(contactloadcellarray)

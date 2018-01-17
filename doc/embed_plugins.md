@@ -12,7 +12,7 @@ For additional information it is possible to access the official documentation f
 
 The `gazebo-yarp-plugins` consists of:
 * gazebo plugins that instantiate yarp device drivers and
-* yarp device drivers that wrap gazebo functionalities inside the yarp device interfaces . 
+* yarp device drivers that wrap gazebo functionalities inside the yarp device interfaces .
 
 Furthermore, in `gazebo-yarp-plugins` there are several plugins that do not mimic any interface or capability present in real robots,
 but are nevertheless useful for simulating complex scenarios.
@@ -30,6 +30,7 @@ but are nevertheless useful for simulating complex scenarios.
 | Lidar Sensor        | `gazebo_yarp_lasersensor` | Sensor | gazebo::GazeboYarpLaserSensor | yarp::dev::GazeboYarpLaserSensorDriver |
 | Coupled Joint Encoders | `gazebo_yarp_maissensor` | Model |  gazebo::GazeboYarpMaisSensor | yarp::dev::GazeboYarpMaisSensorDriver |
 | Stereo Cameras         | `gazebo_yarp_multicamera` | Sensor | gazebo::GazeboYarpMultiCamera | yarp::dev::GazeboYarpMultiCameraDriver |
+| Contact Load Cell Array| `gazebo_contactloadcellarray` | Model | gazebo::GazeboYarpContactLoadCellArray | yarp::dev::GazeboYarpContactLoadCellArrayDriver |
 
 ## Plugins exposing simulation-specific functionalities
 |  Functionality     | Plugin Name  | Plugin Type |  Gazebo Plugin class  |

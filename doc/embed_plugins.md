@@ -30,7 +30,7 @@ but are nevertheless useful for simulating complex scenarios.
 | Lidar Sensor        | `gazebo_yarp_lasersensor` | Sensor | gazebo::GazeboYarpLaserSensor | yarp::dev::GazeboYarpLaserSensorDriver |
 | Coupled Joint Encoders | `gazebo_yarp_maissensor` | Model |  gazebo::GazeboYarpMaisSensor | yarp::dev::GazeboYarpMaisSensorDriver |
 | Stereo Cameras         | `gazebo_yarp_multicamera` | Sensor | gazebo::GazeboYarpMultiCamera | yarp::dev::GazeboYarpMultiCameraDriver |
-| Contact Load Cell Array| `gazebo_contactloadcellarray` | Model (check documentation for this choice)| gazebo::GazeboYarpContactLoadCellArray| yarp::dev::GazeboYarpContactLoadCellArrayDriver|
+| Contact Load Cell Array| `gazebo_contactloadcellarray` | Model | gazebo::GazeboYarpContactLoadCellArray | yarp::dev::GazeboYarpContactLoadCellArrayDriver |
 
 ## Plugins exposing simulation-specific functionalities
 |  Functionality     | Plugin Name  | Plugin Type |  Gazebo Plugin class  |

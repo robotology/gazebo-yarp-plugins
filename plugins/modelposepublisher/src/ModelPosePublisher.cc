@@ -6,6 +6,7 @@
 
 // gazebo
 #include <gazebo/physics/Model.hh>
+#include <gazebo/physics/Link.hh>
 #include <gazebo/common/Events.hh>
 #include <gazebo/physics/World.hh>
 
@@ -102,11 +103,11 @@ void GazeboYarpModelPosePublisher::Load(gazebo::physics::ModelPtr _parent, sdf::
 
 void GazeboYarpModelPosePublisher::PublishTransform()
 {
-    // Get the current pose of the model    
+    // Get the current pose of the canonical link of the model    
 #if GAZEBO_MAJOR_VERSION >= 8
-    ignition::math::Pose3d curPose = m_model->WorldPose();
+    ignition::math::Pose3d curPose = m_model->GetLink()->WorldPose();
 #else
-    gazebo::math::Pose curPoseGazebo = m_model->GetWorldPose();
+    gazebo::math::Pose curPoseGazebo = m_model->GetLink()->GetWorldPose();
     // Convert to Ignition so that the same interface
     // can be used in the rest of the function
     ignition::math::Pose3d curPose = curPoseGazebo.Ign();

@@ -105,9 +105,9 @@ namespace gazebo
     /// SDF tag in seconds. If the parameter is not provided a default value of 10 ms
     /// is used.
     ///
-    /// This plugin __does not__ support <a href="http://gazebosim.org/tutorials?tut=nested_model&cat=build_robot">Gazebo nested models</a>
+    /// This plugin __does not__ support [Gazebo nested models](http://gazebosim.org/tutorials?tut=nested_model&cat=build_robot)
     /// since the method `gazebo::physics::WorldPose()` does not work properly
-    /// with nested models (see <a href="https://bitbucket.org/osrf/gazebo/issues/2410/wrong-gazebo-physics-model-worldpose-for">issue</a>).
+    /// with nested models (see [issue](https://bitbucket.org/osrf/gazebo/issues/2410/wrong-gazebo-physics-model-worldpose-for")).
     ///
     class GazeboYarpModelPosePublisher : public ModelPlugin
     {

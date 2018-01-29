@@ -14,7 +14,7 @@ if(CMAKE_VERSION VERSION_LESS 3.0.0)
     unset(LIB_COMMON_NAME)
 endif()
 
-add_gazebo_yarp_plugin_target(LIBRARY_NAME modelPosePublisher
+add_gazebo_yarp_plugin_target(LIBRARY_NAME modelposepublisher
                               INCLUDE_DIRS include/gazebo
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS} ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${OGRE_INCLUDE_DIRS}
                               LINKED_LIBRARIES ${LIB_COMMON_NAME} ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES}

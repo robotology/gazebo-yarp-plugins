@@ -44,7 +44,7 @@ The [model](scenario/model.sdf) provided consists in a box equipped with the plu
     </link>
 
     <!-- Gazebo Yarp Model Pose Publisher plugin -->
-    <plugin name='pose publisher' filename='libgazebo_yarp_modelPosePublisher.so'></plugin>
+    <plugin name='pose publisher' filename='libgazebo_yarp_modelposepublisher.so'></plugin>
     
   </model>      
 </sdf>

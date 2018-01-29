@@ -56,7 +56,7 @@ namespace gazebo
     ///     ...
     ///     </link>
     ///
-    ///    <plugin name='...' filename='libgazebo_yarp_modelPosePublisher.so'>
+    ///    <plugin name='...' filename='libgazebo_yarp_modelposepublisher.so'>
     ///      <period>1.0</period>
     ///    </plugin>
     ///

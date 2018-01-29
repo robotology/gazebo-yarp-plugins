@@ -40,7 +40,7 @@ but are nevertheless useful for simulating complex scenarios.
 | Display the Center of Mass of a model | `gazebo_yarp_showmodelcom` | Model | gazebo::ShowModelCoM |
 | Project an image stream on a simulated surface | `gazebo_yarp_videotexture` | Visual  | gazebo::VideoTexture |
 | Expose a YARP RPC interface to create/manipulate objects programatically. | `gazebo_yarp_worldinterface` | Model |  gazebo::WorldInterface |
-| Publish the absolute pose of the root link of a model. | `gazebo_yarp_modelPosePublisher` | Model | gazebo::GazeboYarpModelPosePublisher |
+| Publish the absolute pose of the root link of a model. | `gazebo_yarp_modelposepublisher` | Model | gazebo::GazeboYarpModelPosePublisher |
 
 
 ## Using the plugins in Gazebo Models

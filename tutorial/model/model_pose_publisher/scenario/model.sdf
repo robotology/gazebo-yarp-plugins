@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+
+  <!-- Box -->
+  <model name="box">
+    <pose>1 1 0.5 0 0 0.7</pose>	
+    <link name="box_root">
+      <pose>0 0 0 0 0 0</pose>
+      <collision name="box_collison">
+	<geometry>
+          <box>
+            <size>1.0 1.0 1.0</size>
+          </box>
+	</geometry>
+      </collision>
+      <visual name="box_visual">
+	<geometry>
+          <box>
+            <size>1.0 1.0 1.0</size>
+          </box>
+	</geometry>
+      </visual>
+    </link>
+
+    <!-- Gazebo Yarp Model Pose Publisher plugin -->
+    <plugin name='pose publisher' filename='libgazebo_yarp_modelposepublisher.so'></plugin>
+    
+  </model>      
+</sdf>

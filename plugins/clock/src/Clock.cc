@@ -177,6 +177,11 @@ namespace gazebo
         m_world->ResetTime();
     }
 
+    void GazeboYarpClock::reset()
+    {
+        m_world->Reset();
+    }
+
     common::Time GazeboYarpClock::getSimulationTime()
     {
 #if GAZEBO_MAJOR_VERSION >= 8

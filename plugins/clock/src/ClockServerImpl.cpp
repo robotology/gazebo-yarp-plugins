@@ -37,6 +37,11 @@ namespace GazeboYarpPlugins {
     {
         m_clock.resetSimulationTime();
     }
+
+    void ClockServerImpl::reset()
+    {
+        m_clock.reset();
+    }
     
     double ClockServerImpl::getSimulationTime()
     {

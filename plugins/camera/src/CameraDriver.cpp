@@ -110,11 +110,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     if (config.check("display_timestamp")) m_display_timestamp =true;
     if (config.check("display_time_box")) m_display_time_box =true;
 
-#if GAZEBO_MAJOR_VERSION >= 7
     m_camera = m_parentSensor->Camera();
-#else
-    m_camera = m_parentSensor->GetCamera();
-#endif
 
     if(m_camera == NULL)
     {
@@ -122,13 +118,8 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-#if GAZEBO_MAJOR_VERSION >= 7
     m_width  = m_camera->ImageWidth();
     m_height = m_camera->ImageHeight();
-#else
-    m_width  = m_camera->GetImageWidth();
-    m_height = m_camera->GetImageHeight();
-#endif
 
     m_bufferSize = 3*m_width*m_height;
 
@@ -166,17 +157,11 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
 {
     m_dataMutex.wait();
 
-#if GAZEBO_MAJOR_VERSION >= 7
     if(m_parentSensor->IsActive())
         memcpy(m_imageBuffer, m_parentSensor->ImageData(), m_bufferSize);
 
     m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
-#else
-    if(m_parentSensor->IsActive())
-        memcpy(m_imageBuffer, m_parentSensor->GetImageData(), m_bufferSize);
 
-    m_lastTimestamp.update(this->m_parentSensor->GetLastUpdateTime().Double());
-#endif
 
     if (m_display_timestamp)
     {

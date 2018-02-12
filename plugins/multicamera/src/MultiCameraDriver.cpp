@@ -97,29 +97,18 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
     m_display_time_box  = config.check("display_time_box");
     m_vertical          = config.check("vertical");
 
-#if GAZEBO_MAJOR_VERSION >= 7
     m_camera_count = this->m_parentSensor->CameraCount();
-#else
-    m_camera_count = this->m_parentSensor->GetCameraCount();
-#endif
 
     for (unsigned int i = 0; i < m_camera_count; ++i) {
-#if GAZEBO_MAJOR_VERSION >= 7
         m_camera.push_back(m_parentSensor->Camera(i));
-#else
-        m_camera.push_back(m_parentSensor->GetCamera(i));
-#endif
+
         if(m_camera[i] == NULL) {
             yError() << "GazeboYarpMultiCameraDriver: camera" << i <<  "pointer is not valid";
             return false;
        }
-#if GAZEBO_MAJOR_VERSION >= 7
         m_width.push_back(m_camera[i]->ImageWidth());
         m_height.push_back(m_camera[i]->ImageHeight());
-#else
-        m_width.push_back(m_camera[i]->GetImageWidth());
-        m_height.push_back(m_camera[i]->GetImageHeight());
-#endif
+
         m_max_width = std::max(m_max_width, m_width[i]);
         m_max_height = std::max(m_max_height, m_height[i]);
 
@@ -194,11 +183,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::captureImage(unsigned int _camera,
         }
     }
 
-#if GAZEBO_MAJOR_VERSION >= 7
     m_lastTimestamp[_camera].update(this->m_parentSensor->LastUpdateTime().Double());
-#else
-    m_lastTimestamp[_camera].update(this->m_parentSensor->GetLastUpdateTime().Double());
-#endif
 
     if (m_display_timestamp) {
         char txtbuf[1000];

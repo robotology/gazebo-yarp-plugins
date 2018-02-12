@@ -12,7 +12,7 @@ For additional information it is possible to access the official documentation f
 
 The `gazebo-yarp-plugins` consists of:
 * gazebo plugins that instantiate yarp device drivers and
-* yarp device drivers that wrap gazebo functionalities inside the yarp device interfaces . 
+* yarp device drivers that wrap gazebo functionalities inside the yarp device interfaces .
 
 Furthermore, in `gazebo-yarp-plugins` there are several plugins that do not mimic any interface or capability present in real robots,
 but are nevertheless useful for simulating complex scenarios.
@@ -30,6 +30,7 @@ but are nevertheless useful for simulating complex scenarios.
 | Lidar Sensor        | `gazebo_yarp_lasersensor` | Sensor | gazebo::GazeboYarpLaserSensor | yarp::dev::GazeboYarpLaserSensorDriver |
 | Coupled Joint Encoders | `gazebo_yarp_maissensor` | Model |  gazebo::GazeboYarpMaisSensor | yarp::dev::GazeboYarpMaisSensorDriver |
 | Stereo Cameras         | `gazebo_yarp_multicamera` | Sensor | gazebo::GazeboYarpMultiCamera | yarp::dev::GazeboYarpMultiCameraDriver |
+| Contact Load Cell Array| `gazebo_contactloadcellarray` | Model | gazebo::GazeboYarpContactLoadCellArray | yarp::dev::GazeboYarpContactLoadCellArrayDriver |
 
 ## Plugins exposing simulation-specific functionalities
 |  Functionality     | Plugin Name  | Plugin Type |  Gazebo Plugin class  |
@@ -39,6 +40,7 @@ but are nevertheless useful for simulating complex scenarios.
 | Display the Center of Mass of a model | `gazebo_yarp_showmodelcom` | Model | gazebo::ShowModelCoM |
 | Project an image stream on a simulated surface | `gazebo_yarp_videotexture` | Visual  | gazebo::VideoTexture |
 | Expose a YARP RPC interface to create/manipulate objects programatically. | `gazebo_yarp_worldinterface` | Model |  gazebo::WorldInterface |
+| Publish the absolute pose of the root link of a model. | `gazebo_yarp_modelposepublisher` | Model | gazebo::GazeboYarpModelPosePublisher |
 
 
 ## Using the plugins in Gazebo Models

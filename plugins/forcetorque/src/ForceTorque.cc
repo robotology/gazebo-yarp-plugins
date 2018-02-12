@@ -72,11 +72,8 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     {
         return;
     }
-#if GAZEBO_MAJOR_VERSION >= 7
     m_sensorName = _sensor->ScopedName();
-#else
-    m_sensorName = _sensor->GetScopedName();
-#endif
+
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 

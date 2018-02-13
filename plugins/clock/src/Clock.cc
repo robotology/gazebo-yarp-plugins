@@ -179,7 +179,7 @@ namespace gazebo
 
     void GazeboYarpClock::reset()
     {
-        m_world->Reset();
+        m_world->ResetEntities(gazebo::physics::Base::MODEL);
     }
 
     common::Time GazeboYarpClock::getSimulationTime()

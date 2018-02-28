@@ -686,6 +686,15 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
         yWarning() << "Missing LIMITS section";
     }
 
+    // handle coupling
+    for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
+    {
+        if (m_coupling_handler[cpl_cnt])
+        {
+            m_coupling_handler[cpl_cnt]->decouplePosLimits(m_jointPosLimits);
+        }
+    }
+
     return true;
 }
 

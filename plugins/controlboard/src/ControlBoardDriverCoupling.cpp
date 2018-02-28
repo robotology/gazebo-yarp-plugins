@@ -107,6 +107,11 @@ bool EyesCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
     return false;
 }
 
+bool EyesCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits) // NOT IMPLEMENTED
+{
+    return false;
+}
+
 yarp::sig::Vector EyesCouplingHandler::decoupleRefPos (yarp::sig::Vector& pos_ref)
 {
     yarp::sig::Vector out = pos_ref;
@@ -169,6 +174,14 @@ bool ThumbCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
     return false;
+}
+
+bool ThumbCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits)
+{
+    if (m_coupledJoints.size() != m_couplingSize) return false;
+    pos_limits[m_coupledJoints[2]].min = pos_limits[m_coupledJoints[2]].min + pos_limits[m_coupledJoints[3]].min;
+    pos_limits[m_coupledJoints[2]].max = pos_limits[m_coupledJoints[2]].max + pos_limits[m_coupledJoints[3]].max;
+    return true;
 }
 
 yarp::sig::Vector ThumbCouplingHandler::decoupleRefPos (yarp::sig::Vector& pos_ref)
@@ -241,6 +254,14 @@ bool IndexCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
     return false;
 }
 
+bool IndexCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits)
+{
+    if (m_coupledJoints.size() != m_couplingSize) return false;
+    pos_limits[m_coupledJoints[1]].min = pos_limits[m_coupledJoints[1]].min + pos_limits[m_coupledJoints[2]].min;
+    pos_limits[m_coupledJoints[1]].max = pos_limits[m_coupledJoints[1]].max + pos_limits[m_coupledJoints[2]].max;
+    return true;
+}
+
 yarp::sig::Vector IndexCouplingHandler::decoupleRefPos (yarp::sig::Vector& pos_ref)
 {
     yarp::sig::Vector out = pos_ref;
@@ -308,6 +329,14 @@ bool MiddleCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
     return false;
 }
 
+bool MiddleCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits)
+{
+    if (m_coupledJoints.size() != m_couplingSize) return false;
+    pos_limits[m_coupledJoints[1]].min = pos_limits[m_coupledJoints[1]].min + pos_limits[m_coupledJoints[2]].min;
+    pos_limits[m_coupledJoints[1]].max = pos_limits[m_coupledJoints[1]].max + pos_limits[m_coupledJoints[2]].max;
+    return true;
+}
+
 yarp::sig::Vector MiddleCouplingHandler::decoupleRefPos (yarp::sig::Vector& pos_ref)
 {
     yarp::sig::Vector out = pos_ref;
@@ -373,6 +402,14 @@ bool PinkyCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
     return false;
+}
+
+bool PinkyCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits)
+{
+    if (m_coupledJoints.size() != m_couplingSize) return false;
+    pos_limits[m_coupledJoints[0]].min = pos_limits[m_coupledJoints[0]].min + pos_limits[m_coupledJoints[1]].min + pos_limits[m_coupledJoints[2]].min;
+    pos_limits[m_coupledJoints[0]].max = pos_limits[m_coupledJoints[0]].max + pos_limits[m_coupledJoints[1]].max + pos_limits[m_coupledJoints[2]].max;
+    return true;
 }
 
 yarp::sig::Vector PinkyCouplingHandler::decoupleRefPos (yarp::sig::Vector& pos_ref)
@@ -449,6 +486,11 @@ bool FingersAbductionCouplingHandler::decoupleAcc (yarp::sig::Vector& current_ac
 bool FingersAbductionCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
+    return false;
+}
+
+bool FingersAbductionCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits) // NOT IMPLEMENTED
+{
     return false;
 }
 
@@ -529,6 +571,11 @@ bool CerHandCouplingHandler::decoupleAcc (yarp::sig::Vector& current_acc)
 bool CerHandCouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
+    return false;
+}
+
+bool CerHandCouplingHandler::decouplePosLimits (std::vector<Range>& pos_limits) // NOT IMPLEMENTED
+{
     return false;
 }
 

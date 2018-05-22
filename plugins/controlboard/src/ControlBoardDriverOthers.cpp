@@ -102,7 +102,7 @@ bool GazeboYarpControlBoardDriver::disableAmp(int j) //NOT IMPLEMENTED
 bool GazeboYarpControlBoardDriver::getCurrent(int j, double* val) //NOT IMPLEMENTED
 {
     if (val && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        *val = m_amp[j];
+        *val = m_torques[j];
         return true;
     }
     return false;
@@ -111,8 +111,8 @@ bool GazeboYarpControlBoardDriver::getCurrent(int j, double* val) //NOT IMPLEMEN
 bool GazeboYarpControlBoardDriver::getCurrents(double *vals) //NOT IMPLEMENTED
 {
     if (!vals) return false;
-    for (size_t i = 0; i < m_numberOfJoints; ++i) {
-        vals[i] = m_amp[i];
+    for (size_t j = 0; j < m_numberOfJoints; ++j) {
+        vals[j] = m_torques[j];
     }
     return true;
 }

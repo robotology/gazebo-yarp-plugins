@@ -112,7 +112,7 @@ bool GazeboYarpControlBoardDriver::getCurrents(double *vals) //NOT IMPLEMENTED
 {
     if (!vals) return false;
     for (size_t j = 0; j < m_numberOfJoints; ++j) {
-        vals[j] = m_torques[j];
+        this->getCurrent(j,&vals[j]);
     }
     return true;
 }

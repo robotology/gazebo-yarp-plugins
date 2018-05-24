@@ -254,8 +254,8 @@ public:
 
     // Current interface
     //virtual bool getAxes(int *ax);
-    virtual bool getCurrent(int j, double *t); //TODO
-    virtual bool getCurrents(double *t); //TODO
+    virtual bool getCurrent(int j, double *t);
+    virtual bool getCurrents(double *t);
     virtual bool getCurrentRange(int j, double *min, double *max);
     virtual bool getCurrentRanges(double *min, double *max);
     virtual bool setRefCurrents(const double *t);

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef GAZEBOYARP_BASEPOSEVELOCITY_H
-#define GAZEBOYARP_BASEPOSEVELOCITY_H
+#ifndef GAZEBOYARP_BASEPOSEVELOCITYDRIVER_H
+#define GAZEBOYARP_BASEPOSEVELOCITYDRIVER_H
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/common/common.hh>
@@ -24,7 +24,13 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 #include <yarp/os/Stamp.h>
-#include <yarp/sig/Matrix.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/LockGuard.h>
+
+#include <yarp/sig/Vector.h>
+
+#include <GazeboYarpPlugins/Handler.hh>
+#include <GazeboYarpPlugins/common.h>
 
 
 namespace yarp
@@ -34,10 +40,11 @@ namespace yarp
         class GazeboYarpBasePoseVelocityDriver;
     }
 }
+
 class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSensor,
                                                     public yarp::dev::DeviceDriver,
                                                     public yarp::dev::IPreciselyTimed
-    {
+{
         public:
         GazeboYarpBasePoseVelocityDriver();
         virtual ~GazeboYarpBasePoseVelocityDriver();
@@ -64,6 +71,18 @@ class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSen
         void onUpdate(const gazebo::common::UpdateInfo& /*_info*/);
     
         private:
+            
+        gazebo::physics::Model* m_robot;
+        gazebo::physics::LinkPtr m_baseLink;
+        std::string m_baseLinkName;
+        const int m_stateDimensions = 18;
+        yarp::sig::Vector m_baseState;
+        yarp::os::Stamp m_stamp;
+        yarp::os::Mutex m_dataMutex;
+        
+        bool m_dataAvailable = false;
+        
+        gazebo::event::ConnectionPtr m_updateConnection;
                
-    };
+};
 #endif 

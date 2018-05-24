@@ -11,7 +11,7 @@
 
 #include <gazebo/common/Plugin.hh>
 #include <GazeboYarpPlugins/Handler.hh>
-#include <GazeboYarpPlugins/common.hh>
+#include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
 #include <yarp/dev/Wrapper.h>

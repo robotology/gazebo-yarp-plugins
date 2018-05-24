@@ -9,6 +9,7 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Bottle.h>
 
 GZ_REGISTER_MODEL_PLUGIN(gazebo::GazeboYarpBasePoseVelocity)
 
@@ -57,8 +58,107 @@ namespace gazebo
             yError() << "GazeboYarpBasePoseVelocity plugin requires a parent \n";
             return;
         }
-
+        
+        GazeboYarpPlugins::Handler::getHandler()->setRobot(boost::get_pointer(_parent));
+        m_robot = _parent->GetScopedName();
+        
+        ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpBasePoseVelocityDriver>
+                                        ("gazebo_baseposevelocity", "analogServer", "GazeboYarpBasePoseVelocity"));
+        
+        yarp::os::Bottle networkDeviceProp;
+        yarp::os::Bottle deviceDriverProp;
+        
+        if (_sdf->HasElement("yarpConfigurationFile"))
+        {
+            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
+            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+            
+            GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent, _sdf, m_config);
+            
+            bool wipe = false;
+            if (ini_file_path != "" && m_config.fromConfigFile(ini_file_path.c_str(), wipe))
+            {
+                networkDeviceProp = m_config.findGroup("WRAPPER");
+                if (networkDeviceProp.isNull())
+                {
+                    yError() << "GazeboYarpBasePoseVelocity plugin failed: [WRAPPER] group not found in config file";
+                    return;
+                }
+                
+                deviceDriverProp = m_config.findGroup("DRIVER");
+                if (deviceDriverProp.isNull())
+                {
+                    yError() << "GazeboYarpBasePoseVelocity plugin failed: [DRIVER] group not found in config file";
+                    return;
+                }
+            }
+        }
+      
+        if (networkDeviceProp.find("device").isNull())
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: Missing parameter \"device\"  under [WRAPPER] in config";
+            return;
+        }
+        
+        if (networkDeviceProp.find("device").asString() != "analogServer")
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: \"device\" under [WRAPPER] should be set to \"analogSensor\" network wrapper.";
+            return;
+        }
+        
+        if (deviceDriverProp.find("device").isNull())
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: Missing parameter \"device\"  under [DRIVER] in config";
+            return;
+        }
+        
+        if (deviceDriverProp.find("device").asString() != "gazebo_baseposevelocity")
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: \"device\" under [DRIVER] should be set to \"gazebo_baseposevelocity\".";
+            return;
+        }
+        
+        if (deviceDriverProp.find("baseLink").isNull())
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: Missing parameter \"baseLink\"  under [DRIVER] in config";
+            return;
+        }
+               
+        yarp::os::Bottle& robotConf = deviceDriverProp.addList();
+        robotConf.addString("robot");
+        robotConf.addString(m_robot.data());
+        
+        if (deviceDriverProp.find("robot").isNull())
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: robot name not passed to the driver";
+            return;
+        }
+        
+        if (!m_networkDevice.open(networkDeviceProp))
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: error opening network wrapper device";
+            return;
+        }
+        
+        if (!m_deviceDriver.open(deviceDriverProp))
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: error opening yarp device driver";
+            return;
+        }
+        
+        yarp::dev::PolyDriverList driver_list;
+        if (!m_networkDevice.view(m_networkWrapper))
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: error in loading wrapper";
+            return;
+        }
+        
+        driver_list.push(&m_deviceDriver, "dummy");
+        
+        if (!m_networkWrapper->attachAll(driver_list))
+        {
+            yError() << "GazeboYarpBasePoseVelocity plugin failed: error attaching devices";
+            return;
+        }
     }
-
-
 }

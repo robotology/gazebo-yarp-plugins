@@ -20,8 +20,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getCurrentRange(int j, double *min, double *max)
         {
             std::cout << "max torque " << m_maxTorques[j] << std::endl;
-            if (min && max && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) 
-            {
+            if (min && max && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *min = -m_maxTorques[j]/m_kPWM[j];
                 *max = m_maxTorques[j]/m_kPWM[j];
                 return true;
@@ -32,8 +31,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getCurrentRanges(double *min, double *max)
         {
             if (!min || !(max)) return false;
-            for (size_t j = 0; j < m_numberOfJoints; ++j) 
-            {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 min[j] = -m_maxTorques[j]/m_kPWM[j];
                 max[j] = m_maxTorques[j]/m_kPWM[j];
             }
@@ -42,8 +40,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::setRefCurrent(int j, double v)
         {
-            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) 
-            {
+            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 m_jntReferenceTorques[j] = v*m_kPWM[j];
                 return true;
             }
@@ -54,8 +51,7 @@ namespace yarp {
         {
             if (!joints || !t) return false;
             bool ret = true;
-            for (int i = 0; i < n_joint && ret; i++)
-            {
+            for (int i = 0; i < n_joint && ret; i++){
                 ret = setRefCurrent(joints[i], t[i]);
             }
             return ret;
@@ -64,8 +60,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::setRefCurrents(const double* v)
         {
             if (!v) return false;
-            for (size_t j = 0; j < m_numberOfJoints; ++j) 
-            {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 m_jntReferenceTorques[j] = v[j]*m_kPWM[j];
             }
             return true;
@@ -73,8 +68,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getCurrent(int j, double* val)
         {
-            if (val && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) 
-            {
+            if (val && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *val = m_torques[j]/m_kPWM[j];
                 return true;
             }
@@ -84,8 +78,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getCurrents(double *vals)
         {
             if (!vals) return false;
-            for (size_t j = 0; j < m_numberOfJoints; ++j) 
-            {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 this->getCurrent(j,&vals[j]);
             }
             return true;
@@ -93,8 +86,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getRefCurrent(int j, double *v)
         {
-            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) 
-            {
+            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *v = m_jntReferenceTorques[j]/m_kPWM[j];
                 return true;
             }
@@ -104,8 +96,7 @@ namespace yarp {
         bool GazeboYarpControlBoardDriver::getRefCurrents(double *v)
         {
             if (!v) return false;
-            for (size_t j = 0; j < m_numberOfJoints; ++j) 
-            {
+            for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 v[j] = m_jntReferenceTorques[j]/m_kPWM[j];
             }
             return true;

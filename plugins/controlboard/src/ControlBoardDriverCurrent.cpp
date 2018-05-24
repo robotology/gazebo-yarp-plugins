@@ -24,7 +24,6 @@ namespace yarp {
             {
                 *min = -m_maxTorques[j]/m_kPWM[j];
                 *max = m_maxTorques[j]/m_kPWM[j];
-                std::cout << "min: " << *min << " max: " << *max << std::endl;
                 return true;
             }
             return false;

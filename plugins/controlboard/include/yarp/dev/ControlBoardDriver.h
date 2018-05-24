@@ -80,7 +80,6 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public DeviceDriver,
     public IPositionControl2,
     public IVelocityControl2,
-    public IAmplifierControl,
     public IEncodersTimed,
     public IControlCalibration2,
     public IControlLimits2,
@@ -255,8 +254,8 @@ public:
 
     // Current interface
     //virtual bool getAxes(int *ax);
-    //virtual bool getCurrent(int j, double *t);
-    //virtual bool getCurrents(double *t);
+    virtual bool getCurrent(int j, double *t); //TODO
+    virtual bool getCurrents(double *t); //TODO
     virtual bool getCurrentRange(int j, double *min, double *max);
     virtual bool getCurrentRanges(double *min, double *max);
     virtual bool setRefCurrents(const double *t);
@@ -293,16 +292,7 @@ public:
     /*
      * Probably useless stuff here
      */
-    //AMPLIFIER CONTROL (inside comanOthers.cpp)
-    virtual bool enableAmp(int j); //NOT IMPLEMENTED
-    virtual bool disableAmp(int j); //NOT IMPLEMENTED
-    virtual bool getCurrent(int j, double *val); //NOT IMPLEMENTED
-    virtual bool getCurrents(double *vals); //NOT IMPLEMENTED
-    virtual bool setMaxCurrent(int j, double v); //NOT IMPLEMENTED
-    virtual bool getMaxCurrent(int j, double *v);  //NOT IMPLEMENTED
-    virtual bool getAmpStatus(int *st); //NOT IMPLEMENTED
-    virtual bool getAmpStatus(int k, int *v); //NOT IMPLEMENTED
-
+    
     //CONTROL CALIBRATION (inside comanOthers.cpp)
     virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
     virtual bool done(int j); // NOT IMPLEMENTED
@@ -397,7 +387,6 @@ private:
 
     yarp::os::Stamp m_lastTimestamp;        /**< timestamp, updated with simulation time at each onUpdate call */
 
-    yarp::sig::Vector m_amp;
     yarp::sig::VectorOf<JointType> m_jointTypes;
 
     //Desired Control variables

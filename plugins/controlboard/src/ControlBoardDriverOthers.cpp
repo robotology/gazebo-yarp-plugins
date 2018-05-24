@@ -78,71 +78,7 @@ bool GazeboYarpControlBoardDriver::setVelLimits(int axis, double min, double max
     return true;
 }
 
-//Amplifiers
-bool GazeboYarpControlBoardDriver::enableAmp(int j) //NOT IMPLEMENTED
-{
-    if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        m_amp[j] = 1;
-        m_controlMode[j] = VOCAB_CM_POSITION;
-        return true;
-    }
-    return false;
-}
-
-bool GazeboYarpControlBoardDriver::disableAmp(int j) //NOT IMPLEMENTED
-{
-    if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        m_amp[j] = 0;
-        m_controlMode[j] = VOCAB_CM_IDLE;
-        return true;
-    }
-    return false;
-}
-
-bool GazeboYarpControlBoardDriver::getCurrent(int j, double* val) //NOT IMPLEMENTED
-{
-    if (val && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        *val = m_amp[j];
-        return true;
-    }
-    return false;
-}
-
-bool GazeboYarpControlBoardDriver::getCurrents(double *vals) //NOT IMPLEMENTED
-{
-    if (!vals) return false;
-    for (size_t i = 0; i < m_numberOfJoints; ++i) {
-        vals[i] = m_amp[i];
-    }
-    return true;
-}
-
-bool GazeboYarpControlBoardDriver::setMaxCurrent(int, double) //NOT IMPLEMENTED
-{
-    return true;
-}
-
-bool GazeboYarpControlBoardDriver::getMaxCurrent(int j, double *v) //NOT IMPLEMENTED
-{
-    if (!v) return false;
-    *v = 0;
-    return true;
-}
-
-bool GazeboYarpControlBoardDriver::getAmpStatus(int *st) //NOT IMPLEMENTED
-{
-    if (!st) return false;
-    *st = 0;
-    return true;
-}
-
-bool GazeboYarpControlBoardDriver::getAmpStatus(int, int *v) //NOT IMPLEMENTED
-{
-    if (!v) return false;
-    *v = 0;
-    return true;
-}
-
+//CONTROL CALIBRATION
 bool GazeboYarpControlBoardDriver::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
 {
     yDebug("fakebot: calibrating joint %d with parameters %u %f %f %f\n", j, iv, v1, v2, v3);

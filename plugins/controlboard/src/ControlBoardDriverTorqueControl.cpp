@@ -96,8 +96,28 @@ bool GazeboYarpControlBoardDriver::getTorques(double* t)
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::getTorqueRange(int, double*, double *){return false;}
-bool GazeboYarpControlBoardDriver::getTorqueRanges(double *, double *){return false;}
+bool GazeboYarpControlBoardDriver::getTorqueRange(int j, double *min, double *max)
+{
+    if (min && max && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) 
+    {
+        *min = -m_maxTorques[j];
+        *max = m_maxTorques[j];
+        return true;
+    }
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::getTorqueRanges(double *min, double *max)
+{
+    if (!min || !(max)) return false;
+    for (size_t j = 0; j < m_numberOfJoints; ++j) 
+    {
+        min[j] = -m_maxTorques[j];
+        max[j] = m_maxTorques[j];
+    }
+    return true;
+}
+
 bool GazeboYarpControlBoardDriver::getBemfParam(int , double *){return false;}
 bool GazeboYarpControlBoardDriver::setBemfParam(int , double ){return false;}
 bool GazeboYarpControlBoardDriver::getMotorTorqueParams(int ,  yarp::dev::MotorTorqueParameters *){return false;}

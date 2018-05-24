@@ -41,6 +41,52 @@ namespace yarp
     }
 }
 
+/**
+ * YARP device driver to give the gazebo state information of a desired base link of the robot
+ * The state information include 
+ * - absolute pose of the base link (x, y, z. roll, pitch, yaw)
+ * - linear and angular velocity of the base link in the world frame
+ * - linear and angular acceleration of the base link in the world frame
+ * 
+ * This device can be used by adding the following line in the SDF file of your robot,
+ *  ```
+ *      <plugin name="baseposevelocity" filename="libgazebo_yarp_baseposevelocity.so">
+ *          <yarpConfigurationFile>model://path-to-the-configuration-file</yarpConfigurationFile>
+ *      </plugin>
+ *  ```
+ * 
+ * The configuration file must contain two groups [WRAPPER] and [DRIVER]
+ * 
+ * Parameters accepted in the config argument of the open method for [WRAPPER]:
+ * 
+ * | Parameter name| Type |Units|Default Value|Required |                 Description                |              Notes             |
+ * |:-------------:|:----:|:---:|:-----------:|:-------:|:------------------------------------------:|:------------------------------:|
+ * | name          |string|  -  |    -        |   Yes   | full name of the port opened by the device | MUST start with a '/' character|
+ * | period        |double|  ms |    20       |   No    | refresh period of broadcast value in ms    |    optional, default 20ms      |   
+ * | device        |string|  -  |    -        |   Yes   | name of the network wrapper to connect to  | MUST be set to analogServer    |    
+ *
+ * Parameters accepted in the config argument of the open method for [DRIVER]:
+ * 
+ * | Parameter name|      Type     |Units|Default Value|Required |                       Description                      |                        Notes                     |
+ * |:-------------:|:-------------:|:---:|:-----------:|:-------:|:------------------------------------------------------:|:------------------------------------------------:|
+ * | device        |    string     |  -  |    -        |   Yes   | name of the device driver to instantiate               | MUST be set to gazebo_baseposevelocity           |
+ * | baseLink      |    string     |  -  |    -        |   Yes   | name of the floating base link                         |                            -                     |
+ *
+ * An example configuration file might look like,
+ * 
+ * ```
+ * [WRAPPER]
+ * name /icubSim/floating_base/state:o
+ * period 16
+ * device analogServer
+ * 
+ * [DRIVER]
+ * device gazebo_baseposevelocity
+ * baseLink torso_link
+ * ```
+ */
+
+
 class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSensor,
                                                     public yarp::dev::DeviceDriver,
                                                     public yarp::dev::IPreciselyTimed

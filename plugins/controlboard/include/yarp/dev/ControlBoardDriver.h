@@ -304,7 +304,7 @@ public:
     virtual bool getAmpStatus(int k, int *v); //NOT IMPLEMENTED
 
     //CONTROL CALIBRATION (inside comanOthers.cpp)
-    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
+    virtual bool calibrate(int j, unsigned int iv, double v1, double v2, double v3); //NOT IMPLEMENTED
     virtual bool done(int j); // NOT IMPLEMENTED
 
     /*

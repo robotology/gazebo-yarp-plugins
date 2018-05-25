@@ -73,7 +73,7 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   }
 
   std::string portname=m_parameters.find("name").asString();
-  int synchronous=m_parameters.find("synchro").asInt32();
+  int synchronous=m_parameters.find("synchro").asInt();
 
   if (synchronous)
      m_proxy.setSynchronousMode(true);

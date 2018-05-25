@@ -17,7 +17,7 @@ set(${PROJECT_NAME}_VERSION
 include(GNUInstallDirs)
 
 # Finding dependencies
-find_package(YARP 2.3.73.2 REQUIRED)
+find_package(YARP 2.3.69.9 REQUIRED)
 find_package(Boost REQUIRED serialization system)
 find_package(Protobuf REQUIRED)
 find_package(Gazebo REQUIRED)

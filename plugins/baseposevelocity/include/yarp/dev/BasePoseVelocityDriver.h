@@ -129,7 +129,7 @@ class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSen
         yarp::sig::Vector m_baseState;                        ///< Vector for the base state
         yarp::os::Stamp m_stamp;                              ///< Current timestamp
         yarp::os::Mutex m_dataMutex;                          ///< Mutex for resource sharing 
-        
+        bool m_dataAvailable = false;                         ///< flag to check data is available
         gazebo::event::ConnectionPtr m_updateConnection;      ///< Event Pointer to the callback for updating the Gazebo information
                
 };

@@ -114,7 +114,12 @@ void GazeboYarpBasePoseVelocityDriver::onUpdate(const gazebo::common::UpdateInfo
 int GazeboYarpBasePoseVelocityDriver::read(yarp::sig::Vector& out)
 {
     yarp::os::LockGuard guard(m_dataMutex);
-     
+    
+    if (!m_dataAvailable)
+    {
+      return AS_TIMEOUT;
+    }
+    
     out.resize(m_baseState.size());
     out = m_baseState;
   

@@ -33,7 +33,7 @@ void ApplyExternalWrench::UpdateChild()
     // Copying command
     this->m_lock.lock();
     tmpBottle = this->m_rpcThread.getCmd();
-    if ( tmpBottle.get( 8 ).asInt() == 1 )
+    if ( tmpBottle.get( 8 ).asInt32() == 1 )
     {
         // If this is a new command
         m_newCommand = true;

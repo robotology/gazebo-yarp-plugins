@@ -201,7 +201,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 return false;
             }
             for (int is=0;is<b->size();is++) {
-                coupled_joints.push_back(b->get(is).asInt());
+                coupled_joints.push_back(b->get(is).asInt32());
             }
             Bottle* b2 = coupling_bottle->get(2).asList();
             if (b2==0 || b2->size()==0)

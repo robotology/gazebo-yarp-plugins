@@ -31,7 +31,7 @@ public:
     void                setDefaultLink(const std::string& defaultLink);
     void                setDurationBuffer(double d);
     double              getDurationBuffer();
-    void                setNewCommandFlag(int flag);
+    void                setNewCommandFlag(std::int32_t flag);
     virtual void        onStop();
 private:
     yarp::os::RpcServer m_rpcPort;
@@ -63,19 +63,19 @@ public:
         yarp::sig::Vector torque;
         double            duration;
     };
-    
+
     /// \brief Robot name that will be used to open rpc port
     std::string          robotName;
     double               timeIni;
 //     yarp::os::Bottle     bufferBottle;
-    
+
 
 protected:
     // Inherited
     void Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf );
     // Inherited
     virtual void UpdateChild();
-    
+
 
 private:
     yarp::os::Network       m_yarpNet;
@@ -97,10 +97,10 @@ private:
 
     /// \brief Pointer to the update event connection
     event::ConnectionPtr    m_updateConnection;
-    
+
     transport::PublisherPtr m_visPub;
     msgs::Visual            m_visualMsg;
-    
+
     bool                    m_newCommand;
 
 };

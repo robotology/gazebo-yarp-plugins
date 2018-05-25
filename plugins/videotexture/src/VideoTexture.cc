@@ -119,8 +119,8 @@ namespace gazebo
     m_width        = 480;
     m_height       = 640;
     m_scale        = 1;
-    m_width        = m_parameters.find("widthRes").asInt32();
-    m_height       = m_parameters.find("heightRes").asInt32();
+    m_width        = m_parameters.find("widthRes").asInt();
+    m_height       = m_parameters.find("heightRes").asInt();
     m_scale        = m_parameters.find("heightLen").asDouble();
     m_material     = Ogre::MaterialManager::getSingleton().getByName(m_model->GetMaterialName());
     m_texture      = Ogre::TextureManager::getSingleton().getByName(m_texName);

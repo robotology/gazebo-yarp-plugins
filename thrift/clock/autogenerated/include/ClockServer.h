@@ -30,14 +30,14 @@ public:
    * twice before the previous call actually ends its computation gives and undefined behavior.
    * @param numberOfSteps number of steps to simulate
    */
-  virtual void stepSimulation(const std::int32_t numberOfSteps = 1);
+  virtual void stepSimulation(const int32_t numberOfSteps = 1);
   /**
    * Steps the simulation for the provided number of steps.
    * The input paramter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed)
    * @note: this function is blocking
    * @param numberOfSteps number of steps to simulate
    */
-  virtual void stepSimulationAndWait(const std::int32_t numberOfSteps = 1);
+  virtual void stepSimulationAndWait(const int32_t numberOfSteps = 1);
   /**
    * Reset the simulation time back to zero
    */
@@ -52,7 +52,7 @@ public:
    * @return the step size in seconds
    */
   virtual double getStepSize();
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  virtual bool read(yarp::os::ConnectionReader& connection);
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };
 

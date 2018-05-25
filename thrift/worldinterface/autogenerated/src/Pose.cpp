@@ -5,84 +5,84 @@
 
 namespace GazeboYarpPlugins {
 bool Pose::read_x(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(x)) {
+  if (!reader.readFloat64(x)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::nested_read_x(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(x)) {
+  if (!reader.readFloat64(x)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::read_y(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(y)) {
+  if (!reader.readFloat64(y)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::nested_read_y(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(y)) {
+  if (!reader.readFloat64(y)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::read_z(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(z)) {
+  if (!reader.readFloat64(z)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::nested_read_z(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(z)) {
+  if (!reader.readFloat64(z)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::read_roll(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(roll)) {
+  if (!reader.readFloat64(roll)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::nested_read_roll(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(roll)) {
+  if (!reader.readFloat64(roll)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::read_pitch(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(pitch)) {
+  if (!reader.readFloat64(pitch)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::nested_read_pitch(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(pitch)) {
+  if (!reader.readFloat64(pitch)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::read_yaw(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(yaw)) {
+  if (!reader.readFloat64(yaw)) {
     reader.fail();
     return false;
   }
   return true;
 }
 bool Pose::nested_read_yaw(yarp::os::idl::WireReader& reader) {
-  if (!reader.readDouble(yaw)) {
+  if (!reader.readFloat64(yaw)) {
     reader.fail();
     return false;
   }
@@ -105,51 +105,51 @@ bool Pose::read(yarp::os::ConnectionReader& connection) {
 }
 
 bool Pose::write_x(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(x)) return false;
+  if (!writer.writeFloat64(x)) return false;
   return true;
 }
 bool Pose::nested_write_x(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(x)) return false;
+  if (!writer.writeFloat64(x)) return false;
   return true;
 }
 bool Pose::write_y(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(y)) return false;
+  if (!writer.writeFloat64(y)) return false;
   return true;
 }
 bool Pose::nested_write_y(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(y)) return false;
+  if (!writer.writeFloat64(y)) return false;
   return true;
 }
 bool Pose::write_z(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(z)) return false;
+  if (!writer.writeFloat64(z)) return false;
   return true;
 }
 bool Pose::nested_write_z(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(z)) return false;
+  if (!writer.writeFloat64(z)) return false;
   return true;
 }
 bool Pose::write_roll(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(roll)) return false;
+  if (!writer.writeFloat64(roll)) return false;
   return true;
 }
 bool Pose::nested_write_roll(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(roll)) return false;
+  if (!writer.writeFloat64(roll)) return false;
   return true;
 }
 bool Pose::write_pitch(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(pitch)) return false;
+  if (!writer.writeFloat64(pitch)) return false;
   return true;
 }
 bool Pose::nested_write_pitch(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(pitch)) return false;
+  if (!writer.writeFloat64(pitch)) return false;
   return true;
 }
 bool Pose::write_yaw(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(yaw)) return false;
+  if (!writer.writeFloat64(yaw)) return false;
   return true;
 }
 bool Pose::nested_write_yaw(yarp::os::idl::WireWriter& writer) {
-  if (!writer.writeDouble(yaw)) return false;
+  if (!writer.writeFloat64(yaw)) return false;
   return true;
 }
 bool Pose::write(yarp::os::idl::WireWriter& writer) {
@@ -223,7 +223,7 @@ bool Pose::Editor::read(yarp::os::ConnectionReader& connection) {
     writer.writeString("send: 'help' or 'patch (param1 val1) (param2 val2)'");
     return true;
   }
-  yarp::os::ConstString tag;
+  std::string tag;
   if (!reader.readString(tag)) return false;
   if (tag=="help") {
     yarp::os::idl::WireWriter writer(reader);
@@ -231,7 +231,7 @@ bool Pose::Editor::read(yarp::os::ConnectionReader& connection) {
     if (!writer.writeListHeader(2)) return false;
     if (!writer.writeTag("many",1, 0)) return false;
     if (reader.getLength()>0) {
-      yarp::os::ConstString field;
+      std::string field;
       if (!reader.readString(field)) return false;
       if (field=="x") {
         if (!writer.writeListHeader(1)) return false;
@@ -278,8 +278,8 @@ bool Pose::Editor::read(yarp::os::ConnectionReader& connection) {
   }
   for (int i=1; i<len; i++) {
     if (nested && !reader.readListHeader(3)) return false;
-    yarp::os::ConstString act;
-    yarp::os::ConstString key;
+    std::string act;
+    std::string key;
     if (have_act) {
       act = tag;
     } else {
@@ -323,7 +323,7 @@ bool Pose::Editor::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-yarp::os::ConstString Pose::toString() {
+std::string Pose::toString() {
   yarp::os::Bottle b;
   b.read(*this);
   return b.toString();

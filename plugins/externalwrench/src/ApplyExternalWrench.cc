@@ -336,9 +336,9 @@ yarp::os::Bottle RPCServerThread::getCmd()
     return m_cmd;
 }
 
-void RPCServerThread::setNewCommandFlag(int flag)
+void RPCServerThread::setNewCommandFlag(std::int32_t flag)
 {
-    m_cmd.get( 8 ) = flag;
+    m_cmd.get( 8 ) = yarp::os::Value(flag);
 }
 
 void RPCServerThread::onStop()

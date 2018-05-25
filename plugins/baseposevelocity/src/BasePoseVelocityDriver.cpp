@@ -12,7 +12,7 @@
 
 using namespace yarp::dev;
 
-GazeboYarpBasePoseVelocityDriver::GazeboYarpBasePoseVelocityDriver()
+GazeboYarpBasePoseVelocityDriver::GazeboYarpBasePoseVelocityDriver() : m_robot(0), m_baseLink(0)
 {
 
 }
@@ -34,19 +34,27 @@ bool GazeboYarpBasePoseVelocityDriver::open(yarp::os::Searchable& config)
 {
     yarp::os::Property deviceProp;
     deviceProp.fromString(config.toString().c_str());
-    
+       
     std::string robot(deviceProp.find("robot").asString().c_str());
-    
     m_robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robot);
     if (m_robot == NULL)
     {
         yError() << "GazeboYarpBasePoseVelocityDriver: robot model not found";
         return false;
     }
-    
+
     m_baseLinkName = deviceProp.find("baseLink").asString().c_str();
-    
-    m_baseLink = m_robot->GetLink(m_baseLinkName);
+    std::string linkNameScopedEnding = "::" + m_baseLinkName;
+    const gazebo::physics::Link_V &links = m_robot->GetLinks();
+    for (size_t idx = 0; idx < links.size(); idx++)
+    {
+      std::string linkName = links[idx]->GetScopedName();
+      if (GazeboYarpPlugins::hasEnding(linkName, linkNameScopedEnding))
+      {
+        m_baseLink = m_robot->GetLink(linkName);
+        break;
+      }
+    }
     
     if (m_baseLink == nullptr)
     {
@@ -104,12 +112,7 @@ void GazeboYarpBasePoseVelocityDriver::onUpdate(const gazebo::common::UpdateInfo
 int GazeboYarpBasePoseVelocityDriver::read(yarp::sig::Vector& out)
 {
     yarp::os::LockGuard guard(m_dataMutex);
-  
-    if (!m_dataAvailable)
-    {
-        return AS_TIMEOUT;
-    }
-    
+     
     out.resize(m_baseState.size());
     out = m_baseState;
   

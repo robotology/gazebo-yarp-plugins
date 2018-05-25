@@ -114,7 +114,7 @@ class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSen
         // Precisely Timed
         virtual yarp::os::Stamp getLastInputStamp(); 
     
-        void onUpdate(const gazebo::common::UpdateInfo& /*_info*/);
+        void onUpdate(const gazebo::common::UpdateInfo& _info);
     
         private:
             

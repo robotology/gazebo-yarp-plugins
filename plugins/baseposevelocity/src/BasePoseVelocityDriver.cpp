@@ -64,6 +64,8 @@ bool GazeboYarpBasePoseVelocityDriver::open(yarp::os::Searchable& config)
     
     m_baseState.resize(m_stateDimensions);
     
+    m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpBasePoseVelocityDriver::onUpdate, this, _1));
+    
     return true;
 }
 

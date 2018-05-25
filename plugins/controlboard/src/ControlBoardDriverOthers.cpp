@@ -60,7 +60,7 @@ bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) /
     return true;
 }
 
-// IControlLimits2
+// IControlLimits
 bool GazeboYarpControlBoardDriver::getVelLimits(int axis, double* min, double* max) //WORKS
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;

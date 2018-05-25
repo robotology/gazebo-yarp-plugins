@@ -144,7 +144,7 @@ public:
    * @return true if success, false otherwise
    */
   virtual bool rename(const std::string& old_name, const std::string& new_name);
-  virtual bool read(yarp::os::ConnectionReader& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection) override;
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };
 

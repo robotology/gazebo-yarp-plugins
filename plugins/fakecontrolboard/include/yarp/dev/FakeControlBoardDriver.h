@@ -14,7 +14,7 @@
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlMode2.h>
+#include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/sig/Vector.h>
@@ -65,15 +65,15 @@ namespace gazebo {
 
 class yarp::dev::GazeboYarpFakeControlBoardDriver:
     public DeviceDriver,
-    public IPositionControl2,
-    public IVelocityControl2,
+    public IPositionControl,
+    public IVelocityControl,
     public IAmplifierControl,
     public IEncodersTimed,
     public IControlCalibration2,
-    public IControlLimits2,
+    public IControlLimits,
     public IInteractionMode,
     public DeviceResponder,
-    public IControlMode2,
+    public IControlMode,
     public ITorqueControl,
     public IPositionDirect,
     public IImpedanceControl,

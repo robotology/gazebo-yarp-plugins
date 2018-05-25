@@ -203,7 +203,7 @@ bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs)
     return true;
 }
 
-// IPositionControl2
+// IPositionControl
 
 bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs)
 {

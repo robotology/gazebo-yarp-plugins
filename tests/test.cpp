@@ -291,13 +291,13 @@ int main(int argc, char *argv[])
                 for (i = 0; i < jnts; i++)
                 {
                     Bottle& c = b.addList();
-                    c.addDouble(p[i].kp);
-                    c.addDouble(p[i].kd);
-                    c.addDouble(p[i].ki);
-                    c.addDouble(p[i].max_int);
-                    c.addDouble(p[i].max_output);
-                    c.addDouble(p[i].offset);
-                    c.addDouble(p[i].scale);
+                    c.addFloat64(p[i].kp);
+                    c.addFloat64(p[i].kd);
+                    c.addFloat64(p[i].ki);
+                    c.addFloat64(p[i].max_int);
+                    c.addFloat64(p[i].max_output);
+                    c.addFloat64(p[i].offset);
+                    c.addFloat64(p[i].scale);
                 }
                 yDebug("%s\n", b.toString().c_str());
                 delete[] p;
@@ -752,7 +752,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_TRQ:
         {
             *ok = torque->getTorque(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -763,7 +763,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -771,7 +771,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_ERR:
         {
             *ok = torque->getTorqueError(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -782,7 +782,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -790,7 +790,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_OUTPUT:
         {
             *ok = torque->getTorquePidOutput(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -801,7 +801,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -811,13 +811,13 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Pid p;
             *ok = torque->getTorquePid(cmd.get(3).asInt(), &p);
             Bottle& b = response.addList();
-            b.addDouble(p.kp);
-            b.addDouble(p.kd);
-            b.addDouble(p.ki);
-            b.addDouble(p.max_int);
-            b.addDouble(p.max_output);
-            b.addDouble(p.offset);
-            b.addDouble(p.scale);
+            b.addFloat64(p.kp);
+            b.addFloat64(p.kd);
+            b.addFloat64(p.ki);
+            b.addFloat64(p.max_int);
+            b.addFloat64(p.max_output);
+            b.addFloat64(p.offset);
+            b.addFloat64(p.scale);
         }
         break;
 
@@ -830,13 +830,13 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             for (i = 0; i < controlledJoints; i++)
             {
                 Bottle& c = b.addList();
-                c.addDouble(p[i].kp);
-                c.addDouble(p[i].kd);
-                c.addDouble(p[i].ki);
-                c.addDouble(p[i].max_int);
-                c.addDouble(p[i].max_output);
-                c.addDouble(p[i].offset);
-                c.addDouble(p[i].scale);
+                c.addFloat64(p[i].kp);
+                c.addFloat64(p[i].kd);
+                c.addFloat64(p[i].ki);
+                c.addFloat64(p[i].max_int);
+                c.addFloat64(p[i].max_output);
+                c.addFloat64(p[i].offset);
+                c.addFloat64(p[i].scale);
             }
             delete[] p;
         }
@@ -845,7 +845,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_REFERENCE:
         {
             *ok = torque->getRefTorque(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -856,7 +856,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -864,7 +864,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_LIM:
         {
             *ok = torque->getTorqueErrorLimit(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -875,7 +875,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -945,15 +945,15 @@ void handleImpedanceMsg(IImpedanceControl *iimp, const yarp::os::Bottle& cmd,
         case VOCAB_IMP_PARAM:
         {
             *ok = iimp->getImpedance(cmd.get(3).asInt(), &dtmp0, &dtmp1);
-            response.addDouble(dtmp0);
-            response.addDouble(dtmp1);
+            response.addFloat64(dtmp0);
+            response.addFloat64(dtmp1);
         }
         break;
 
         case VOCAB_IMP_OFFSET:
         {
             *ok = iimp->getImpedanceOffset(cmd.get(3).asInt(), &dtmp0);
-            response.addDouble(dtmp0);
+            response.addFloat64(dtmp0);
         }
         break;
         }

@@ -84,13 +84,13 @@ namespace gazebo
             yarp::os::Bottle &bot = m_comOutputPort->prepare();
             bot.clear();
 #if GAZEBO_MAJOR_VERSION >= 8
-            bot.addDouble(wordlCoGModel.X());
-            bot.addDouble(wordlCoGModel.Y());
-            bot.addDouble(wordlCoGModel.Z());
+            bot.addFloat64(wordlCoGModel.X());
+            bot.addFloat64(wordlCoGModel.Y());
+            bot.addFloat64(wordlCoGModel.Z());
 #else
-            bot.addDouble(wordlCoGModel.x);
-            bot.addDouble(wordlCoGModel.y);
-            bot.addDouble(wordlCoGModel.z);
+            bot.addFloat64(wordlCoGModel.x);
+            bot.addFloat64(wordlCoGModel.y);
+            bot.addFloat64(wordlCoGModel.z);
 #endif
             m_comOutputPort->write();
         }

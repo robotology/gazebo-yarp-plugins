@@ -197,7 +197,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 #else
     std::string worldName = _model->GetWorld()->GetName();
 #endif
-    
+
     this->m_node->Init ( worldName );
     m_visPub = this->m_node->Advertise<msgs::Visual> ( "~/visual", 10 );
 
@@ -276,13 +276,13 @@ bool RPCServerThread::threadInit()
     // Default link on which wrenches are applied
     //m_cmd.addString ( this->m_scopedName + "::l_arm" );
     m_cmd.addString ( this->m_defaultLink );
-    m_cmd.addDouble ( 0 ); // Force  coord. x
-    m_cmd.addDouble ( 0 ); // Force  coord. y
-    m_cmd.addDouble ( 0 ); // Force  coord. z
-    m_cmd.addDouble ( 0 ); // Torque coord. x
-    m_cmd.addDouble ( 0 ); // Torque coord. y
-    m_cmd.addDouble ( 0 ); // Torque coord. z
-    m_cmd.addDouble ( 0 ); // Wrench duration
+    m_cmd.addFloat64 ( 0 ); // Force  coord. x
+    m_cmd.addFloat64 ( 0 ); // Force  coord. y
+    m_cmd.addFloat64 ( 0 ); // Force  coord. z
+    m_cmd.addFloat64 ( 0 ); // Torque coord. x
+    m_cmd.addFloat64 ( 0 ); // Torque coord. y
+    m_cmd.addFloat64 ( 0 ); // Torque coord. z
+    m_cmd.addFloat64 ( 0 ); // Wrench duration
 
     this->m_durationBuffer = m_cmd.get ( 7 ).asDouble();
 
@@ -313,7 +313,7 @@ void RPCServerThread::run()
                 this->m_rpcPort.reply ( m_reply );
                 m_lock.lock();
                 // new-command flag
-                command.addInt(1);
+                command.addInt32(1);
                 m_cmd = command;
                 m_lock.unlock();
             } else {
@@ -345,4 +345,3 @@ void RPCServerThread::onStop()
 {
     m_rpcPort.interrupt();
 }
-

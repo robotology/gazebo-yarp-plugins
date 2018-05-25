@@ -114,21 +114,23 @@ class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSen
         // Precisely Timed
         virtual yarp::os::Stamp getLastInputStamp(); 
     
+        /**
+         * Gets World pose, velocity and acceleration of the base link
+         * and updates the base state vector
+         */
         void onUpdate(const gazebo::common::UpdateInfo& _info);
     
         private:
             
-        gazebo::physics::Model* m_robot;
-        gazebo::physics::LinkPtr m_baseLink;
-        std::string m_baseLinkName;
-        const int m_stateDimensions = 18;
-        yarp::sig::Vector m_baseState;
-        yarp::os::Stamp m_stamp;
-        yarp::os::Mutex m_dataMutex;
+        gazebo::physics::Model* m_robot;                      ///< Pointer to the loaded robot model
+        gazebo::physics::LinkPtr m_baseLink;                  ///< Pointer to the desired base link from the model
+        std::string m_baseLinkName;                           ///< Base link name
+        const int m_stateDimensions = 18;                     ///< State dimensions to include 6D Pose, 6D velocity and 6D acceleration 
+        yarp::sig::Vector m_baseState;                        ///< Vector for the base state
+        yarp::os::Stamp m_stamp;                              ///< Current timestamp
+        yarp::os::Mutex m_dataMutex;                          ///< Mutex for resource sharing 
         
-        bool m_dataAvailable = false;
-        
-        gazebo::event::ConnectionPtr m_updateConnection;
+        gazebo::event::ConnectionPtr m_updateConnection;      ///< Event Pointer to the callback for updating the Gazebo information
                
 };
 #endif 

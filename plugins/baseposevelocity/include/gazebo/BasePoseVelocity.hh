@@ -34,16 +34,18 @@ namespace gazebo
         GazeboYarpBasePoseVelocity();
         virtual ~GazeboYarpBasePoseVelocity();
         
+        /**
+         * Loads robot model, reads configuration, 
+         * opens network wrapper device and opens device driver
+         */
         void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
         
     private:
-        yarp::dev::PolyDriver m_deviceDriver;  // devdriver
-        yarp::dev::PolyDriver m_networkDevice; //devwrapper
-        yarp::dev::IMultipleWrapper* m_networkWrapper; //imultwrapper
-        
-        std::string m_robot;
-        
-        yarp::os::Property m_config;
+        yarp::dev::PolyDriver m_deviceDriver;           ///< Device driver for getting base link state
+        yarp::dev::PolyDriver m_networkDevice;          ///< Network wrapper device to send state through YARP server
+        yarp::dev::IMultipleWrapper* m_networkWrapper;  ///< Interface to attach device driver to network device
+        std::string m_robot;                            ///< name of robot model
+        yarp::os::Property m_config;                    ///< Property to read configuration
                
     };
 }

@@ -53,7 +53,7 @@ namespace yarp {
         {          
             if (!joints || !t) return false;
             bool ret = true;
-            for (int i = 0; i < n_joint && ret; i++){
+            for (int i = 0; i < n_joint && ret; i++) {
                 ret = setRefCurrent(joints[i], t[i]);
             }
             return ret;

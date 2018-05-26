@@ -30,7 +30,7 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getCurrentRanges(double *min, double *max)
         {
-            if (!min || !(max)) return false;
+            if (!min || !max)) return false;
             for (size_t j = 0; j < m_numberOfJoints; ++j) {
                 min[j] = -m_maxTorques[j]/m_kPWM[j];
                 max[j] = m_maxTorques[j]/m_kPWM[j];

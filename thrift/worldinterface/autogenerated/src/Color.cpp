@@ -133,7 +133,7 @@ bool Color::Editor::read(yarp::os::ConnectionReader& connection) {
     writer.writeString("send: 'help' or 'patch (param1 val1) (param2 val2)'");
     return true;
   }
-  std::string tag;
+  yarp::os::ConstString tag;
   if (!reader.readString(tag)) return false;
   if (tag=="help") {
     yarp::os::idl::WireWriter writer(reader);
@@ -141,19 +141,19 @@ bool Color::Editor::read(yarp::os::ConnectionReader& connection) {
     if (!writer.writeListHeader(2)) return false;
     if (!writer.writeTag("many",1, 0)) return false;
     if (reader.getLength()>0) {
-      std::string field;
+      yarp::os::ConstString field;
       if (!reader.readString(field)) return false;
       if (field=="r") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("std::int16_t r")) return false;
+        if (!writer.writeString("int16_t r")) return false;
       }
       if (field=="g") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("std::int16_t g")) return false;
+        if (!writer.writeString("int16_t g")) return false;
       }
       if (field=="b") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("std::int16_t b")) return false;
+        if (!writer.writeString("int16_t b")) return false;
       }
     }
     if (!writer.writeListHeader(4)) return false;
@@ -173,8 +173,8 @@ bool Color::Editor::read(yarp::os::ConnectionReader& connection) {
   }
   for (int i=1; i<len; i++) {
     if (nested && !reader.readListHeader(3)) return false;
-    std::string act;
-    std::string key;
+    yarp::os::ConstString act;
+    yarp::os::ConstString key;
     if (have_act) {
       act = tag;
     } else {
@@ -206,7 +206,7 @@ bool Color::Editor::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-std::string Color::toString() {
+yarp::os::ConstString Color::toString() {
   yarp::os::Bottle b;
   b.read(*this);
   return b.toString();

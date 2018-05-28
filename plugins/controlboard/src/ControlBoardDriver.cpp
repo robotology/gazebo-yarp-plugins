@@ -110,7 +110,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_trajectoryGenerationReferencePosition.zero();
     // m_trajectoryGenerationReferenceAcceleration.zero();
     m_trajectoryGenerationReferenceAcceleration=10.0; //default value in deg/s^2
-    m_amp = 1; // initially on - ok for simulator
+    m_amp = 1;
     m_controlMode = new int[m_numberOfJoints];
     m_interactionMode = new int[m_numberOfJoints];
     m_isMotionDone = new bool[m_numberOfJoints];

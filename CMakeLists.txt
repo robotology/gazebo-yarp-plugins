@@ -10,7 +10,7 @@ set(${PROJECT_NAME}_MAJOR_VERSION 2)
 set(${PROJECT_NAME}_MINOR_VERSION 3)
 set(${PROJECT_NAME}_PATCH_VERSION 73)
 set(${PROJECT_NAME}_VERSION
-    ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})https://github.com/robotology/icub-tests/issues/39
+    ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
 
 # Defines the CMAKE_INSTALL_LIBDIR, CMAKE_INSTALL_BINDIR and many other useful macros
 # See https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html

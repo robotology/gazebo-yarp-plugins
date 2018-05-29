@@ -31,12 +31,12 @@ GazeboYarpContactLoadCellArrayDriver::~GazeboYarpContactLoadCellArrayDriver()
 }
 
 void GazeboYarpContactLoadCellArrayDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
-{ 
+{
     const gazebo::msgs::Contacts& contacts = this->m_sensor->Contacts();
-    
+
     ignition::math::Vector3d resultantForceonCG(0.0, 0.0, 0.0);
     ignition::math::Vector3d resultantMomentonCG(0.0, 0.0, 0.0);
-        
+
     const double TIME_CONVERSION_NS = 1.0e-9;
     double timestamp = -1;
     for (size_t i = 0; i < contacts.contact_size(); i++)
@@ -77,32 +77,32 @@ void GazeboYarpContactLoadCellArrayDriver::onUpdate(const gazebo::common::Update
         }
     }
 
-#if DEBUG 
+#if DEBUG
      std::cout << "Wrench at CG [ " << resultantForceonCG.X() << " " <<  resultantForceonCG.Y() << " " << resultantForceonCG.Z() << " " << resultantMomentonCG.X() << " " <<  resultantMomentonCG.Y() << " " << resultantMomentonCG.Z() << " ]" << std::endl;
 #endif
-     
-    // The wrench is applied at the CG and with the rotation same as link origin 
+
+    // The wrench is applied at the CG and with the rotation same as link origin
     // consider L: Link Origin Frame, C: Link CG Frame, ^: cross product operator givng a skew symmetric matrix
     // L_f = C_f
     // L_m = [L_o_c]^L_f
     ignition::math::Vector3d resultantForceonLinkOrigin = resultantForceonCG;
-    
+
     ignition::math::Matrix3d L_o_C_cross = ignition::math::Matrix3d(0, -m_linkOrigin_Pos_linkCG.Z(), m_linkOrigin_Pos_linkCG.Y(),
                                                                     m_linkOrigin_Pos_linkCG.Z(), 0, -m_linkOrigin_Pos_linkCG.X(),
                                                                     -m_linkOrigin_Pos_linkCG.Y(), m_linkOrigin_Pos_linkCG.X(), 0);
     ignition::math::Vector3d resultantMomentonLinkOrigin = resultantMomentonCG + L_o_C_cross*resultantForceonLinkOrigin;
-   
-#if DEBUG     
+
+#if DEBUG
     std::cout << "Wrench at Link Origin [ " << resultantForceonLinkOrigin.X() << " " <<  resultantForceonLinkOrigin.Y() << " " << resultantForceonLinkOrigin.Z() << " " << resultantMomentonLinkOrigin.X() << " " <<  resultantMomentonLinkOrigin.Y() << " " << resultantMomentonLinkOrigin.Z() << " ]" << std::endl;
-#endif    
-    
-    // build a reduced wrench only with normal force f_{z}, and tangential moments tau_{x}, tau_{y} 
+#endif
+
+    // build a reduced wrench only with normal force f_{z}, and tangential moments tau_{x}, tau_{y}
     yarp::sig::Vector reducedWrench;
     reducedWrench.clear();
     reducedWrench.push_back(resultantForceonLinkOrigin.Z());
     reducedWrench.push_back(resultantMomentonLinkOrigin.X());
-    reducedWrench.push_back(resultantMomentonLinkOrigin.Y()); 
-    
+    reducedWrench.push_back(resultantMomentonLinkOrigin.Y());
+
     // map this reduced wrench to the load cell normal forces at the respective load cell locations
     if (reducedWrench.size() != m_mapWrenchtoNormalForce.cols())
     {
@@ -110,13 +110,13 @@ void GazeboYarpContactLoadCellArrayDriver::onUpdate(const gazebo::common::Update
     }
     m_contactNormalForces.resize(m_mapWrenchtoNormalForce.rows());
     using namespace yarp::math;
-    m_contactNormalForces = m_mapWrenchtoNormalForce*reducedWrench; 
-    
+    m_contactNormalForces = m_mapWrenchtoNormalForce*reducedWrench;
+
     // This flag is important. If its not set to true, the analog sensor ouput will be zero
     m_dataAvailable = true;
     m_stamp.update(m_sensor->LastMeasurementTime().Double());
-    
-#if DEBUG    
+
+#if DEBUG
     checkCoP(reducedWrench);
 #endif
 }
@@ -127,39 +127,39 @@ void GazeboYarpContactLoadCellArrayDriver::checkCoP(const yarp::sig::Vector& thr
     copFromEquivalentContactWrench[0] = -threeAxisContactForceTorque[2]/threeAxisContactForceTorque[0]; // -tau_{y]/f_{z}
     copFromEquivalentContactWrench[1] = threeAxisContactForceTorque[1]/threeAxisContactForceTorque[0];  // tau_{x}/f_{z}
 
-    
+
     // Computing COP from contact normal forces, assumption load cell locations are on the same XY plane
     double sumOfNormalForcesInN = 0.0;
     yarp::sig::Vector weightedSumOfLocations(3);
     weightedSumOfLocations.zero();
-    
-    using namespace yarp::math;
+
+    // using namespace yarp::math;
     using namespace yarp::sig;
     for (size_t i = 0; i < m_contactNormalForces.size(); i++)
     {
         sumOfNormalForcesInN += m_contactNormalForces[i];
         weightedSumOfLocations += m_contactNormalForces[i]*m_loadCellLocations[i];
     }
-    
+
     yarp::sig::Vector copFromContactNormalForces(2);
     copFromContactNormalForces[0] = weightedSumOfLocations[0]/sumOfNormalForcesInN;
     copFromContactNormalForces[1] = weightedSumOfLocations[1]/sumOfNormalForcesInN;
-    
+
     yarp::sig::Vector differenceInCoP(2);
     differenceInCoP = copFromEquivalentContactWrench - copFromContactNormalForces;
 
-#if DEBUG     
+#if DEBUG
     //yInfo() << "GazeboYarpContactLoadCellArrayDriver: Measured Wrench: [" << threeAxisContactForceTorque[0] <<", " << threeAxisContactForceTorque[1] << ", " << threeAxisContactForceTorque[2] << "]";
     //yInfo() << "GazeboYarpContactLoadCellArrayDriver: Measured CoP: [" << copFromEquivalentContactWrench[0] <<", " << copFromEquivalentContactWrench[1] <<"]";
     //yInfo() << "GazeboYarpContactLoadCellArrayDriver: Estimated CoP: [" << copFromContactNormalForces[0] <<", " << copFromContactNormalForces[1] <<"]";
     yInfo() << "GazeboYarpContactLoadCellArrayDriver: Difference in measured CoP and estimated CoP: [" << differenceInCoP[0] <<", " << differenceInCoP[1] <<"]";
 #endif
-    
+
     if (std::abs(copFromContactNormalForces[0] - copFromEquivalentContactWrench[0])/copFromEquivalentContactWrench[0] > 1e-09)
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Measured CoP and Estiamted CoP X intercept do not match";
     }
-    
+
     if (std::abs(copFromContactNormalForces[1] - copFromEquivalentContactWrench[1])/copFromEquivalentContactWrench[1] > 1e-09)
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Measured CoP and Estiamted CoP Y intercept do not match";
@@ -171,21 +171,21 @@ bool GazeboYarpContactLoadCellArrayDriver::open(yarp::os::Searchable& config)
 {
     yarp::os::Property pluginParams;
     pluginParams.fromString(config.toString().c_str());
-  
+
     std::string robotName(pluginParams.find("robotName").asString().c_str());
-  
+
     this->m_robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if (this->m_robot == NULL)
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Robot Model was not found";
         return false;
     }
-  
+
     if (!this->initLinkAssociatedToContactSensor(pluginParams))
     {
         return false;
     }
-   
+
     if (!this->initContactSensor())
     {
         return false;
@@ -195,17 +195,17 @@ bool GazeboYarpContactLoadCellArrayDriver::open(yarp::os::Searchable& config)
     {
         return false;
     }
-  
+
     if (!this->prepareLinkInformation())
     {
         return false;
     }
-  
+
     yarp::os::LockGuard guard(m_dataMutex);
-  
+
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpContactLoadCellArrayDriver::onUpdate, this, _1));
     this->m_sensor->SetActive(true);
-  
+
     return true;
 }
 
@@ -219,12 +219,12 @@ bool GazeboYarpContactLoadCellArrayDriver::close()
 bool GazeboYarpContactLoadCellArrayDriver::initLinkAssociatedToContactSensor(yarp::os::Property &pluginParameters)
 {
     m_linkAssociateToSensor = pluginParameters.find("linkName").asString();
-  
+
     const gazebo::physics::Link_V &gazeboModelLinks = m_robot->GetLinks();
     std::string linkNameScopedEnding = "::" + m_linkAssociateToSensor;
     bool linkFound = false;
     for (size_t gazeboLink = 0; gazeboLink < gazeboModelLinks.size(); gazeboLink++)
-    {  
+    {
         std::string gazeboLinkName = gazeboModelLinks[gazeboLink]->GetScopedName();
         if (GazeboYarpPlugins::hasEnding(gazeboLinkName, linkNameScopedEnding))
         {
@@ -233,13 +233,13 @@ bool GazeboYarpContactLoadCellArrayDriver::initLinkAssociatedToContactSensor(yar
             break;
         }
     }
-  
+
     if (!linkFound)
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: initContactSensor(): Link associated to sensor not found";
         return false;
     }
-    
+
     return true;
 }
 
@@ -261,38 +261,38 @@ bool GazeboYarpContactLoadCellArrayDriver::initContactSensor()
             break;
         }
     }
-  
+
     std::string sensorName = sensorsdf.get()->GetAttribute("name")->GetAsString();
     // For some reason scoped name is not necessary force
     // instantiating the contact sensor, uncomment the block if necessary
-    // Get collision name 
-    sdf::ElementPtr collision = (sensorsdf.get()->GetElement("contact")).get()->GetElement("collision"); 
+    // Get collision name
+    sdf::ElementPtr collision = (sensorsdf.get()->GetElement("contact")).get()->GetElement("collision");
     std::string collisionName = collision.get()->GetValue()->GetAsString();
     /* std::string tmp = m_sensorLink->GetName() + "::" + collisionName + "::" + sensorName;
      * sensorName.clear();
      * sensorName = tmp;
      */
-  
-  
+
+
     this->m_linkCollisionName = m_robot->GetName() + "::" + m_sensorLink->GetName() + "::" + collisionName;
-  
+
     yarp::os::LockGuard guard(m_dataMutex);
     gazebo::sensors::SensorManager *mgr = gazebo::sensors::SensorManager::Instance();
-  
+
     // If sensors are not initialized, fail.
     if (!mgr->SensorsInitialized())
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Sensors not initialized";
         return false;
     }
-     
-  
-    gazebo::sensors::SensorPtr contact = mgr->GetSensor(sensorName); 
+
+
+    gazebo::sensors::SensorPtr contact = mgr->GetSensor(sensorName);
     this->m_sensor = dynamic_cast<gazebo::sensors::ContactSensor*>(contact.get());
     if (this->m_sensor == nullptr)
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Could not get pointer to the sensor";
-        return false;      
+        return false;
     }
     this->m_sensor->SetActive(true);
     return true;
@@ -308,23 +308,23 @@ bool GazeboYarpContactLoadCellArrayDriver::configure(yarp::os::Property& pluginP
         yError() << "GazeboYarpContactLoadCellArrayDriver: Error parsing parameters: \"loadCellNames\" should be followed by  list";
         return false;
     }
-  
+
     yarp::os::Bottle *loadCellX = pluginParams.find("loadCellX").asList();
     yarp::os::Bottle *loadCellY = pluginParams.find("loadCellY").asList();
     yarp::os::Bottle *loadCellZ = pluginParams.find("loadCellZ").asList();
-  
+
     if (loadCellX->size() == 0 || loadCellY->size() == 0 || loadCellZ->size() == 0)
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Error parsing parameters: \"loadCellX , ..Y, ..Z\" should be followed by  list";
-        return false;    
+        return false;
     }
-  
+
     if (loadCellX->size() != loadCellNames->size() || loadCellY->size() != loadCellNames->size() || loadCellZ->size() != loadCellNames->size())
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver: Error parsing parameters: \"loadCellX , ..Y, ..Z\" should be the same size as \"loadCellNames\"";
         return false;
     }
-  
+
     for (size_t i = 0; i < loadCellNames->size(); i++)
     {
         yarp::sig::Vector loadCellLoc(3);
@@ -334,13 +334,13 @@ bool GazeboYarpContactLoadCellArrayDriver::configure(yarp::os::Property& pluginP
         loadCellLoc.push_back(loadCellZ->get(i).asDouble());
         this->m_loadCellLocations.push_back(loadCellLoc);
      }
-  
-     m_contactNormalForces.resize(m_loadCellLocations.size());  
+
+     m_contactNormalForces.resize(m_loadCellLocations.size());
      if (!this->prepareMappingMatrix())
      {
          return false;
      }
-    
+
     return true;
 }
 
@@ -349,22 +349,22 @@ bool GazeboYarpContactLoadCellArrayDriver::prepareMappingMatrix()
     // get the size of the load cell locations
     int n_cells = this->m_loadCellLocations.size();
     const int N_AXIS = 3;
-  
+
     // Consider w = Af ; where w is the wrench of size 3x1 containing normal force, tangential and radial torques
-    // A is the matrix that maps the array of load cell normal forces f to an resultant wrench w acting 
+    // A is the matrix that maps the array of load cell normal forces f to an resultant wrench w acting
     // at the contact. However, we ae solving the inverse problem of mapping a wrench acting at the contact link
     // to the presure sensor array normal forces, hence we need to obtain the pseudo inverse through
-    // f = (A+)w ; where (A+) is the pseudo inverse. Mapping an equivalent wrench to a number of load cell 
+    // f = (A+)w ; where (A+) is the pseudo inverse. Mapping an equivalent wrench to a number of load cell
     // normal forces has infinite solutions, but considering the pseudo inverse gives us the solution with minimized norm.
     // Hence it is not necessary that the array of load cell simulate the same forces at corresponding locations
     // similar to the real robot. However, the resultant wrench from the load cell array of normal forces should be valid.
     // The matrix A is the function of loadCell locations (x, y) with respect to the link coordinate frame
-    
+
     // ASSUMPTION: The load cells are distributed over a plane perpendicular to the z-axis of the link frame
     // and the load cells are measuring the force over the z-direction
-    yarp::sig::Matrix A; 
+    yarp::sig::Matrix A;
     A.resize(N_AXIS ,n_cells);
-  
+
     // Add the respective columns to the mapping matrix
     for (int i = 0; i < n_cells; i++)
     {
@@ -373,20 +373,20 @@ bool GazeboYarpContactLoadCellArrayDriver::prepareMappingMatrix()
         columnMap.push_back(1);
         columnMap.push_back(this->m_loadCellLocations[i][1]); // r_y : y-intercept of the contact point with respect to link origin
         columnMap.push_back(-this->m_loadCellLocations[i][0]); // -r_x : x-intercept of the contact point with respect to link origin
-        
+
         if (!A.setCol(i, columnMap))
         {
             yError() << "GazeboYarpContactLoadCellArrayDriver Failed: Failed to form mapping matrix";
             return false;
         }
     }
-  
+
     if (A.rows() != N_AXIS || A.cols() != m_loadCellLocations.size())
     {
         yError() << "GazeboYarpContactLoadCellArrayDriver Failed: Mismatched dimensions in the mapping matrix";
         return false;
     }
- 
+
     // Compute the pseudo-inverse to determine the mapping matrix
     this->m_mapWrenchtoNormalForce = yarp::math::pinv(A);
 
@@ -397,9 +397,9 @@ bool GazeboYarpContactLoadCellArrayDriver::prepareLinkInformation()
 {
     // \url https://bitbucket.org/osrf/gazebo/issues/545/request-change-contact-reference-frame
     // \url https://bitbucket.org/osrf/gazebo/pull-requests/355/bullet-contact-sensor/diff
-    // According to the above issue and PR, the force torque feedback values are acting at the 
+    // According to the above issue and PR, the force torque feedback values are acting at the
     // CG with respect to the link origin frame.
-     
+
 #if GAZEBO_MAJOR_VERSION >= 8
     // Just get information about location of link CG with respect to the link origin frame
     this->m_linkOrigin_Pos_linkCG = m_sensorLink->GetInertial().get()->Pose().Pos();
@@ -407,26 +407,26 @@ bool GazeboYarpContactLoadCellArrayDriver::prepareLinkInformation()
     gazebo::math::Pose tmp = m_sensorLink->GetInertial().get()->GetPose();
     this->m_linkOrigin_Pos_linkCG = ignition::math::Vector3d(tmp.pos.x, tmp.pos.y, tmp.pos.z);
 #endif
-    
-#if DEBUG   
+
+#if DEBUG
      std::cout << "L_o_C: \n [ " << m_linkOrigin_Pos_linkCG[0] << " " <<  m_linkOrigin_Pos_linkCG[1] << " " << m_linkOrigin_Pos_linkCG[2] << " ]"<< std::endl;
-#endif  
-   
+#endif
+
     return true;
 }
 
 int GazeboYarpContactLoadCellArrayDriver::read(yarp::sig::Vector& out)
 {
     yarp::os::LockGuard guard(m_dataMutex);
-  
+
     if (!m_dataAvailable)
     {
         return AS_TIMEOUT;
     }
-  
+
     out.resize(m_contactNormalForces.size());
     out = m_contactNormalForces;
-  
+
     return AS_OK;
 }
 

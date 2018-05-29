@@ -303,7 +303,7 @@ public:
     // IPOSITION DIRECT
     virtual bool setPositionDirectMode();
     virtual bool setPosition(int j, double ref);
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositions(const double *refs);
 
     // INTERACTION MODE interface

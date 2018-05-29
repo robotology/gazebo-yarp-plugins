@@ -324,7 +324,7 @@ public:
     // IPOSITION DIRECT
     virtual bool setPositionDirectMode();
     virtual bool setPosition(int j, double ref);
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs);
     virtual bool setPositions(const double *refs);
     virtual bool getRefPosition (const int joint, double *ref);
     virtual bool getRefPositions (double *refs);

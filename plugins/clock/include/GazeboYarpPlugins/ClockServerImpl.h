@@ -23,7 +23,8 @@ public:
     virtual void continueSimulation();
     virtual void stepSimulation(const int32_t numberOfSteps = 1);
     virtual void stepSimulationAndWait(const int32_t numberOfSteps = 1);
-    void resetSimulationTime();
+    virtual void resetSimulationTime();
+    virtual void reset();
     virtual double getSimulationTime();
     virtual double getStepSize();
     

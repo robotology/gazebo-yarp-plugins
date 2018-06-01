@@ -24,3 +24,5 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME baseposevelocity
                                       include/yarp/dev/BasePoseVelocityDriver.h
                               SOURCES src/BasePoseVelocity.cc
                                       src/BasePoseVelocityDriver.cpp)
+
+                                      

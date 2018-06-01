@@ -161,3 +161,4 @@ int GazeboYarpBasePoseVelocityDriver::getState(int ch)
 {
     return AS_OK;
 }
+

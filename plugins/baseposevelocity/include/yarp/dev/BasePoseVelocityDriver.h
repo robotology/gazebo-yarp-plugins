@@ -134,3 +134,4 @@ class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSen
                
 };
 #endif 
+

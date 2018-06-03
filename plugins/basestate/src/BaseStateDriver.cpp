@@ -112,12 +112,12 @@ void GazeboYarpBaseStateDriver::onUpdate(const gazebo::common::UpdateInfo& _info
     m_baseState[16] = worldBaseAngAcc.Y();
     m_baseState[17] = worldBaseAngAcc.Z();
 #else  
-    gazebo::math::Vector3d _worldBasePosition = m_baseLink->GetWorldPose().pos();
-    gazebo::math::Quaterniond _worldBaseOrientation = m_baseLink->GetWorldPose().rot();
-    gazebo::math::Vector3d _worldBaseLinVel = m_baseLink->GetWorldLinearVel();
-    gazebo::math::Vector3d _worldBaseAngVel = m_baseLink->GetWorldAngularVel();
-    gazebo::math::Vector3d _worldBaseLinAcc = m_baseLink->GetWorldLinearAccel();
-    gazebo::math::Vector3d _worldBaseAngAcc = m_baseLink->GetWorldAngularAccel();
+    gazebo::math::Vector3 _worldBasePosition = m_baseLink->GetWorldPose().pos();
+    gazebo::math::Quaternion _worldBaseOrientation = m_baseLink->GetWorldPose().rot();
+    gazebo::math::Vector3 _worldBaseLinVel = m_baseLink->GetWorldLinearVel();
+    gazebo::math::Vector3 _worldBaseAngVel = m_baseLink->GetWorldAngularVel();
+    gazebo::math::Vector3 _worldBaseLinAcc = m_baseLink->GetWorldLinearAccel();
+    gazebo::math::Vector3 _worldBaseAngAcc = m_baseLink->GetWorldAngularAccel();
 
     // Serializing the state vector
     m_baseState[0] = _worldBasePosition.x;

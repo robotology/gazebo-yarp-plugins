@@ -5,8 +5,8 @@
  */
 
 
-#ifndef GAZEBOYARP_BASEPOSEVELOCITYDRIVER_H
-#define GAZEBOYARP_BASEPOSEVELOCITYDRIVER_H
+#ifndef GAZEBOYARP_BASESTATEDRIVER_H
+#define GAZEBOYARP_BASESTATEDRIVER_H
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/common/common.hh>
@@ -37,7 +37,7 @@ namespace yarp
 {
     namespace dev
     {
-        class GazeboYarpBasePoseVelocityDriver;
+        class GazeboYarpBaseStateDriver;
     }
 }
 
@@ -50,7 +50,7 @@ namespace yarp
  * 
  * This device can be used by adding the following line in the SDF file of your robot,
  *  ```
- *      <plugin name="baseposevelocity" filename="libgazebo_yarp_baseposevelocity.so">
+ *      <plugin name="basestate" filename="libgazebo_yarp_basestate.so">
  *          <yarpConfigurationFile>model://path-to-the-configuration-file</yarpConfigurationFile>
  *      </plugin>
  *  ```
@@ -69,7 +69,7 @@ namespace yarp
  * 
  * | Parameter name|      Type     |Units|Default Value|Required |                       Description                      |                        Notes                     |
  * |:-------------:|:-------------:|:---:|:-----------:|:-------:|:------------------------------------------------------:|:------------------------------------------------:|
- * | device        |    string     |  -  |    -        |   Yes   | name of the device driver to instantiate               | MUST be set to gazebo_baseposevelocity           |
+ * | device        |    string     |  -  |    -        |   Yes   | name of the device driver to instantiate               | MUST be set to gazebo_basestate           |
  * | baseLink      |    string     |  -  |    -        |   Yes   | name of the floating base link                         |                            -                     |
  *
  * An example configuration file might look like,
@@ -81,19 +81,19 @@ namespace yarp
  * device analogServer
  * 
  * [DRIVER]
- * device gazebo_baseposevelocity
+ * device gazebo_basestate
  * baseLink torso_link
  * ```
  */
 
 
-class yarp::dev::GazeboYarpBasePoseVelocityDriver : public yarp::dev::IAnalogSensor,
+class yarp::dev::GazeboYarpBaseStateDriver : public yarp::dev::IAnalogSensor,
                                                     public yarp::dev::DeviceDriver,
                                                     public yarp::dev::IPreciselyTimed
 {
         public:
-        GazeboYarpBasePoseVelocityDriver();
-        virtual ~GazeboYarpBasePoseVelocityDriver();
+        GazeboYarpBaseStateDriver();
+        virtual ~GazeboYarpBaseStateDriver();
         
         
         // Device Driver

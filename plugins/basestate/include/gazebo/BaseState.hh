@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
-#ifndef GAZEBO_YARP_BASEPOSEVELOCITY_HH
-#define GAZEBO_YARP_BASEPOSEVELOCITY_HH
+#ifndef GAZEBO_YARP_BASESTATE_HH
+#define GAZEBO_YARP_BASESTATE_HH
 
 #include <string>
 
@@ -28,11 +28,11 @@ namespace yarp
 
 namespace gazebo
 {
-    class GazeboYarpBasePoseVelocity : public ModelPlugin
+    class GazeboYarpBaseState : public ModelPlugin
     {
     public:
-        GazeboYarpBasePoseVelocity();
-        virtual ~GazeboYarpBasePoseVelocity();
+        GazeboYarpBaseState();
+        virtual ~GazeboYarpBaseState();
         
         /**
          * Loads robot model, reads configuration, 

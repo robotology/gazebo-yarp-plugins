@@ -62,7 +62,7 @@ namespace gazebo
         GazeboYarpPlugins::Handler::getHandler()->setRobot(boost::get_pointer(_parent));
         m_robot = _parent->GetScopedName();
         
-        ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpBasePoseVelocityDriver>
+        ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpBaseStateDriver>
                                         ("gazebo_basestate", "analogServer", "GazeboYarpBaseState"));
         
         yarp::os::Bottle networkDeviceProp;

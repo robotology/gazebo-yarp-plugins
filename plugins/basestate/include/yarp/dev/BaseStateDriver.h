@@ -20,10 +20,9 @@
 #include <ignition/math/Matrix3.hh>
 #include <ignition/math.hh>
 #else 
-#include <gazebo/math/Pose3.hh>
+#include <gazebo/math/Pose.hh>
 #include <gazebo/math/Vector3.hh>
 #include <gazebo/math/Matrix3.hh>
-#include <gazebo/math.hh>
 #endif
 
 #include <yarp/dev/DeviceDriver.h>

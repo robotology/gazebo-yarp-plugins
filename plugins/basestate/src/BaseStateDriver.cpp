@@ -79,67 +79,67 @@ bool GazeboYarpBaseStateDriver::close()
 void GazeboYarpBaseStateDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
 #if GAZEBO_MAJOR_VERSION >= 8
-    ignition::math::Vector3d m_worldBasePosition = m_baseLink->WorldPose().Pos();
-    ignition::math::Quaterniond m_worldBaseOrientation = m_baseLink->WorldPose().Rot();
+    ignition::math::Vector3d worldBasePosition = m_baseLink->WorldPose().Pos();
+    ignition::math::Quaterniond worldBaseOrientation = m_baseLink->WorldPose().Rot();
     
     // Get the velocity of the origin of the link frame in the world reference frame
-    ignition::math::Vector3d m_worldBaseLinVel = m_baseLink->WorldLinearVel();
-    ignition::math::Vector3d m_worldBaseAngVel = m_baseLink->WorldAngularVel();
+    ignition::math::Vector3d worldBaseLinVel = m_baseLink->WorldLinearVel();
+    ignition::math::Vector3d worldBaseAngVel = m_baseLink->WorldAngularVel();
     
     // Get the acceleration of the center of mass of the link in the world reference frame
-    ignition::math::Vector3d m_worldBaseLinAcc = m_baseLink->WorldLinearAccel();
-    ignition::math::Vector3d m_worldBaseAngAcc = m_baseLink->WorldAngularAccel();
+    ignition::math::Vector3d worldBaseLinAcc = m_baseLink->WorldLinearAccel();
+    ignition::math::Vector3d worldBaseAngAcc = m_baseLink->WorldAngularAccel();
 
     // Serializing the state vector
-    m_baseState[0] = m_worldBasePosition.X();
-    m_baseState[1] = m_worldBasePosition.Y();
-    m_baseState[2] = m_worldBasePosition.Z();
-    m_baseState[3] = m_worldBaseOrientation.Roll();
-    m_baseState[4] = m_worldBaseOrientation.Pitch();
-    m_baseState[5] = m_worldBaseOrientation.Yaw();
+    m_baseState[0] = worldBasePosition.X();
+    m_baseState[1] = worldBasePosition.Y();
+    m_baseState[2] = worldBasePosition.Z();
+    m_baseState[3] = worldBaseOrientation.Roll();
+    m_baseState[4] = worldBaseOrientation.Pitch();
+    m_baseState[5] = worldBaseOrientation.Yaw();
     
-    m_baseState[6] = m_worldBaseLinVel.X();
-    m_baseState[7] = m_worldBaseLinVel.Y();
-    m_baseState[8] = m_worldBaseLinVel.Z();
-    m_baseState[9] = m_worldBaseAngVel.X();
-    m_baseState[10] = m_worldBaseAngVel.Y();
-    m_baseState[11] = m_worldBaseAngVel.Z();
+    m_baseState[6] = worldBaseLinVel.X();
+    m_baseState[7] = worldBaseLinVel.Y();
+    m_baseState[8] = worldBaseLinVel.Z();
+    m_baseState[9] = worldBaseAngVel.X();
+    m_baseState[10] = worldBaseAngVel.Y();
+    m_baseState[11] = worldBaseAngVel.Z();
     
-    m_baseState[12] = m_worldBaseLinAcc.X();
-    m_baseState[13] = m_worldBaseLinAcc.Y();
-    m_baseState[14] = m_worldBaseLinAcc.Z();
-    m_baseState[15] = m_worldBaseAngAcc.X();
-    m_baseState[16] = m_worldBaseAngAcc.Y();
-    m_baseState[17] = m_worldBaseAngAcc.Z();
+    m_baseState[12] = worldBaseLinAcc.X();
+    m_baseState[13] = worldBaseLinAcc.Y();
+    m_baseState[14] = worldBaseLinAcc.Z();
+    m_baseState[15] = worldBaseAngAcc.X();
+    m_baseState[16] = worldBaseAngAcc.Y();
+    m_baseState[17] = worldBaseAngAcc.Z();
 #else  
-    gazebo::math::Vector3d m_worldBasePosition = m_baseLink->GetWorldPose().pos();
-    gazebo::math::Quaterniond m_worldBaseOrientation = m_baseLink->GetWorldPose().rot();
-    gazebo::math::Vector3d m_worldBaseLinVel = m_baseLink->GetWorldLinearVel();
-    gazebo::math::Vector3d m_worldBaseAngVel = m_baseLink->GetWorldAngularVel();
-    gazebo::math::Vector3d m_worldBaseLinAcc = m_baseLink->GetWorldLinearAccel();
-    gazebo::math::Vector3d m_worldBaseAngAcc = m_baseLink->GetWorldAngularAccel();
+    gazebo::math::Vector3d _worldBasePosition = m_baseLink->GetWorldPose().pos();
+    gazebo::math::Quaterniond _worldBaseOrientation = m_baseLink->GetWorldPose().rot();
+    gazebo::math::Vector3d _worldBaseLinVel = m_baseLink->GetWorldLinearVel();
+    gazebo::math::Vector3d _worldBaseAngVel = m_baseLink->GetWorldAngularVel();
+    gazebo::math::Vector3d _worldBaseLinAcc = m_baseLink->GetWorldLinearAccel();
+    gazebo::math::Vector3d _worldBaseAngAcc = m_baseLink->GetWorldAngularAccel();
 
     // Serializing the state vector
-    m_baseState[0] = m_worldBasePosition.x;
-    m_baseState[1] = m_worldBasePosition.y;
-    m_baseState[2] = m_worldBasePosition.z;
-    m_baseState[3] = m_worldBaseOrientation.GetRoll();
-    m_baseState[4] = m_worldBaseOrientation.GetPitch();
-    m_baseState[5] = m_worldBaseOrientation.GetYaw();
+    m_baseState[0] = _worldBasePosition.x;
+    m_baseState[1] = _worldBasePosition.y;
+    m_baseState[2] = _worldBasePosition.z;
+    m_baseState[3] = _worldBaseOrientation.GetRoll();
+    m_baseState[4] = _worldBaseOrientation.GetPitch();
+    m_baseState[5] = _worldBaseOrientation.GetYaw();
     
-    m_baseState[6] = m_worldBaseLinVel.x;
-    m_baseState[7] = m_worldBaseLinVel.y;
-    m_baseState[8] = m_worldBaseLinVel.z;
-    m_baseState[9] = m_worldBaseAngVel.x;
-    m_baseState[10] = m_worldBaseAngVel.y;
-    m_baseState[11] = m_worldBaseAngVel.z;
+    m_baseState[6] = _worldBaseLinVel.x;
+    m_baseState[7] = _worldBaseLinVel.y;
+    m_baseState[8] = _worldBaseLinVel.z;
+    m_baseState[9] = _worldBaseAngVel.x;
+    m_baseState[10] = _worldBaseAngVel.y;
+    m_baseState[11] = _worldBaseAngVel.z;
     
-    m_baseState[12] = m_worldBaseLinAcc.x;
-    m_baseState[13] = m_worldBaseLinAcc.y;
-    m_baseState[14] = m_worldBaseLinAcc.z;
-    m_baseState[15] = m_worldBaseAngAcc.x;
-    m_baseState[16] = m_worldBaseAngAcc.y;
-    m_baseState[17] = m_worldBaseAngAcc.z;   
+    m_baseState[12] = _worldBaseLinAcc.x;
+    m_baseState[13] = _worldBaseLinAcc.y;
+    m_baseState[14] = _worldBaseLinAcc.z;
+    m_baseState[15] = _worldBaseAngAcc.x;
+    m_baseState[16] = _worldBaseAngAcc.y;
+    m_baseState[17] = _worldBaseAngAcc.z;   
 #endif
     
     m_stamp.update(_info.simTime.Double());

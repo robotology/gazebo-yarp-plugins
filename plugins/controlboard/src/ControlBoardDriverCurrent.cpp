@@ -4,7 +4,6 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
-#include <iostream>
 #include "ControlBoardDriver.h"
 #include <yarp/os/LogStream.h>
 

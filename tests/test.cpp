@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 
             case VOCAB_PID: {
                 Pid pd;
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 pid->getPid(j, &pd);
                 yDebug("%s: ", Vocab::decode(VOCAB_PID).c_str());
                 yDebug("kp %.2f ", pd.kp);
@@ -291,13 +291,13 @@ int main(int argc, char *argv[])
                 for (i = 0; i < jnts; i++)
                 {
                     Bottle& c = b.addList();
-                    c.addDouble(p[i].kp);
-                    c.addDouble(p[i].kd);
-                    c.addDouble(p[i].ki);
-                    c.addDouble(p[i].max_int);
-                    c.addDouble(p[i].max_output);
-                    c.addDouble(p[i].offset);
-                    c.addDouble(p[i].scale);
+                    c.addFloat64(p[i].kp);
+                    c.addFloat64(p[i].kd);
+                    c.addFloat64(p[i].ki);
+                    c.addFloat64(p[i].max_int);
+                    c.addFloat64(p[i].max_output);
+                    c.addFloat64(p[i].offset);
+                    c.addFloat64(p[i].scale);
                 }
                 yDebug("%s\n", b.toString().c_str());
                 delete[] p;
@@ -306,7 +306,7 @@ int main(int argc, char *argv[])
 
             case VOCAB_LIMITS: {
                 double min, max;
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 lim->getLimits(j, &min, &max);
                 yDebug("%s: ", Vocab::decode(VOCAB_LIMITS).c_str());
                 yDebug("limits: (%.2f %.2f)\n", min, max);
@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_OUTPUT: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 double v;
                 iopenloop->getOutput(j, &v);
                 yDebug("%s: ", Vocab::decode(VOCAB_OUTPUT).c_str());
@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
 
             case VOCAB_REFERENCE: {
                 double ref_pos;
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 pid->getReference(j,&ref_pos);
                 yDebug("%s: (", Vocab::decode(VOCAB_REFERENCE).c_str());
                 yDebug("%.2f ", ref_pos);
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
 
             case VOCAB_REF_SPEED: {
                 double ref_speed;
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 pos->getRefSpeed(j,&ref_speed);
                 yDebug("%s: (", Vocab::decode(VOCAB_REF_SPEED).c_str());
                 yDebug("%.2f ", ref_speed);
@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
 
             case VOCAB_REF_ACCELERATION: {
                 double ref_acc;
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 pos->getRefAcceleration(j,&ref_acc);
                 yDebug("%s: (", Vocab::decode(VOCAB_REF_ACCELERATION).c_str());
                 yDebug("%.2f ", ref_acc);
@@ -412,7 +412,7 @@ int main(int argc, char *argv[])
         case VOCAB_SET:
             switch(p.get(1).asVocab()) {
             case VOCAB_POSITION_MOVE: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 double ref = p.get(3).asDouble();
                 yDebug("%s: moving %d to %.2f\n", Vocab::decode(VOCAB_POSITION_MOVE).c_str(), j, ref);
                 pos->positionMove(j, ref);
@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_VELOCITY_MOVE: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 double ref = p.get(3).asDouble();
                 yDebug("%s: accelerating %d to %.2f\n", Vocab::decode(VOCAB_VELOCITY_MOVE).c_str(), j, ref);
                 vel->velocityMove(j, ref);
@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_REF_SPEED: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 double ref = p.get(3).asDouble();
                 yDebug("%s: setting speed for %d to %.2f\n", Vocab::decode(VOCAB_REF_SPEED).c_str(), j, ref);
                 pos->setRefSpeed(j, ref);
@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_REF_ACCELERATION: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 double ref = p.get(3).asDouble();
                 yDebug("%s: setting acceleration for %d to %.2f\n", Vocab::decode(VOCAB_REF_ACCELERATION).c_str(), j, ref);
                 pos->setRefAcceleration(j, ref);
@@ -484,7 +484,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_STOP: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 yDebug("%s: stopping axis %d\n", Vocab::decode(VOCAB_STOP).c_str(), j);
                 pos->stop(j);
             }
@@ -497,7 +497,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_ENCODER: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 double ref = p.get(3).asDouble();
                 yDebug("%s: setting the encoder value for %d to %.2f\n", Vocab::decode(VOCAB_ENCODER).c_str(), j, ref);
                 enc->setEncoder(j, ref);
@@ -516,7 +516,7 @@ int main(int argc, char *argv[])
 
             case VOCAB_PID: {
                 Pid pd;
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 Bottle *l = p.get(3).asList();
                 if (l==0)
                 {
@@ -549,7 +549,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_DISABLE: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 yDebug("%s: disabling control for axis %d\n", Vocab::decode(VOCAB_DISABLE).c_str(), j);
                 pid->disablePid(j);
                 amp->disableAmp(j);
@@ -557,7 +557,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_ENABLE: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 yDebug("%s: enabling control for axis %d\n", Vocab::decode(VOCAB_ENABLE).c_str(), j);
                 amp->enableAmp(j);
                 pid->enablePid(j);
@@ -565,7 +565,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_LIMITS: {
-                int j = p.get(2).asInt();
+                int j = p.get(2).asInt32();
                 yDebug("%s: setting limits for axis %d\n", Vocab::decode(VOCAB_LIMITS).c_str(), j);
                 Bottle *l = p.get(3).asList();
                 lim->setLimits(j, l->get(0).asDouble(), l->get(1).asDouble());
@@ -573,7 +573,7 @@ int main(int argc, char *argv[])
             break;
 
             case VOCAB_OUTPUT: {
-                int j=p.get(2).asInt();
+                int j=p.get(2).asInt32();
                 double v=p.get(3).asDouble();
                 iopenloop->setOutput(j,v);
                 yDebug("%s: setting output for axis %d to %f\n", Vocab::decode(VOCAB_OUTPUT).c_str(), j, v);
@@ -619,7 +619,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         {
         case VOCAB_REF:
         {
-            *ok = torque->setRefTorque(cmd.get(3).asInt(), cmd.get(4).asDouble());
+            *ok = torque->setRefTorque(cmd.get(3).asInt32(), cmd.get(4).asDouble());
         }
         break;
 
@@ -641,7 +641,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
 
         case VOCAB_LIM:
         {
-            *ok = torque->setTorqueErrorLimit (cmd.get(3).asInt(), cmd.get(4).asDouble());
+            *ok = torque->setTorqueErrorLimit (cmd.get(3).asInt32(), cmd.get(4).asDouble());
         }
         break;
 
@@ -664,7 +664,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_PID:
         {
             Pid p;
-            int j = cmd.get(3).asInt();
+            int j = cmd.get(3).asInt32();
             Bottle& b = *(cmd.get(4).asList());
             p.kp = b.get(0).asDouble();
             p.kd = b.get(1).asDouble();
@@ -704,19 +704,19 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
 
         case VOCAB_RESET:
         {
-            *ok = torque->resetTorquePid (cmd.get(3).asInt());
+            *ok = torque->resetTorquePid (cmd.get(3).asInt32());
         }
         break;
 
         case VOCAB_DISABLE:
         {
-            *ok = torque->disableTorquePid (cmd.get(3).asInt());
+            *ok = torque->disableTorquePid (cmd.get(3).asInt32());
         }
         break;
 
         case VOCAB_ENABLE:
         {
-            *ok = torque->enableTorquePid (cmd.get(3).asInt());
+            *ok = torque->enableTorquePid (cmd.get(3).asInt32());
         }
         break;
 
@@ -751,8 +751,8 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
 
         case VOCAB_TRQ:
         {
-            *ok = torque->getTorque(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            *ok = torque->getTorque(cmd.get(3).asInt32(), &dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -763,15 +763,15 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
 
         case VOCAB_ERR:
         {
-            *ok = torque->getTorqueError(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            *ok = torque->getTorqueError(cmd.get(3).asInt32(), &dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -782,15 +782,15 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
 
         case VOCAB_OUTPUT:
         {
-            *ok = torque->getTorquePidOutput(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            *ok = torque->getTorquePidOutput(cmd.get(3).asInt32(), &dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -801,7 +801,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -809,15 +809,15 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
         case VOCAB_PID:
         {
             Pid p;
-            *ok = torque->getTorquePid(cmd.get(3).asInt(), &p);
+            *ok = torque->getTorquePid(cmd.get(3).asInt32(), &p);
             Bottle& b = response.addList();
-            b.addDouble(p.kp);
-            b.addDouble(p.kd);
-            b.addDouble(p.ki);
-            b.addDouble(p.max_int);
-            b.addDouble(p.max_output);
-            b.addDouble(p.offset);
-            b.addDouble(p.scale);
+            b.addFloat64(p.kp);
+            b.addFloat64(p.kd);
+            b.addFloat64(p.ki);
+            b.addFloat64(p.max_int);
+            b.addFloat64(p.max_output);
+            b.addFloat64(p.offset);
+            b.addFloat64(p.scale);
         }
         break;
 
@@ -830,13 +830,13 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             for (i = 0; i < controlledJoints; i++)
             {
                 Bottle& c = b.addList();
-                c.addDouble(p[i].kp);
-                c.addDouble(p[i].kd);
-                c.addDouble(p[i].ki);
-                c.addDouble(p[i].max_int);
-                c.addDouble(p[i].max_output);
-                c.addDouble(p[i].offset);
-                c.addDouble(p[i].scale);
+                c.addFloat64(p[i].kp);
+                c.addFloat64(p[i].kd);
+                c.addFloat64(p[i].ki);
+                c.addFloat64(p[i].max_int);
+                c.addFloat64(p[i].max_output);
+                c.addFloat64(p[i].offset);
+                c.addFloat64(p[i].scale);
             }
             delete[] p;
         }
@@ -844,8 +844,8 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
 
         case VOCAB_REFERENCE:
         {
-            *ok = torque->getRefTorque(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            *ok = torque->getRefTorque(cmd.get(3).asInt32(), &dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -856,15 +856,15 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
 
         case VOCAB_LIM:
         {
-            *ok = torque->getTorqueErrorLimit(cmd.get(3).asInt(), &dtmp);
-            response.addDouble(dtmp);
+            *ok = torque->getTorqueErrorLimit(cmd.get(3).asInt32(), &dtmp);
+            response.addFloat64(dtmp);
         }
         break;
 
@@ -875,7 +875,7 @@ void handleTorqueMsg(ITorqueControl *torque, const yarp::os::Bottle& cmd,
             Bottle& b = response.addList();
             int i;
             for (i = 0; i < controlledJoints; i++)
-                b.addDouble(p[i]);
+                b.addFloat64(p[i]);
             delete[] p;
         }
         break;
@@ -916,12 +916,12 @@ void handleImpedanceMsg(IImpedanceControl *iimp, const yarp::os::Bottle& cmd,
         {
         case VOCAB_IMP_PARAM:
         {
-            *ok = iimp->setImpedance(cmd.get(3).asInt(), cmd.get(4).asDouble(),cmd.get(5).asDouble());
+            *ok = iimp->setImpedance(cmd.get(3).asInt32(), cmd.get(4).asDouble(),cmd.get(5).asDouble());
         }
         break;
         case VOCAB_IMP_OFFSET:
         {
-            *ok = iimp->setImpedanceOffset (cmd.get(3).asInt(), cmd.get(4).asDouble());
+            *ok = iimp->setImpedanceOffset (cmd.get(3).asInt32(), cmd.get(4).asDouble());
         }
         break;
         }
@@ -944,16 +944,16 @@ void handleImpedanceMsg(IImpedanceControl *iimp, const yarp::os::Bottle& cmd,
 
         case VOCAB_IMP_PARAM:
         {
-            *ok = iimp->getImpedance(cmd.get(3).asInt(), &dtmp0, &dtmp1);
-            response.addDouble(dtmp0);
-            response.addDouble(dtmp1);
+            *ok = iimp->getImpedance(cmd.get(3).asInt32(), &dtmp0, &dtmp1);
+            response.addFloat64(dtmp0);
+            response.addFloat64(dtmp1);
         }
         break;
 
         case VOCAB_IMP_OFFSET:
         {
-            *ok = iimp->getImpedanceOffset(cmd.get(3).asInt(), &dtmp0);
-            response.addDouble(dtmp0);
+            *ok = iimp->getImpedanceOffset(cmd.get(3).asInt32(), &dtmp0);
+            response.addFloat64(dtmp0);
         }
         break;
         }
@@ -986,7 +986,7 @@ void handleControlModeMsg(IControlMode *iMode, const yarp::os::Bottle& cmd,
     {
     case VOCAB_SET:
     {
-        int axis = cmd.get(3).asInt();
+        int axis = cmd.get(3).asInt32();
         int mode=cmd.get(2).asVocab();
         switch (mode)
         {
@@ -1014,7 +1014,7 @@ void handleControlModeMsg(IControlMode *iMode, const yarp::os::Bottle& cmd,
         if (cmd.get(2).asVocab()==VOCAB_CM_CONTROL_MODE)
         {
             int p=-1;
-            int axis = cmd.get(3).asInt();
+            int axis = cmd.get(3).asInt32();
             yDebug("Calling getControlMode\n");
             *ok = iMode->getControlMode(axis, &p);
 

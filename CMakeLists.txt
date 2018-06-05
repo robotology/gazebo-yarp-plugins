@@ -8,7 +8,7 @@ PROJECT(GazeboYARPPlugins)
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 2)
 set(${PROJECT_NAME}_MINOR_VERSION 3)
-set(${PROJECT_NAME}_PATCH_VERSION 72)
+set(${PROJECT_NAME}_PATCH_VERSION 73)
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
 
@@ -17,7 +17,7 @@ set(${PROJECT_NAME}_VERSION
 include(GNUInstallDirs)
 
 # Finding dependencies
-find_package(YARP 2.3.69.9 REQUIRED)
+find_package(YARP 2.3.73.4 REQUIRED)
 find_package(Boost REQUIRED serialization system)
 find_package(Protobuf REQUIRED)
 find_package(Gazebo REQUIRED)

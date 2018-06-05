@@ -19,7 +19,6 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getCurrentRange(int j, double *min, double *max)
         {
-            std::cout << "max torque " << m_maxTorques[j] << std::endl;
             if (min && max && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *min = -m_maxTorques[j] / m_kPWM[j];
                 *max = m_maxTorques[j] / m_kPWM[j];

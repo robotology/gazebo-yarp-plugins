@@ -108,7 +108,14 @@ namespace gazebo
 #else
         msgs::Set(m_visualMsg.mutable_pose(), WorldCoGPose);
 #endif
-        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(),common::Color(1,0,0,0.3));
+
+        double red = 1;
+        double alpha = 0.3;
+#if GAZEBO_MAJOR_VERSION >= 9
+        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(red,0,0,alpha));
+#else
+        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(), common::Color(red,0,0,alpha));
+#endif
         m_visualMsg.set_visible(1);
         m_visPub->Publish(m_visualMsg);
     }

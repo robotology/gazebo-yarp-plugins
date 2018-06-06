@@ -18,7 +18,7 @@ icubcontrib_add_uninstall_target()
 set(TARGET_NAME example)
 
 add_executable(${TARGET_NAME} example.cpp)
-target_include_directories(${TARGET_NAME} PRIVATE ${YARP_INCLUDE_DIRS})
+target_include_directories(${TARGET_NAME} PRIVATE)
 target_link_libraries(${TARGET_NAME} ${YARP_LIBRARIES})
 
 install(TARGETS ${TARGET_NAME} DESTINATION bin)

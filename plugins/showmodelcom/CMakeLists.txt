@@ -11,7 +11,7 @@ include(AddGazeboYarpPluginTarget)
 add_gazebo_yarp_plugin_target(LIBRARY_NAME showmodelcom
                               INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
                               INCLUDE_DIRS include/gazebo
-                              SYSTEM_INCLUDE_DIRS ${YARP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}
+                              SYSTEM_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}
                               LINKED_LIBRARIES ${YARP_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARIES}
                               HEADERS include/gazebo/ShowModelCoM.hh
                               SOURCES src/ShowModelCoM.cc

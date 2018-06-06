@@ -34,7 +34,7 @@ bool GazeboYarpControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* list
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val)
+bool GazeboYarpControlBoardDriver::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     val.clear();
     if (key == "hardwareDamping")
@@ -130,7 +130,7 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, 
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
+bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     std::string s1 = val.toString();
     yarp::os::Bottle* bval = val.get(0).asList();

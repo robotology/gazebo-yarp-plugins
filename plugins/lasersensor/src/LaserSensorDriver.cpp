@@ -337,7 +337,7 @@ bool GazeboYarpLaserSensorDriver::setScanRate (double rate)
     return true;
 }
 
-bool GazeboYarpLaserSensorDriver::getDeviceInfo (yarp::os::ConstString &device_info)
+bool GazeboYarpLaserSensorDriver::getDeviceInfo (std::string &device_info)
 {
     yarp::os::LockGuard guard(m_mutex);
     return true;

@@ -8,10 +8,10 @@
 
 using namespace yarp::dev;
 
-bool GazeboYarpFakeControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
+bool GazeboYarpFakeControlBoardDriver::getAxisName(int axis, std::string& name)
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
-    name = yarp::os::ConstString(m_jointNames.at(axis));
+    name = std::string(m_jointNames.at(axis));
     return true;
 }
 

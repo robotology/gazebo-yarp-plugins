@@ -92,8 +92,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
                 if(m_parameters.check("ROS"))
                 {
-                    yarp::os::ConstString ROS;
-                    ROS = yarp::os::ConstString ("(") + m_parameters.findGroup("ROS").toString() + yarp::os::ConstString (")");
+                    std::string ROS;
+                    ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
                     wrapper_group.append(yarp::os::Bottle(ROS));
                 }
 

@@ -15,14 +15,14 @@ bool GazeboYarpFakeControlBoardDriver::getRemoteVariablesList(yarp::os::Bottle* 
     return true;
 }
 
-bool GazeboYarpFakeControlBoardDriver::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val)
+bool GazeboYarpFakeControlBoardDriver::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     val.clear();
     yWarning("getRemoteVariable(): Unknown variable %s", key.c_str());
     return false;
 }
 
-bool GazeboYarpFakeControlBoardDriver::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
+bool GazeboYarpFakeControlBoardDriver::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     yWarning("setRemoteVariable(): Unknown variable %s", key.c_str());
     return false;

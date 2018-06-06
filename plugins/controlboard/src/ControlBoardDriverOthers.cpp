@@ -8,7 +8,7 @@
 
 using namespace yarp::dev;
 
-bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
+bool GazeboYarpControlBoardDriver::getAxisName(int axis, std::string& name)
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
 
@@ -23,7 +23,7 @@ bool GazeboYarpControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& 
             }
         }
     }
-    name = yarp::os::ConstString(controlboard_joint_names.at(axis));
+    name = std::string(controlboard_joint_names.at(axis));
     return true;
 }
 
@@ -38,7 +38,7 @@ bool GazeboYarpControlBoardDriver::getJointType(int axis, yarp::dev::JointTypeEn
         type = yarp::dev::VOCAB_JOINTTYPE_UNKNOWN;
     }
 
-    yarp::os::ConstString(controlboard_joint_names.at(axis));
+    std::string(controlboard_joint_names.at(axis));
     return true;
 }
 

@@ -40,7 +40,7 @@ namespace yarp {
         {
             if (!checkIfTorqueIsValid(v * m_kPWM[j]))
                 return false;
-            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
+            if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 m_jntReferenceTorques[j] = v * m_kPWM[j];
                 return true;
             }
@@ -52,7 +52,7 @@ namespace yarp {
             if (!joints || !t) return false;
             bool ret = true;
             for (int i = 0; i < n_joint && ret; i++) {
-                ret = setRefCurrent(joints[i], t[i]);
+                m_jntReferenceTorques[joints[i]] = t[i] * m_kPWM[joints[i]];
             }
             return ret;
         }

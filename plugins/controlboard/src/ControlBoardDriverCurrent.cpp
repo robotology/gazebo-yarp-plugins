@@ -4,7 +4,6 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
-#include <iostream>
 #include "ControlBoardDriver.h"
 #include <yarp/os/LogStream.h>
 
@@ -19,7 +18,6 @@ namespace yarp {
 
         bool GazeboYarpControlBoardDriver::getCurrentRange(int j, double *min, double *max)
         {
-            std::cout << "max torque " << m_maxTorques[j] << std::endl;
             if (min && max && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 *min = -m_maxTorques[j] / m_kPWM[j];
                 *max = m_maxTorques[j] / m_kPWM[j];
@@ -42,7 +40,7 @@ namespace yarp {
         {
             if (!checkIfTorqueIsValid(v * m_kPWM[j]))
                 return false;
-            if (v && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
+            if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
                 m_jntReferenceTorques[j] = v * m_kPWM[j];
                 return true;
             }
@@ -54,7 +52,7 @@ namespace yarp {
             if (!joints || !t) return false;
             bool ret = true;
             for (int i = 0; i < n_joint && ret; i++) {
-                ret = setRefCurrent(joints[i], t[i]);
+                m_jntReferenceTorques[joints[i]] = t[i] * m_kPWM[joints[i]];
             }
             return ret;
         }

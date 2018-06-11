@@ -107,7 +107,7 @@ public:
      */
 
     // AXIS IAxisInfo
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name);
+    virtual bool getAxisName(int axis, std::string& name);
     virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type);
 
     //DEVICE DRIVER
@@ -290,8 +290,8 @@ public:
      */
 
     // RemoteVariables Interface
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val);
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val);
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val);
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
 
     // CONTROL LIMITS2 (inside comanOthers.cpp)

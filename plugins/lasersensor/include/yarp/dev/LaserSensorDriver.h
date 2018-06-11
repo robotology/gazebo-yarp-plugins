@@ -75,7 +75,7 @@ public:
     virtual bool setHorizontalResolution (double step);
     virtual bool getScanRate (double &rate);
     virtual bool setScanRate (double rate);
-    virtual bool getDeviceInfo (yarp::os::ConstString &device_info);
+    virtual bool getDeviceInfo (std::string &device_info);
 
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();

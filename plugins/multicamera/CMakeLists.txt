@@ -28,7 +28,7 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME MultiCameraPlugin
 add_gazebo_yarp_plugin_target(LIBRARY_NAME multicamera
                               INCLUDE_DIRS include
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS}
-                                                  ${YARP_INCLUDE_DIRS}
+                                                 
                                                   ${Boost_INCLUDE_DIRS}
                                                   ${GAZEBO_INCLUDE_DIRS}
                                                   ${SDFORMAT_INCLUDE_DIRS}

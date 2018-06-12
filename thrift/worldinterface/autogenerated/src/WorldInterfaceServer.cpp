@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <WorldInterfaceServer.h>
@@ -18,7 +26,7 @@ public:
   bool collision_enable;
   std::string _return;
   void init(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -35,7 +43,7 @@ public:
   bool collision_enable;
   std::string _return;
   void init(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -51,7 +59,7 @@ public:
   bool collision_enable;
   std::string _return;
   void init(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -66,7 +74,7 @@ public:
   bool collision_enable;
   std::string _return;
   void init(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -76,7 +84,7 @@ public:
   Color color;
   bool _return;
   void init(const std::string& id, const Color& color);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -87,7 +95,7 @@ public:
   std::string frame_name;
   bool _return;
   void init(const std::string& id, const Pose& pose, const std::string& frame_name);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -97,7 +105,7 @@ public:
   bool enable;
   bool _return;
   void init(const std::string& id, const bool enable);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -107,7 +115,7 @@ public:
   bool enable;
   bool _return;
   void init(const std::string& id, const bool enable);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -116,7 +124,7 @@ public:
   std::string id;
   Pose _return;
   void init(const std::string& id);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -125,7 +133,7 @@ public:
   std::string filename;
   bool _return;
   void init(const std::string& filename);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -134,7 +142,7 @@ public:
   std::string id;
   bool _return;
   void init(const std::string& id);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -142,7 +150,7 @@ class WorldInterfaceServer_deleteAll : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -150,7 +158,7 @@ class WorldInterfaceServer_getList : public yarp::os::Portable {
 public:
   std::vector<std::string>  _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -160,7 +168,7 @@ public:
   std::string link_name;
   bool _return;
   void init(const std::string& id, const std::string& link_name);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -169,7 +177,7 @@ public:
   std::string id;
   bool _return;
   void init(const std::string& id);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -179,11 +187,11 @@ public:
   std::string new_name;
   bool _return;
   void init(const std::string& old_name, const std::string& new_name);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(15)) return false;
   if (!writer.writeTag("makeSphere",1,1)) return false;
@@ -218,7 +226,7 @@ void WorldInterfaceServer_makeSphere::init(const double radius, const Pose& pose
   this->collision_enable = collision_enable;
 }
 
-bool WorldInterfaceServer_makeBox::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_makeBox::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(17)) return false;
   if (!writer.writeTag("makeBox",1,1)) return false;
@@ -257,7 +265,7 @@ void WorldInterfaceServer_makeBox::init(const double width, const double height,
   this->collision_enable = collision_enable;
 }
 
-bool WorldInterfaceServer_makeCylinder::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_makeCylinder::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(16)) return false;
   if (!writer.writeTag("makeCylinder",1,1)) return false;
@@ -294,7 +302,7 @@ void WorldInterfaceServer_makeCylinder::init(const double radius, const double l
   this->collision_enable = collision_enable;
 }
 
-bool WorldInterfaceServer_makeFrame::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_makeFrame::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(15)) return false;
   if (!writer.writeTag("makeFrame",1,1)) return false;
@@ -329,7 +337,7 @@ void WorldInterfaceServer_makeFrame::init(const double size, const Pose& pose, c
   this->collision_enable = collision_enable;
 }
 
-bool WorldInterfaceServer_changeColor::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_changeColor::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(5)) return false;
   if (!writer.writeTag("changeColor",1,1)) return false;
@@ -354,7 +362,7 @@ void WorldInterfaceServer_changeColor::init(const std::string& id, const Color& 
   this->color = color;
 }
 
-bool WorldInterfaceServer_setPose::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_setPose::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(9)) return false;
   if (!writer.writeTag("setPose",1,1)) return false;
@@ -381,7 +389,7 @@ void WorldInterfaceServer_setPose::init(const std::string& id, const Pose& pose,
   this->frame_name = frame_name;
 }
 
-bool WorldInterfaceServer_enableGravity::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_enableGravity::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
   if (!writer.writeTag("enableGravity",1,1)) return false;
@@ -406,7 +414,7 @@ void WorldInterfaceServer_enableGravity::init(const std::string& id, const bool 
   this->enable = enable;
 }
 
-bool WorldInterfaceServer_enableCollision::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_enableCollision::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
   if (!writer.writeTag("enableCollision",1,1)) return false;
@@ -431,7 +439,7 @@ void WorldInterfaceServer_enableCollision::init(const std::string& id, const boo
   this->enable = enable;
 }
 
-bool WorldInterfaceServer_getPose::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_getPose::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("getPose",1,1)) return false;
@@ -453,7 +461,7 @@ void WorldInterfaceServer_getPose::init(const std::string& id) {
   this->id = id;
 }
 
-bool WorldInterfaceServer_loadModelFromFile::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_loadModelFromFile::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("loadModelFromFile",1,1)) return false;
@@ -476,7 +484,7 @@ void WorldInterfaceServer_loadModelFromFile::init(const std::string& filename) {
   this->filename = filename;
 }
 
-bool WorldInterfaceServer_deleteObject::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_deleteObject::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("deleteObject",1,1)) return false;
@@ -499,7 +507,7 @@ void WorldInterfaceServer_deleteObject::init(const std::string& id) {
   this->id = id;
 }
 
-bool WorldInterfaceServer_deleteAll::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_deleteAll::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("deleteAll",1,1)) return false;
@@ -520,7 +528,7 @@ void WorldInterfaceServer_deleteAll::init() {
   _return = false;
 }
 
-bool WorldInterfaceServer_getList::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_getList::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("getList",1,1)) return false;
@@ -552,7 +560,7 @@ bool WorldInterfaceServer_getList::read(yarp::os::ConnectionReader& connection) 
 void WorldInterfaceServer_getList::init() {
 }
 
-bool WorldInterfaceServer_attach::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_attach::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
   if (!writer.writeTag("attach",1,1)) return false;
@@ -577,7 +585,7 @@ void WorldInterfaceServer_attach::init(const std::string& id, const std::string&
   this->link_name = link_name;
 }
 
-bool WorldInterfaceServer_detach::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_detach::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("detach",1,1)) return false;
@@ -600,7 +608,7 @@ void WorldInterfaceServer_detach::init(const std::string& id) {
   this->id = id;
 }
 
-bool WorldInterfaceServer_rename::write(yarp::os::ConnectionWriter& connection) {
+bool WorldInterfaceServer_rename::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
   if (!writer.writeTag("rename",1,1)) return false;
@@ -1136,7 +1144,7 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
         if (!writer.writeListHeader(1)) return false;
         {
           if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(_return.size()))) return false;
-          std::vector<std::string> ::iterator _iter5;
+          std::vector<std::string> ::const_iterator _iter5;
           for (_iter5 = _return.begin(); _iter5 != _return.end(); ++_iter5)
           {
             if (!writer.writeString((*_iter5))) return false;

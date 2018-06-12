@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <Pose.h>
@@ -104,55 +112,55 @@ bool Pose::read(yarp::os::ConnectionReader& connection) {
   return read(reader);
 }
 
-bool Pose::write_x(yarp::os::idl::WireWriter& writer) {
+bool Pose::write_x(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(x)) return false;
   return true;
 }
-bool Pose::nested_write_x(yarp::os::idl::WireWriter& writer) {
+bool Pose::nested_write_x(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(x)) return false;
   return true;
 }
-bool Pose::write_y(yarp::os::idl::WireWriter& writer) {
+bool Pose::write_y(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(y)) return false;
   return true;
 }
-bool Pose::nested_write_y(yarp::os::idl::WireWriter& writer) {
+bool Pose::nested_write_y(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(y)) return false;
   return true;
 }
-bool Pose::write_z(yarp::os::idl::WireWriter& writer) {
+bool Pose::write_z(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(z)) return false;
   return true;
 }
-bool Pose::nested_write_z(yarp::os::idl::WireWriter& writer) {
+bool Pose::nested_write_z(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(z)) return false;
   return true;
 }
-bool Pose::write_roll(yarp::os::idl::WireWriter& writer) {
+bool Pose::write_roll(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(roll)) return false;
   return true;
 }
-bool Pose::nested_write_roll(yarp::os::idl::WireWriter& writer) {
+bool Pose::nested_write_roll(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(roll)) return false;
   return true;
 }
-bool Pose::write_pitch(yarp::os::idl::WireWriter& writer) {
+bool Pose::write_pitch(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(pitch)) return false;
   return true;
 }
-bool Pose::nested_write_pitch(yarp::os::idl::WireWriter& writer) {
+bool Pose::nested_write_pitch(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(pitch)) return false;
   return true;
 }
-bool Pose::write_yaw(yarp::os::idl::WireWriter& writer) {
+bool Pose::write_yaw(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(yaw)) return false;
   return true;
 }
-bool Pose::nested_write_yaw(yarp::os::idl::WireWriter& writer) {
+bool Pose::nested_write_yaw(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeFloat64(yaw)) return false;
   return true;
 }
-bool Pose::write(yarp::os::idl::WireWriter& writer) {
+bool Pose::write(const yarp::os::idl::WireWriter& writer) const {
   if (!write_x(writer)) return false;
   if (!write_y(writer)) return false;
   if (!write_z(writer)) return false;
@@ -162,12 +170,12 @@ bool Pose::write(yarp::os::idl::WireWriter& writer) {
   return !writer.isError();
 }
 
-bool Pose::write(yarp::os::ConnectionWriter& connection) {
+bool Pose::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(6)) return false;
   return write(writer);
 }
-bool Pose::Editor::write(yarp::os::ConnectionWriter& connection) {
+bool Pose::Editor::write(yarp::os::ConnectionWriter& connection) const {
   if (!isValid()) return false;
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(dirty_count+1)) return false;
@@ -323,7 +331,7 @@ bool Pose::Editor::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-std::string Pose::toString() {
+std::string Pose::toString() const {
   yarp::os::Bottle b;
   b.read(*this);
   return b.toString();

@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <ClockServer.h>
@@ -10,14 +18,14 @@ namespace GazeboYarpPlugins {
 class ClockServer_pauseSimulation : public yarp::os::Portable {
 public:
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 class ClockServer_continueSimulation : public yarp::os::Portable {
 public:
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -25,7 +33,7 @@ class ClockServer_stepSimulation : public yarp::os::Portable {
 public:
   std::int32_t numberOfSteps;
   void init(const std::int32_t numberOfSteps);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -33,14 +41,14 @@ class ClockServer_stepSimulationAndWait : public yarp::os::Portable {
 public:
   std::int32_t numberOfSteps;
   void init(const std::int32_t numberOfSteps);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 class ClockServer_resetSimulationTime : public yarp::os::Portable {
 public:
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -48,7 +56,7 @@ class ClockServer_getSimulationTime : public yarp::os::Portable {
 public:
   double _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -56,11 +64,11 @@ class ClockServer_getStepSize : public yarp::os::Portable {
 public:
   double _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_pauseSimulation::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_pauseSimulation::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("pauseSimulation",1,1)) return false;
@@ -75,7 +83,7 @@ bool ClockServer_pauseSimulation::read(yarp::os::ConnectionReader& connection) {
 void ClockServer_pauseSimulation::init() {
 }
 
-bool ClockServer_continueSimulation::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_continueSimulation::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("continueSimulation",1,1)) return false;
@@ -90,7 +98,7 @@ bool ClockServer_continueSimulation::read(yarp::os::ConnectionReader& connection
 void ClockServer_continueSimulation::init() {
 }
 
-bool ClockServer_stepSimulation::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_stepSimulation::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("stepSimulation",1,1)) return false;
@@ -107,7 +115,7 @@ void ClockServer_stepSimulation::init(const std::int32_t numberOfSteps) {
   this->numberOfSteps = numberOfSteps;
 }
 
-bool ClockServer_stepSimulationAndWait::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_stepSimulationAndWait::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("stepSimulationAndWait",1,1)) return false;
@@ -125,7 +133,7 @@ void ClockServer_stepSimulationAndWait::init(const std::int32_t numberOfSteps) {
   this->numberOfSteps = numberOfSteps;
 }
 
-bool ClockServer_resetSimulationTime::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_resetSimulationTime::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("resetSimulationTime",1,1)) return false;
@@ -140,7 +148,7 @@ bool ClockServer_resetSimulationTime::read(yarp::os::ConnectionReader& connectio
 void ClockServer_resetSimulationTime::init() {
 }
 
-bool ClockServer_getSimulationTime::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_getSimulationTime::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("getSimulationTime",1,1)) return false;
@@ -161,7 +169,7 @@ void ClockServer_getSimulationTime::init() {
   _return = (double)0;
 }
 
-bool ClockServer_getStepSize::write(yarp::os::ConnectionWriter& connection) {
+bool ClockServer_getStepSize::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("getStepSize",1,1)) return false;

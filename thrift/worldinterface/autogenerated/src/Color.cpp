@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <Color.h>
@@ -59,43 +67,43 @@ bool Color::read(yarp::os::ConnectionReader& connection) {
   return read(reader);
 }
 
-bool Color::write_r(yarp::os::idl::WireWriter& writer) {
+bool Color::write_r(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeI16(r)) return false;
   return true;
 }
-bool Color::nested_write_r(yarp::os::idl::WireWriter& writer) {
+bool Color::nested_write_r(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeI16(r)) return false;
   return true;
 }
-bool Color::write_g(yarp::os::idl::WireWriter& writer) {
+bool Color::write_g(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeI16(g)) return false;
   return true;
 }
-bool Color::nested_write_g(yarp::os::idl::WireWriter& writer) {
+bool Color::nested_write_g(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeI16(g)) return false;
   return true;
 }
-bool Color::write_b(yarp::os::idl::WireWriter& writer) {
+bool Color::write_b(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeI16(b)) return false;
   return true;
 }
-bool Color::nested_write_b(yarp::os::idl::WireWriter& writer) {
+bool Color::nested_write_b(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeI16(b)) return false;
   return true;
 }
-bool Color::write(yarp::os::idl::WireWriter& writer) {
+bool Color::write(const yarp::os::idl::WireWriter& writer) const {
   if (!write_r(writer)) return false;
   if (!write_g(writer)) return false;
   if (!write_b(writer)) return false;
   return !writer.isError();
 }
 
-bool Color::write(yarp::os::ConnectionWriter& connection) {
+bool Color::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
   return write(writer);
 }
-bool Color::Editor::write(yarp::os::ConnectionWriter& connection) {
+bool Color::Editor::write(yarp::os::ConnectionWriter& connection) const {
   if (!isValid()) return false;
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(dirty_count+1)) return false;
@@ -206,7 +214,7 @@ bool Color::Editor::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-std::string Color::toString() {
+std::string Color::toString() const {
   yarp::os::Bottle b;
   b.read(*this);
   return b.toString();

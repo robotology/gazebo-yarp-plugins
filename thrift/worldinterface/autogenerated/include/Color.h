@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_Color
@@ -45,16 +53,16 @@ public:
   // read and write structure on a connection
   bool read(yarp::os::idl::WireReader& reader) override;
   bool read(yarp::os::ConnectionReader& connection) override;
-  bool write(yarp::os::idl::WireWriter& writer) override;
-  bool write(yarp::os::ConnectionWriter& connection) override;
+  bool write(const yarp::os::idl::WireWriter& writer) const override;
+  bool write(yarp::os::ConnectionWriter& connection) const override;
 
 private:
-  bool write_r(yarp::os::idl::WireWriter& writer);
-  bool nested_write_r(yarp::os::idl::WireWriter& writer);
-  bool write_g(yarp::os::idl::WireWriter& writer);
-  bool nested_write_g(yarp::os::idl::WireWriter& writer);
-  bool write_b(yarp::os::idl::WireWriter& writer);
-  bool nested_write_b(yarp::os::idl::WireWriter& writer);
+  bool write_r(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_r(const yarp::os::idl::WireWriter& writer) const;
+  bool write_g(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_g(const yarp::os::idl::WireWriter& writer) const;
+  bool write_b(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_b(const yarp::os::idl::WireWriter& writer) const;
   bool read_r(yarp::os::idl::WireReader& reader);
   bool nested_read_r(yarp::os::idl::WireReader& reader);
   bool read_g(yarp::os::idl::WireReader& reader);
@@ -64,7 +72,7 @@ private:
 
 public:
 
-  std::string toString();
+  std::string toString() const;
 
   // if you want to serialize this class without nesting, use this helper
   typedef yarp::os::idl::Unwrapped<GazeboYarpPlugins::Color > unwrapped;
@@ -151,7 +159,7 @@ public:
       dirty_flags(false);
     }
     bool read(yarp::os::ConnectionReader& connection) override;
-    bool write(yarp::os::ConnectionWriter& connection) override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
   private:
 
     Color *obj;

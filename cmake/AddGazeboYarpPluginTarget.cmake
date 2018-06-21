@@ -63,6 +63,7 @@ target_include_directories(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC
 
 # Add install target
 install(TARGETS ${GAZEBO_PLUGIN_LIBRARY_NAME}
+        EXPORT GazeboYARPPlugins
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 

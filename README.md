@@ -13,5 +13,7 @@ Quick start
 -----------
 * [Downloading and Installing gazebo-yarp-plugins](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/install.html)
 * [Use the gazebo-yarp-plugins in Gazebo Models](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/embed_plugins.html)
+* [Use the gazebo-yarp-plugins as a C++ library using CMake](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/use_as_library.html)
 * [Troubleshooting](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/troubleshooting.html)
 * [Contributing](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/contributing.html)
+

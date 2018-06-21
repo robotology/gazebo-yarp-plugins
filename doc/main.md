@@ -14,5 +14,6 @@ Quick start
 -----------------------
 \li \ref install
 \li \ref embed_plugins
+\li \ref use_as_library
 \li \ref troubleshooting
 \li \ref contributing

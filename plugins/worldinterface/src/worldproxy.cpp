@@ -139,8 +139,15 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
 
   int nobjects=++objects.count;
   ostringstream objlabel;
-  objlabel << "sphere"<< nobjects;
-
+  
+  if(object_name!="")
+  {
+      objlabel << object_name;
+  }
+  else
+  {
+     objlabel << "sphere"<< nobjects;
+  }
   sdf::ElementPtr model = getSDFRoot(sphereSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());

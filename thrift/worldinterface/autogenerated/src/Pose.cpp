@@ -327,7 +327,7 @@ bool Pose::Editor::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireWriter writer(reader);
   if (writer.isNull()) return true;
   writer.writeListHeader(1);
-  writer.writeVocab(VOCAB2('o','k'));
+  writer.writeVocab(yarp::os::createVocab('o','k'));
   return true;
 }
 

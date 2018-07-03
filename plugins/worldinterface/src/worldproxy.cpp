@@ -892,7 +892,7 @@ bool WorldProxy::detach(const std::string& id)
 }
 
 
-GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
+GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id, const std::string& frame_name)
 {
   GazeboYarpPlugins::Pose ret;
 
@@ -907,23 +907,47 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id)
       return ret;
     }
 
+    YarpWorldPose relative_link_pose;
+    if (frame_name!="")
+    {
+        physics::LinkPtr relative_link = HELPER_getLink(frame_name);
+        if( !relative_link )
+        {
+            yError() << "Unable to find specified link";
+            return ret;
+        }
+        #if GAZEBO_MAJOR_VERSION >= 8
+        relative_link_pose = relative_link->WorldPose();
+        #else
+        relative_link_pose = relative_link->GetWorldPose();
+        #endif
+    }
+
+    #if GAZEBO_MAJOR_VERSION >= 8
+    YarpWorldPose p=model->WorldPose();
+    YarpWorldPose final_pose (p.Pos()[0], p.Pos()[1], p.Pos()[2], p.Rot().Roll(), p.Rot().Pitch(), Rot().Yaw());
+    #else
+    YarpWorldPose p=model->GetWorldPose();
+    YarpWorldPose final_pose (p.pos[0], p.pos[1], p.pos[2], p.rot.GetRoll(), p.rot.GetPitch(), p.rot.GetYaw());
+    #endif
+
+
+    final_pose -= relative_link_pose;
 
 #if GAZEBO_MAJOR_VERSION >= 8
-  YarpWorldPose p=model->WorldPose();
-  ret.x=p.Pos()[0];
-  ret.y=p.Pos()[1];
-  ret.z=p.Pos()[2];
-  ret.roll=p.Rot().Roll();
-  ret.pitch=p.Rot().Pitch();
-  ret.yaw=p.Rot().Yaw();
+    ret.x=final_pose.Pos()[0];
+    ret.y=final_pose.Pos()[1];
+    ret.z=final_pose.Pos()[2];
+    ret.roll=final_pose.Rot().Roll();
+    ret.pitch=final_pose.Rot().Pitch();
+    ret.yaw=final_pose.Rot().Yaw();
 #else
-  YarpWorldPose p=model->GetWorldPose();
-  ret.x=p.pos[0];
-  ret.y=p.pos[1];
-  ret.z=p.pos[2];
-  ret.roll=p.rot.GetRoll();
-  ret.pitch=p.rot.GetPitch();
-  ret.yaw=p.rot.GetYaw();
+    ret.x=final_pose.pos[0];
+    ret.y=final_pose.pos[1];
+    ret.z=final_pose.pos[2];
+    ret.roll=final_pose.rot.GetRoll();
+    ret.pitch=final_pose.rot.GetPitch();
+    ret.yaw=final_pose.rot.GetYaw();
 #endif
 
   return ret;

@@ -122,8 +122,9 @@ public:
 class WorldInterfaceServer_getPose : public yarp::os::Portable {
 public:
   std::string id;
+  std::string frame_name;
   Pose _return;
-  void init(const std::string& id);
+  void init(const std::string& id, const std::string& frame_name);
   virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
@@ -441,9 +442,10 @@ void WorldInterfaceServer_enableCollision::init(const std::string& id, const boo
 
 bool WorldInterfaceServer_getPose::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeListHeader(3)) return false;
   if (!writer.writeTag("getPose",1,1)) return false;
   if (!writer.writeString(id)) return false;
+  if (!writer.writeString(frame_name)) return false;
   return true;
 }
 
@@ -457,8 +459,9 @@ bool WorldInterfaceServer_getPose::read(yarp::os::ConnectionReader& connection) 
   return true;
 }
 
-void WorldInterfaceServer_getPose::init(const std::string& id) {
+void WorldInterfaceServer_getPose::init(const std::string& id, const std::string& frame_name) {
   this->id = id;
+  this->frame_name = frame_name;
 }
 
 bool WorldInterfaceServer_loadModelFromFile::write(yarp::os::ConnectionWriter& connection) const {
@@ -716,12 +719,12 @@ bool WorldInterfaceServer::enableCollision(const std::string& id, const bool ena
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-Pose WorldInterfaceServer::getPose(const std::string& id) {
+Pose WorldInterfaceServer::getPose(const std::string& id, const std::string& frame_name) {
   Pose _return;
   WorldInterfaceServer_getPose helper;
-  helper.init(id);
+  helper.init(id,frame_name);
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","Pose WorldInterfaceServer::getPose(const std::string& id)");
+    yError("Missing server method '%s'?","Pose WorldInterfaceServer::getPose(const std::string& id, const std::string& frame_name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -1079,12 +1082,16 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection) {
     }
     if (tag == "getPose") {
       std::string id;
+      std::string frame_name;
       if (!reader.readString(id)) {
         reader.fail();
         return false;
       }
+      if (!reader.readString(frame_name)) {
+        frame_name = "";
+      }
       Pose _return;
-      _return = getPose(id);
+      _return = getPose(id,frame_name);
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(6)) return false;
@@ -1347,9 +1354,10 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
       helpString.push_back("@return returns true or false on success failure ");
     }
     if (functionName=="getPose") {
-      helpString.push_back("Pose getPose(const std::string& id) ");
+      helpString.push_back("Pose getPose(const std::string& id, const std::string& frame_name = \"\") ");
       helpString.push_back("Get object pose. ");
       helpString.push_back("@param id string that identifies object in gazebo (returned after creation) ");
+      helpString.push_back("@param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. ");
       helpString.push_back("@return returns value of the pose in the world reference frame ");
     }
     if (functionName=="loadModelFromFile") {

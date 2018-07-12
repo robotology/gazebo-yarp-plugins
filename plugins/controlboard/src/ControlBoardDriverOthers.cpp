@@ -126,13 +126,13 @@ bool GazeboYarpControlBoardDriver::getAmpStatus(int, int *v) //NOT IMPLEMENTED
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::calibrate(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::calibrateAxisWithParams(int j, unsigned int iv, double v1, double v2, double v3) //NOT IMPLEMENTED
 {
     yDebug("fakebot: calibrating joint %d with parameters %u %f %f %f\n", j, iv, v1, v2, v3);
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::done(int j) // NOT IMPLEMENTED
+bool GazeboYarpControlBoardDriver::calibrationDone(int j) // NOT IMPLEMENTED
 {
     yDebug("fakebot: calibration done on joint %d.\n", j);
     return true;

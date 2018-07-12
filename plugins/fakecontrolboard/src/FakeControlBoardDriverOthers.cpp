@@ -38,8 +38,8 @@ bool GazeboYarpFakeControlBoardDriver::setMaxCurrent(int, double) {return false;
 bool GazeboYarpFakeControlBoardDriver::getMaxCurrent(int j, double *v) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getAmpStatus(int *st) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getAmpStatus(int, int *v) {return false;}
-bool GazeboYarpFakeControlBoardDriver::calibrate(int j, unsigned int iv, double v1, double v2, double v3) {return false;}
-bool GazeboYarpFakeControlBoardDriver::done(int j) {return false;}
+bool GazeboYarpFakeControlBoardDriver::calibrateAxisWithParams(int j, unsigned int iv, double v1, double v2, double v3) {return false;}
+bool GazeboYarpFakeControlBoardDriver::calibrationDone(int j) {return false;}
 
 // PWM interface
 bool GazeboYarpFakeControlBoardDriver::getNumberOfMotors(int *ax) { return getAxes(ax); }

@@ -45,11 +45,3 @@ bool GazeboYarpFakeControlBoardDriver::setControlModes(const int n_joint, const 
 {
     return getTrueIfArgumentIsZero(n_joint);
 }
-
-bool GazeboYarpFakeControlBoardDriver::setPositionMode(int) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setVelocityMode(int) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setImpedancePositionMode(int) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setImpedanceVelocityMode(int) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setTorqueMode(int ) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setControlMode(const int, const int) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setControlModes(int *modes) {return false;}

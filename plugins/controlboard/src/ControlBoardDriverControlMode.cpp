@@ -22,16 +22,6 @@ void GazeboYarpControlBoardDriver::resetAllPidsForJointAtIndex(int j)
     m_pids[VOCAB_PIDTYPE_VELOCITY][j].Reset();
 }
 
-bool GazeboYarpControlBoardDriver::setPositionMode(int j)
-{
-    return this->setControlMode(j, VOCAB_CM_POSITION);
-}
-
-bool GazeboYarpControlBoardDriver::setVelocityMode(int j)
-{
-    return this->setControlMode(j, VOCAB_CM_VELOCITY);
-}
-
 bool GazeboYarpControlBoardDriver::getControlMode(int j, int *mode)
 {
     if (!mode || j < 0 || static_cast<size_t>(j) >= m_numberOfJoints)
@@ -47,24 +37,6 @@ bool GazeboYarpControlBoardDriver::getControlModes(int *modes) //NOT TESTED
         modes[j] = m_controlMode[j];
     }
     return true;
-}
-
-bool GazeboYarpControlBoardDriver::setTorqueMode(int j)
-{
-    return this->setControlMode(j, VOCAB_CM_TORQUE);
-}
-
-bool GazeboYarpControlBoardDriver::setImpedancePositionMode(int j)//NOT TESTED
-{
-    bool ret = true;
-    ret = ret && this->setControlMode(j, VOCAB_CM_POSITION);
-    ret = ret && this->setInteractionMode(j, VOCAB_IM_COMPLIANT);
-    return ret;
-}
-
-bool GazeboYarpControlBoardDriver::setImpedanceVelocityMode(int) //NOT IMPLEMENTED
-{
-    return false;
 }
 
 

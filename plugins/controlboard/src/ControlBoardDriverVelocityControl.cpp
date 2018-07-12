@@ -11,15 +11,6 @@
 using namespace yarp::dev;
 
 
-bool GazeboYarpControlBoardDriver::setVelocityMode() //NOT TESTED
-{
-    bool ret = true;
-    for (size_t j = 0; j < m_numberOfJoints; j++) {
-        ret = ret && this->setControlMode(j, VOCAB_CM_VELOCITY);
-    }
-    return ret;
-}
-
 bool GazeboYarpControlBoardDriver::velocityMove(int j, double sp) //NOT TESTED
 {
     if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints)

@@ -932,7 +932,7 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id, const std::st
 
     #if GAZEBO_MAJOR_VERSION >= 8
     YarpWorldPose p=model->WorldPose();
-    YarpWorldPose final_pose (p.Pos()[0], p.Pos()[1], p.Pos()[2], p.Rot().Roll(), p.Rot().Pitch(), Rot().Yaw());
+    YarpWorldPose final_pose (p.Pos()[0], p.Pos()[1], p.Pos()[2], p.Rot().Roll(), p.Rot().Pitch(),p.Rot().Yaw());
     #else
     YarpWorldPose p=model->GetWorldPose();
     YarpWorldPose final_pose (p.pos[0], p.pos[1], p.pos[2], p.rot.GetRoll(), p.rot.GetPitch(), p.rot.GetYaw());

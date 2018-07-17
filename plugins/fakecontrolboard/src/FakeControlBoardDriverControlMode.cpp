@@ -41,7 +41,16 @@ bool GazeboYarpFakeControlBoardDriver::getControlMode(int j, int *mode)
     return true;
 }
 
-bool GazeboYarpFakeControlBoardDriver::setControlModes(const int n_joint, const int *joints, int *modes) 
+bool GazeboYarpFakeControlBoardDriver::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     return getTrueIfArgumentIsZero(n_joint);
+}
+
+bool GazeboYarpFakeControlBoardDriver::setControlMode(const int, const int)
+{
+    return false;
+}
+bool GazeboYarpFakeControlBoardDriver::setControlModes(int *)
+{
+    return false;
 }

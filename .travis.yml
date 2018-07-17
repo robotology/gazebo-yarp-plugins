@@ -1,5 +1,4 @@
 language: cpp
-sudo: false
 dist: trusty
 cache: ccache
 
@@ -9,32 +8,24 @@ services:
 env:
   global:
     - PROJECT_DIR_ABS=$TRAVIS_BUILD_DIR
-    - YARP_DOCKER_TAG="master"
+    - DEPS_BRANCH_DOCKER="master"
   matrix:
-    - GAZEBO_VERSION=gazebo7 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
-    - GAZEBO_VERSION=gazebo7 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
-    - GAZEBO_VERSION=gazebo8 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Debug
-    - GAZEBO_VERSION=gazebo8 GAZEBO_YARP_PLUGINS_BUILD_TYPE=Release
+    - GAZEBO_VERSION=gazebo8 BUILD_TYPE=Debug
+    - GAZEBO_VERSION=gazebo8 BUILD_TYPE=Release
+    - GAZEBO_VERSION=gazebo9 BUILD_TYPE=Debug
+    - GAZEBO_VERSION=gazebo9 BUILD_TYPE=Release
 
 compiler:
    - gcc
    - clang
 
 before_install:
-  # Pull the docker containers
-  - if [ ! $TRAVIS_BRANCH = "master" ] ; then YARP_DOCKER_TAG="devel" ; fi
-  - docker pull robotology/yarp:${YARP_DOCKER_TAG}
-  - docker pull robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
+  - if [ ! $TRAVIS_BRANCH = "master" ] ; then DEPS_BRANCH_DOCKER="devel" ; fi
+  # Pull the docker image
+  - export DOCKER_IMAGE=robotology/robotology-tdd:${GAZEBO_VERSION}${DEPS_BRANCH_DOCKER}
+  - docker pull ${DOCKER_IMAGE}
 
 before_script:
-  # Run the yarpserver as background container
-  - >-
-    docker run -d -it
-    -p 10000:10000
-    --name yarp-server
-    robotology/yarp:${YARP_DOCKER_TAG}
-    yarpserver
-
   # Run CMake into the persistent $PROJECT_DIR_ABS folder
   - cd $PROJECT_DIR_ABS
   - mkdir build
@@ -44,8 +35,8 @@ before_script:
     -v "$PROJECT_DIR_ABS:/app" -w /app
     -e CC=$CC
     -e CXX=$CXX
-    robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
-    sh -c 'cd build && cmake -DCMAKE_BUILD_TYPE=${GAZEBO_YARP_PLUGINS_BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..'
+    ${DOCKER_IMAGE}
+    sh -c 'cd build && cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DALLOW_IDL_GENERATION:BOOL=OFF ./..'
 
 script:
   # Build the project
@@ -55,23 +46,23 @@ script:
     -v "$PROJECT_DIR_ABS:/app" -w /app
     -e CC=$CC
     -e CXX=$CXX
-    robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
-    sh -c 'cd build && make'
-  # Install and execute the project
+    ${DOCKER_IMAGE}
+    sh -c 'cd build && make -j2'
+  # Install the project and run the tests
   - >-
     docker run -it --rm
     -v "$PROJECT_DIR_ABS:/app" -w /app
     -v "$HOME/.ccache:/root/.ccache"
     -e CC=$CC
     -e CXX=$CXX
-    -e GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/app/build/robotology/gazebo-yarp-plugins/build:/usr/local/lib
-    robotology/yarp-tdd:${GAZEBO_VERSION}${YARP_DOCKER_TAG}
-    sh -c 'cd build && make install && yarp detect --write && testrunner --verbose --suit /icub-tests/suits/basics-icubGazeboSim.xml'
-
-after_script:
-  # Stop and remove running containers
-  - docker stop yarp-server
-  - docker rm yarp-server
+    ${DOCKER_IMAGE}
+    sh -c 'cd build &&\
+           make install &&\
+           (yarpserver &) &&\
+           sleep 2 &&\
+           yarp detect --write &&\
+           export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} &&\
+           testrunner --verbose --suit ${ROBOTOLOGY_SUPERBUILD_ROOT}/robotology/icub-tests/suits/basics-icubGazeboSim.xml'
 
 notifications:
   email:

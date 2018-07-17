@@ -91,7 +91,7 @@ service WorldInterfaceServer {
     * Set new object pose.
     * @param id object id
     * @param pose new pose
-    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. 
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
     * @return returns true or false on success failure
     */
     bool setPose(1: string id, 2: Pose pose, 3: string frame_name="");
@@ -115,9 +115,10 @@ service WorldInterfaceServer {
      /** 
     * Get object pose.
     * @param id string that identifies object in gazebo (returned after creation)
+    * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
     * @return returns value of the pose in the world reference frame
     */
-    Pose getPose(1:string id);
+    Pose getPose(1:string id, 2: string frame_name="");
     
     /**
     * Load a model from file.

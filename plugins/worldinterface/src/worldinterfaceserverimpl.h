@@ -59,9 +59,10 @@ public:
     /**
      * Get object pose.
      * @param id string that identifies object in gazebo (returned after creation)
+     * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL1::link). Otherwise, world it will be used.
      * @return returns value of the pose in the world reference frame
      */
-    virtual GazeboYarpPlugins::Pose getPose(const std::string& id);
+    virtual GazeboYarpPlugins::Pose getPose(const std::string& id, const std::string& frame_name = "");
 
     /**
      * Enable/disables gravity for an object

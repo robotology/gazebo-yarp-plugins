@@ -109,6 +109,16 @@ bool GazeboYarpControlBoardDriver::getTorqueRanges(double *min, double *max)
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::getMotorTorqueParams(int ,  yarp::dev::MotorTorqueParameters *)
+{
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::setMotorTorqueParams(int , const yarp::dev::MotorTorqueParameters )
+{
+    return false;
+}
+
 bool GazeboYarpControlBoardDriver::checkIfTorqueIsValid(const double* torques) const
 {
     if (!torques)

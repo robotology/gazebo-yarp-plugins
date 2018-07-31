@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #ifndef YARP_THRIFT_GENERATOR_WorldInterfaceServer
@@ -100,9 +108,10 @@ public:
   /**
    * Get object pose.
    * @param id string that identifies object in gazebo (returned after creation)
+   * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
    * @return returns value of the pose in the world reference frame
    */
-  virtual Pose getPose(const std::string& id);
+  virtual Pose getPose(const std::string& id, const std::string& frame_name = "");
   /**
    * Load a model from file.
    * @param id string that specifies the name of the model
@@ -144,7 +153,7 @@ public:
    * @return true if success, false otherwise
    */
   virtual bool rename(const std::string& old_name, const std::string& new_name);
-  virtual bool read(yarp::os::ConnectionReader& connection);
+  virtual bool read(yarp::os::ConnectionReader& connection) override;
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };
 

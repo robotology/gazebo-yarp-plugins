@@ -11,7 +11,7 @@ using namespace yarp::dev;
 
 //////////////////////////////////////////////////////////////////////////////
 // Helper functions
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 
 bool GazeboYarpFakeControlBoardDriver::getZero(int j, double *ref)
 {
@@ -26,7 +26,7 @@ bool GazeboYarpFakeControlBoardDriver::getZero(double * encs)
 {
     if (!encs) return false;
     for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        encs[i] = 0.0; 
+        encs[i] = 0.0;
     }
     return true;
 }
@@ -55,7 +55,7 @@ bool GazeboYarpFakeControlBoardDriver::getTrue(bool * flags)
 {
     if (!flags) return false;
     for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-        flags[i] = true; 
+        flags[i] = true;
     }
     return true;
 }
@@ -67,7 +67,7 @@ bool GazeboYarpFakeControlBoardDriver::getTrueIfArgumentIsZero(const int n_joint
 
 //////////////////////////////////////////////////////////////////////////////
 // IPositionControl
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 
 bool GazeboYarpFakeControlBoardDriver::getAxes(int *ax) // WORKS
 {
@@ -85,9 +85,9 @@ bool GazeboYarpFakeControlBoardDriver::getTargetPositions(const int n_joint, con
 bool GazeboYarpFakeControlBoardDriver::getRefSpeed(int j, double *ref) {return getZero(j,ref);}
 bool GazeboYarpFakeControlBoardDriver::getRefSpeeds(double *spds) {return getZero(spds);}
 
-// Setter methods with three arguments are critical : 
+// Setter methods with three arguments are critical :
 // if they are called with a list of zero joints,
-// they should return true, otherwise false 
+// they should return true, otherwise false
 bool GazeboYarpFakeControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs) {return getTrueIfArgumentIsZero(n_joint);}
 bool GazeboYarpFakeControlBoardDriver::relativeMove(const int n_joint, const int *joints, const double *deltas) {return getTrueIfArgumentIsZero(n_joint);}
 bool GazeboYarpFakeControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flags) {return getTrueIfArgumentIsZero(n_joint);}
@@ -96,7 +96,7 @@ bool GazeboYarpFakeControlBoardDriver::setRefAccelerations(const int n_joint, co
 bool GazeboYarpFakeControlBoardDriver::getRefSpeeds(const int n_joint, const int *joints, double *spds) {return getTrueIfArgumentIsZero(n_joint);}
 bool GazeboYarpFakeControlBoardDriver::getRefAccelerations(const int n_joint, const int *joints, double *accs) {return getTrueIfArgumentIsZero(n_joint);}
 bool GazeboYarpFakeControlBoardDriver::stop(const int n_joint, const int *joints) {return getTrueIfArgumentIsZero(n_joint);}
-bool GazeboYarpFakeControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs) {return getTrueIfArgumentIsZero(n_joint);}
+bool GazeboYarpFakeControlBoardDriver::setPositions(const int n_joint, const int *joints, const double *refs) {return getTrueIfArgumentIsZero(n_joint);}
 
 // Method that always return false
 bool GazeboYarpFakeControlBoardDriver::setRefSpeed(int j, double sp) {return false;}
@@ -106,19 +106,17 @@ bool GazeboYarpFakeControlBoardDriver::stop() {return false;}
 bool GazeboYarpFakeControlBoardDriver::positionMove(const double *refs) {return false;}
 bool GazeboYarpFakeControlBoardDriver::relativeMove(int j, double delta) {return false;}
 bool GazeboYarpFakeControlBoardDriver::relativeMove(const double *deltas) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setPositionMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::setRefSpeeds(const double *spds) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setRefAcceleration(int j, double acc) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setRefAccelerations(const double *accs) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefAcceleration(int j, double *acc) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefAccelerations(double *accs) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setPositionDirectMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::setPosition(int j, double ref) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setPositions(const double *refs) {return false;}
 
 //////////////////////////////////////////////////////////////////////////////
 // IVelocityControl
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 
 bool GazeboYarpFakeControlBoardDriver::getRefVelocity(const int joint, double *vel) { return getZero(joint,vel); }
 bool GazeboYarpFakeControlBoardDriver::getRefVelocities(double *vels) {return getZero(vels);}
@@ -129,7 +127,6 @@ bool GazeboYarpFakeControlBoardDriver::getRefVelocities(const int n_joint, const
 
 bool GazeboYarpFakeControlBoardDriver::velocityMove(const int n_joint, const int *joints, const double *spds) {return getTrueIfArgumentIsZero(n_joint);}
 
-bool GazeboYarpFakeControlBoardDriver::setVelocityMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::velocityMove(int j, double sp) {return false;}
 bool GazeboYarpFakeControlBoardDriver::velocityMove(const double *sp) {return false;}
 
@@ -162,10 +159,5 @@ bool GazeboYarpFakeControlBoardDriver::getRefTorques(double* rt) { return getZer
 // Methods always returning false
 bool GazeboYarpFakeControlBoardDriver::setRefTorque(int, double) {return false;}
 bool GazeboYarpFakeControlBoardDriver::setRefTorques(const double*) {return false;}
-bool GazeboYarpFakeControlBoardDriver::setTorqueMode() {return false;}
 bool GazeboYarpFakeControlBoardDriver::getTorqueRange(int, double*, double *){return false;}
-bool GazeboYarpFakeControlBoardDriver::getTorqueRanges(double *, double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::setTorqueOffset(int , double ){return false;} 
-bool GazeboYarpFakeControlBoardDriver::getBemfParam(int , double *){return false;} 
-bool GazeboYarpFakeControlBoardDriver::setBemfParam(int , double ){return false;} 
-
+bool GazeboYarpFakeControlBoardDriver::getTorqueRanges(double *, double *){return false;}

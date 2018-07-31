@@ -150,15 +150,6 @@ bool GazeboYarpControlBoardDriver::checkMotionDone(bool *flag) //NOT TESTED
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::setPositionMode() //NOT TESTED
-{
-    bool ret = true;
-    for (size_t j = 0; j < m_numberOfJoints; j++) {
-        ret = ret && this->setControlMode(j, VOCAB_CM_POSITION);
-    }
-    return ret;
-}
-
 bool GazeboYarpControlBoardDriver::setRefSpeeds(const double *spds) //NOT TESTED
 {
     for (size_t i = 0; i < m_numberOfJoints; ++i) {
@@ -203,7 +194,7 @@ bool GazeboYarpControlBoardDriver::getRefAccelerations(double *accs)
     return true;
 }
 
-// IPositionControl2
+// IPositionControl
 
 bool GazeboYarpControlBoardDriver::positionMove(const int n_joint, const int *joints, const double *refs)
 {
@@ -328,15 +319,6 @@ bool GazeboYarpControlBoardDriver::getTargetPositions(const int n_joint, const i
 
 
 // IPOSITION DIRECT
-bool GazeboYarpControlBoardDriver::setPositionDirectMode()
-{
-    bool ret = true;
-    for (int j = 0; static_cast<size_t>(j) < m_numberOfJoints; j++)  {
-        ret = ret && this->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
-    }
-    return ret;
-}
-
 bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
 {
     if (m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) {
@@ -351,7 +333,7 @@ bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
     return false;
 }
 
-bool GazeboYarpControlBoardDriver::setPositions(const int n_joint, const int *joints, double *refs)
+bool GazeboYarpControlBoardDriver::setPositions(const int n_joint, const int *joints,const double *refs)
 {
     bool ret = true;
     for (int i = 0; i < n_joint; i++) {
@@ -401,5 +383,3 @@ bool GazeboYarpControlBoardDriver::getRefPositions (const int n_joint, const int
     }
     return ret;
 }
-
-

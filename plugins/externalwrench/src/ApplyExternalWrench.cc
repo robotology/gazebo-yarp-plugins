@@ -33,7 +33,7 @@ void ApplyExternalWrench::UpdateChild()
     // Copying command
     this->m_lock.lock();
     tmpBottle = this->m_rpcThread.getCmd();
-    if ( tmpBottle.get( 8 ).asInt() == 1 )
+    if ( tmpBottle.get( 8 ).asInt32() == 1 )
     {
         // If this is a new command
         m_newCommand = true;
@@ -124,7 +124,13 @@ void ApplyExternalWrench::UpdateChild()
 #else
         msgs::Set ( m_visualMsg.mutable_pose(), linkCoGPose );
 #endif
-        msgs::Set ( m_visualMsg.mutable_material()->mutable_ambient(),common::Color ( 1,0,0,0.3 ) );
+        double red = 1;
+        double alpha = 0.3;
+#if GAZEBO_MAJOR_VERSION >= 9
+        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(red,0,0,alpha));
+#else
+        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(), common::Color(red,0,0,alpha));
+#endif
         m_visualMsg.set_visible ( 1 );
         m_visPub->Publish ( m_visualMsg );
     }
@@ -197,7 +203,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 #else
     std::string worldName = _model->GetWorld()->GetName();
 #endif
-    
+
     this->m_node->Init ( worldName );
     m_visPub = this->m_node->Advertise<msgs::Visual> ( "~/visual", 10 );
 
@@ -276,13 +282,13 @@ bool RPCServerThread::threadInit()
     // Default link on which wrenches are applied
     //m_cmd.addString ( this->m_scopedName + "::l_arm" );
     m_cmd.addString ( this->m_defaultLink );
-    m_cmd.addDouble ( 0 ); // Force  coord. x
-    m_cmd.addDouble ( 0 ); // Force  coord. y
-    m_cmd.addDouble ( 0 ); // Force  coord. z
-    m_cmd.addDouble ( 0 ); // Torque coord. x
-    m_cmd.addDouble ( 0 ); // Torque coord. y
-    m_cmd.addDouble ( 0 ); // Torque coord. z
-    m_cmd.addDouble ( 0 ); // Wrench duration
+    m_cmd.addFloat64 ( 0 ); // Force  coord. x
+    m_cmd.addFloat64 ( 0 ); // Force  coord. y
+    m_cmd.addFloat64 ( 0 ); // Force  coord. z
+    m_cmd.addFloat64 ( 0 ); // Torque coord. x
+    m_cmd.addFloat64 ( 0 ); // Torque coord. y
+    m_cmd.addFloat64 ( 0 ); // Torque coord. z
+    m_cmd.addFloat64 ( 0 ); // Wrench duration
 
     this->m_durationBuffer = m_cmd.get ( 7 ).asDouble();
 
@@ -313,7 +319,7 @@ void RPCServerThread::run()
                 this->m_rpcPort.reply ( m_reply );
                 m_lock.lock();
                 // new-command flag
-                command.addInt(1);
+                command.addInt32(1);
                 m_cmd = command;
                 m_lock.unlock();
             } else {
@@ -336,13 +342,12 @@ yarp::os::Bottle RPCServerThread::getCmd()
     return m_cmd;
 }
 
-void RPCServerThread::setNewCommandFlag(int flag)
+void RPCServerThread::setNewCommandFlag(std::int32_t flag)
 {
-    m_cmd.get( 8 ) = flag;
+    m_cmd.get( 8 ) = yarp::os::Value(flag);
 }
 
 void RPCServerThread::onStop()
 {
     m_rpcPort.interrupt();
 }
-

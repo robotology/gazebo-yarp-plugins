@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_Pose
@@ -52,24 +60,24 @@ public:
   }
 
   // read and write structure on a connection
-  bool read(yarp::os::idl::WireReader& reader);
-  bool read(yarp::os::ConnectionReader& connection);
-  bool write(yarp::os::idl::WireWriter& writer);
-  bool write(yarp::os::ConnectionWriter& connection);
+  bool read(yarp::os::idl::WireReader& reader) override;
+  bool read(yarp::os::ConnectionReader& connection) override;
+  bool write(const yarp::os::idl::WireWriter& writer) const override;
+  bool write(yarp::os::ConnectionWriter& connection) const override;
 
 private:
-  bool write_x(yarp::os::idl::WireWriter& writer);
-  bool nested_write_x(yarp::os::idl::WireWriter& writer);
-  bool write_y(yarp::os::idl::WireWriter& writer);
-  bool nested_write_y(yarp::os::idl::WireWriter& writer);
-  bool write_z(yarp::os::idl::WireWriter& writer);
-  bool nested_write_z(yarp::os::idl::WireWriter& writer);
-  bool write_roll(yarp::os::idl::WireWriter& writer);
-  bool nested_write_roll(yarp::os::idl::WireWriter& writer);
-  bool write_pitch(yarp::os::idl::WireWriter& writer);
-  bool nested_write_pitch(yarp::os::idl::WireWriter& writer);
-  bool write_yaw(yarp::os::idl::WireWriter& writer);
-  bool nested_write_yaw(yarp::os::idl::WireWriter& writer);
+  bool write_x(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_x(const yarp::os::idl::WireWriter& writer) const;
+  bool write_y(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_y(const yarp::os::idl::WireWriter& writer) const;
+  bool write_z(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_z(const yarp::os::idl::WireWriter& writer) const;
+  bool write_roll(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_roll(const yarp::os::idl::WireWriter& writer) const;
+  bool write_pitch(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_pitch(const yarp::os::idl::WireWriter& writer) const;
+  bool write_yaw(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_yaw(const yarp::os::idl::WireWriter& writer) const;
   bool read_x(yarp::os::idl::WireReader& reader);
   bool nested_read_x(yarp::os::idl::WireReader& reader);
   bool read_y(yarp::os::idl::WireReader& reader);
@@ -85,7 +93,7 @@ private:
 
 public:
 
-  yarp::os::ConstString toString();
+  std::string toString() const;
 
   // if you want to serialize this class without nesting, use this helper
   typedef yarp::os::idl::Unwrapped<GazeboYarpPlugins::Pose > unwrapped;
@@ -207,8 +215,8 @@ public:
     void clean() {
       dirty_flags(false);
     }
-    bool read(yarp::os::ConnectionReader& connection);
-    bool write(yarp::os::ConnectionWriter& connection);
+    bool read(yarp::os::ConnectionReader& connection) override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
   private:
 
     Pose *obj;

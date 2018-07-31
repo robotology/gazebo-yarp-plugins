@@ -88,7 +88,7 @@ public:
     virtual bool                  getExtrinsicParam(sig::Matrix &extrinsic);
     virtual bool                  getImages(FlexImage& colorFrame, depthImageType& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL);
     virtual RGBDSensor_status     getSensorStatus();
-    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL);
+    virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL);
     /*
      * INTERFACE TOWARD GAZEBO SIMULATOR CORE
      * Get the image from the simulator and store it internally

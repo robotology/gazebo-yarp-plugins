@@ -8,19 +8,19 @@
 
 using namespace yarp::dev;
 
-bool GazeboYarpFakeControlBoardDriver::getAxisName(int axis, yarp::os::ConstString& name)
+bool GazeboYarpFakeControlBoardDriver::getAxisName(int axis, std::string& name)
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
-    name = yarp::os::ConstString(m_jointNames.at(axis));
+    name = std::string(m_jointNames.at(axis));
     return true;
 }
 
 bool GazeboYarpFakeControlBoardDriver::getJointType(int axis, yarp::dev::JointTypeEnum& type)
 {
     if (axis < 0 || axis >= (int)m_numberOfJoints) return false;
-    
+
     type = this->m_jointTypes[axis];
-  
+
     return true;
 }
 
@@ -38,8 +38,8 @@ bool GazeboYarpFakeControlBoardDriver::setMaxCurrent(int, double) {return false;
 bool GazeboYarpFakeControlBoardDriver::getMaxCurrent(int j, double *v) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getAmpStatus(int *st) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getAmpStatus(int, int *v) {return false;}
-bool GazeboYarpFakeControlBoardDriver::calibrate2(int j, unsigned int iv, double v1, double v2, double v3) {return false;}
-bool GazeboYarpFakeControlBoardDriver::done(int j) {return false;}
+bool GazeboYarpFakeControlBoardDriver::calibrateAxisWithParams(int j, unsigned int iv, double v1, double v2, double v3) {return false;}
+bool GazeboYarpFakeControlBoardDriver::calibrationDone(int j) {return false;}
 
 // PWM interface
 bool GazeboYarpFakeControlBoardDriver::getNumberOfMotors(int *ax) { return getAxes(ax); }
@@ -58,4 +58,3 @@ bool GazeboYarpFakeControlBoardDriver::setRefCurrent(int j, double t) {return fa
 bool GazeboYarpFakeControlBoardDriver::setRefCurrents(const int n_joint, const int *joints, const double *t) { return (n_joint == 0); }
 bool GazeboYarpFakeControlBoardDriver::getRefCurrents(double *t) {return false;}
 bool GazeboYarpFakeControlBoardDriver::getRefCurrent(int j, double *t) {return false;}
-

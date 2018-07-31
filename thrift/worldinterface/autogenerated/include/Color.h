@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_Color
@@ -15,16 +23,16 @@ namespace GazeboYarpPlugins {
 class GazeboYarpPlugins::Color : public yarp::os::idl::WirePortable {
 public:
   // Fields
-  int16_t r;
-  int16_t g;
-  int16_t b;
+  std::int16_t r;
+  std::int16_t g;
+  std::int16_t b;
 
   // Default constructor
   Color() : r(0), g(0), b(0) {
   }
 
   // Constructor with field values
-  Color(const int16_t r,const int16_t g,const int16_t b) : r(r), g(g), b(b) {
+  Color(const std::int16_t r,const std::int16_t g,const std::int16_t b) : r(r), g(g), b(b) {
   }
 
   // Copy constructor
@@ -43,18 +51,18 @@ public:
   }
 
   // read and write structure on a connection
-  bool read(yarp::os::idl::WireReader& reader);
-  bool read(yarp::os::ConnectionReader& connection);
-  bool write(yarp::os::idl::WireWriter& writer);
-  bool write(yarp::os::ConnectionWriter& connection);
+  bool read(yarp::os::idl::WireReader& reader) override;
+  bool read(yarp::os::ConnectionReader& connection) override;
+  bool write(const yarp::os::idl::WireWriter& writer) const override;
+  bool write(yarp::os::ConnectionWriter& connection) const override;
 
 private:
-  bool write_r(yarp::os::idl::WireWriter& writer);
-  bool nested_write_r(yarp::os::idl::WireWriter& writer);
-  bool write_g(yarp::os::idl::WireWriter& writer);
-  bool nested_write_g(yarp::os::idl::WireWriter& writer);
-  bool write_b(yarp::os::idl::WireWriter& writer);
-  bool nested_write_b(yarp::os::idl::WireWriter& writer);
+  bool write_r(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_r(const yarp::os::idl::WireWriter& writer) const;
+  bool write_g(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_g(const yarp::os::idl::WireWriter& writer) const;
+  bool write_b(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_b(const yarp::os::idl::WireWriter& writer) const;
   bool read_r(yarp::os::idl::WireReader& reader);
   bool nested_read_r(yarp::os::idl::WireReader& reader);
   bool read_g(yarp::os::idl::WireReader& reader);
@@ -64,7 +72,7 @@ private:
 
 public:
 
-  yarp::os::ConstString toString();
+  std::string toString() const;
 
   // if you want to serialize this class without nesting, use this helper
   typedef yarp::os::idl::Unwrapped<GazeboYarpPlugins::Color > unwrapped;
@@ -111,34 +119,34 @@ public:
       group--;
       if (group==0&&is_dirty) communicate();
     }
-    void set_r(const int16_t r) {
+    void set_r(const std::int16_t r) {
       will_set_r();
       obj->r = r;
       mark_dirty_r();
       communicate();
       did_set_r();
     }
-    void set_g(const int16_t g) {
+    void set_g(const std::int16_t g) {
       will_set_g();
       obj->g = g;
       mark_dirty_g();
       communicate();
       did_set_g();
     }
-    void set_b(const int16_t b) {
+    void set_b(const std::int16_t b) {
       will_set_b();
       obj->b = b;
       mark_dirty_b();
       communicate();
       did_set_b();
     }
-    int16_t get_r() {
+    std::int16_t get_r() {
       return obj->r;
     }
-    int16_t get_g() {
+    std::int16_t get_g() {
       return obj->g;
     }
-    int16_t get_b() {
+    std::int16_t get_b() {
       return obj->b;
     }
     virtual bool will_set_r() { return true; }
@@ -150,8 +158,8 @@ public:
     void clean() {
       dirty_flags(false);
     }
-    bool read(yarp::os::ConnectionReader& connection);
-    bool write(yarp::os::ConnectionWriter& connection);
+    bool read(yarp::os::ConnectionReader& connection) override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
   private:
 
     Color *obj;

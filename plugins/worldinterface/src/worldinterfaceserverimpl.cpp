@@ -40,9 +40,9 @@ bool WorldInterfaceServerImpl::setPose(const std::string& id, const GazeboYarpPl
   return proxy->setPose(id, pose, frame_name);
 }
 
-GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id)
+GazeboYarpPlugins::Pose WorldInterfaceServerImpl::getPose(const std::string& id, const std::string& frame_name)
 {
-  return proxy->getPose(id); 
+    return proxy->getPose(id, frame_name);
 }
   
 bool WorldInterfaceServerImpl::enableGravity(const std::string& id, const bool enable)

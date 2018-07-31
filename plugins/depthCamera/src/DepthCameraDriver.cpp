@@ -431,7 +431,7 @@ IRGBDSensor::RGBDSensor_status GazeboYarpDepthCameraDriver::getSensorStatus()
 {
     return m_depthCameraSensorPtr->IsActive() ? RGBD_SENSOR_OK_IN_USE : RGBD_SENSOR_NOT_READY;
 }
-yarp::os::ConstString GazeboYarpDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
+std::string GazeboYarpDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
     if(timeStamp)
     {

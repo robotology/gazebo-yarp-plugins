@@ -51,15 +51,6 @@ bool GazeboYarpControlBoardDriver::setRefTorques(const int n_joint, const int *j
     return ret;
 }
 
-bool GazeboYarpControlBoardDriver::setTorqueMode()
-{
-    bool ret = true;
-    for (size_t j = 0; j < m_numberOfJoints; j++) {
-        ret = ret && this->setControlMode(j, VOCAB_CM_TORQUE);
-    }
-    return ret;
-}
-
 bool GazeboYarpControlBoardDriver::getRefTorque(int j, double* t)
 {
     if (t && j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
@@ -118,10 +109,15 @@ bool GazeboYarpControlBoardDriver::getTorqueRanges(double *min, double *max)
     return true;
 }
 
-bool GazeboYarpControlBoardDriver::getBemfParam(int , double *){return false;}
-bool GazeboYarpControlBoardDriver::setBemfParam(int , double ){return false;}
-bool GazeboYarpControlBoardDriver::getMotorTorqueParams(int ,  yarp::dev::MotorTorqueParameters *){return false;}
-bool GazeboYarpControlBoardDriver::setMotorTorqueParams(int , const yarp::dev::MotorTorqueParameters ){return false;}
+bool GazeboYarpControlBoardDriver::getMotorTorqueParams(int ,  yarp::dev::MotorTorqueParameters *)
+{
+    return false;
+}
+
+bool GazeboYarpControlBoardDriver::setMotorTorqueParams(int , const yarp::dev::MotorTorqueParameters )
+{
+    return false;
+}
 
 bool GazeboYarpControlBoardDriver::checkIfTorqueIsValid(const double* torques) const
 {

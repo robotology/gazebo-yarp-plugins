@@ -82,9 +82,9 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
         if (general_config.check("discard_max_range")==false) {yError() << "Missing discard_max_range"; return false; }
         m_max_discard_range = general_config.find("discard_max_range").asDouble();
         if (general_config.check("enable_clip_range")==false) {yError() << "Missing enable_clip_range"; return false; }
-        m_enable_clip_range = (general_config.find("enable_clip_range").asInt()==1);
+        m_enable_clip_range = (general_config.find("enable_clip_range").asInt32()==1);
         if (general_config.check("enable_discard_range")==false) {yError() << "Missing enable_discard_range"; return false; }
-        m_enable_discard_range = (general_config.find("enable_discard_range").asInt()==1);
+        m_enable_discard_range = (general_config.find("enable_discard_range").asInt32()==1);
 
         if (m_enable_clip_range==true && m_enable_discard_range)
         {
@@ -337,7 +337,7 @@ bool GazeboYarpLaserSensorDriver::setScanRate (double rate)
     return true;
 }
 
-bool GazeboYarpLaserSensorDriver::getDeviceInfo (yarp::os::ConstString &device_info)
+bool GazeboYarpLaserSensorDriver::getDeviceInfo (std::string &device_info)
 {
     yarp::os::LockGuard guard(m_mutex);
     return true;

@@ -30,6 +30,7 @@ endif()
 add_subdirectory(worldinterface)
 add_subdirectory(linkattacher)
 add_subdirectory(lasersensor)
+add_subdirectory(doublelaser)
 add_subdirectory(depthCamera)
 
 

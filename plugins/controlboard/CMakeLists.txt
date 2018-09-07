@@ -36,7 +36,8 @@ set(controlBoard_source     src/ControlBoard.cc
                             src/ControlBoardDriverCurrent.cpp
                             src/ControlBoardDriverPidControl.cpp
                             src/ControlBoardDriverTrajectory.cpp
-                            src/ControlBoardDriverCoupling.cpp)
+                            src/ControlBoardDriverCoupling.cpp
+                            src/ControlBoardDriverVirtualAnalogSensor.cpp)
 
 set(controlBoard_headers    include/gazebo/ControlBoard.hh
                             include/yarp/dev/ControlBoardDriver.h

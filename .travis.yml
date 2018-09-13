@@ -57,12 +57,7 @@ script:
     -e CXX=$CXX
     ${DOCKER_IMAGE}
     sh -c 'cd build &&\
-           make install &&\
-           (yarpserver &) &&\
-           sleep 2 &&\
-           yarp detect --write &&\
-           export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} &&\
-           testrunner --verbose --suit ${ROBOTOLOGY_SUPERBUILD_ROOT}/robotology/icub-tests/suits/basics-icubGazeboSim.xml'
+           make install'
 
 notifications:
   email:

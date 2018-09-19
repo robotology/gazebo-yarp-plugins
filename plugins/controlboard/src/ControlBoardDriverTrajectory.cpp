@@ -210,7 +210,7 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
 #else
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
 #endif
-    m_controllerPeriod = static_cast<unsigned>(physics->GetUpdatePeriod() * 1000.0);
+    m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0;
     double speedf = fabs(speed);
     double dx0 =0;
     m_computed_reference = current_pos;
@@ -231,7 +231,7 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
 
     //double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
 
-    m_tf = (1000 * fabs(m_xf - m_x0) / speedf) / double (m_controllerPeriod);
+    m_tf = (1000 * fabs(m_xf - m_x0) / speedf) / m_controllerPeriod;
     m_dx0 = m_dx0 * m_tf;
 
     dx0  = m_dx0;
@@ -391,7 +391,7 @@ bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double f
 #else
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
 #endif
-    m_controllerPeriod = static_cast<unsigned>(physics->GetUpdatePeriod() * 1000.0);
+    m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0;
     m_x0 = current_pos;
     m_xf = final_pos;
     if (m_xf > m_joint_max) m_xf = m_joint_max;

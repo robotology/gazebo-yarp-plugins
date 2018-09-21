@@ -41,6 +41,7 @@ but are nevertheless useful for simulating complex scenarios.
 | Project an image stream on a simulated surface | `gazebo_yarp_videotexture` | Visual  | gazebo::VideoTexture |
 | Expose a YARP RPC interface to create/manipulate objects programatically. | `gazebo_yarp_worldinterface` | Model |  gazebo::WorldInterface |
 | Publish the absolute pose of the root link of a model. | `gazebo_yarp_modelposepublisher` | Model | gazebo::GazeboYarpModelPosePublisher |
+| Expose a YARP RPC interface to attach/detach links of the models spawned to the links of the robot using a fixed joint. | `gazebo_yarp_rpc_linkattacher` | Model | gazebo::GazeboYarpLinkAttacher |
 | Exposes the absolute pose, velocity and acceleration of a desired link through YARP analog server device| `gazebo_basestate` | Model | gazebo::GazeboYarpBaseState | yarp::dev::GazeboYarpBaseStateDriver |
 
 ## Using the plugins in Gazebo Models

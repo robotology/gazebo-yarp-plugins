@@ -68,6 +68,13 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
+class ClockServer_reset : public yarp::os::Portable {
+public:
+  void init();
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
+  virtual bool read(yarp::os::ConnectionReader& connection) override;
+};
+
 bool ClockServer_pauseSimulation::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
@@ -190,6 +197,21 @@ void ClockServer_getStepSize::init() {
   _return = (double)0;
 }
 
+bool ClockServer_reset::write(yarp::os::ConnectionWriter& connection) const {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(1)) return false;
+  if (!writer.writeTag("reset",1,1)) return false;
+  return true;
+}
+
+bool ClockServer_reset::read(yarp::os::ConnectionReader& connection) {
+  YARP_UNUSED(connection);
+  return true;
+}
+
+void ClockServer_reset::init() {
+}
+
 ClockServer::ClockServer() {
   yarp().setOwner(*this);
 }
@@ -252,6 +274,14 @@ double ClockServer::getStepSize() {
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
+}
+void ClockServer::reset() {
+  ClockServer_reset helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","void ClockServer::reset()");
+  }
+  yarp().write(helper);
 }
 
 bool ClockServer::read(yarp::os::ConnectionReader& connection) {
@@ -362,6 +392,21 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "reset") {
+      if (!direct) {
+        ClockServer_reset helper;
+        helper.init();
+        yarp().callback(helper,*this,"__direct__");
+      } else {
+        reset();
+      }
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeOnewayResponse()) return false;
+      }
+      reader.accept();
+      return true;
+    }
     if (tag == "help") {
       std::string functionName;
       if (!reader.readString(functionName)) {
@@ -403,6 +448,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
     helpString.push_back("resetSimulationTime");
     helpString.push_back("getSimulationTime");
     helpString.push_back("getStepSize");
+    helpString.push_back("reset");
     helpString.push_back("help");
   }
   else {
@@ -442,6 +488,10 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
       helpString.push_back("double getStepSize() ");
       helpString.push_back("Get the current step size in seconds. ");
       helpString.push_back("@return the step size in seconds ");
+    }
+    if (functionName=="reset") {
+      helpString.push_back("void reset() ");
+      helpString.push_back("Reset the simulation ");
     }
     if (functionName=="help") {
       helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");

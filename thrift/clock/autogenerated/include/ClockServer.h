@@ -60,6 +60,10 @@ public:
    * @return the step size in seconds
    */
   virtual double getStepSize();
+  /**
+   * Reset the simulation
+   */
+  virtual void reset();
   virtual bool read(yarp::os::ConnectionReader& connection) override;
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };

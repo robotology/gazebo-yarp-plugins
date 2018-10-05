@@ -102,9 +102,9 @@ public:
     void resetSimulationTime();
 
     /**
-     * Reset the simulation  back to zero
+     * Reset the simulation time and state back to zero
      */
-    void reset();    
+    void resetSimulation();    
     
     /**
      * Get the current step size in seconds.

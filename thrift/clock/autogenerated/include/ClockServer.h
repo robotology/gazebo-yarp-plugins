@@ -61,9 +61,9 @@ public:
    */
   virtual double getStepSize();
   /**
-   * Reset the simulation
+   * Reset the simulation state and time
    */
-  virtual void reset();
+  virtual void resetSimulation();
   virtual bool read(yarp::os::ConnectionReader& connection) override;
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };

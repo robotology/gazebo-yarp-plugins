@@ -68,7 +68,7 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-class ClockServer_reset : public yarp::os::Portable {
+class ClockServer_resetSimulation : public yarp::os::Portable {
 public:
   void init();
   virtual bool write(yarp::os::ConnectionWriter& connection) const override;
@@ -197,19 +197,19 @@ void ClockServer_getStepSize::init() {
   _return = (double)0;
 }
 
-bool ClockServer_reset::write(yarp::os::ConnectionWriter& connection) const {
+bool ClockServer_resetSimulation::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
-  if (!writer.writeTag("reset",1,1)) return false;
+  if (!writer.writeTag("resetSimulation",1,1)) return false;
   return true;
 }
 
-bool ClockServer_reset::read(yarp::os::ConnectionReader& connection) {
+bool ClockServer_resetSimulation::read(yarp::os::ConnectionReader& connection) {
   YARP_UNUSED(connection);
   return true;
 }
 
-void ClockServer_reset::init() {
+void ClockServer_resetSimulation::init() {
 }
 
 ClockServer::ClockServer() {
@@ -275,11 +275,11 @@ double ClockServer::getStepSize() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-void ClockServer::reset() {
-  ClockServer_reset helper;
+void ClockServer::resetSimulation() {
+  ClockServer_resetSimulation helper;
   helper.init();
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","void ClockServer::reset()");
+    yError("Missing server method '%s'?","void ClockServer::resetSimulation()");
   }
   yarp().write(helper);
 }
@@ -392,13 +392,13 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "reset") {
+    if (tag == "resetSimulation") {
       if (!direct) {
-        ClockServer_reset helper;
+        ClockServer_resetSimulation helper;
         helper.init();
         yarp().callback(helper,*this,"__direct__");
       } else {
-        reset();
+        resetSimulation();
       }
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
@@ -448,7 +448,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
     helpString.push_back("resetSimulationTime");
     helpString.push_back("getSimulationTime");
     helpString.push_back("getStepSize");
-    helpString.push_back("reset");
+    helpString.push_back("resetSimulation");
     helpString.push_back("help");
   }
   else {
@@ -489,9 +489,9 @@ std::vector<std::string> ClockServer::help(const std::string& functionName) {
       helpString.push_back("Get the current step size in seconds. ");
       helpString.push_back("@return the step size in seconds ");
     }
-    if (functionName=="reset") {
-      helpString.push_back("void reset() ");
-      helpString.push_back("Reset the simulation ");
+    if (functionName=="resetSimulation") {
+      helpString.push_back("void resetSimulation() ");
+      helpString.push_back("Reset the simulation state and time ");
     }
     if (functionName=="help") {
       helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");

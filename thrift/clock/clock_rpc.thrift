@@ -42,9 +42,9 @@ service ClockServer {
      */
     double getStepSize();
 
-    /** Reset the simulation
+    /** Reset the simulation state and time
      *
      */
-    oneway void reset();
+    oneway void resetSimulation();
     
 }

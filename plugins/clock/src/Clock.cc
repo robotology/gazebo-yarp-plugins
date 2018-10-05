@@ -177,7 +177,7 @@ namespace gazebo
         m_world->ResetTime();
     }
 
-    void GazeboYarpClock::reset()
+    void GazeboYarpClock::resetSimulation()
     {
         //m_world->ResetEntities(gazebo::physics::Base::MODEL);
         m_world->Reset();

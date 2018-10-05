@@ -111,7 +111,7 @@ bool LinkAttacherServerImpl::attachUnscoped(const string& model_name, const std:
             #if GAZEBO_MAJOR_VERSION >= 8
             joint->Load(object_link,robot_link,ignition::math::Pose3d());
             #else
-            joint->Load(object_link,robot_link,gazebo::Math::Pose());
+            joint->Load(object_link,robot_link,gazebo::math::Pose());
             #endif
 
             //Attach(prent_link,child_link)

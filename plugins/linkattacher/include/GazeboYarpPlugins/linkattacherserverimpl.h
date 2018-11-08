@@ -39,25 +39,25 @@ public:
 
   /**
   * Attach any link of the models spawned in gazebo to a link of the robot using a fixed joint.
-  * @param model_name name that identifies model in gazebo (that are already spawned in gazebo)
-  * @param model_link_name name of a the link in the model you want to attach to the robot
-  * @param robot_name name of the robot
-  * @param robot_link_name name of the robot link to which you want to attached the model link
+  * @param parent_model_name name that identifies the first model
+  * @param parent_model_link_name name of the link in the first model you want to attach (scoped or unscoped name)
+  * @param child_model_name name that identifies the second model
+  * @param child_model_link_name name of the link in the second model you want to attach (scoped or unscoped name)
   * @return true if success, false otherwise
   */
-  virtual bool attachUnscoped(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name);
+  virtual bool attachUnscoped(const std::string& parent_model_name, const std::string& parent_model_link_name, const std::string& child_model_name, const std::string& child_model_link_name);
 
   /**
   * Detach the model link which was previously attached to the robot link through a fixed joint.
-  * @param model_name name that identifies model in gazebo (that are already spawned in gazebo)
-  * @param model_link_name name of a the link in the model that is attached to the robot
+  * @param model_name name that identifies parent model
+  * @param model_link_name name of the link of the parent model that is attached
   * @return true if success, false otherwise
   */
   virtual bool detachUnscoped(const std::string& model_name, const std::string& model_link_name);
 
   /**
   * Enable/disables gravity for a model
-  * @param model_name name that identifies model in gazebo (that are already spawned in gazebo)
+  * @param model_name name that identifies model in gazebo
   * @param enable 1 to enable gravity, 0 otherwise
   * @return returns true or false on success failure
   */

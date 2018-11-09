@@ -68,38 +68,27 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpFakeControlBoard)
         // Add the gazebo_controlboard device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpFakeControlBoardDriver>("gazebo_fakecontrolboard", "controlboardwrapper2", "GazeboYarpFakeControlBoardDriver"));
 
-        //Getting .ini configuration file from sdf
-        bool configuration_loaded = false;
+        // Getting .ini configuration file parameters from sdf
+        bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_pluginParameters);
 
-        yarp::os::Bottle wrapper_group;
-        yarp::os::Bottle driver_group;
-        if (_sdf->HasElement("yarpConfigurationFile")) {
-            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+        if (!configuration_loaded)
+        {
+            yError() << "GazeboYarpFakeControlBoard : File .ini not found, load failed." ;
+            return;
+        }
 
-            GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent,_sdf,m_pluginParameters);
+        yarp::os::Bottle wrapper_group = m_pluginParameters.findGroup("WRAPPER");
+        if(wrapper_group.isNull()) 
+        {
+            yError("GazeboYarpFakeControlBoard : [WRAPPER] group not found in config file\n");
+            return;
+        }
 
-            bool wipe = false;
-            if (ini_file_path != "" && m_pluginParameters.fromConfigFile(ini_file_path.c_str(),wipe))
-            {
-                m_pluginParameters.put("gazebo_ini_file_path",ini_file_path.c_str());
-
-                wrapper_group = m_pluginParameters.findGroup("WRAPPER");
-                if(wrapper_group.isNull()) {
-                    yError("GazeboYarpFakeControlBoard : [WRAPPER] group not found in config file\n");
-                    return;
-                }
-
-                if(m_pluginParameters.check("ROS"))
-                {
-                    std::string ROS;
-                    ROS = std::string ("(") + m_pluginParameters.findGroup("ROS").toString() + std::string (")");
-                    wrapper_group.append(yarp::os::Bottle(ROS));
-                }
-
-                configuration_loaded = true;
-            }
-
+        if(m_pluginParameters.check("ROS"))
+        {
+            std::string ROS;
+            ROS = std::string ("(") + m_pluginParameters.findGroup("ROS").toString() + std::string (")");
+            wrapper_group.append(yarp::os::Bottle(ROS));
         }
 
         if (!configuration_loaded) {
@@ -128,6 +117,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpFakeControlBoard)
             return;
         }
 
+        yarp::os::Bottle driver_group;
         for (int n = 0; n < netList->size(); n++)
         {
             yarp::dev::PolyDriverDescriptor newPoly;

@@ -74,46 +74,30 @@ namespace gazebo
         // Add the gazebo device driver to the factory
         ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpContactLoadCellArrayDriver>
                                            ("gazebo_contactloadcellarray", "analogServer", "GazeboYarpContactLoadCellArray"));
-           
-        // Getting .ini config file from _sdf
-        yarp::os::Bottle wrapper_properties;
-        yarp::os::Bottle driver_properties;
-    
-        bool configuration_loaded = false;
-        if (_sdf->HasElement("yarpConfigurationFile"))
-        {
-            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-      
-            GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent, _sdf, m_parameters);
-      
-            bool wipe = false;
-            if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str(), wipe))
-            {
-                wrapper_properties = m_parameters.findGroup("WRAPPER");
-                if (wrapper_properties.isNull())
-                {
-                    yError() << "GazeboYarpContactLoadCellArray Plugin failed: [WRAPPER] group not found in config file";
-                    return;  
-                }
 
-                driver_properties = m_parameters.findGroup("DRIVER");
-                if (driver_properties.isNull())
-                {
-                    yError() << "GazeboYarpContactLoadCellArray Plugin failed: [DRIVER] group not found in config file";
-                    return;
-                }
+        // Getting .ini configuration file parameters from sdf
+        bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_parameters);
 
-                configuration_loaded = true;
-            }
-        }
-    
         if (!configuration_loaded)
         {
-            yError() << "GazeboYarpContactLoadCellArray Plugin Failed: File .ini not found, load failed";
+            yError() << "GazeboYarpContactLoadCellArray : File .ini not found, load failed." ;
             return;
         }
-    
+
+        yarp::os::Bottle wrapper_properties = m_parameters.findGroup("WRAPPER");
+        if (wrapper_properties.isNull())
+        {
+            yError() << "GazeboYarpContactLoadCellArray Plugin failed: [WRAPPER] group not found in config file";
+            return;  
+        }
+
+        yarp::os::Bottle driver_properties = m_parameters.findGroup("DRIVER");
+        if (driver_properties.isNull())
+        {
+            yError() << "GazeboYarpContactLoadCellArray Plugin failed: [DRIVER] group not found in config file";
+            return;
+        }
+
         // Check on Required Parameter for Analog Sensor Wrapper
         if (wrapper_properties.find("device").isNull())
         {

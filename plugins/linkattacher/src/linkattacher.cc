@@ -44,44 +44,33 @@ void LinkAttacher::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   m_la_server.attachWorldPointer(_model->GetWorld());
   m_la_server.attachModelPointer(_model);
 
-  bool configuration_loaded = false;
+  // Getting .ini configuration file parameters from sdf
+  bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_model, _sdf, m_parameters);
 
-  if( _sdf->HasElement("yarpConfigurationFile") )
+  if (!configuration_loaded)
   {
-    std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-    std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-
-    if(!ini_file_path.empty() && m_parameters.fromConfigFile(ini_file_path.c_str()))
-    {
-      yInfo() << LogPrefix << "Load: Found yarpConfigurationFile: loading from " << ini_file_path;
-      configuration_loaded = true;
-    }
-
-    if(!configuration_loaded)
-    {
-      yError() << LogPrefix << "Load: Failed to load the configuration file";
+      yError() << LogPrefix << " File .ini not found, load failed." ;
       return;
-    }
-
-    std::string portname;
-    if(m_parameters.check("name"))
-    {
-          portname = m_parameters.find("name").asString();
-    }
-    else
-    {
-      yError() << LogPrefix << "Load: name parameter missing in the configuration file";
-      return;
-    }
-
-    m_rpcport = std::unique_ptr<yarp::os::RpcServer>(new yarp::os::RpcServer());
-    if(!m_rpcport->open(portname))
-    {
-      yError() << LogPrefix << "Load: failed to open rpcserver port";
-      return;
-    }
-
-    m_la_server.yarp().attachAsServer(*m_rpcport);
   }
+
+  std::string portname;
+  if(m_parameters.check("name"))
+  {
+        portname = m_parameters.find("name").asString();
+  }
+  else
+  {
+    yError() << LogPrefix << " <name> parameter missing in the configuration file";
+    return;
+  }
+
+  m_rpcport = std::unique_ptr<yarp::os::RpcServer>(new yarp::os::RpcServer());
+  if(!m_rpcport->open(portname))
+  {
+    yError() << LogPrefix << " failed to open rpcserver port";
+    return;
+  }
+
+  m_la_server.yarp().attachAsServer(*m_rpcport);
 
 }

@@ -45,7 +45,9 @@ std::vector<std::string> splitString(const std::string &s, const std::string &de
  * Load the configuration for a given model plugin,
  * and save the configuration in the plugin_parameters output object.
  * This involves calling addGazeboEnviromentalVariablesModel and then loading
- * the yarp configuration file specified in the sdf with the yarpConfigurationFile tag.
+ * the yarp configuration file specified in the sdf with the yarpConfigurationFile and
+ * yarpConfigurationString tags. In case a parameter is defined in both, the yarpConfigurationString
+ * has the priority.
  */
 bool loadConfigModelPlugin(gazebo::physics::ModelPtr _parent,
                            sdf::ElementPtr _sdf,
@@ -74,7 +76,9 @@ bool addGazeboEnviromentalVariablesModel(gazebo::physics::ModelPtr _parent,
  * Load the configuration for a given sensor plugin,
  * and save the configuration in the plugin_parameters output object.
  * This involves calling addGazeboEnviromentalVariablesSensor and then loading
- * the yarp configuration file specified in the sdf with the yarpConfigurationFile tag.
+ * the yarp configuration file specified in the sdf with the yarpConfigurationFile and
+ * yarpConfigurationString tags. In case a parameter is defined in both, the yarpConfigurationString
+ * has the priority.
  */
 bool loadConfigSensorPlugin(gazebo::sensors::SensorPtr _sensor,
                             sdf::ElementPtr _sdf,

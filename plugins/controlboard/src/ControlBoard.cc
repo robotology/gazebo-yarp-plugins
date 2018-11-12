@@ -68,43 +68,27 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         // Add the gazebo_controlboard device driver to the factory.
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>("gazebo_controlboard", "controlboardwrapper2", "GazeboYarpControlBoardDriver"));
 
-        //Getting .ini configuration file from sdf
-        bool configuration_loaded = false;
+        // Getting .ini configuration file parameters from sdf
+        bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_parameters);
 
-        yarp::os::Bottle wrapper_group;
-        yarp::os::Bottle driver_group;
-        if (_sdf->HasElement("yarpConfigurationFile")) {
-            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-
-            GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent,_sdf,m_parameters);
-
-            bool wipe = false;
-            if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
-            {
-                m_parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
-
-                wrapper_group = m_parameters.findGroup("WRAPPER");
-                if(wrapper_group.isNull()) {
-                    yError("GazeboYarpControlBoard : [WRAPPER] group not found in config file\n");
-                    return;
-                }
-
-                if(m_parameters.check("ROS"))
-                {
-                    std::string ROS;
-                    ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
-                    wrapper_group.append(yarp::os::Bottle(ROS));
-                }
-
-                configuration_loaded = true;
-            }
-
-        }
-
-        if (!configuration_loaded) {
+        if (!configuration_loaded)
+        {
             yError() << "GazeboYarpControlBoard : File .ini not found, load failed." ;
             return;
+        }
+
+        yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
+        if(wrapper_group.isNull()) 
+        {
+            yError("GazeboYarpControlBoard : [WRAPPER] group not found in config file\n");
+            return;
+        }
+
+        if(m_parameters.check("ROS"))
+        {
+            std::string ROS;
+            ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
+            wrapper_group.append(yarp::os::Bottle(ROS));
         }
 
         m_wrapper.open(wrapper_group);
@@ -128,6 +112,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
 
+        yarp::os::Bottle driver_group;
         for (int n = 0; n < netList->size(); n++)
         {
             yarp::dev::PolyDriverDescriptor newPoly;

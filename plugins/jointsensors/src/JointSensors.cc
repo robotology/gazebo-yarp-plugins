@@ -57,13 +57,15 @@ void GazeboYarpJointSensors::Load(physics::ModelPtr _parent, sdf::ElementPtr _sd
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpJointSensorsDriver>
                                       ("gazebo_jointsensors", "analogServer", "GazeboYarpJointSensorsDriver"));
 
-    //Getting .ini configuration file from sdf
+    // Getting .ini configuration file from sdf
     ::yarp::os::Property wrapper_properties;
     ::yarp::os::Property driver_properties;
 
-    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent,_sdf,driver_properties);
+    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, driver_properties);
 
-    if (!configuration_loaded) {
+    if (!configuration_loaded)
+    {
+        yError() << "GazeboYarpJointSensors : File .ini not found, load failed." ;
         return;
     };
 

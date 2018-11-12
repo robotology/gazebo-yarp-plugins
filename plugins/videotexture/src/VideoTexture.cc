@@ -78,29 +78,17 @@ namespace gazebo
        return;
     }
 
-    //Getting .ini configuration file from sdf
-    bool configuration_loaded = false;
-
+    // Getting .ini configuration file parameters from sdf
     if(!sdf->HasElement("yarpConfigurationFile") && sdf->HasElement("sdf"))
     {
         sdf = sdf->GetElement("sdf");
     }
 
-    if (sdf->HasElement("yarpConfigurationFile"))
-    {
-        std::string ini_file_name = sdf->Get<std::string>("yarpConfigurationFile");
-        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-
-        if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str()))
-        {
-            //yInfo() << "Found yarpConfigurationFile: loading from " << ini_file_path ;
-            configuration_loaded = true;
-        }
-     }
+    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_parameters);
 
     if (!configuration_loaded)
     {
-        //yError() << "VideoTexture::Load error could not load configuration file";
+        yError() << "VideoTexture : File .ini not found, load failed." ;
         return;
     }
 

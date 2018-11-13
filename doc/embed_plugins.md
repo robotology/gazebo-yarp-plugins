@@ -55,7 +55,10 @@ For model plugins such as the `gazebo_yarp_controlboard`, a plugin can be loaded
 </plugin>
 ~~~
 Most Model and Sensor plugins present in `gazebo-yarp-plugins` read their configuration from the file referenced in the `yarpConfigurationFile` tag.
-The location of the file is defined by using a [Gazebo URI](https://bitbucket.org/osrf/gazebo/wiki/uri), while the file is a [.ini YARP configuration file](http://www.yarp.it/yarp_config_files.html).
+The location of the file is defined by using a [Gazebo URI](https://bitbucket.org/osrf/gazebo/wiki/uri), while the file is a [.ini YARP configuration file](http://www.yarp.it/yarp_config_files.html). Alternatively, parameters can be passed directly in the `sdf` with the [`Bottle`](http://www.yarp.it/classyarp_1_1os_1_1Bottle.html) format using the `yarpConfigurationString` tag (e.g. `<yarpConfigurationString>(name /iCub/linkattacher/rpc:i)</yarpConfigurationString>`). When using `yarpConfigurationString`, it is important to remember that:
+- only **one** `yarpConfigurationString` can be defined for each plugin.
+- the tags `<yarpConfigurationFile>` and `<yarpConfigurationString>` can coexist, but if a parameter is defined in both the value in `<yarpConfigurationString>` will **always** be used.
+
 For specific information consumed by each plugin, please refer to the doxygen documentation of the specific plugin class.
 
 System plugins instead need to be loaded at the beginning of the simulation, and hence they are passed as command line arguments when launching `gazebo` (or `gzserver`).

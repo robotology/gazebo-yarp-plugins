@@ -84,7 +84,7 @@ namespace gazebo
         sdf = sdf->GetElement("sdf");
     }
 
-    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_parameters);
+    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(parent, sdf, m_parameters);
 
     if (!configuration_loaded)
     {

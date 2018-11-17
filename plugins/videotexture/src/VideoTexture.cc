@@ -78,13 +78,25 @@ namespace gazebo
        return;
     }
 
-    // Getting .ini configuration file parameters from sdf
+    //Getting .ini configuration file from sdf
+    bool configuration_loaded = false;
+
     if(!sdf->HasElement("yarpConfigurationFile") && sdf->HasElement("sdf"))
     {
         sdf = sdf->GetElement("sdf");
     }
 
-    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(parent, sdf, m_parameters);
+    if (sdf->HasElement("yarpConfigurationFile"))
+    {
+        std::string ini_file_name = sdf->Get<std::string>("yarpConfigurationFile");
+        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+
+        if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str()))
+        {
+            //yInfo() << "Found yarpConfigurationFile: loading from " << ini_file_path ;
+            configuration_loaded = true;
+        }
+     }
 
     if (!configuration_loaded)
     {

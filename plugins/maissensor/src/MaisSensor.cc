@@ -64,45 +64,27 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     // Add the gazebo_controlboard device driver to the factory.
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpMaisSensorDriver>("gazebo_maissensor", "analogServer", "GazeboYarpMaisSensorDriver"));
 
-    //Getting .ini configuration file from sdf
-    bool configuration_loaded = false;
+    // Getting .ini configuration file parameters from sdf
+    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_parameters);
 
-    yarp::os::Bottle wrapper_group;
-    yarp::os::Bottle driver_group;
-    if (_sdf->HasElement("yarpConfigurationFile")) {
-        std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-
-        GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent,_sdf,m_parameters);
-
-        bool wipe = false;
-        if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
-        {
-            yInfo() << "GazeboYarpMaisSensor: Found yarpConfigurationFile: loading from " << ini_file_path;
-            m_parameters.put("gazebo_ini_file_path",ini_file_path.c_str());
-
-            wrapper_group = m_parameters.findGroup("WRAPPER");
-            if(wrapper_group.isNull())
-            {
-                yError("GazeboYarpMaisSensor : [WRAPPER] group not found in config file\n");
-                return;
-            }
-
-            if(m_parameters.check("ROS"))
-            {
-                std::string ROS;
-                ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
-                wrapper_group.append(yarp::os::Bottle(ROS));
-            }
-                
-            configuration_loaded = true;
-        }
-
+    if (!configuration_loaded)
+    {
+        yError() << "GazeboYarpMaisSensor : File .ini not found, load failed." ;
+        return;
     }
 
-    if (!configuration_loaded) {
-        yError() << "GazeboYarpMaisSensor: File .ini not found, quitting" ;
+    yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
+    if(wrapper_group.isNull())
+    {
+        yError("GazeboYarpMaisSensor : [WRAPPER] group not found in config file\n");
         return;
+    }
+
+    if(m_parameters.check("ROS"))
+    {
+        std::string ROS;
+        ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
+        wrapper_group.append(yarp::os::Bottle(ROS));
     }
     
     //Open the wrapper
@@ -137,6 +119,7 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     m_sensorName = m_robotName + "::" + newPoly.key.c_str();
     newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(m_sensorName);
 
+    yarp::os::Bottle driver_group;
     if( newPoly.poly != NULL)
     {
         // device already exists, use it, setting it againg to increment the usage counter.

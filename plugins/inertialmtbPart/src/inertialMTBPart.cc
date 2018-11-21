@@ -55,10 +55,10 @@ void GazeboYarpInertialMTBPart::Load(physics::ModelPtr _parent, sdf::ElementPtr 
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpInertialMTBPartDriver>
                                         ("gazebo_inertialMTB", "analogServer", "GazeboYarpInertialMTBPartDriver"));
 
-    //Getting .ini configuration file parameters from sdf
+    // Getting .ini configuration file parameters from sdf
     ::yarp::os::Property plugin_properties;
 
-    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent,_sdf,plugin_properties);
+    bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, plugin_properties);
 
     if (!configuration_loaded)
     {

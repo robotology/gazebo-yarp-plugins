@@ -65,33 +65,27 @@ namespace gazebo
         ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpBaseStateDriver>
                                         ("gazebo_basestate", "analogServer", "GazeboYarpBaseState"));
         
-        yarp::os::Bottle networkDeviceProp;
-        yarp::os::Bottle deviceDriverProp;
-        
-        if (_sdf->HasElement("yarpConfigurationFile"))
+        // Getting .ini configuration file parameters from sdf
+        bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_config);
+
+        if (!configuration_loaded)
         {
-            std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-            std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-            
-            GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_parent, _sdf, m_config);
-            
-            bool wipe = false;
-            if (ini_file_path != "" && m_config.fromConfigFile(ini_file_path.c_str(), wipe))
-            {
-                networkDeviceProp = m_config.findGroup("WRAPPER");
-                if (networkDeviceProp.isNull())
-                {
-                    yError() << "GazeboYarpBaseState plugin failed: [WRAPPER] group not found in config file";
-                    return;
-                }
-                
-                deviceDriverProp = m_config.findGroup("DRIVER");
-                if (deviceDriverProp.isNull())
-                {
-                    yError() << "GazeboYarpBaseState plugin failed: [DRIVER] group not found in config file";
-                    return;
-                }
-            }
+            yError() << "GazeboYarpBaseState : File .ini not found, load failed." ;
+            return;
+        }
+
+        yarp::os::Bottle networkDeviceProp = m_config.findGroup("WRAPPER");
+        if (networkDeviceProp.isNull())
+        {
+            yError() << "GazeboYarpBaseState plugin failed: [WRAPPER] group not found in config file";
+            return;
+        }
+        
+        yarp::os::Bottle deviceDriverProp = m_config.findGroup("DRIVER");
+        if (deviceDriverProp.isNull())
+        {
+            yError() << "GazeboYarpBaseState plugin failed: [DRIVER] group not found in config file";
+            return;
         }
       
         if (networkDeviceProp.find("device").isNull())

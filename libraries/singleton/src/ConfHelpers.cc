@@ -60,23 +60,33 @@ bool loadConfigModelPlugin(physics::ModelPtr _model,
                            sdf::ElementPtr _sdf,
                            yarp::os::Property& plugin_parameters)
 {
-    if (_sdf->HasElement("yarpConfigurationFile")) {
+    GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_model,_sdf,plugin_parameters);
+    bool wipe = false;
+    bool loaded_configuration = true;
+
+    if (_sdf->HasElement("yarpConfigurationFile"))
+    {
         std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
         std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
 
-        GazeboYarpPlugins::addGazeboEnviromentalVariablesModel(_model,_sdf,plugin_parameters);
-
-        bool wipe = false;
         if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe)) {
-            return true;
+            loaded_configuration = true;
         } else {
             yError() << "GazeboYarpPlugins error: failure in loading configuration for model" << _model->GetName() << "\n"
                       << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << "\n"
                       << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path;
-            return false;
+            loaded_configuration = false;
         }
     }
-    return true;
+
+    if (_sdf->HasElement("yarpConfigurationString"))
+    {
+        std::string configuration_string = _sdf->Get<std::string>("yarpConfigurationString");
+        plugin_parameters.fromString(configuration_string, wipe);
+        yInfo() << "GazeboYarpPlugins: configuration of model " << _model->GetName() << " loaded from yarpConfigurationString : " << configuration_string << "\n";
+    }
+
+    return loaded_configuration;
 }
 
 bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
@@ -122,31 +132,41 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
                             sdf::ElementPtr _sdf,
                             yarp::os::Property& plugin_parameters)
 {
-    if (_sdf->HasElement("yarpConfigurationFile")) {
-        std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+    GazeboYarpPlugins::addGazeboEnviromentalVariablesSensor(_sensor,_sdf,plugin_parameters);
+    bool wipe = false;
+    bool loaded_configuration = true;
 
-        GazeboYarpPlugins::addGazeboEnviromentalVariablesSensor(_sensor,_sdf,plugin_parameters);
-
-        bool wipe = false;
-        if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
-        {
-            return true;
-        }
-        else
-        {
 #if GAZEBO_MAJOR_VERSION >= 7
     std::string sensorName = _sensor->Name();
 #else
     std::string sensorName = _sensor->GetName();
 #endif
+
+    if (_sdf->HasElement("yarpConfigurationFile")) {
+        std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
+        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
+        
+        if (ini_file_path != "" && plugin_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
+        {
+            loaded_configuration = true;
+        }
+        else
+        {
             yError()  << "GazeboYarpPlugins error: failure in loading configuration for sensor " << sensorName << "\n"
                       << "GazeboYarpPlugins error: yarpConfigurationFile : " << ini_file_name << "\n"
                       << "GazeboYarpPlugins error: yarpConfigurationFile absolute path : " << ini_file_path ;
-            return false;
+            loaded_configuration = false;
         }
     }
-    return true;
+
+    if (_sdf->HasElement("yarpConfigurationString"))
+    {
+        std::string configuration_string = _sdf->Get<std::string>("yarpConfigurationString");
+        plugin_parameters.fromString(configuration_string, wipe);
+        yInfo() << "GazeboYarpPlugins: configuration of sensor " << sensorName << " loaded from yarpConfigurationString : " << configuration_string << "\n";
+    }
+
+    return loaded_configuration;
 }
 
 

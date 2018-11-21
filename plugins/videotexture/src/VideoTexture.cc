@@ -100,7 +100,7 @@ namespace gazebo
 
     if (!configuration_loaded)
     {
-        //yError() << "VideoTexture::Load error could not load configuration file";
+        yError() << "VideoTexture : File .ini not found, load failed." ;
         return;
     }
 

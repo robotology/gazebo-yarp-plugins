@@ -81,27 +81,27 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         //Getting .ini configuration file from sdf
         bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_parameters);
-        
+
         if (!configuration_loaded)
         {
             yError() << "GazeboYarpControlBoard : File .ini not found, load failed." ;
             return;
         }
-        
+
         yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
         if(wrapper_group.isNull()) 
         {
             yError("GazeboYarpControlBoard : [WRAPPER] group not found in config file\n");
             return;
         }
-        
+
         if(m_parameters.check("ROS"))
         {
             std::string ROS;
             ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
             wrapper_group.append(yarp::os::Bottle(ROS));
         }
-                        
+
         m_wrapper.open(wrapper_group);
 
         if (!m_wrapper.isValid()) {
@@ -122,7 +122,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             m_wrapper.close();
             return;
         }
-        
+
         yarp::os::Bottle driver_group;
         yarp::os::Bottle virt_group;
         

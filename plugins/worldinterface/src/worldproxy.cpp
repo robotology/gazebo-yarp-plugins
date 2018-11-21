@@ -371,7 +371,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   ostringstream objlabel;
   if (object_name!= "")
   {
-     objlabel << object_name << nobjects;
+     objlabel << object_name;
   }
   else
   {
@@ -589,7 +589,7 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   ostringstream objlabel;
   if (object_name!= "")
   {
-     objlabel << object_name << nobjects;
+     objlabel << object_name;
   }
   else
   {

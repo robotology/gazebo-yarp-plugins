@@ -257,7 +257,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
   ostringstream objlabel;
   if (object_name!= "")
   {
-     objlabel << object_name << nobjects;
+     objlabel << object_name;
   }
   else
   {

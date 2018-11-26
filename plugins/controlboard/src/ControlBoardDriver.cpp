@@ -64,6 +64,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_velocities.resize(m_numberOfJoints);
     m_amp.resize(m_numberOfJoints);
     m_torques.resize(m_numberOfJoints); m_torques.zero();
+    m_measTorques.resize(m_numberOfJoints); m_measTorques.zero();
     m_maxTorques.resize(m_numberOfJoints, 2000.0);
     m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_jntReferencePositions.resize(m_numberOfJoints);
@@ -123,6 +124,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_speed_ramp_handler.resize(m_numberOfJoints, NULL);
     m_velocity_watchdog.resize(m_numberOfJoints, NULL);
 
+    m_useVirtualAnalogSensor = m_pluginParameters.check("useVirtualAnalogSensor", yarp::os::Value(false)).asBool();
+    
     VectorOf<int> trajectory_generator_type;
     trajectory_generator_type.resize(m_numberOfJoints);
 
@@ -466,7 +469,14 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 #endif
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, gazeboPos);
         m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
-        m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
+        if (!m_useVirtualAnalogSensor)
+        {
+            m_torques[jnt_cnt] = m_jointPointers[jnt_cnt]->GetForce(0u);
+        }
+        else
+        {
+            m_torques[jnt_cnt] = m_measTorques[jnt_cnt];
+        }
     }
 
     m_motPositions=m_positions;

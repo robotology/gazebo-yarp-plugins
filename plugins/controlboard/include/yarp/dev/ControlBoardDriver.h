@@ -8,6 +8,7 @@
 #define GAZEBOYARP_CONTROLBOARDDRIVER_HH
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IPidControl.h>
@@ -18,6 +19,7 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IRemoteVariables.h>
+#include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
@@ -94,8 +96,9 @@ class yarp::dev::GazeboYarpControlBoardDriver:
     public ICurrentControl,
     public IPidControl,
     public IRemoteVariables,
-    public IAxisInfo
-{
+    public IAxisInfo,
+    public IVirtualAnalogSensor
+    {
 public:
 
     GazeboYarpControlBoardDriver();
@@ -252,6 +255,12 @@ public:
     virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
     virtual bool getRefCurrents(double *t) override;
     virtual bool getRefCurrent(int j, double *t) override;
+    
+    // Virtual Analog Sensor Interface
+    virtual VAS_status getVirtualAnalogSensorStatus(int ch) override;
+    virtual int getVirtualAnalogSensorChannels() override;
+    virtual bool updateVirtualAnalogSensorMeasure(yarp::sig::Vector &measure) override;
+    virtual bool updateVirtualAnalogSensorMeasure(int ch, double &measure) override;
 
     /*
      * IPidControl Interface methods
@@ -379,6 +388,7 @@ private:
     yarp::sig::Vector m_motPositions;      /**< motor positions [Degrees] */
     yarp::sig::Vector m_velocities;         /**< joint velocities [Degrees/Seconds] */
     yarp::sig::Vector m_torques;            /**< joint torques [Netwon Meters] */
+    yarp::sig::Vector m_measTorques;        /**< joint torques from virtual analog sensor [Newton Meters] */
     yarp::sig::Vector m_maxTorques;         /**< joint torques [Netwon Meters] */
 
     yarp::os::Stamp m_lastTimestamp;        /**< timestamp, updated with simulation time at each onUpdate call */
@@ -441,7 +451,8 @@ private:
     bool* m_isMotionDone;
     int * m_controlMode;
     int * m_interactionMode;
-
+    
+    bool m_useVirtualAnalogSensor = false;
     bool m_started;
     int m_clock;
     int _T_controller;

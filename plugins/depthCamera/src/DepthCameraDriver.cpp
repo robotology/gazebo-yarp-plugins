@@ -376,6 +376,7 @@ bool GazeboYarpDepthCameraDriver::getDepthClipPlanes(double& nearPlane, double& 
 {
     nearPlane = m_depthCameraSensorPtr->DepthCamera()->NearClip();
     farPlane  = m_depthCameraSensorPtr->DepthCamera()->FarClip();
+    return true;
 }
 bool GazeboYarpDepthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
@@ -415,7 +416,7 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
     m_depthFrameMutex.post();
     return true;
 }
-bool GazeboYarpDepthCameraDriver::getExtrinsicParam(sig::Matrix& extrinsic)
+bool GazeboYarpDepthCameraDriver::getExtrinsicParam(yarp::sig::Matrix& extrinsic)
 {
     extrinsic.resize(4, 4);
     extrinsic.zero();

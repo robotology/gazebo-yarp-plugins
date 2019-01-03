@@ -2,7 +2,7 @@
 # Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro, Alessandro Settimi and Francesco Romano
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.5)
 PROJECT(GazeboYARPPlugins)
 
 # Project version
@@ -18,18 +18,27 @@ include(GNUInstallDirs)
 
 # Finding dependencies
 find_package(YARP 3.0.101 REQUIRED)
-find_package(Boost REQUIRED serialization system)
-find_package(Protobuf REQUIRED)
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 7.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})
     message(FATAL_ERROR "Your Gazebo version is older than Gazebo 7.0. Gazebo Yarp plugins are supported with gazebo versions >= 7.0. Please update to a newer version")
 endif()
-find_package(SDFormat REQUIRED)
-find_package(OGRE QUIET)
+
+# Custom workaround for chocolatey distributed Gazebo and OGRE
+# See https://github.com/ms-iot/ROSOnWindows/issues/48 for the original issue
+if(MSVC)
+    find_package(OGRE REQUIRED CONFIG)
+    # It is tipically better to use target_include_directories in place of
+    # global include_directories, but in this case it is more compact to use include_directories
+    include_directories(${OGRE_Paging_INCLUDE_DIRS})
+endif()
+
 
 # Add Gazebo CXX flags, to support Gazebo 6 reckless dependency on C++11
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+
+# On Windows, export all symbols by default as *nix
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 # add local cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)

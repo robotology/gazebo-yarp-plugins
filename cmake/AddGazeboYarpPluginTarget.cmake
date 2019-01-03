@@ -57,9 +57,17 @@ endif()
 add_library(${GAZEBO_PLUGIN_LIBRARY_NAME} ${LIBRARY_TYPE} ${GAZEBO_PLUGIN_SOURCES} ${GAZEBO_PLUGIN_HEADERS})
 target_link_libraries(${GAZEBO_PLUGIN_LIBRARY_NAME} ${GAZEBO_PLUGIN_LINKED_LIBRARIES})
 
+
 target_include_directories(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC 
                          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+
+if(MSVC)
+    # On Visual Studio, it is necessary to define this Windows-specific macros
+    # to get Gazebo headers to compile without problems, for more details
+    # see https://stackoverflow.com/questions/5971332/redefinition-errors-in-winsock2-h
+    target_compile_definitions(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC NOMINMAX WIN32_LEAN_AND_MEAN _USE_MATH_DEFINES)
+endif()
 
 # Add install target
 install(TARGETS ${GAZEBO_PLUGIN_LIBRARY_NAME}

@@ -26,7 +26,7 @@ public:
      * @param radius radius of the sphere [m]
      * @param pose pose of the sphere [m]
      * @param color color of the sphere
-     * @return returns a string that contains the name of the object in the world
+     * @return returns a string that contains the name of the object in the world or empty string on error
      */
     virtual std::string makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "",const bool gravity_enable = 0, const bool collision_enable = 1);
     /**
@@ -36,7 +36,7 @@ public:
      * @param thickness box thickness [m]
      * @param pose pose of the box [m]
      * @param color color of the box
-     * @return returns a string that contains the name of the object in the world
+     * @return returns a string that contains the name of the object in the world or empty string on error
      */
     virtual std::string makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "",const bool gravity_enable = 0, const bool collision_enable = 1);
     /**
@@ -45,7 +45,7 @@ public:
      * @param length lenght of the cylinder [m]
      * @param pose pose of the cylinder [m]
      * @param color color of the cylinder
-     * @return returns a string that contains the name of the object in the world
+     * @return returns a string that contains the name of the object in the world or empty string on error
      */
     virtual std::string makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "",const bool gravity_enable = 0, const bool collision_enable = 1);
     /**
@@ -87,7 +87,7 @@ public:
      * @param size size of the frame [m]
      * @param pose pose of the frame [m]
      * @param color color of the frame
-     * @return returns a string that contains the name of the object in the world
+     * @return returns a string that contains the name of the object in the world or empty string on error
      */
     virtual std::string makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name = "", const std::string& object_name = "", const bool gravity_enable = 0, const bool collision_enable = 1);
 

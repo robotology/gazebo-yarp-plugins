@@ -8,7 +8,8 @@
 
  #include "worldproxy.h"
 #include <GazeboYarpPlugins/ConfHelpers.hh>
-
+#include <gazebo/rendering/Visual.hh>
+#include <gazebo/rendering/rendering.hh>
 #include <math.h>
 
 #include <string>
@@ -681,29 +682,29 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
 
 bool WorldProxy::changeColor(const std::string& id, const GazeboYarpPlugins::Color& color)
 {
-#if GAZEBO_MAJOR_VERSION >= 8
-    physics::ModelPtr model=world->ModelByName(id);
-#else
-    physics::ModelPtr model=world->GetModel(id);
-#endif
-    if (!model)
+    auto visual_ptr = rendering::RenderEngine::Instance()->GetScene(0)->GetVisual(id);
+
+    if (visual_ptr)
     {
-      yError() <<"Object " << id << " does not exist in gazebo";
-      return false;
+        auto material_ptr = Ogre::MaterialManager::getSingleton().getByName(visual_ptr->GetMaterialName());
+
+        if (!material_ptr.isNull()) {
+            material_ptr->setDiffuse(color.r/255.0, color.g/255.0, color.b/255.0, 1.0);
+        }
+        else {
+            return false;
+        }
+
+    }
+    else {
+        yError() <<"Object " << id << " does not exist in gazebo";
+        return false;
     }
 
+    if (isSynchronous())
+        waitForEngine();
 
-  // TO BE COMPLETED
-  // msgs::Visual visualMsg;
-  // visualMsg.set_name(_name);
-  // visualMsg.set_parent_name(_parentName);
-  // visualMsg.set_transparency(0);
-  // this->visualPub->Publish(visualMsg);
-
-  if (isSynchronous())
-     waitForEngine();
-
-  return true;
+    return true;
 }
 
 bool WorldProxy::enableCollision(const std::string& id, const bool enable)

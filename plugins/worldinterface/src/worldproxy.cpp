@@ -1017,27 +1017,22 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id, const std::st
 
 bool WorldProxy::deleteObject(const std::string& id)
 {
-  ObjectsListIt it=objects.begin();
-  while(it!=objects.end())
-  {
-    string obj=it->first;
 #if GAZEBO_MAJOR_VERSION >= 8
-    physics::ModelPtr model=world->ModelByName(obj);
+    physics::ModelPtr model=world->ModelByName(id);
 #else
-    physics::ModelPtr model=world->GetModel(obj);
+    physics::ModelPtr model=world->GetModel(id);
 #endif
     if (model)
     {
-      world->RemoveModel(obj);
-      objects.erase(it);
-      return true;
+        world->RemoveModel(id);
+        objects.erase(id);
+        return true;
     }
     else
     {
-      it++;
+        yError()<<"WorldProxy::deleteObject: the obj called" << id << "not exists";
+        return false;
     }
-  }
-  return false;
 }
 
 bool WorldProxy::deleteAll()

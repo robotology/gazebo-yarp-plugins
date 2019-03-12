@@ -218,12 +218,15 @@ bool GazeboYarpControlBoardDriver::relativeMove(const int n_joint, const int *jo
     return ret;
 }
 
-bool GazeboYarpControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+bool GazeboYarpControlBoardDriver::checkMotionDone(const int n_joint, const int *joints, bool *flag)
 {
-    if (!joints || !flags) return false;
+    if (!joints || !flag) return false;
     bool ret = true;
+    *flag = true;
     for (int i = 0; i < n_joint && ret; i++) {
-        ret = checkMotionDone(joints[i], &flags[i]);
+        bool done;
+        ret = checkMotionDone(joints[i], &done);
+        (*flag) &= done;
     }
     return ret;
 }

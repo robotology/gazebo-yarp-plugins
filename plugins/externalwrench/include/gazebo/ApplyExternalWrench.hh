@@ -8,6 +8,7 @@
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/Model.hh>
+#include <GazeboYarpPlugins/common.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcServer.h>
@@ -16,6 +17,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/LogStream.h>
 
 
 // A YARP Thread class that will be used to read the rpc port to apply external wrench
@@ -56,7 +58,7 @@ private:
 public:
     ApplyExternalWrench();
     virtual ~ApplyExternalWrench();
-    std::string retrieveSubscope(gazebo::physics::Link_V& v, std::string  scope);
+    bool getCandidateLink(physics::LinkPtr& candidateLink, std::string candidateLinkName);
 
     struct wrench {
         yarp::sig::Vector force;
@@ -102,6 +104,7 @@ private:
     msgs::Visual            m_visualMsg;
 
     bool                    m_newCommand;
+    bool                    m_setMessage;
 
 };
 

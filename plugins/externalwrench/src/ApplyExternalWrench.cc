@@ -37,6 +37,7 @@ void ApplyExternalWrench::UpdateChild()
     {
         // If this is a new command
         m_newCommand = true;
+        this->m_setMessage = false;
         this->m_rpcThread.setNewCommandFlag( 0 );
     } else {
         m_newCommand = false;
@@ -55,13 +56,17 @@ void ApplyExternalWrench::UpdateChild()
         m_wrenchToApply.torque[i-4] = tmpBottle.get ( i ).asDouble();
     }
 
-    std::string fullScopeLinkName = "";
-    if(this->m_subscope!="") {
+    // return if the link is not found
+    if (!this->getCandidateLink(this->m_onLink, this->m_linkName)) {
+        return;
+    }
+
+    /*if(this->m_subscope!="") {
       fullScopeLinkName = std::string ( this->m_modelScope + "::" + this->m_subscope + "::" + this->m_linkName );
       this->m_onLink  = m_myModel->GetLink ( fullScopeLinkName );
     } else {
       this->m_onLink  = m_myModel->GetLink ( this->m_linkName );
-    }
+    }*/
 
 //  This piece of code shows the full name (scoped name + link name) of every link in the current loaded model.
 //     gazebo::physics::Link_V tmpLinksVector;
@@ -70,14 +75,8 @@ void ApplyExternalWrench::UpdateChild()
 //     yDebug() << tmpLinksVector[i]->GetName() << " ";
 //     yDebug() << std::endl;
 
-    if ( !this->m_onLink ) {
-        //yError() << "ApplyWrench plugin: link named " << this->m_linkName<< " not found";
-        return;
-    }
-
     // Get wrench duration
     this->m_wrenchToApply.duration = tmpBottle.get ( 7 ).asDouble();
-
 
     // Taking duration of the applied force into account
     static bool applying_force_flag = 0;
@@ -141,6 +140,9 @@ void ApplyExternalWrench::UpdateChild()
         m_visPub->Publish ( m_visualMsg );
     }
 
+    // Clear variables
+    this->m_linkName.clear();
+    this->m_onLink.reset();
 }
 
 void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf )
@@ -172,7 +174,6 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
             gazebo::physics::Link_V links = _model->GetLinks();
             std::string defaultLink = links[0]->GetName();
             m_rpcThread.setDefaultLink(defaultLink);
-	    this->m_subscope = retrieveSubscope(links, m_modelScope);
             configuration_loaded = true;
         } else {
             yError ( "ERROR trying to get robot configuration file" );
@@ -230,17 +231,35 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::UpdateChild, this ) );
 }
 
-std::string ApplyExternalWrench::retrieveSubscope ( gazebo::physics::Link_V& v , std::string scope)
+bool ApplyExternalWrench::getCandidateLink(physics::LinkPtr& candidateLink, std::string candidateLinkName)
 {
-    std::string tmpName = v[0]->GetName();
-    std::size_t found = tmpName.find_first_of(":");
-    if(found!=std::string::npos)
-      tmpName = tmpName.substr (0, found);
-    else
-      tmpName = "";
-    return tmpName;
-}
+    // Get the exact link with only link name instead of full_scoped_link_name
+    std::string fullScopeLinkName = "";
+    gazebo::physics::Link_V links = this->m_myModel->GetLinks();
+    for(int i=0; i < links.size(); i++)
+    {
+        std::string candidate_link_name = links[i]->GetScopedName();
 
+        // hasEnding compare ending of the condidate model link name to the given link name, in order to be able to use unscoped names
+        if(GazeboYarpPlugins::hasEnding(candidate_link_name, candidateLinkName))
+        {
+            candidateLink = links[i];
+            break;
+        }
+    }
+
+    if(!candidateLink)
+     {
+        if (!this->m_setMessage) {
+            yError()  << "externalWrench: " << this->m_linkName << " link is not found";
+            this->m_setMessage = true;
+        }
+        return false;
+    }
+
+    return true;
+
+}
 
 }
 

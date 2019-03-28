@@ -91,6 +91,9 @@ bool RPCServerThread::threadInit()
         return false;
     }
 
+    // Set the default operation mode
+    this->m_mode = "single";
+
     return true;
 }
 
@@ -101,6 +104,8 @@ void RPCServerThread::run()
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
+            this->m_reply.addString ( "The defaul operation mode is with single wrench" );
+            this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
@@ -123,14 +128,33 @@ void RPCServerThread::run()
                 m_cmd = command;
                 m_lock.unlock();
 
-               //Creating new instances of external wrenches
-               boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
-               if(newWrench->setWrench(m_robotModel, m_cmd))
-               {
-                   wrenchesVectorPtr->push_back(newWrench);
-               }
-               else yError() << "Failed to set new wrench values!";
-            } else {
+                if (this->m_mode == "single") {
+
+                    // Delete the previous wrenchs
+                    if (wrenchesVectorPtr->size() != 0) {
+                        boost::shared_ptr<ExternalWrench> wrench = wrenchesVectorPtr->at(0);
+                        wrench->deleteWrench();
+                        wrenchesVectorPtr->clear();
+                    }
+
+                }
+
+                //Creating new instances of external wrenches
+                boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
+                if(newWrench->setWrench(m_robotModel, m_cmd))
+                {
+                    wrenchesVectorPtr->push_back(newWrench);
+                }
+                else yError() << "Failed to set new wrench values!";
+            }
+            else if (command.size() == 1 && command.get(0).isString()) {
+                std::string message = command.get(0).asString() + " wrench operation mode";
+                this->m_reply.addString (message);
+                this->m_rpcPort.reply ( m_reply );
+
+                this->m_mode = command.get(0).asString();
+            }
+            else {
                 this->m_reply.clear();
                 this->m_reply.addString ( "ERROR: Incorrect command format" );
                 this->m_rpcPort.reply ( this->m_reply );

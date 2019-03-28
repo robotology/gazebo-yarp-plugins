@@ -76,6 +76,7 @@ public:
     bool getLink();
 
     void applyWrench();
+    void deleteWrench();
     void setModel();
 };
 

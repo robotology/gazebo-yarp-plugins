@@ -45,6 +45,10 @@ private:
     physics::ModelPtr   m_robotModel;
     std::string         m_robotName;
     double              m_durationBuffer;
+
+    // variable for operation mode
+    // single wrench or multiple wrenches
+    std::string         m_mode;
 };
 
 

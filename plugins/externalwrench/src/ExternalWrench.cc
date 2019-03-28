@@ -157,12 +157,22 @@ void ExternalWrench::applyWrench()
     }
     else
     {
-        m_visualMsg.set_visible(0);
-        m_visualMsg.clear_geometry();
-        m_visualMsg.clear_delete_me();
-        m_visPub->Publish(m_visualMsg);
-        duration_done = true;
+        deleteWrench();
     }
+}
+
+void ExternalWrench::deleteWrench()
+{
+    this->wrenchPtr->link_name.clear();
+    this->wrenchPtr->force.clear();
+    this->wrenchPtr->torque.clear();
+    this->wrenchPtr->duration = 0;
+
+    this->m_visualMsg.set_visible(0);
+    this->m_visualMsg.clear_geometry();
+    this->m_visualMsg.clear_delete_me();
+    this->m_visPub->Publish(m_visualMsg);
+    this->duration_done = true;
 }
 
 ExternalWrench::~ExternalWrench()

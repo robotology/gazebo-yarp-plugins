@@ -41,8 +41,7 @@ bool ExternalWrench::getLink()
     }
 
     if(!link)
-     {
-        yError()  << "externalWrench: " << wrenchPtr->link_name << " link is not found";
+    {
         return false;
     }
 
@@ -79,14 +78,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
     model = _model;
 
     //get link name from command
-    std::string linkName = cmd.get(0).asString();
-    if (linkName.find_last_of("::") != 0) {
-        wrenchPtr->link_name = linkName.substr(linkName.find_last_of("::")+1); //case of scoped link name
-    }
-    else
-    {
-        wrenchPtr->link_name = linkName; //case of unscoped link name
-    }
+    wrenchPtr->link_name = cmd.get(0).asString();
 
     if(getLink())
     {

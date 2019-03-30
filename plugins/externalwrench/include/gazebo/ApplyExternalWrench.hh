@@ -15,7 +15,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/LogStream.h>
 
@@ -49,6 +48,7 @@ private:
     // variable for operation mode
     // single wrench or multiple wrenches
     std::string         m_mode;
+    std::string         m_message;
 };
 
 
@@ -69,8 +69,6 @@ public:
     /// \brief Robot name that will be used to open rpc port
     std::string          robotName;
 
-    double               timeIni;
-
 protected:
     // Inherited
     void Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf );
@@ -81,7 +79,6 @@ private:
     yarp::os::Property      m_iniParams;
 
     physics::ModelPtr       m_myModel;
-
 
     /// \brief Link the plugin is attached to
     physics::LinkPtr        m_onLink;
@@ -96,8 +93,6 @@ private:
     msgs::Visual            m_visualMsg;
 
     bool                    m_newCommand;
-    bool                    m_setMessage;
-
 };
 
 }

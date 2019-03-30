@@ -116,12 +116,11 @@ void RPCServerThread::run()
             this->m_reply.addString ( "Note: The reference frame is the base/root robot frame with x pointing backwards and z upwards.");
             this->m_rpcPort.reply ( this->m_reply );
         } else{
-            if(command.get(0).isString() \
-                    && ( command.get ( 1 ).isDouble() || command.get ( 1 ).isInt() )  && ( command.get ( 2 ).isDouble() || command.get ( 2 ).isInt() ) && ( command.get ( 3 ).isDouble() || command.get ( 3 ).isInt() ) \
-                    && ( command.get ( 4 ).isDouble() || command.get ( 4 ).isInt() )  && ( command.get ( 5 ).isDouble() || command.get ( 5 ).isInt() ) && ( command.get ( 6 ).isDouble() || command.get ( 6 ).isInt() )  \
-                    && ( command.get ( 7 ).isDouble() || command.get ( 7 ).isInt() ) ) {
-                this->m_reply.addString ( "[ACK] Correct command format" );
-                this->m_rpcPort.reply ( m_reply );
+            if((command.size() == 8) && (command.get(0).isString() \
+                && ( command.get ( 1 ).isDouble() || command.get ( 1 ).isInt() )  && ( command.get ( 2 ).isDouble() || command.get ( 2 ).isInt() ) && ( command.get ( 3 ).isDouble() || command.get ( 3 ).isInt() ) \
+                && ( command.get ( 4 ).isDouble() || command.get ( 4 ).isInt() )  && ( command.get ( 5 ).isDouble() || command.get ( 5 ).isInt() ) && ( command.get ( 6 ).isDouble() || command.get ( 6 ).isInt() )  \
+                && ( command.get ( 7 ).isDouble() || command.get ( 7 ).isInt() )) ) {
+                this->m_message = "[ACK] Correct command format";
                 m_lock.lock();
                 // new-command flag
                 command.addInt(1);
@@ -130,10 +129,13 @@ void RPCServerThread::run()
 
                 if (this->m_mode == "single") {
 
-                    // Delete the previous wrenchs
+                    // Delete the previous wrenches
                     if (wrenchesVectorPtr->size() != 0) {
-                        boost::shared_ptr<ExternalWrench> wrench = wrenchesVectorPtr->at(0);
-                        wrench->deleteWrench();
+                        for (int i = 0; i < wrenchesVectorPtr->size(); i++)
+                        {
+                            boost::shared_ptr<ExternalWrench> wrench = wrenchesVectorPtr->at(i);
+                            wrench->deleteWrench();
+                        }
                         wrenchesVectorPtr->clear();
                     }
 
@@ -143,20 +145,42 @@ void RPCServerThread::run()
                 boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
                 if(newWrench->setWrench(m_robotModel, m_cmd))
                 {
+                    this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
+                    this->m_reply.addString ( m_message);
+                    this->m_rpcPort.reply ( m_reply );
                     wrenchesVectorPtr->push_back(newWrench);
                 }
-                else yError() << "Failed to set new wrench values!";
+                else
+                {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link found in the model" ;
+                    this->m_reply.addString ( m_message );
+                    this->m_rpcPort.reply ( m_reply );
+                }
             }
             else if (command.size() == 1 && command.get(0).isString()) {
-                std::string message = command.get(0).asString() + " wrench operation mode";
-                this->m_reply.addString (message);
-                this->m_rpcPort.reply ( m_reply );
 
                 this->m_mode = command.get(0).asString();
+
+                this->m_message = command.get(0).asString() + " wrench operation mode set";
+
+                // Delete the previous wrenches
+                if (wrenchesVectorPtr->size() != 0) {
+                    this->m_message = this->m_message + " . Clearing previous wrenches.";
+                    for (int i = 0; i < wrenchesVectorPtr->size(); i++)
+                    {
+                        boost::shared_ptr<ExternalWrench> wrench = wrenchesVectorPtr->at(i);
+                        wrench->deleteWrench();
+                    }
+                    wrenchesVectorPtr->clear();
+                }
+
+                this->m_reply.addString (m_message);
+                this->m_rpcPort.reply ( m_reply );
+
             }
             else {
                 this->m_reply.clear();
-                this->m_reply.addString ( "ERROR: Incorrect command format" );
+                this->m_message = "ERROR: Incorrect command format. Insert [help] to know the correct command format";
+                this->m_reply.addString ( m_message );
                 this->m_rpcPort.reply ( this->m_reply );
             }
         }

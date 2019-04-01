@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
+ * Copyright (C) 2019 Fondazione Istituto Italiano di Tecnologia - iCub Facility
  * Authors: see AUTHORS file.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
@@ -18,7 +18,7 @@
 
 
 /**
- * @file DoubleLaser.h
+ * @file DoubleLaser.cc
  * @authors: Valentina Gaggero <valentina.gaggero@iit.it>
  */
 
@@ -122,7 +122,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         if(!readConfigurationFromFile( _parent, _sdf))
             return;
 
-        // 4) Insert the pointer in the singleton handler for retriving it in the yarp driver
+        // 4) Insert the pointer in the singleton handler for retrieving it in the yarp driver
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 
 
@@ -146,13 +146,13 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if(! m_wrapper_rangeFinder.open(wrapper_parameters))
         {
-            yError()<<"GazeboYarpDoubleLaser failed: error in opening yarp driver wrapper Rangefinder2DWrapper!!!";
+            yError()<<"GazeboYarpDoubleLaser failed: error opening yarp driver wrapper Rangefinder2DWrapper";
             return;
         }
 
         if (!m_wrapper_rangeFinder.view(m_iWrap_rangeFinder)) 
         {
-            yError("GazeboYarpDoubleLaser : wrapper interface not found, load failed. Rangefinder2DWrapper");
+            yError("GazeboYarpDoubleLaser : wrapper (Rangefinder2DWrapper) interface not found, load failed.");
             return;
         }
 
@@ -184,7 +184,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if(!m_driver_doublelaser.open(doublelaser_dev_parameters) )
         {
-            yError()<<"GazeboYarpDoubleLaser: error in opening yarp driver doubleLaser";
+            yError()<<"GazeboYarpDoubleLaser: error opening DoubleLaser yarp device ";
             return;
         }
 
@@ -236,7 +236,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         m_driver_doublelaser.view(m_iWrap_doublelaser);
         if(!m_iWrap_doublelaser->attachAll(listoflasers))
         {
-            yError() << "GazeboYarpDoubleLaser: error douring attaching double laser to front and back laser devices";
+            yError() << "GazeboYarpDoubleLaser: error attaching double laser to front and back laser devices";
             m_driver_doublelaser.close();
             return;
         }
@@ -249,13 +249,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         listofdoubellaser.push(doublelaser_desc);
 
-        if(m_iWrap_rangeFinder->attachAll(listofdoubellaser))
+        if(!m_iWrap_rangeFinder->attachAll(listofdoubellaser))
         {
-            yError() << "GazeboYarpDoubleLaser: ho fatto attach di rangeFinder wrapper al double laser. OK";
-        }
-        else
-        {
-            yError() << "GazeboYarpDoubleLaser: ERRORE mentre facevo attach di rangeFinder wrapper al double laser.";
+            yError() << "GazeboYarpDoubleLaser: error attaching wrapper to double laser device";
+            return;
         }
 
 

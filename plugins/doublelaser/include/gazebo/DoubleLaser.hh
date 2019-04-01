@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2013-2015 Fondazione Istituto Italiano di Tecnologia RBCS & iCub Facility & ADVR
+ * Copyright (C) 2019 Fondazione Istituto Italiano di Tecnologia - iCub Facility
  * Authors: see AUTHORS file.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
 /**
- * @file DoubleLaser.h
+ * @file DoubleLaser.hh
  * @authors: Valentina Gaggero <valentina.gaggero@iit.it>
  */
 
@@ -29,9 +29,9 @@ namespace gazebo
 /// \class GazeboYarpDoubleLaser
 /// Gazebo Plugin emulating the yarp double laser device in Gazebo.
 ///.
-/// It can be configurated using the yarpConfigurationFile sdf tag,
+/// It can be configured using the yarpConfigurationFile sdf tag,
 /// that contains a Gazebo URI pointing at a yarp .ini configuration file
-/// containing the configuration parameters of the doublelaser
+/// containing the configuration parameters of the DoubleLaser
 ///
 
 

@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "ExternalWrench.hh"
 
 int ExternalWrench::count = 0;
@@ -5,9 +12,6 @@ int ExternalWrench::count = 0;
 //Initializing wrench command
 ExternalWrench::ExternalWrench()
 {
-    model_has_link = false;
-
-    //srand(boost::lexical_cast<float>(std::time(NULL)));
     srand(rand()%100);
     color[0] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     color[1] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -27,7 +31,7 @@ ExternalWrench::ExternalWrench()
 bool ExternalWrench::getLink()
 {
     // Get the exact link with only link name instead of full_scoped_link_name
-    links = this->model->GetLinks();
+    physics::Link_V links = this->model->GetLinks();
     for(int i=0; i < links.size(); i++)
     {
         std::string candidate_link_name = links[i]->GetScopedName();
@@ -45,32 +49,31 @@ bool ExternalWrench::getLink()
         return false;
     }
 
-    model_has_link = true;
     return true;
 }
 
 void ExternalWrench::setVisual()
 {
     //Wrench Visual
-    m_node = transport::NodePtr(new gazebo::transport::Node());
-    this->m_node->Init(model->GetWorld()->Name());
-    m_visPub = this->m_node->Advertise<msgs::Visual>("~/visual",100);
+    node = transport::NodePtr(new gazebo::transport::Node());
+    this->node->Init(model->GetWorld()->Name());
+    visPub = this->node->Advertise<msgs::Visual>("~/visual",100);
 
     // Set the visual's name. This should be unique.
     std::string visual_name = "__" + wrenchPtr->link_name + "__CYLINDER_VISUAL__" + boost::lexical_cast<std::string>(count);
-    m_visualMsg.set_name (visual_name);
+    visualMsg.set_name (visual_name);
 
     // Set the visual's parent. This visual will be attached to the parent
-    m_visualMsg.set_parent_name(model->GetScopedName());
+    visualMsg.set_parent_name(model->GetScopedName());
 
     // Create a cylinder
-    msgs::Geometry *geomMsg = m_visualMsg.mutable_geometry();
+    msgs::Geometry *geomMsg = visualMsg.mutable_geometry();
     geomMsg->set_type(msgs::Geometry::CYLINDER);
     geomMsg->mutable_cylinder()->set_radius(0.0075);
     geomMsg->mutable_cylinder()->set_length(.30);
 
     // Don't cast shadows
-    m_visualMsg.set_cast_shadows(false);
+    visualMsg.set_cast_shadows(false);
 }
 
 bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
@@ -135,17 +138,17 @@ void ExternalWrench::applyWrench()
 #endif
 
 #if GAZEBO_MAJOR_VERSION == 7
-        msgs::Set(m_visualMsg.mutable_pose(), linkCoGPose.Ign());
+        msgs::Set(visualMsg.mutable_pose(), linkCoGPose.Ign());
 #else
-        msgs::Set(m_visualMsg.mutable_pose(), linkCoGPose);
+        msgs::Set(visualMsg.mutable_pose(), linkCoGPose);
 #endif
 #if GAZEBO_MAJOR_VERSION >= 9
-        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));
+        msgs::Set(visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));
 #else
-        msgs::Set(m_visualMsg.mutable_material()->mutable_ambient(),common::Color(color[0],color[1],color[2],color[3]));
+        msgs::Set(visualMsg.mutable_material()->mutable_ambient(),common::Color(color[0],color[1],color[2],color[3]));
 #endif
-        m_visualMsg.set_visible(1);
-        m_visPub->Publish(m_visualMsg);
+        visualMsg.set_visible(1);
+        visPub->Publish(visualMsg);
     }
     else
     {
@@ -160,10 +163,10 @@ void ExternalWrench::deleteWrench()
     this->wrenchPtr->torque.clear();
     this->wrenchPtr->duration = 0;
 
-    this->m_visualMsg.set_visible(0);
-    this->m_visualMsg.clear_geometry();
-    this->m_visualMsg.clear_delete_me();
-    this->m_visPub->Publish(m_visualMsg);
+    this->visualMsg.set_visible(0);
+    this->visualMsg.clear_geometry();
+    this->visualMsg.clear_delete_me();
+    this->visPub->Publish(visualMsg);
     this->duration_done = true;
 }
 

@@ -1,5 +1,12 @@
-#ifndef EXTERNALWRENCH_H
-#define EXTERNALWRENCH_H
+/*
+ * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#ifndef GAZEBO_YARP_PLUGINS_EXTERNALWRENCH_H
+#define GAZEBO_YARP_PLUGINS_EXTERNALWRENCH_H
 
 #include <iostream>
 #include <stdlib.h>
@@ -52,14 +59,12 @@ private:
    double                        tick;
    double                        tock;
 
-   bool                          model_has_link;
    physics::ModelPtr             model;
    physics::LinkPtr              link;
-   physics::Link_V               links;
 
-   transport::NodePtr            m_node;
-   transport::PublisherPtr       m_visPub;
-   msgs::Visual                  m_visualMsg;
+   transport::NodePtr            node;
+   transport::PublisherPtr       visPub;
+   msgs::Visual                  visualMsg;
 
    event::ConnectionPtr          updateConnection;
 
@@ -80,4 +85,4 @@ public:
     void setModel();
 };
 
-#endif
+#endif //GAZEBO_YARP_PLUGINS_EXTERNALWRENCH_H

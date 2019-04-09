@@ -123,7 +123,7 @@ void RPCServerThread::run()
                 this->m_message = "[ACK] Correct command format";
                 m_lock.lock();
                 // new-command flag
-                command.addInt(1);
+                command.addInt32(1);
                 m_cmd = command;
                 m_lock.unlock();
 

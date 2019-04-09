@@ -24,6 +24,10 @@
 class RPCServerThread: public yarp::os::Thread
 {
 public:
+    // variable for operation mode
+    // single wrench or multiple wrenches
+    std::string         m_mode;
+
     virtual bool        threadInit();
     virtual void        run();
     virtual void        threadRelease();
@@ -45,9 +49,6 @@ private:
     std::string         m_robotName;
     double              m_durationBuffer;
 
-    // variable for operation mode
-    // single wrench or multiple wrenches
-    std::string         m_mode;
     std::string         m_message;
 };
 
@@ -63,6 +64,7 @@ public:
     ApplyExternalWrench();
     virtual ~ApplyExternalWrench();
     void applyWrenches();
+    void onReset();
 
     bool getCandidateLink(physics::LinkPtr& candidateLink, std::string candidateLinkName);
 
@@ -88,6 +90,9 @@ private:
 
     /// \brief Pointer to the update event connection
     event::ConnectionPtr    m_updateConnection;
+
+    /// \brief Pointer to WorldReset Gazebo event
+    event::ConnectionPtr    m_resetConnection;
 
     transport::PublisherPtr m_visPub;
     msgs::Visual            m_visualMsg;

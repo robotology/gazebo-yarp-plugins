@@ -62,6 +62,9 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::applyWrenches, this ) );
+
+    // Listen to gazebo world reset event
+    this->m_resetConnection = event::Events::ConnectWorldReset ( boost::bind ( &ApplyExternalWrench::onReset, this ) );
 }
 
 void ApplyExternalWrench::applyWrenches()
@@ -75,6 +78,24 @@ void ApplyExternalWrench::applyWrenches()
             m_rpcThread.wrenchesVectorPtr->at(i)->applyWrench();
         }
     }
+    this->m_lock.unlock();
+}
+
+void ApplyExternalWrench::onReset()
+{
+    this->m_lock.lock();
+    // Delete all the wrenches
+    if (this->m_rpcThread.wrenchesVectorPtr->size() != 0) {
+        for (int i = 0; i < this->m_rpcThread.wrenchesVectorPtr->size(); i++)
+        {
+            boost::shared_ptr<ExternalWrench> wrench = this->m_rpcThread.wrenchesVectorPtr->at(i);
+            wrench->deleteWrench();
+        }
+        this->m_rpcThread.wrenchesVectorPtr->clear();
+    }
+
+    // Change the operation mode to default option 'single'
+    this->m_rpcThread.m_mode = "single";
     this->m_lock.unlock();
 }
 

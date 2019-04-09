@@ -10,7 +10,7 @@
 
 int ExternalWrench::count = 0;
 
-//Initializing wrench command
+// Initializing wrench command
 ExternalWrench::ExternalWrench()
 {
     // Increase wrench count
@@ -37,8 +37,19 @@ ExternalWrench::ExternalWrench()
     wrenchPtr->torque.resize(3,0);
     wrenchPtr->duration = 0.0;
 
-    tick = yarp::os::Time::now();
+    tick = 0; // Default tick value
+    tock = 0; // Default tock value
     duration_done = false;
+}
+
+void ExternalWrench::setTick(double& tickTime)
+{
+    this->tick = tickTime;
+}
+
+void ExternalWrench::setTock(double& tockTime)
+{
+    this->tock = tockTime;
 }
 
 bool ExternalWrench::getLink()
@@ -67,7 +78,7 @@ bool ExternalWrench::getLink()
 
 void ExternalWrench::setVisual()
 {
-    //Wrench Visual
+    // Wrench Visual
     node = transport::NodePtr(new gazebo::transport::Node());
     this->node->Init(model->GetWorld()->Name());
     visPub = this->node->Advertise<msgs::Visual>("~/visual",100);
@@ -93,7 +104,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 {
     model = _model;
 
-    //get link name from command
+    // Get link name from command
     wrenchPtr->link_name = cmd.get(0).asString();
 
     if(getLink())
@@ -117,7 +128,6 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 
 void ExternalWrench::applyWrench()
 {
-    tock = yarp::os::Time::now();
     if((tock-tick) < wrenchPtr->duration)
     {
 #if GAZEBO_MAJOR_VERSION >= 8

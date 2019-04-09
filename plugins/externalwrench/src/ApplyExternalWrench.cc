@@ -61,19 +61,28 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
-    this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::applyWrenches, this ) );
+    this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::onUpdate, this, _1 ) );
 
     // Listen to gazebo world reset event
     this->m_resetConnection = event::Events::ConnectWorldReset ( boost::bind ( &ApplyExternalWrench::onReset, this ) );
 }
 
-void ApplyExternalWrench::applyWrenches()
+void ApplyExternalWrench::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
+    // Update last time stamp
+    double time = _info.simTime.Double();
+    m_rpcThread.setLastTimeStamp(time);
+
     this->m_lock.lock();
     for(int i = 0; i < m_rpcThread.wrenchesVectorPtr->size() ; i++)
     {
+        // Update wrench tock time
+        yarp::os::Stamp tockTimeStamp = m_rpcThread.getLastTimeStamp();
+        double tockTime = tockTimeStamp.getTime();
+        m_rpcThread.wrenchesVectorPtr->at(i)->setTock(tockTime);
+
         bool duration_check = m_rpcThread.wrenchesVectorPtr->at(i)->duration_done;
-        if(duration_check==false)
+        if(duration_check == false)
         {
             m_rpcThread.wrenchesVectorPtr->at(i)->applyWrench();
         }
@@ -166,6 +175,11 @@ void RPCServerThread::run()
                 boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
                 if(newWrench->setWrench(m_robotModel, m_cmd))
                 {
+                    // Set wrench tick time
+                    yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
+                    double tickTime = tickTimeStamp.getTime();
+                    newWrench->setTick(tickTime);
+
                     this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
                     this->m_reply.addString ( m_message);
                     this->m_rpcPort.reply ( m_reply );
@@ -208,6 +222,22 @@ void RPCServerThread::run()
         m_reply.clear();
         command.clear();
     }
+}
+
+void RPCServerThread::setLastTimeStamp(double& time)
+{
+    this->m_lock.lock();
+
+    m_lastTimestamp.update(time);
+
+    this->m_lock.unlock();
+}
+
+yarp::os::Stamp RPCServerThread::getLastTimeStamp()
+{
+    boost::lock_guard<boost::mutex> lock{this->m_lock};
+
+    return m_lastTimestamp;
 }
 
 void RPCServerThread::setRobotModel(physics::ModelPtr robotModel)

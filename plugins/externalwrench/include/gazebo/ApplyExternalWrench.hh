@@ -16,6 +16,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
 
 #include "ExternalWrench.hh"
@@ -35,6 +36,8 @@ public:
     void                setRobotName(std::string robotName);
     void                setRobotModel(physics::ModelPtr robotModel);
     void                setNewCommandFlag(std::int32_t flag);
+    void                setLastTimeStamp(double& time);
+    yarp::os::Stamp     getLastTimeStamp();
     virtual void        onStop();
 
     boost::shared_ptr< std::vector< boost::shared_ptr<ExternalWrench>>> wrenchesVectorPtr{new std::vector< boost::shared_ptr<ExternalWrench>>()};
@@ -50,6 +53,8 @@ private:
     double              m_durationBuffer;
 
     std::string         m_message;
+
+    yarp::os::Stamp     m_lastTimestamp;
 };
 
 
@@ -63,7 +68,7 @@ private:
 public:
     ApplyExternalWrench();
     virtual ~ApplyExternalWrench();
-    void applyWrenches();
+    void onUpdate(const gazebo::common::UpdateInfo&);
     void onReset();
 
     bool getCandidateLink(physics::LinkPtr& candidateLink, std::string candidateLinkName);

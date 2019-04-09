@@ -78,6 +78,8 @@ public:
     bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
     bool getLink();
 
+    void setTick(double& tickTime);
+    void setTock(double& tockTime);
     void applyWrench();
     void deleteWrench();
     void setModel();

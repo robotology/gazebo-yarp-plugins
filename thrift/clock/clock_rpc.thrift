@@ -41,5 +41,10 @@ service ClockServer {
      * @return the step size in seconds
      */
     double getStepSize();
+
+    /** Reset the simulation state and time
+     *
+     */
+    oneway void resetSimulation();
     
 }

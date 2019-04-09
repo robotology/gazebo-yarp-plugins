@@ -36,8 +36,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
 
-#include <boost/lexical_cast.hpp>
-
 using namespace gazebo;
 
 class ExternalWrench

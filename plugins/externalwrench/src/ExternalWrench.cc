@@ -6,24 +6,37 @@
  */
 
 #include "ExternalWrench.hh"
+#include <random>
 
 int ExternalWrench::count = 0;
 
 //Initializing wrench command
 ExternalWrench::ExternalWrench()
 {
-    srand(rand()%100);
-    color[0] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    color[1] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    color[2] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    color[3] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    // Increase wrench count
+    count++;
 
+    // Initialize visual color
+    std::mt19937 rand_gen(50); //fixed seed
+    std::uniform_real_distribution<> uni_dis(0.0, 1.0);
+
+    for(int i = 0; i < count; i++)
+    {
+        uni_dis(rand_gen);
+        if (i == count-1) {
+            color[0] = uni_dis(rand_gen);
+            color[1] = uni_dis(rand_gen);
+            color[2] = uni_dis(rand_gen);
+            color[3] = uni_dis(rand_gen);
+        }
+    }
+
+    // Default wrench values
     wrenchPtr->link_name = "world";
     wrenchPtr->force.resize(3,0);
     wrenchPtr->torque.resize(3,0);
     wrenchPtr->duration = 0.0;
 
-    count++;
     tick = yarp::os::Time::now();
     duration_done = false;
 }
@@ -60,7 +73,7 @@ void ExternalWrench::setVisual()
     visPub = this->node->Advertise<msgs::Visual>("~/visual",100);
 
     // Set the visual's name. This should be unique.
-    std::string visual_name = "__" + wrenchPtr->link_name + "__CYLINDER_VISUAL__" + boost::lexical_cast<std::string>(count);
+    std::string visual_name = "GYP_EXT_WRENCH__" + wrenchPtr->link_name + "__CYLINDER_VISUAL__" + std::to_string(count);
     visualMsg.set_name (visual_name);
 
     // Set the visual's parent. This visual will be attached to the parent

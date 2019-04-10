@@ -93,6 +93,7 @@ void ApplyExternalWrench::onUpdate(const gazebo::common::UpdateInfo& _info)
 void ApplyExternalWrench::onReset()
 {
     this->m_lock.lock();
+
     // Delete all the wrenches
     if (this->m_rpcThread.wrenchesVectorPtr->size() != 0) {
         for (int i = 0; i < this->m_rpcThread.wrenchesVectorPtr->size(); i++)
@@ -105,6 +106,10 @@ void ApplyExternalWrench::onReset()
 
     // Change the operation mode to default option 'single'
     this->m_rpcThread.m_mode = "single";
+
+    // Reset wrench count
+    this->m_rpcThread.wrenchCount = 0;
+
     this->m_lock.unlock();
 }
 
@@ -123,6 +128,9 @@ bool RPCServerThread::threadInit()
 
     // Set the default operation mode
     this->m_mode = "single";
+
+    // Set wrench count default value
+    this->wrenchCount = 0;
 
     return true;
 }
@@ -159,6 +167,9 @@ void RPCServerThread::run()
 
                 if (this->m_mode == "single") {
 
+                    // Reset wrench count
+                    wrenchCount = 0;
+
                     // Delete the previous wrenches
                     if (wrenchesVectorPtr->size() != 0) {
                         for (int i = 0; i < wrenchesVectorPtr->size(); i++)
@@ -171,14 +182,26 @@ void RPCServerThread::run()
 
                 }
 
-                //Creating new instances of external wrenches
+                // Create new instances of external wrenches
                 boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
                 if(newWrench->setWrench(m_robotModel, m_cmd))
                 {
+                    // Update wrench count
+                    wrenchCount++;
+
                     // Set wrench tick time
                     yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
                     double tickTime = tickTimeStamp.getTime();
                     newWrench->setTick(tickTime);
+
+                    // Set wrench index
+                    newWrench->setWrenchIndex(wrenchCount);
+
+                    // Set wrench color
+                    newWrench->setWrenchColor();
+
+                    // Set wrench visual
+                    newWrench->setVisual();
 
                     this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
                     this->m_reply.addString ( m_message);
@@ -196,6 +219,9 @@ void RPCServerThread::run()
                 this->m_mode = command.get(0).asString();
 
                 this->m_message = command.get(0).asString() + " wrench operation mode set";
+
+                // Reset wrench count
+                wrenchCount = 0;
 
                 // Delete the previous wrenches
                 if (wrenchesVectorPtr->size() != 0) {

@@ -8,28 +8,17 @@
 #include "ExternalWrench.hh"
 #include <random>
 
-int ExternalWrench::count = 0;
-
 // Initializing wrench command
 ExternalWrench::ExternalWrench()
 {
-    // Increase wrench count
-    count++;
+    // Default wrench index
+    wrenchIndex = 0;
 
-    // Initialize visual color
-    std::mt19937 rand_gen(50); //fixed seed
-    std::uniform_real_distribution<> uni_dis(0.0, 1.0);
-
-    for(int i = 0; i < count; i++)
-    {
-        uni_dis(rand_gen);
-        if (i == count-1) {
-            color[0] = uni_dis(rand_gen);
-            color[1] = uni_dis(rand_gen);
-            color[2] = uni_dis(rand_gen);
-            color[3] = uni_dis(rand_gen);
-        }
-    }
+    // Default color
+    color[0] = 0;
+    color[1] = 0;
+    color[2] = 0;
+    color[3] = 0;
 
     // Default wrench values
     wrenchPtr->link_name = "world";
@@ -40,6 +29,30 @@ ExternalWrench::ExternalWrench()
     tick = 0; // Default tick value
     tock = 0; // Default tock value
     duration_done = false;
+}
+
+void ExternalWrench::setWrenchColor()
+{
+    // Set visual color
+    std::mt19937 rand_gen(50); //fixed seed
+    std::uniform_real_distribution<> uni_dis(0.0, 1.0);
+
+    for(int i = 1; i <= wrenchIndex; i++)
+    {
+        uni_dis(rand_gen);
+        if (i == wrenchIndex) {
+            color[0] = uni_dis(rand_gen);
+            color[1] = uni_dis(rand_gen);
+            color[2] = uni_dis(rand_gen);
+            color[3] = uni_dis(rand_gen);
+        }
+    }
+
+}
+
+void ExternalWrench::setWrenchIndex(int& index)
+{
+    this->wrenchIndex = index;
 }
 
 void ExternalWrench::setTick(double& tickTime)
@@ -84,7 +97,7 @@ void ExternalWrench::setVisual()
     visPub = this->node->Advertise<msgs::Visual>("~/visual",100);
 
     // Set the visual's name. This should be unique.
-    std::string visual_name = "GYP_EXT_WRENCH__" + wrenchPtr->link_name + "__CYLINDER_VISUAL__" + std::to_string(count);
+    std::string visual_name = "GYP_EXT_WRENCH__" + wrenchPtr->link_name + "__CYLINDER_VISUAL__" + std::to_string(wrenchIndex);
     visualMsg.set_name (visual_name);
 
     // Set the visual's parent. This visual will be attached to the parent
@@ -109,8 +122,6 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 
     if(getLink())
     {
-        setVisual();
-
         wrenchPtr->force[0]  =  cmd.get(1).asDouble();
         wrenchPtr->force[1]  =  cmd.get(2).asDouble();
         wrenchPtr->force[2]  =  cmd.get(3).asDouble();
@@ -194,6 +205,4 @@ void ExternalWrench::deleteWrench()
 }
 
 ExternalWrench::~ExternalWrench()
-{
-    count--;
-}
+{}

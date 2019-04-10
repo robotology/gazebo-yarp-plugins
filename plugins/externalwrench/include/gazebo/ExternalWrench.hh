@@ -42,7 +42,6 @@ class ExternalWrench
 {
 private:
 
-   static int count;
    float      color[4];
    struct wrenchCommand
    {
@@ -57,6 +56,8 @@ private:
    double                        tick;
    double                        tock;
 
+   int                           wrenchIndex;
+
    physics::ModelPtr             model;
    physics::LinkPtr              link;
 
@@ -65,8 +66,6 @@ private:
    msgs::Visual                  visualMsg;
 
    event::ConnectionPtr          updateConnection;
-
-   void setVisual();
 
 public:
 
@@ -78,8 +77,11 @@ public:
     bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
     bool getLink();
 
+    void setWrenchIndex(int& index);
+    void setWrenchColor();
     void setTick(double& tickTime);
     void setTock(double& tockTime);
+    void setVisual();
     void applyWrench();
     void deleteWrench();
     void setModel();

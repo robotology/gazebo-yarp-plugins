@@ -29,6 +29,8 @@ public:
     // single wrench or multiple wrenches
     std::string         m_mode;
 
+    int                 wrenchCount;
+
     virtual bool        threadInit();
     virtual void        run();
     virtual void        threadRelease();

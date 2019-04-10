@@ -49,9 +49,7 @@ private:
         yarp::sig::Vector        force;
         yarp::sig::Vector        torque;
         double                   duration;
-   };
-
-   std::unique_ptr<wrenchCommand> wrenchPtr{new wrenchCommand()};
+   } wrench;
 
    double                        tick;
    double                        tock;

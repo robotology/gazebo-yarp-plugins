@@ -42,7 +42,7 @@ public:
     yarp::os::Stamp     getLastTimeStamp();
     virtual void        onStop();
 
-    boost::shared_ptr< std::vector< boost::shared_ptr<ExternalWrench>>> wrenchesVectorPtr{new std::vector< boost::shared_ptr<ExternalWrench>>()};
+    std::vector<ExternalWrench> wrenchesVector;
 
 private:
     yarp::os::RpcServer m_rpcPort;

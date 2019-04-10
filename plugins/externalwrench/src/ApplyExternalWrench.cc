@@ -74,17 +74,17 @@ void ApplyExternalWrench::onUpdate(const gazebo::common::UpdateInfo& _info)
     m_rpcThread.setLastTimeStamp(time);
 
     this->m_lock.lock();
-    for(int i = 0; i < m_rpcThread.wrenchesVectorPtr->size() ; i++)
+    for(int i = 0; i < m_rpcThread.wrenchesVector.size() ; i++)
     {
         // Update wrench tock time
         yarp::os::Stamp tockTimeStamp = m_rpcThread.getLastTimeStamp();
         double tockTime = tockTimeStamp.getTime();
-        m_rpcThread.wrenchesVectorPtr->at(i)->setTock(tockTime);
+        m_rpcThread.wrenchesVector.at(i).setTock(tockTime);
 
-        bool duration_check = m_rpcThread.wrenchesVectorPtr->at(i)->duration_done;
+        bool duration_check = m_rpcThread.wrenchesVector.at(i).duration_done;
         if(duration_check == false)
         {
-            m_rpcThread.wrenchesVectorPtr->at(i)->applyWrench();
+            m_rpcThread.wrenchesVector.at(i).applyWrench();
         }
     }
     this->m_lock.unlock();
@@ -95,13 +95,13 @@ void ApplyExternalWrench::onReset()
     this->m_lock.lock();
 
     // Delete all the wrenches
-    if (this->m_rpcThread.wrenchesVectorPtr->size() != 0) {
-        for (int i = 0; i < this->m_rpcThread.wrenchesVectorPtr->size(); i++)
+    if (this->m_rpcThread.wrenchesVector.size() != 0) {
+        for (int i = 0; i < this->m_rpcThread.wrenchesVector.size(); i++)
         {
-            boost::shared_ptr<ExternalWrench> wrench = this->m_rpcThread.wrenchesVectorPtr->at(i);
-            wrench->deleteWrench();
+            ExternalWrench wrench = this->m_rpcThread.wrenchesVector.at(i);
+            wrench.deleteWrench();
         }
-        this->m_rpcThread.wrenchesVectorPtr->clear();
+        this->m_rpcThread.wrenchesVector.clear();
     }
 
     // Change the operation mode to default option 'single'
@@ -171,20 +171,20 @@ void RPCServerThread::run()
                     wrenchCount = 0;
 
                     // Delete the previous wrenches
-                    if (wrenchesVectorPtr->size() != 0) {
-                        for (int i = 0; i < wrenchesVectorPtr->size(); i++)
+                    if (wrenchesVector.size() != 0) {
+                        for (int i = 0; i < wrenchesVector.size(); i++)
                         {
-                            boost::shared_ptr<ExternalWrench> wrench = wrenchesVectorPtr->at(i);
-                            wrench->deleteWrench();
+                            ExternalWrench wrench = wrenchesVector.at(i);
+                            wrench.deleteWrench();
                         }
-                        wrenchesVectorPtr->clear();
+                        wrenchesVector.clear();
                     }
 
                 }
 
                 // Create new instances of external wrenches
-                boost::shared_ptr<ExternalWrench> newWrench(new ExternalWrench);
-                if(newWrench->setWrench(m_robotModel, m_cmd))
+                ExternalWrench newWrench;
+                if(newWrench.setWrench(m_robotModel, m_cmd))
                 {
                     // Update wrench count
                     wrenchCount++;
@@ -192,21 +192,21 @@ void RPCServerThread::run()
                     // Set wrench tick time
                     yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
                     double tickTime = tickTimeStamp.getTime();
-                    newWrench->setTick(tickTime);
+                    newWrench.setTick(tickTime);
 
                     // Set wrench index
-                    newWrench->setWrenchIndex(wrenchCount);
+                    newWrench.setWrenchIndex(wrenchCount);
 
                     // Set wrench color
-                    newWrench->setWrenchColor();
+                    newWrench.setWrenchColor();
 
                     // Set wrench visual
-                    newWrench->setVisual();
+                    newWrench.setVisual();
 
                     this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
                     this->m_reply.addString ( m_message);
                     this->m_rpcPort.reply ( m_reply );
-                    wrenchesVectorPtr->push_back(newWrench);
+                    wrenchesVector.push_back(newWrench);
                 }
                 else
                 {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link found in the model" ;
@@ -224,14 +224,14 @@ void RPCServerThread::run()
                 wrenchCount = 0;
 
                 // Delete the previous wrenches
-                if (wrenchesVectorPtr->size() != 0) {
+                if (wrenchesVector.size() != 0) {
                     this->m_message = this->m_message + " . Clearing previous wrenches.";
-                    for (int i = 0; i < wrenchesVectorPtr->size(); i++)
+                    for (int i = 0; i < wrenchesVector.size(); i++)
                     {
-                        boost::shared_ptr<ExternalWrench> wrench = wrenchesVectorPtr->at(i);
-                        wrench->deleteWrench();
+                        ExternalWrench wrench = wrenchesVector.at(i);
+                        wrench.deleteWrench();
                     }
-                    wrenchesVectorPtr->clear();
+                    wrenchesVector.clear();
                 }
 
                 this->m_reply.addString (m_message);

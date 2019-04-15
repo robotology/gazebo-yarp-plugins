@@ -34,20 +34,13 @@ ExternalWrench::ExternalWrench()
 void ExternalWrench::setWrenchColor()
 {
     // Set visual color
-    std::mt19937 rand_gen(50); //fixed seed
+    std::mt19937 rand_gen(this->wrenchIndex); //fixed seed based on wrench index
     std::uniform_real_distribution<> uni_dis(0.0, 1.0);
 
-    for(int i = 1; i <= wrenchIndex; i++)
-    {
-        uni_dis(rand_gen);
-        if (i == wrenchIndex) {
-            color[0] = uni_dis(rand_gen);
-            color[1] = uni_dis(rand_gen);
-            color[2] = uni_dis(rand_gen);
-            color[3] = uni_dis(rand_gen);
-        }
-    }
-
+    color[0] = uni_dis(rand_gen);
+    color[1] = uni_dis(rand_gen);
+    color[2] = uni_dis(rand_gen);
+    color[3] = uni_dis(rand_gen);
 }
 
 void ExternalWrench::setWrenchIndex(int& index)

@@ -7,7 +7,6 @@ project(Plugin_MultiCamera)
 
 include(AddGazeboYarpPluginTarget)
 
-set(LIB_COMMON_NAME gazebo_yarp_lib_common)
 
 include_directories(/usr/local/src/robot/gazebo-yarp-plugins/libraries/singleton/include)
 
@@ -29,7 +28,7 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME multicamera
                                                   ${SDFORMAT_INCLUDE_DIRS}
                                                   ${PROTOBUF_INCLUDE_DIRS}
                                                   ${OGRE_INCLUDE_DIRS}
-                              LINKED_LIBRARIES ${LIB_COMMON_NAME}
+                              LINKED_LIBRARIES gazebo_yarp_lib_common
                                                gazebo_yarp_singleton
                                                gazebo_yarp_MultiCameraPlugin
                                                ${YARP_LIBRARIES}

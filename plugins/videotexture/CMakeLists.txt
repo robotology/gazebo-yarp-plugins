@@ -7,7 +7,7 @@ PROJECT(Plugin_Videotexture)
 
 include(AddGazeboYarpPluginTarget)
 
-set(LIB_COMMON_NAME gazebo_yarp_lib_common)
+
 
 # find opencv dependency
 find_package(OpenCV REQUIRED)
@@ -22,7 +22,7 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME videotexture
                                                   ${PROTOBUF_INCLUDE_DIRS}
                                                   ${OGRE_INCLUDE_DIRS}
                                                   ${OpenCV_INCLUDE_DIRS}
-                              LINKED_LIBRARIES ${LIB_COMMON_NAME}
+                              LINKED_LIBRARIES gazebo_yarp_lib_common
                                                gazebo_yarp_singleton
                                                ${YARP_LIBRARIES}
                                                ${GAZEBO_LIBRARIES}

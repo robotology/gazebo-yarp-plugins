@@ -45,10 +45,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 #used for dir suffixes
 include(GNUInstallDirs)
-if (CMAKE_VERSION LESS 3.0)
-    # hack: by default this would be 'lib/x86_64-linux-gnu' on linux
-    set(CMAKE_INSTALL_LIBDIR lib)
-endif()
 
 OPTION(GAZEBO_YARP_PLUGINS_ENABLE_RPATH "Enable installation with RPATH" TRUE)
 include(AddInstallRPATHSupport)

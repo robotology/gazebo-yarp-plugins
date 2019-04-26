@@ -8,6 +8,7 @@
 
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
+#include <yarp/os/LogStream.h>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
 

@@ -27,6 +27,7 @@ public:
     virtual void resetSimulation();
     virtual double getSimulationTime();
     virtual double getStepSize();
+    virtual void resetSimulationPosition();
     
 private:
     

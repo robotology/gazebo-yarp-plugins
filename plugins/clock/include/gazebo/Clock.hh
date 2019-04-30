@@ -102,6 +102,11 @@ public:
     void resetSimulationTime();
 
     /**
+     * Reset the simulation position back to initial pose
+     */
+    void resetSimulationPosition();
+
+    /**
      * Reset the simulation time and state back to zero
      */
     void resetSimulation();    

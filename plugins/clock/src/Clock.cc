@@ -12,6 +12,7 @@
 #include <gazebo/common/Events.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
 #include <gazebo/physics/World.hh>
+#include <gazebo/physics/physics.hh>
 #include <gazebo/physics/PhysicsIface.hh>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -30,7 +31,6 @@ namespace gazebo
     , m_rpcPort(0)
     , m_clockServer(0)
     {
-
     }
 
     GazeboYarpClock::~GazeboYarpClock()
@@ -182,6 +182,12 @@ namespace gazebo
         m_world->Reset();
     }
 
+    void GazeboYarpClock::resetSimulationPosition()
+    {
+        m_world->ResetEntities(gazebo::physics::Base::BASE);
+        event::Events::worldReset();
+    }    
+
     common::Time GazeboYarpClock::getSimulationTime()
     {
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -202,7 +208,7 @@ namespace gazebo
             return physics->GetMaxStepSize();
         }
         return -1.0;
-    }
+    }  
 
     // Register this plugin with the simulator
     GZ_REGISTER_SYSTEM_PLUGIN(GazeboYarpClock)

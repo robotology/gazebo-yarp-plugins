@@ -182,7 +182,7 @@ namespace gazebo
         m_world->Reset();
     }
 
-    void GazeboYarpClock::resetSimulationPosition()
+    void GazeboYarpClock::resetSimulationState()
     {
         m_world->ResetEntities(gazebo::physics::Base::BASE);
         event::Events::worldReset();

@@ -296,7 +296,7 @@ void ClockServer_resetSimulation::init()
 {
 }
 
-class ClockServer_resetSimulationPosition :
+class ClockServer_resetSimulationState :
         public yarp::os::Portable
 {
 public:
@@ -305,25 +305,25 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_resetSimulationPosition::write(yarp::os::ConnectionWriter& connection) const
+bool ClockServer_resetSimulationState::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
         return false;
     }
-    if (!writer.writeTag("resetSimulationPosition", 1, 1)) {
+    if (!writer.writeTag("resetSimulationState", 1, 1)) {
         return false;
     }
     return true;
 }
 
-bool ClockServer_resetSimulationPosition::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_resetSimulationState::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
 }
 
-void ClockServer_resetSimulationPosition::init()
+void ClockServer_resetSimulationState::init()
 {
 }
 
@@ -417,12 +417,12 @@ void ClockServer::resetSimulation()
     yarp().write(helper);
 }
 
-void ClockServer::resetSimulationPosition()
+void ClockServer::resetSimulationState()
 {
-    ClockServer_resetSimulationPosition helper;
+    ClockServer_resetSimulationState helper;
     helper.init();
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "void ClockServer::resetSimulationPosition()");
+        yError("Missing server method '%s'?", "void ClockServer::resetSimulationState()");
     }
     yarp().write(helper);
 }
@@ -442,7 +442,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName)
         helpString.emplace_back("getSimulationTime");
         helpString.emplace_back("getStepSize");
         helpString.emplace_back("resetSimulation");
-        helpString.emplace_back("resetSimulationPosition");
+        helpString.emplace_back("resetSimulationState");
         helpString.emplace_back("help");
     } else {
         if (functionName == "pauseSimulation") {
@@ -486,9 +486,9 @@ std::vector<std::string> ClockServer::help(const std::string& functionName)
             helpString.emplace_back("void resetSimulation() ");
             helpString.emplace_back("Reset the simulation state and time ");
         }
-        if (functionName == "resetSimulationPosition") {
-            helpString.emplace_back("void resetSimulationPosition() ");
-            helpString.emplace_back("Reset the simulation position back to initial pose ");
+        if (functionName == "resetSimulationState") {
+            helpString.emplace_back("void resetSimulationState() ");
+            helpString.emplace_back("Reset the simulation state back to initial pose ");
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -653,13 +653,13 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
-        if (tag == "resetSimulationPosition") {
+        if (tag == "resetSimulationState") {
             if (!direct) {
-                ClockServer_resetSimulationPosition helper;
+                ClockServer_resetSimulationState helper;
                 helper.init();
                 yarp().callback(helper,*this, "__direct__");
             } else {
-                resetSimulationPosition();
+                resetSimulationState();
             }
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {

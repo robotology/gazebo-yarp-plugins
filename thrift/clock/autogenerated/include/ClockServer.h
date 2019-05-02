@@ -76,9 +76,9 @@ public:
     virtual void resetSimulation();
 
     /**
-     * Reset the simulation position back to initial pose
+     * Reset the simulation state back to initial pose
      */
-    virtual void resetSimulationPosition();
+    virtual void resetSimulationState();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

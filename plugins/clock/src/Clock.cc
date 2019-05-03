@@ -208,7 +208,7 @@ namespace gazebo
             return physics->GetMaxStepSize();
         }
         return -1.0;
-    }  
+    }
 
     // Register this plugin with the simulator
     GZ_REGISTER_SYSTEM_PLUGIN(GazeboYarpClock)

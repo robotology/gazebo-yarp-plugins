@@ -46,5 +46,10 @@ service ClockServer {
      *
      */
     oneway void resetSimulation();
+  
+    /** Reset the simulation state back to initial pose
+     *
+     */
+    oneway void resetSimulationState();    
     
 }

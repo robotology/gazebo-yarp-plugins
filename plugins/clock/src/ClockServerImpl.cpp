@@ -52,4 +52,9 @@ namespace GazeboYarpPlugins {
     {
         return m_clock.getStepSize();
     }
+
+    void ClockServerImpl::resetSimulationState()
+    {
+        m_clock.resetSimulationState();
+    }
 }

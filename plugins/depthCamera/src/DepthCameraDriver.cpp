@@ -334,6 +334,7 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
         distModel = camPtr->LensDistortion().get();
         if(distModel)
         {
+            intrinsic.put("physFocalLength", 0.0);
             intrinsic.put("focalLengthX",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
             intrinsic.put("focalLengthY",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
 #if GAZEBO_MAJOR_VERSION >= 8

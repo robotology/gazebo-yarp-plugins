@@ -94,7 +94,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
 
     //Open the driver
-    //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
+    //Force the device to be of type "gazebo_depthCamera" (it make sense? probably yes)
     m_driverParameters.put("device","gazebo_depthCamera");
     yDebug() << "CC: m_driverParameters:\t" << m_driverParameters.toString();
 

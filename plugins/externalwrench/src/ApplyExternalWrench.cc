@@ -59,6 +59,12 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
         yError ( "ERROR: rpcThread did not start correctly" );
     }
 
+    // Get gazebo simulation update period
+    gazebo::physics::PhysicsEnginePtr physicsEngine = _model->GetWorld()->Physics();
+    m_rpcThread.m_simulationUpdatePeriod = physicsEngine->GetUpdatePeriod();
+
+    yInfo() << "Simulation update period : " << m_rpcThread.m_simulationUpdatePeriod;
+
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::onUpdate, this, _1 ) );
@@ -107,6 +113,9 @@ void ApplyExternalWrench::onReset()
     // Change the operation mode to default option 'single'
     this->m_rpcThread.m_mode = "single";
 
+    // Change the wrench smoothing option to default false
+    this->m_rpcThread.m_wrenchSmoothing = false;
+
     // Reset wrench count
     this->m_rpcThread.wrenchCount = 0;
 
@@ -128,6 +137,9 @@ bool RPCServerThread::threadInit()
 
     // Set the default operation mode
     this->m_mode = "single";
+
+    // Set the default smoothing option
+    this->m_wrenchSmoothing = false;
 
     // Set wrench count default value
     this->wrenchCount = 0;
@@ -184,7 +196,7 @@ void RPCServerThread::run()
 
                 // Create new instances of external wrenches
                 ExternalWrench newWrench;
-                if(newWrench.setWrench(m_robotModel, m_cmd))
+                if(newWrench.setWrench(m_robotModel, m_cmd, m_simulationUpdatePeriod, m_wrenchSmoothing))
                 {
                     // Update wrench count
                     wrenchCount++;
@@ -232,6 +244,22 @@ void RPCServerThread::run()
                         wrench.deleteWrench();
                     }
                     wrenchesVector.clear();
+                }
+
+                this->m_reply.addString (m_message);
+                this->m_rpcPort.reply ( m_reply );
+
+            }
+            else if (command.size() == 2 && command.get(0).isString() && command.get(1).isString() && \
+                    (command.get(0).asString() == "smoothing" && (command.get(1).asString() == "on" || command.get(1).asString() == "off"))) {
+
+                if (command.get(1).asString() == "on") {
+                    this->m_wrenchSmoothing = true;
+                    this->m_message = "Wrench smoothing is on starting from the next wrench";
+                }
+                else if (command.get(1).asString() == "off") {
+                    this->m_wrenchSmoothing = false;
+                    this->m_message = "Wrench smoothing is off starting from the next wrench";
                 }
 
                 this->m_reply.addString (m_message);

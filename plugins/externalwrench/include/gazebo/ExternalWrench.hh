@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "gazebo/gazebo.hh"
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -51,6 +52,11 @@ private:
         double                   duration;
    } wrench;
 
+   // Smoothed wrench vector
+   std::vector<yarp::sig::Vector> smoothedWrenchVec;
+   bool                          wrenchSmoothingFlag;
+
+   int                           timeStepIndex;
    double                        tick;
    double                        tock;
 
@@ -67,22 +73,23 @@ private:
 
 public:
 
-    bool duration_done;
+   bool duration_done;
 
-    ExternalWrench();
-    ~ExternalWrench();
+   ExternalWrench();
+   ~ExternalWrench();
 
-    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
-    bool getLink();
+   bool setWrench(physics::ModelPtr&, yarp::os::Bottle&, double&, bool&);
+   bool smoothWrench(const yarp::os::Bottle&, const double&);
+   bool getLink();
 
-    void setWrenchIndex(int& index);
-    void setWrenchColor();
-    void setTick(double& tickTime);
-    void setTock(double& tockTime);
-    void setVisual();
-    void applyWrench();
-    void deleteWrench();
-    void setModel();
+   void setWrenchIndex(int& index);
+   void setWrenchColor();
+   void setTick(double& tickTime);
+   void setTock(double& tockTime);
+   void setVisual();
+   void applyWrench();
+   void deleteWrench();
+   void setModel();
 };
 
 #endif //GAZEBO_YARP_PLUGINS_EXTERNALWRENCH_H

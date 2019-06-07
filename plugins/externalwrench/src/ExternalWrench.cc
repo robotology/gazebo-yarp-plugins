@@ -7,6 +7,7 @@
 
 #include "ExternalWrench.hh"
 #include <random>
+#include <algorithm>
 
 // Initializing wrench command
 ExternalWrench::ExternalWrench()
@@ -29,6 +30,9 @@ ExternalWrench::ExternalWrench()
     tick = 0; // Default tick value
     tock = 0; // Default tock value
     duration_done = false;
+
+    wrenchSmoothingFlag = false;
+    timeStepIndex = 0;
 }
 
 void ExternalWrench::setWrenchColor()
@@ -106,7 +110,7 @@ void ExternalWrench::setVisual()
     visualMsg.set_cast_shadows(false);
 }
 
-bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
+bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, double& simulationUpdatePeriod, bool& wrenchSmoothing)
 {
     model = _model;
 
@@ -115,28 +119,139 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 
     if(getLink())
     {
-        wrench.force[0]  =  cmd.get(1).asDouble();
-        wrench.force[1]  =  cmd.get(2).asDouble();
-        wrench.force[2]  =  cmd.get(3).asDouble();
+        if (wrenchSmoothing) {
+            wrenchSmoothingFlag = true;
+            return smoothWrench(cmd, simulationUpdatePeriod);
+        }
+        else {
 
-        wrench.torque[0] = cmd.get(4).asDouble();
-        wrench.torque[1] = cmd.get(5).asDouble();
-        wrench.torque[2] = cmd.get(6).asDouble();
+            wrench.force[0]  =  cmd.get(1).asDouble();
+            wrench.force[1]  =  cmd.get(2).asDouble();
+            wrench.force[2]  =  cmd.get(3).asDouble();
 
-        wrench.duration  = cmd.get(7).asDouble();
+            wrench.torque[0] = cmd.get(4).asDouble();
+            wrench.torque[1] = cmd.get(5).asDouble();
+            wrench.torque[2] = cmd.get(6).asDouble();
 
-        return true;
+            wrench.duration  = cmd.get(7).asDouble();
+
+            return true;
+        }
+
     }
     else return false;
 }
 
+bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& simulationUpdatePeriod)
+{
+    // Clear smoothed wrenches vector
+    smoothedWrenchVec.clear();
+
+    double duration = cmd.get(7).asDouble();
+    if ((duration <= 0) && (duration <= simulationUpdatePeriod)) {
+        yError() << "Failed to smooth wrench as given duration is very small";
+        return false;
+    }
+
+    yInfo() << "Inside wrench smoothing";
+
+    // Compute time steps
+    std::size_t steps = duration/simulationUpdatePeriod;
+
+    yInfo() << "Total time steps : " << steps;
+
+    // Get original wrench
+    yarp::sig::Vector originalWrench;
+    originalWrench.resize(6,0);
+
+    originalWrench[0]  =  cmd.get(1).asDouble();
+    originalWrench[1]  =  cmd.get(2).asDouble();
+    originalWrench[2]  =  cmd.get(3).asDouble();
+    originalWrench[3]  =  cmd.get(4).asDouble();
+    originalWrench[4]  =  cmd.get(5).asDouble();
+    originalWrench[5]  =  cmd.get(6).asDouble();
+
+    yInfo() << "Original wrench : " << originalWrench.toString().c_str();
+
+    yInfo() << "Computing smoothing coefficients";
+
+    double time = 0;
+    std::vector<double> smoothingCoefficients;
+
+    for (int timeStep = 0; timeStep <= steps; timeStep++) {
+        // Second derivative of minimum jerk trajectory
+        double smoothingCoefficient = duration*(30 * std::pow(time/duration, 2) - 60 * std::pow(time/duration, 3) + 30 * std::pow(time/duration, 4));
+        smoothingCoefficients.push_back(smoothingCoefficient);
+
+        // Update time
+        time = time + simulationUpdatePeriod;
+    }
+
+    yInfo() << "Computed smoothing coefficients";
+
+    // Normalize smoothing coefficients
+    double smoothingCoefficientMax = *std::max_element(smoothingCoefficients.begin(), smoothingCoefficients.end());
+    for (int timeStep = 0; timeStep <= steps; timeStep++) {
+        smoothingCoefficients.at(timeStep) =  smoothingCoefficients.at(timeStep) / smoothingCoefficientMax;
+    }
+
+    yInfo() << "Normalized smoothing coefficients";
+
+    yarp::sig::Vector smoothedWrench;
+    smoothedWrench.resize(6,0);
+
+    for (int timeStep = 0; timeStep <= steps; timeStep++) {
+
+        smoothedWrench = originalWrench * smoothingCoefficients.at(timeStep);
+
+        smoothedWrenchVec.push_back(smoothedWrench);
+        //yInfo() << smoothedWrench.toString().c_str();
+
+        smoothedWrench.clear();
+    }
+
+    yInfo() << "Size of smoothed wrenches vector : " << smoothedWrenchVec.size();
+
+    return true;
+}
+
 void ExternalWrench::applyWrench()
 {
+    yInfo() << "Inside apply wrench";
     if((tock-tick) < wrench.duration)
     {
 #if GAZEBO_MAJOR_VERSION >= 8
-        ignition::math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
-        ignition::math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
+        ignition::math::Vector3d force;
+        ignition::math::Vector3d torque;
+
+        if (wrenchSmoothingFlag)
+        {
+            yInfo() << "Inside smoothed apply wrench";
+            yInfo() << "Size of smoothed wrenches vector : " << smoothedWrenchVec.size();
+
+            yarp::sig::Vector smoothedWrench = smoothedWrenchVec.at(timeStepIndex);
+
+            force[0] = smoothedWrench[0];
+            force[1] = smoothedWrench[1];
+            force[2] = smoothedWrench[2];
+
+            torque[0] = smoothedWrench[3];
+            torque[1] = smoothedWrench[4];
+            torque[2] = smoothedWrench[5];
+
+            timeStepIndex++;
+        }
+        else
+        {
+            yInfo() << "Inside normal apply wrench";
+            force[0] = wrench.force[0];
+            force[1] = wrench.force[1];
+            force[2] = wrench.force[2];
+
+            torque[0] = wrench.torque[0];
+            torque[1] = wrench.torque[1];
+            torque[2] = wrench.torque[2];
+        }
 
         link->AddForce(force);
         link->AddTorque(torque);

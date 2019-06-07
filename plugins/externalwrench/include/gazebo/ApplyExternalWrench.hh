@@ -8,6 +8,7 @@
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/Model.hh>
+#include <gazebo/physics/physics.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <yarp/os/Network.h>
@@ -28,6 +29,12 @@ public:
     // variable for operation mode
     // single wrench or multiple wrenches
     std::string         m_mode;
+
+    // wrench smoothing flag
+    bool                m_wrenchSmoothing;
+
+    // gazebo simulation update period
+    double              m_simulationUpdatePeriod;
 
     int                 wrenchCount;
 

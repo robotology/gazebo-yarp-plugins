@@ -209,12 +209,12 @@ void RPCServerThread::run()
                     wrenchesVector.push_back(newWrench);
                 }
                 else
-                {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link found in the model" ;
+                {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link not found in the model" ;
                     this->m_reply.addString ( m_message );
                     this->m_rpcPort.reply ( m_reply );
                 }
             }
-            else if (command.size() == 1 && command.get(0).isString()) {
+            else if (command.size() == 1 && command.get(0).isString() && (command.get(0).asString() == "single" || command.get(0).asString() == "multiple")) {
 
                 this->m_mode = command.get(0).asString();
 

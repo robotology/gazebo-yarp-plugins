@@ -50,10 +50,12 @@ private:
         yarp::sig::Vector        force;
         yarp::sig::Vector        torque;
         double                   duration;
+
+        // Smoothed wrench vector
+        std::vector<yarp::sig::Vector> smoothedWrenchVec;
+
    } wrench;
 
-   // Smoothed wrench vector
-   std::vector<yarp::sig::Vector> smoothedWrenchVec;
    bool                          wrenchSmoothingFlag;
    std::size_t                   steps;
 

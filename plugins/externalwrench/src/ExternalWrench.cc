@@ -146,7 +146,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
 bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& simulationUpdatePeriod)
 {
     // Clear smoothed wrenches vector
-    smoothedWrenchVec.clear();
+    wrench.smoothedWrenchVec.clear();
 
     double duration = cmd.get(7).asDouble();
     if ((duration <= 0) && (duration <= simulationUpdatePeriod)) {
@@ -205,13 +205,13 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
 
         smoothedWrench = originalWrench * smoothingCoefficients.at(timeStep);
 
-        smoothedWrenchVec.push_back(smoothedWrench);
+        wrench.smoothedWrenchVec.push_back(smoothedWrench);
         //yInfo() << smoothedWrench.toString().c_str();
 
         smoothedWrench.clear();
     }
 
-    yInfo() << "Size of smoothed wrenches vector : " << smoothedWrenchVec.size();
+    yInfo() << "Size of smoothed wrenches vector : " << wrench.smoothedWrenchVec.size();
 
     return true;
 }
@@ -224,9 +224,9 @@ void ExternalWrench::applyWrench()
         ignition::math::Vector3d force;
         ignition::math::Vector3d torque;
 
-        if (wrenchSmoothingFlag)
-        {
-            yarp::sig::Vector smoothedWrench = smoothedWrenchVec.at(timeStepIndex);
+        if (wrenchSmoothingFlag) {
+
+            yarp::sig::Vector smoothedWrench = wrench.smoothedWrenchVec.at(timeStepIndex);
 
             wrench.force[0] = smoothedWrench[0];
             wrench.force[1] = smoothedWrench[1];
@@ -301,6 +301,10 @@ void ExternalWrench::deleteWrench()
     this->wrench.force.clear();
     this->wrench.torque.clear();
     this->wrench.duration = 0;
+
+    if (wrenchSmoothingFlag) {
+        this->wrench.smoothedWrenchVec.clear();
+    }
 
     this->visualMsg.set_visible(0);
     this->visualMsg.clear_geometry();

@@ -154,8 +154,9 @@ void RPCServerThread::run()
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
-            this->m_reply.addString ( "The defaul operation mode is with single wrench" );
+            this->m_reply.addString ( "The defaul operation mode is with single wrench and without wrench smoothing" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
+            this->m_reply.addString ( "Insert [smoothing on] or [smoothing off] to change the wrench smoothing" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
@@ -232,12 +233,19 @@ void RPCServerThread::run()
 
                 this->m_message = command.get(0).asString() + " wrench operation mode set";
 
+                if (this->m_wrenchSmoothing == true) {
+                    this->m_message = this->m_message + " with wrench smoothing on";
+                }
+                else {
+                    this->m_message = this->m_message + " with wrench smoothing off";
+                }
+
                 // Reset wrench count
                 wrenchCount = 0;
 
                 // Delete the previous wrenches
                 if (wrenchesVector.size() != 0) {
-                    this->m_message = this->m_message + " . Clearing previous wrenches.";
+                    this->m_message = this->m_message + ". Clearing previous wrenches.";
                     for (int i = 0; i < wrenchesVector.size(); i++)
                     {
                         ExternalWrench wrench = wrenchesVector.at(i);

@@ -55,6 +55,7 @@ private:
    // Smoothed wrench vector
    std::vector<yarp::sig::Vector> smoothedWrenchVec;
    bool                          wrenchSmoothingFlag;
+   std::size_t                   steps;
 
    int                           timeStepIndex;
    double                        tick;

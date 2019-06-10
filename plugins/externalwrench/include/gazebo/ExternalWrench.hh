@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <string>
 #include <memory>
-#include <vector>
 
 #include "gazebo/gazebo.hh"
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -43,9 +42,9 @@ class ExternalWrench
 {
 private:
 
-   float      color[4];
-   struct wrenchCommand
-   {
+    float      color[4];
+    struct wrenchCommand
+    {
         std::string              link_name;
         yarp::sig::Vector        force;
         yarp::sig::Vector        torque;
@@ -53,46 +52,45 @@ private:
 
         // Smoothed wrench vector
         std::vector<yarp::sig::Vector> smoothedWrenchVec;
+    } wrench;
 
-   } wrench;
+    bool                          wrenchSmoothingFlag;
+    int                           timeStepIndex;
+    std::size_t                   steps;
 
-   bool                          wrenchSmoothingFlag;
-   std::size_t                   steps;
+    double                        tick;
+    double                        tock;
 
-   int                           timeStepIndex;
-   double                        tick;
-   double                        tock;
+    int                           wrenchIndex;
 
-   int                           wrenchIndex;
+    physics::ModelPtr             model;
+    physics::LinkPtr              link;
 
-   physics::ModelPtr             model;
-   physics::LinkPtr              link;
+    transport::NodePtr            node;
+    transport::PublisherPtr       visPub;
+    msgs::Visual                  visualMsg;
 
-   transport::NodePtr            node;
-   transport::PublisherPtr       visPub;
-   msgs::Visual                  visualMsg;
-
-   event::ConnectionPtr          updateConnection;
+    event::ConnectionPtr          updateConnection;
 
 public:
 
-   bool duration_done;
+    bool duration_done;
 
-   ExternalWrench();
-   ~ExternalWrench();
+    ExternalWrench();
+    ~ExternalWrench();
 
-   bool setWrench(physics::ModelPtr&, yarp::os::Bottle&, double&, bool&);
-   bool smoothWrench(const yarp::os::Bottle&, const double&);
-   bool getLink();
+    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&, double&, bool&);
+    bool smoothWrench(const yarp::os::Bottle&, const double&);
+    bool getLink();
 
-   void setWrenchIndex(int& index);
-   void setWrenchColor();
-   void setTick(double& tickTime);
-   void setTock(double& tockTime);
-   void setVisual();
-   void applyWrench();
-   void deleteWrench();
-   void setModel();
+    void setWrenchIndex(int& index);
+    void setWrenchColor();
+    void setTick(double& tickTime);
+    void setTock(double& tockTime);
+    void setVisual();
+    void applyWrench();
+    void deleteWrench();
+    void setModel();
 };
 
 #endif //GAZEBO_YARP_PLUGINS_EXTERNALWRENCH_H

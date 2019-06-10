@@ -154,9 +154,9 @@ void RPCServerThread::run()
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
-            this->m_reply.addString ( "The defaul operation mode is with single wrench and without wrench smoothing" );
+            this->m_reply.addString ( "The defaul operation mode is with single wrench without wrench smoothing" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
-            this->m_reply.addString ( "Insert [smoothing on] or [smoothing off] to change the wrench smoothing" );
+            this->m_reply.addString ( "Insert [smoothing on] or [smoothing off] to set the wrench smoothing option" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
@@ -180,6 +180,8 @@ void RPCServerThread::run()
 
                 if (this->m_mode == "single") {
 
+                    this->m_lock.lock();
+
                     // Reset wrench count
                     wrenchCount = 0;
 
@@ -193,6 +195,7 @@ void RPCServerThread::run()
                         wrenchesVector.clear();
                     }
 
+                    this->m_lock.unlock();
                 }
 
                 // Create new instances of external wrenches
@@ -243,6 +246,8 @@ void RPCServerThread::run()
                 // Reset wrench count
                 wrenchCount = 0;
 
+                this->m_lock.lock();
+
                 // Delete the previous wrenches
                 if (wrenchesVector.size() != 0) {
                     this->m_message = this->m_message + ". Clearing previous wrenches.";
@@ -253,6 +258,8 @@ void RPCServerThread::run()
                     }
                     wrenchesVector.clear();
                 }
+
+                this->m_lock.unlock();
 
                 this->m_reply.addString (m_message);
                 this->m_rpcPort.reply ( m_reply );
@@ -272,7 +279,6 @@ void RPCServerThread::run()
 
                 this->m_reply.addString (m_message);
                 this->m_rpcPort.reply ( m_reply );
-
             }
             else {
                 this->m_reply.clear();

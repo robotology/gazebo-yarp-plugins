@@ -7,7 +7,6 @@
 
 #include "ExternalWrench.hh"
 #include <random>
-#include <algorithm>
 
 // Initializing wrench command
 ExternalWrench::ExternalWrench()
@@ -124,7 +123,24 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
 
         if (wrenchSmoothing) {
             wrenchSmoothingFlag = true;
-            return smoothWrench(cmd, simulationUpdatePeriod);
+            bool wrenchSmoothingStatus = smoothWrench(cmd, simulationUpdatePeriod);
+
+            if (wrenchSmoothingStatus) {
+
+                // Get the first elements of the smoothed wrench
+                yarp::sig::Vector initSmoothedWrench = wrench.smoothedWrenchVec.at(timeStepIndex);
+
+                wrench.force[0] = initSmoothedWrench[0];
+                wrench.force[1] = initSmoothedWrench[1];
+                wrench.force[2] = initSmoothedWrench[2];
+
+                wrench.torque[0] = initSmoothedWrench[3];
+                wrench.torque[1] = initSmoothedWrench[4];
+                wrench.torque[2] = initSmoothedWrench[5];
+
+                return true;
+            }
+            else return  false;
         }
         else {
 
@@ -206,7 +222,8 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
         smoothedWrench = originalWrench * smoothingCoefficients.at(timeStep);
 
         wrench.smoothedWrenchVec.push_back(smoothedWrench);
-        //yInfo() << smoothedWrench.toString().c_str();
+        yInfo() << smoothedWrench[0] << " " << smoothedWrench[1] << " " << smoothedWrench[2] << " " \
+                << smoothedWrench[3] << " " << smoothedWrench[4] << " " << smoothedWrench[5] << " ";
 
         smoothedWrench.clear();
     }
@@ -226,6 +243,11 @@ void ExternalWrench::applyWrench()
 
         if (wrenchSmoothingFlag) {
 
+            // Update time step index
+            if (timeStepIndex < steps) {
+                timeStepIndex++;
+            }
+
             yarp::sig::Vector smoothedWrench = wrench.smoothedWrenchVec.at(timeStepIndex);
 
             wrench.force[0] = smoothedWrench[0];
@@ -235,11 +257,6 @@ void ExternalWrench::applyWrench()
             wrench.torque[0] = smoothedWrench[3];
             wrench.torque[1] = smoothedWrench[4];
             wrench.torque[2] = smoothedWrench[5];
-
-            // Update time step index
-            if (timeStepIndex < steps) {
-                timeStepIndex++;
-            }
         }
 
         force[0] = wrench.force[0];
@@ -302,7 +319,7 @@ void ExternalWrench::deleteWrench()
     this->wrench.torque.clear();
     this->wrench.duration = 0;
 
-    if (wrenchSmoothingFlag) {
+    if (wrenchSmoothingFlag && !this->wrench.smoothedWrenchVec.empty()) {
         this->wrench.smoothedWrenchVec.clear();
     }
 

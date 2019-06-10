@@ -119,6 +119,9 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
 
     if(getLink())
     {
+        // Get wrench duration
+        wrench.duration  = cmd.get(7).asDouble();
+
         if (wrenchSmoothing) {
             wrenchSmoothingFlag = true;
             return smoothWrench(cmd, simulationUpdatePeriod);
@@ -132,8 +135,6 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
             wrench.torque[0] = cmd.get(4).asDouble();
             wrench.torque[1] = cmd.get(5).asDouble();
             wrench.torque[2] = cmd.get(6).asDouble();
-
-            wrench.duration  = cmd.get(7).asDouble();
 
             return true;
         }
@@ -156,7 +157,7 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     yInfo() << "Inside wrench smoothing";
 
     // Compute time steps
-    std::size_t steps = duration/simulationUpdatePeriod;
+    steps = duration/simulationUpdatePeriod;
 
     yInfo() << "Total time steps : " << steps;
 
@@ -217,7 +218,6 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
 
 void ExternalWrench::applyWrench()
 {
-    yInfo() << "Inside apply wrench";
     if((tock-tick) < wrench.duration)
     {
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -226,32 +226,29 @@ void ExternalWrench::applyWrench()
 
         if (wrenchSmoothingFlag)
         {
-            yInfo() << "Inside smoothed apply wrench";
-            yInfo() << "Size of smoothed wrenches vector : " << smoothedWrenchVec.size();
-
             yarp::sig::Vector smoothedWrench = smoothedWrenchVec.at(timeStepIndex);
 
-            force[0] = smoothedWrench[0];
-            force[1] = smoothedWrench[1];
-            force[2] = smoothedWrench[2];
+            wrench.force[0] = smoothedWrench[0];
+            wrench.force[1] = smoothedWrench[1];
+            wrench.force[2] = smoothedWrench[2];
 
-            torque[0] = smoothedWrench[3];
-            torque[1] = smoothedWrench[4];
-            torque[2] = smoothedWrench[5];
+            wrench.torque[0] = smoothedWrench[3];
+            wrench.torque[1] = smoothedWrench[4];
+            wrench.torque[2] = smoothedWrench[5];
 
-            timeStepIndex++;
+            // Update time step index
+            if (timeStepIndex < steps) {
+                timeStepIndex++;
+            }
         }
-        else
-        {
-            yInfo() << "Inside normal apply wrench";
-            force[0] = wrench.force[0];
-            force[1] = wrench.force[1];
-            force[2] = wrench.force[2];
 
-            torque[0] = wrench.torque[0];
-            torque[1] = wrench.torque[1];
-            torque[2] = wrench.torque[2];
-        }
+        force[0] = wrench.force[0];
+        force[1] = wrench.force[1];
+        force[2] = wrench.force[2];
+
+        torque[0] = wrench.torque[0];
+        torque[1] = wrench.torque[1];
+        torque[2] = wrench.torque[2];
 
         link->AddForce(force);
         link->AddTorque(torque);

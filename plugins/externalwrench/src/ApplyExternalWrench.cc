@@ -63,8 +63,6 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
     gazebo::physics::PhysicsEnginePtr physicsEngine = _model->GetWorld()->Physics();
     m_rpcThread.m_simulationUpdatePeriod = physicsEngine->GetUpdatePeriod();
 
-    yInfo() << "Simulation update period : " << m_rpcThread.m_simulationUpdatePeriod;
-
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::onUpdate, this, _1 ) );
@@ -198,34 +196,53 @@ void RPCServerThread::run()
                     this->m_lock.unlock();
                 }
 
-                // Create new instances of external wrenches
-                ExternalWrench newWrench;
-                if(newWrench.setWrench(m_robotModel, m_cmd, m_simulationUpdatePeriod, m_wrenchSmoothing))
-                {
-                    // Update wrench count
-                    wrenchCount++;
+                if (command.get(7).asDouble() > 0 || command.get(7).asInt() > 0 ) {
 
-                    // Set wrench tick time
-                    yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
-                    double tickTime = tickTimeStamp.getTime();
-                    newWrench.setTick(tickTime);
+                    if (this->m_wrenchSmoothing == true && (command.get(7).asDouble() <= m_simulationUpdatePeriod)) {
+                        this->m_message = this->m_message + " but the entered duration is less than or equal to the simulation update period";
+                        this->m_reply.addString ( m_message );
+                        this->m_rpcPort.reply ( m_reply );
 
-                    // Set wrench index
-                    newWrench.setWrenchIndex(wrenchCount);
+                        m_reply.clear();
+                        command.clear();
 
-                    // Set wrench color
-                    newWrench.setWrenchColor();
+                        continue;
+                    }
 
-                    // Set wrench visual
-                    newWrench.setVisual();
+                    // Create new instances of external wrenches
+                    ExternalWrench newWrench;
+                    if(newWrench.setWrench(m_robotModel, m_cmd, m_simulationUpdatePeriod, m_wrenchSmoothing))
+                    {
+                        // Update wrench count
+                        wrenchCount++;
 
-                    this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
-                    this->m_reply.addString ( m_message);
-                    this->m_rpcPort.reply ( m_reply );
-                    wrenchesVector.push_back(newWrench);
+                        // Set wrench tick time
+                        yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
+                        double tickTime = tickTimeStamp.getTime();
+                        newWrench.setTick(tickTime);
+
+                        // Set wrench index
+                        newWrench.setWrenchIndex(wrenchCount);
+
+                        // Set wrench color
+                        newWrench.setWrenchColor();
+
+                        // Set wrench visual
+                        newWrench.setVisual();
+
+                        this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
+                        this->m_reply.addString ( m_message);
+                        this->m_rpcPort.reply ( m_reply );
+                        wrenchesVector.push_back(newWrench);
+                    }
+                    else
+                    {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link not found in the model" ;
+                        this->m_reply.addString ( m_message );
+                        this->m_rpcPort.reply ( m_reply );
+                    }
                 }
-                else
-                {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link not found in the model" ;
+                else {
+                    this->m_message = this->m_message + " but the entered duration is invalid";
                     this->m_reply.addString ( m_message );
                     this->m_rpcPort.reply ( m_reply );
                 }

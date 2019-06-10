@@ -165,17 +165,9 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     wrench.smoothedWrenchVec.clear();
 
     double duration = cmd.get(7).asDouble();
-    if ((duration <= 0) && (duration <= simulationUpdatePeriod)) {
-        yError() << "Failed to smooth wrench as given duration is very small";
-        return false;
-    }
-
-    yInfo() << "Inside wrench smoothing";
 
     // Compute time steps
     steps = duration/simulationUpdatePeriod;
-
-    yInfo() << "Total time steps : " << steps;
 
     // Get original wrench
     yarp::sig::Vector originalWrench;
@@ -187,10 +179,6 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     originalWrench[3]  =  cmd.get(4).asDouble();
     originalWrench[4]  =  cmd.get(5).asDouble();
     originalWrench[5]  =  cmd.get(6).asDouble();
-
-    yInfo() << "Original wrench : " << originalWrench.toString().c_str();
-
-    yInfo() << "Computing smoothing coefficients";
 
     double time = 0;
     std::vector<double> smoothingCoefficients;
@@ -204,15 +192,11 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
         time = time + simulationUpdatePeriod;
     }
 
-    yInfo() << "Computed smoothing coefficients";
-
     // Normalize smoothing coefficients
     double smoothingCoefficientMax = *std::max_element(smoothingCoefficients.begin(), smoothingCoefficients.end());
     for (int timeStep = 0; timeStep <= steps; timeStep++) {
         smoothingCoefficients.at(timeStep) =  smoothingCoefficients.at(timeStep) / smoothingCoefficientMax;
     }
-
-    yInfo() << "Normalized smoothing coefficients";
 
     yarp::sig::Vector smoothedWrench;
     smoothedWrench.resize(6,0);
@@ -222,13 +206,8 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
         smoothedWrench = originalWrench * smoothingCoefficients.at(timeStep);
 
         wrench.smoothedWrenchVec.push_back(smoothedWrench);
-        yInfo() << smoothedWrench[0] << " " << smoothedWrench[1] << " " << smoothedWrench[2] << " " \
-                << smoothedWrench[3] << " " << smoothedWrench[4] << " " << smoothedWrench[5] << " ";
-
         smoothedWrench.clear();
     }
-
-    yInfo() << "Size of smoothed wrenches vector : " << wrench.smoothedWrenchVec.size();
 
     return true;
 }

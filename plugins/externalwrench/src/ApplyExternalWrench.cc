@@ -5,6 +5,7 @@
  */
 
 #include "ApplyExternalWrench.hh"
+#include <gazebo/physics/PhysicsTypes.hh>
 
 namespace gazebo
 {

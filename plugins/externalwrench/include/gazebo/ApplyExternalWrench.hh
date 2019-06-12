@@ -8,7 +8,6 @@
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/Model.hh>
-#include <gazebo/physics/physics.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <yarp/os/Network.h>

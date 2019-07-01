@@ -7,8 +7,9 @@ PROJECT(GazeboYARPPlugins)
 
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)
-set(${PROJECT_NAME}_MINOR_VERSION 1)
-set(${PROJECT_NAME}_PATCH_VERSION 2)
+set(${PROJECT_NAME}_MINOR_VERSION 2)
+set(${PROJECT_NAME}_PATCH_VERSION 0)
+
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
 
@@ -45,10 +46,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 #used for dir suffixes
 include(GNUInstallDirs)
-if (CMAKE_VERSION LESS 3.0)
-    # hack: by default this would be 'lib/x86_64-linux-gnu' on linux
-    set(CMAKE_INSTALL_LIBDIR lib)
-endif()
 
 OPTION(GAZEBO_YARP_PLUGINS_ENABLE_RPATH "Enable installation with RPATH" TRUE)
 include(AddInstallRPATHSupport)

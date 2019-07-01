@@ -30,9 +30,11 @@ endif()
 add_subdirectory(worldinterface)
 add_subdirectory(linkattacher)
 add_subdirectory(lasersensor)
+add_subdirectory(doublelaser)
 add_subdirectory(depthCamera)
 
 
 add_subdirectory(contactloadcellarray)
 add_subdirectory(modelposepublisher)
 add_subdirectory(basestate)
+add_subdirectory(configurationoverride)

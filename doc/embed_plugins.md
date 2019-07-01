@@ -33,16 +33,18 @@ but are nevertheless useful for simulating complex scenarios.
 | Contact Load Cell Array| `gazebo_contactloadcellarray` | Model | gazebo::GazeboYarpContactLoadCellArray | yarp::dev::GazeboYarpContactLoadCellArrayDriver |
 
 ## Plugins exposing simulation-specific functionalities
-|  Functionality     | Plugin Name  | Plugin Type |  Gazebo Plugin class  |
-| :----------------: |:-------------:| :-----:|:---------------------------------:|
-| Clock synchronization  | `gazebo_yarp_clock` | System | gazebo::GazeboYarpClock |
-| Apply external force/torque via YARP facilities | `gazebo_yarp_externalwrench` | Model |  gazebo::ApplyExternalWrench |
-| Display the Center of Mass of a model | `gazebo_yarp_showmodelcom` | Model | gazebo::ShowModelCoM |
-| Project an image stream on a simulated surface | `gazebo_yarp_videotexture` | Visual  | gazebo::VideoTexture |
-| Expose a YARP RPC interface to create/manipulate objects programatically. | `gazebo_yarp_worldinterface` | Model |  gazebo::WorldInterface |
-| Publish the absolute pose of the root link of a model. | `gazebo_yarp_modelposepublisher` | Model | gazebo::GazeboYarpModelPosePublisher |
-| Expose a YARP RPC interface to attach/detach links of the models spawned to the links of the robot using a fixed joint. | `gazebo_yarp_rpc_linkattacher` | Model | gazebo::GazeboYarpLinkAttacher |
+|  Functionality     | Plugin Name  | Plugin Type |  Gazebo Plugin class  | YARP Device class (if any)  |
+| :----------------: |:-------------:| :-----:|:---------------------------------:|:-------------------:|
+| Clock synchronization  | `gazebo_yarp_clock` | System | gazebo::GazeboYarpClock | |
+| Apply external force/torque via YARP facilities | `gazebo_yarp_externalwrench` | Model |  gazebo::ApplyExternalWrench | |
+| Display the Center of Mass of a model | `gazebo_yarp_showmodelcom` | Model | gazebo::ShowModelCoM | |
+| Project an image stream on a simulated surface | `gazebo_yarp_videotexture` | Visual  | gazebo::VideoTexture | |
+| Expose a YARP RPC interface to create/manipulate objects programatically. | `gazebo_yarp_worldinterface` | Model |  gazebo::WorldInterface | |
+| Publish the absolute pose of the root link of a model. | `gazebo_yarp_modelposepublisher` | Model | gazebo::GazeboYarpModelPosePublisher | |
+| Expose a YARP RPC interface to attach/detach links of the models spawned to the links of the robot using a fixed joint. | `gazebo_yarp_rpc_linkattacher` | Model | gazebo::GazeboYarpLinkAttacher | |
 | Exposes the absolute pose, velocity and acceleration of a desired link through YARP analog server device| `gazebo_basestate` | Model | gazebo::GazeboYarpBaseState | yarp::dev::GazeboYarpBaseStateDriver |
+| Changes the value of the property of a specific plugin attached to the model (if not present, the configuration is created) | `gazebo_yarp_configurationoverride` | Model | gazebo::GazeboYarpConfigurationOverride | |
+
 
 ## Using the plugins in Gazebo Models
 In Gazebo, the simulated models are described using the [SDF (simulation description format)]((http://gazebosim.org/sdf.html), an XML-based file format.
@@ -55,7 +57,10 @@ For model plugins such as the `gazebo_yarp_controlboard`, a plugin can be loaded
 </plugin>
 ~~~
 Most Model and Sensor plugins present in `gazebo-yarp-plugins` read their configuration from the file referenced in the `yarpConfigurationFile` tag.
-The location of the file is defined by using a [Gazebo URI](https://bitbucket.org/osrf/gazebo/wiki/uri), while the file is a [.ini YARP configuration file](http://www.yarp.it/yarp_config_files.html).
+The location of the file is defined by using a [Gazebo URI](https://bitbucket.org/osrf/gazebo/wiki/uri), while the file is a [.ini YARP configuration file](http://www.yarp.it/yarp_config_files.html). Alternatively, parameters can be passed directly in the `sdf` with the [`Bottle`](http://www.yarp.it/classyarp_1_1os_1_1Bottle.html) format using the `yarpConfigurationString` tag (e.g. `<yarpConfigurationString>(name /iCub/linkattacher/rpc:i)</yarpConfigurationString>`). When using `yarpConfigurationString`, it is important to remember that:
+- only **one** `yarpConfigurationString` can be defined for each plugin.
+- the tags `<yarpConfigurationFile>` and `<yarpConfigurationString>` can coexist, but if a parameter is defined in both the value in `<yarpConfigurationString>` will **always** be used.
+
 For specific information consumed by each plugin, please refer to the doxygen documentation of the specific plugin class.
 
 System plugins instead need to be loaded at the beginning of the simulation, and hence they are passed as command line arguments when launching `gazebo` (or `gzserver`).

@@ -100,6 +100,16 @@ public:
      * Reset the simulation time back to zero
      */
     void resetSimulationTime();
+
+    /**
+     * Reset the simulation state back to initial state
+     */
+    void resetSimulationState();
+
+    /**
+     * Reset the simulation time and state back to zero
+     */
+    void resetSimulation();    
     
     /**
      * Get the current step size in seconds.

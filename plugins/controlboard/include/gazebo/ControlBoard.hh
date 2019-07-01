@@ -12,6 +12,7 @@
 #include <string>
 
 #include <yarp/dev/PolyDriverList.h>
+#include <yarp/dev/IVirtualAnalogSensor.h>
 
 namespace yarp {
     namespace dev {
@@ -51,6 +52,10 @@ private:
     yarp::dev::IMultipleWrapper* m_iWrap;
     yarp::dev::PolyDriverList m_controlBoards;
 
+    bool m_useVirtAnalogSensor = false;
+    yarp::dev::PolyDriver m_virtAnalogSensorWrapper;
+    yarp::dev::IMultipleWrapper* m_iVirtAnalogSensorWrap;
+    
     yarp::os::Property m_parameters;
 
     std::string m_robotName;

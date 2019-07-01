@@ -41,5 +41,15 @@ service ClockServer {
      * @return the step size in seconds
      */
     double getStepSize();
+
+    /** Reset the simulation state and time
+     *
+     */
+    oneway void resetSimulation();
+  
+    /** Reset the simulation state back to initial pose
+     *
+     */
+    oneway void resetSimulationState();    
     
 }

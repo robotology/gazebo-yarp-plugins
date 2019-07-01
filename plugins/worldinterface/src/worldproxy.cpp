@@ -62,6 +62,20 @@ sdf::ElementPtr getSDFRoot(sdf::SDF &sdfObj)
 
 std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name, const std::string& object_name,const bool gravity_enable, const bool collision_enable)
 {
+    if (object_name!= "")
+    {
+        #if GAZEBO_MAJOR_VERSION >= 8
+        physics::ModelPtr model=world->ModelByName(object_name);
+        #else
+        physics::ModelPtr model=world->GetModel(object_name);
+        #endif
+        if (model)
+        {
+            yError()<<"An object called " << object_name << "exists already in gazebo\n";
+            return "";
+        }
+    }
+
   sdf::SDF sphereSDF;
 
   string sphereSDF_string=string(
@@ -178,7 +192,20 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
 
 string WorldProxy::makeBox(const double width, const double height, const double thickness, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name, const std::string& object_name,const bool gravity_enable, const bool collision_enable)
 {
-  sdf::SDF boxSDF;
+    if (object_name!= "")
+    {
+        #if GAZEBO_MAJOR_VERSION >= 8
+        physics::ModelPtr model=world->ModelByName(object_name);
+        #else
+        physics::ModelPtr model=world->GetModel(object_name);
+        #endif
+        if (model)
+        {
+            yError()<<"An object called " << object_name << "exists already in gazebo\n";
+            return "";
+        }
+    }
+    sdf::SDF boxSDF;
 
   string boxSDF_String=string(
     "<?xml version='1.0'?>\
@@ -257,7 +284,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
   ostringstream objlabel;
   if (object_name!= "")
   {
-     objlabel << object_name << nobjects;
+     objlabel << object_name;
   }
   else
   {
@@ -293,6 +320,20 @@ string WorldProxy::makeBox(const double width, const double height, const double
 
 string WorldProxy::makeCylinder(const double radius, const double length, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
 {
+    if (object_name!= "")
+    {
+        #if GAZEBO_MAJOR_VERSION >= 8
+        physics::ModelPtr model=world->ModelByName(object_name);
+        #else
+        physics::ModelPtr model=world->GetModel(object_name);
+        #endif
+        if (model)
+        {
+            yError()<<"An object called " << object_name << "exists already in gazebo\n";
+            return "";
+        }
+    }
+
   sdf::SDF cylSDF;
 
   string cylSDF_String=string(
@@ -371,7 +412,7 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   ostringstream objlabel;
   if (object_name!= "")
   {
-     objlabel << object_name << nobjects;
+     objlabel << object_name;
   }
   else
   {
@@ -476,7 +517,21 @@ bool WorldProxy::enableGravity(const std::string& id, const bool enable)
 
 std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Pose& pose, const GazeboYarpPlugins::Color& color, const std::string& frame_name, const std::string& object_name,const bool gravity_enable, const bool collision_enable)
 {
-  sdf::SDF frameSDF;
+    if (object_name!= "")
+    {
+        #if GAZEBO_MAJOR_VERSION >= 8
+        physics::ModelPtr model=world->ModelByName(object_name);
+        #else
+        physics::ModelPtr model=world->GetModel(object_name);
+        #endif
+        if (model)
+        {
+            yError()<<"An object called " << object_name << "exists already in gazebo\n";
+            return "";
+        }
+    }
+
+    sdf::SDF frameSDF;
 
   string frameSDF_string=string(
       "<?xml version='1.0'?>\
@@ -589,7 +644,7 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   ostringstream objlabel;
   if (object_name!= "")
   {
-     objlabel << object_name << nobjects;
+     objlabel << object_name;
   }
   else
   {
@@ -962,27 +1017,22 @@ GazeboYarpPlugins::Pose WorldProxy::getPose(const std::string& id, const std::st
 
 bool WorldProxy::deleteObject(const std::string& id)
 {
-  ObjectsListIt it=objects.begin();
-  while(it!=objects.end())
-  {
-    string obj=it->first;
 #if GAZEBO_MAJOR_VERSION >= 8
-    physics::ModelPtr model=world->ModelByName(obj);
+    physics::ModelPtr model=world->ModelByName(id);
 #else
-    physics::ModelPtr model=world->GetModel(obj);
+    physics::ModelPtr model=world->GetModel(id);
 #endif
     if (model)
     {
-      world->RemoveModel(obj);
-      objects.erase(it);
-      return true;
+        world->RemoveModel(id);
+        objects.erase(id);
+        return true;
     }
     else
     {
-      it++;
+        yError()<<"WorldProxy::deleteObject: the obj called" << id << "not exists";
+        return false;
     }
-  }
-  return false;
 }
 
 bool WorldProxy::deleteAll()

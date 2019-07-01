@@ -16,172 +16,179 @@ LinkAttacherServerImpl::LinkAttacherServerImpl()
 LinkAttacherServerImpl::~LinkAttacherServerImpl()
 {}
 
-bool LinkAttacherServerImpl::attachUnscoped(const string& model_name, const std::string& model_link_name, const std::string& robot_name, const string& robot_link_name)
+bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, const string& parent_model_link_name, const string& child_model_name, const string& child_model_link_name)
 {
-
     #if GAZEBO_MAJOR_VERSION >= 8
-    gazebo::physics::ModelPtr object_model = _world->ModelByName(model_name);
+    gazebo::physics::ModelPtr parent_model = _world->ModelByName(parent_model_name);
     #else
-    gazebo::physics::ModelPtr object_model = _world->GetModel(model_name);
+    gazebo::physics::ModelPtr parent_model = _world->GetModel(parent_model_name);
     #endif
 
-    if(!object_model)
+    if(!parent_model)
     {
-        yError() << LogPrefix << "Attach: " << model_name << " does not exist in gazebo";
+        yError() << LogPrefix << "Attach: " << parent_model_name << " model does not exist in gazebo";
         return false;
     }
     else
     {
-      yInfo() << LogPrefix << "Attach: " << object_model->GetName() << " found";
-    }
-
-    gazebo::physics::LinkPtr object_link = object_model->GetLink(model_link_name);
-    if(!object_link)
-    {
-        yError() << LogPrefix << "Attach: " << model_link_name << " is not found";
-        return false;
-    }
-    else
-    {
-      yInfo() << LogPrefix << "Attach: " << object_link->GetName() << " found";
-    }
-
-    #if GAZEBO_MAJOR_VERSION >= 8
-    gazebo::physics::ModelPtr robot_model = _world->ModelByName(robot_name);
-    #else
-    gazebo::physics::ModelPtr robot_model = _world->GetModel(robot_name);
-    #endif
-
-    if(!robot_model)
-    {
-        yError() << LogPrefix << "Attach: " << robot_name << " does not exist in gazebo";
-        return false;
-    }
-    else
-    {
-      yInfo() << LogPrefix << "Attach: " << robot_model->GetName() << " found";
+      yInfo() << LogPrefix << "Attach: " << parent_model->GetName() << " model found";
     }
 
     //Get the exact link with only link name instead of full_scoped_link_name
-    gazebo::physics::Link_V robot_model_links = robot_model->GetLinks();
-    for(int i=0; i < robot_model_links.size(); i++)
+    gazebo::physics::Link_V parent_model_links = parent_model->GetLinks();
+    gazebo::physics::LinkPtr parent_model_link;
+    for(int i=0; i < parent_model_links.size(); i++)
     {
-        //E.g iCub::l_hand::l_hand_base_link
-
-        std::string candidate_robot_link_name = robot_model_links[i]->GetScopedName();
-
-        std::size_t lastcolon = candidate_robot_link_name.rfind(":");
-        std::string unscoped_robot_link_name = candidate_robot_link_name.substr(lastcolon+1,std::string::npos);
-
-        if(unscoped_robot_link_name == robot_link_name)
+        std::string candidate_parent_model_link_name = parent_model_links[i]->GetScopedName();
+        
+        // hasEnding compare ending of the condidate model link name to the given link name, in order to be able to use unscoped names
+        if(GazeboYarpPlugins::hasEnding(candidate_parent_model_link_name, parent_model_link_name))
         {
-            yInfo() << LogPrefix << "Attach: Full scoped Candidate robot link name: " << candidate_robot_link_name << " found";
-            gazebo::physics::LinkPtr robot_link = robot_model_links[i];
-            if(!robot_link)
-            {
-                yError() << LogPrefix << "Attach: " << robot_link_name << " is not found";
-                return false;
-            }
-            else
-            {
-              yInfo() << LogPrefix << "Attach: " << robot_link->GetName() << " found";
-            }
-
-            //This is joint creation
-            gazebo::physics::JointPtr joint;
-
-            #if GAZEBO_MAJOR_VERSION >= 8
-            joint = _world->Physics()->CreateJoint("fixed",object_model);
-            #else
-            joint = _world->GetPhysicsEngine()->CreateJoint("fixed",object_model);
-            #endif
-
-            if(!joint)
-            {
-                yError() << LogPrefix << "Attach: Unable to create joint";
-                return false;
-            }
-
-            std::string joint_name = model_link_name + "_magnet_joint";
-            joint->SetName(joint_name);
-            yInfo() << LogPrefix << "Attach: Magnet joint: " << joint->GetName() << " created";
-
-            joint->SetModel(object_model);
-
-            #if GAZEBO_MAJOR_VERSION >= 8
-            joint->Load(object_link,robot_link,ignition::math::Pose3d());
-            #else
-            joint->Load(object_link,robot_link,gazebo::math::Pose());
-            #endif
-
-            //Attach(prent_link,child_link)
-            joint->Attach(object_link,robot_link);
-
+            parent_model_link = parent_model_links[i];
+            yInfo() << LogPrefix << "Attach: " << parent_model_link->GetName() << " link found";
             break;
         }
     }
+    if(!parent_model_link)
+    {
+    	yError() << LogPrefix << "Attach: " << parent_model_link_name << " link is not found";
+    	return false;
+    }
+
+    #if GAZEBO_MAJOR_VERSION >= 8
+    gazebo::physics::ModelPtr child_model = _world->ModelByName(child_model_name);
+    #else
+    gazebo::physics::ModelPtr child_model = _world->GetModel(child_model_name);
+    #endif
+
+    if(!child_model)
+    {
+        yError() << LogPrefix << "Attach: " << child_model_name << " model does not exist in gazebo";
+        return false;
+    }
+    else
+    {
+      yInfo() << LogPrefix << "Attach: " << child_model->GetName() << " model found";
+    }
+
+    //Get the exact link with only link name instead of full_scoped_link_name
+    gazebo::physics::Link_V child_model_links = child_model->GetLinks();
+    gazebo::physics::LinkPtr child_model_link;
+    for(int i=0; i < child_model_links.size(); i++)
+    {
+        std::string candidate_child_model_link_name = child_model_links[i]->GetScopedName();
+        // hasEnding compare ending of the condidate model link name to the given link name, in order to be able to use unscoped names
+        if(GazeboYarpPlugins::hasEnding(candidate_child_model_link_name, child_model_link_name))
+        {
+            child_model_link = child_model_links[i];
+            yInfo() << LogPrefix << "Attach: " << child_model_link->GetName() << " link found";
+            break;
+        }
+    }
+    if(!child_model_link)
+    {
+    	yError() << LogPrefix << "Attach: " << child_model_link_name << " link is not found";
+    	return false;
+    }
+
+    //This is joint creation
+    gazebo::physics::JointPtr fixed_joint;
+
+    #if GAZEBO_MAJOR_VERSION >= 8
+    fixed_joint = _world->Physics()->CreateJoint("fixed",parent_model);
+    #else
+    fixed_joint = _world->GetPhysicsEngine()->CreateJoint("fixed",parent_model);
+    #endif
+
+    if(!fixed_joint)
+    {
+        yError() << LogPrefix << "Attach: Unable to create joint";
+        return false;
+    }
+
+    std::string joint_name = parent_model_link_name + "_fixed_joint";
+    fixed_joint->SetName(joint_name);
+    yInfo() << LogPrefix << "Attach: fixed joint: " << fixed_joint->GetName() << " created";
+
+    fixed_joint->SetModel(parent_model);
+
+    #if GAZEBO_MAJOR_VERSION >= 8
+    fixed_joint->Load(parent_model_link,child_model_link,ignition::math::Pose3d());
+    #else
+    fixed_joint->Load(parent_model_link,child_model_link,gazebo::math::Pose());
+    #endif
+
+    //Attach(parent_link,child_link)
+    fixed_joint->Attach(parent_model_link,child_model_link);
 
     return true;
 }
 
-bool LinkAttacherServerImpl::detachUnscoped(const string& model_name, const std::string& model_link_name)
+bool LinkAttacherServerImpl::detachUnscoped(const string& model_name, const string& model_link_name)
 {
     #if GAZEBO_MAJOR_VERSION >= 8
-    gazebo::physics::ModelPtr object_model = _world->ModelByName(model_name);
+    gazebo::physics::ModelPtr model = _world->ModelByName(model_name);
     #else
-    gazebo::physics::ModelPtr object_model = _world->GetModel(model_name);
+    gazebo::physics::ModelPtr model = _world->GetModel(model_name);
     #endif
 
-    if(!object_model)
+    if(!model)
     {
-        yError() << LogPrefix << "Detach: " << model_name << " does not exist in gazebo";
+        yError() << LogPrefix << "Detach: " << model_name << " model does not exist in gazebo";
         return false;
     }
     else
     {
-      yInfo() << LogPrefix << "Detach: " << object_model->GetName() << " found";
+      yInfo() << LogPrefix << "Detach: " << model->GetName() << " model found";
     }
 
-    gazebo::physics::LinkPtr object_link = object_model->GetLink(model_link_name);
-    if(!object_link)
+    //Get the exact link with only link name instead of full_scoped_link_name
+    gazebo::physics::Link_V model_links = model->GetLinks();
+    gazebo::physics::LinkPtr model_link;
+    for(int i=0; i < model_links.size(); i++)
     {
-        yError() << LogPrefix << "Detach: " << model_link_name << " is not found";
-        return false;
+        std::string candidate_model_link_name = model_links[i]->GetScopedName();
+        // hasEnding compare ending of the condidate model link name to the given link name, in order to be able to use unscoped names
+        if(GazeboYarpPlugins::hasEnding(candidate_model_link_name, model_link_name))
+        {
+            model_link = model_links[i];
+            yInfo() << LogPrefix << "Detach: " << model_link->GetName() << " link found";
+            break;
+        }
     }
-    else
+    if(!model_link)
     {
-      yInfo() << LogPrefix << "Detach: " << object_link->GetName() << " found";
+    	yError() << LogPrefix << "Detach: " << model_link_name << " link is not found";
+    	return false;
     }
 
-    std::string joint_name = model_name + "::" + model_link_name + "_magnet_joint";
+    std::string joint_name = model_name + "::" + model_link_name + "_fixed_joint";
 
     //Get all the joints at the object link
-    gazebo::physics::Joint_V joints_v = object_link->GetChildJoints();
-
+    gazebo::physics::Joint_V joints_v = model_link->GetChildJoints();
+    gazebo::physics::JointPtr fixed_joint;
     for(int i=0; i < joints_v.size(); i++)
     {
         std::string candidate_joint_name = joints_v[i]->GetScopedName();
         if(candidate_joint_name == joint_name)
         {
-            gazebo::physics::JointPtr joint = joints_v[i];
-
-            if(!joint)
+            fixed_joint = joints_v[i];
+            if(fixed_joint)
             {
-                yError() << LogPrefix << "Detach: Magnet Joint not found";
-                return false;
-            }
-            else
-            {
-                joint->Detach();
-                yInfo() << LogPrefix << "Detach: Found joint: " << joint->GetName() << " detached";
+                fixed_joint->Detach();
+                yInfo() << LogPrefix << "Detach: Found joint: " << fixed_joint->GetName() << " detached";
             }
         }
     }
+    if(!fixed_joint)
+    {
+        yError() << LogPrefix << "Detach: fixed Joint not found";
+        return false;
+    }
     return true;
-
 }
 
-bool LinkAttacherServerImpl::enableGravity(const std::string& model_name, const bool enable)
+bool LinkAttacherServerImpl::enableGravity(const string& model_name, const bool enable)
 {
   #if GAZEBO_MAJOR_VERSION >= 8
   gazebo::physics::ModelPtr model = _world->ModelByName(model_name);

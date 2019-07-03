@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Fixed 
+- Fixed compilation on Gazebo 7 by disabling compilation of `externalwrench` plugin if the project is configured with Gazebo 7 (https://github.com/robotology/gazebo-yarp-plugins/pull/434).
+
 ## [3.2.0] - 2019-07-01
 ### Added
 - Add `resetSimulation` method to reset simulation state and time time, in the `gazebo_yarp_clock` RPC interface (https://github.com/robotology/gazebo-yarp-plugins/pull/345).

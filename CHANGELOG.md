@@ -15,3 +15,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Fixed
 - Fix invalid camera parameters in `gazebo_depthCamera` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/408).
+
+## [Unreleased]
+### Fixed 
+- Fixed compilation on Gazebo 7 by disabling compilation of `externalwrench` plugin if the project is configured with Gazebo 7 (https://github.com/robotology/gazebo-yarp-plugins/pull/434) .

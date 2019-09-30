@@ -16,10 +16,14 @@
 using namespace yarp::dev;
 
 const unsigned YarpIMUChannelsNumber = 12; //The IMU has 12 fixed channels
-const std::string YarpIMUScopedName = "sensorScopedName";
+constexpr size_t rpyStartIdx   = 0;
+constexpr size_t accelStartIdx = 3;
+constexpr size_t gyroStartIdx  = 6;
+constexpr size_t magnStartIdx  = 9;
+const std::string YarpIMUScopedName {"sensorScopedName"};
 
-GazeboYarpIMUDriver::GazeboYarpIMUDriver() {}
-GazeboYarpIMUDriver::~GazeboYarpIMUDriver() {}
+GazeboYarpIMUDriver::GazeboYarpIMUDriver()  = default;
+GazeboYarpIMUDriver::~GazeboYarpIMUDriver() = default;
 
 /**
  *
@@ -57,7 +61,6 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
     }
 
     m_dataMutex.post();
-    return;
 }
 
 //DEVICE DRIVER
@@ -68,7 +71,11 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     m_dataMutex.post();
 
     //Get gazebo pointers
-    std::string sensorScopedName(config.find(YarpIMUScopedName.c_str()).asString().c_str());
+    std::string sensorScopedName(config.find(YarpIMUScopedName).asString());
+    std::string sensorName(config.find("sensor_name").asString());
+
+    m_sensorName=sensorName;
+    m_frameName=sensorName;
 
     m_parentSensor = dynamic_cast<gazebo::sensors::ImuSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
 
@@ -124,4 +131,161 @@ bool GazeboYarpIMUDriver::calibrate(int /*ch*/, double /*v*/)
 yarp::os::Stamp GazeboYarpIMUDriver::getLastInputStamp()
 {
     return m_lastTimestamp;
+}
+
+size_t GazeboYarpIMUDriver::getNrOfThreeAxisGyroscopes() const
+{
+    return 1;
+}
+
+
+yarp::dev::MAS_status GazeboYarpIMUDriver::getThreeAxisGyroscopeStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisGyroscopeName(size_t sens_index, std::string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(sens_index, out, timestamp, gyroStartIdx);
+}
+
+size_t GazeboYarpIMUDriver::getNrOfThreeAxisLinearAccelerometers() const
+{
+    return 1;
+}
+
+
+yarp::dev::MAS_status GazeboYarpIMUDriver::getThreeAxisLinearAccelerometerStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(sens_index, out, timestamp, accelStartIdx);
+}
+
+
+size_t GazeboYarpIMUDriver::getNrOfOrientationSensors() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status GazeboYarpIMUDriver::getOrientationSensorStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool GazeboYarpIMUDriver::getOrientationSensorName(size_t sens_index, std::string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool GazeboYarpIMUDriver::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool GazeboYarpIMUDriver::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const
+{
+    return genericGetMeasure(sens_index, rpy, timestamp, rpyStartIdx);
+}
+
+size_t GazeboYarpIMUDriver::getNrOfThreeAxisMagnetometers() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status GazeboYarpIMUDriver::getThreeAxisMagnetometerStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisMagnetometerName(size_t sens_index, std::string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool GazeboYarpIMUDriver::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(sens_index, out, timestamp, magnStartIdx);
+}
+yarp::dev::MAS_status GazeboYarpIMUDriver::genericGetStatus(size_t sens_index) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "GazeboYarpIMUDriver: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return yarp::dev::MAS_status::MAS_ERROR;
+    }
+
+    return yarp::dev::MAS_status::MAS_OK;
+}
+
+bool GazeboYarpIMUDriver::genericGetSensorName(size_t sens_index, std::string& name) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "GazeboYarpIMUDriver: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+
+    name = m_sensorName;
+    return true;
+}
+
+bool GazeboYarpIMUDriver::genericGetFrameName(size_t sens_index, std::string& frameName) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "GazeboYarpIMUDriver: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+
+    frameName = m_frameName;
+    return true;
+
+}
+
+bool GazeboYarpIMUDriver::genericGetMeasure(size_t sens_index, yarp::sig::Vector &out, double &timestamp, size_t startIdx) const {
+
+    if (sens_index != 0)
+    {
+        yError() << "GazeboYarpIMUDriver: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+
+    out.resize(3);
+    m_dataMutex.wait();
+    out[0] = m_imuData[startIdx];
+    out[1] = m_imuData[startIdx + 1];
+    out[2] = m_imuData[startIdx + 2];
+
+    timestamp = m_lastTimestamp.getTime();
+    m_dataMutex.post();
+    return true;
 }

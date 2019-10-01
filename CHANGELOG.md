@@ -15,3 +15,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Fixed
 - Fix invalid camera parameters in `gazebo_depthCamera` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/408).
+
+## [3.3.0] - UNRELEASED
+### Added
+- Add the usage of `MultipleAnalogInterfaces`(https://www.yarp.it/group__dev__iface__multiple__analog.html)
+  in the `gazebo_yarp_imu`.

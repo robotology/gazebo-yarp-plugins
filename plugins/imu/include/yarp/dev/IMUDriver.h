@@ -9,6 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
@@ -41,7 +42,11 @@ extern const std::string YarpIMUScopedName;
 class yarp::dev::GazeboYarpIMUDriver:
     public yarp::dev::IGenericSensor,
     public yarp::dev::IPreciselyTimed,
-    public yarp::dev::DeviceDriver
+    public yarp::dev::DeviceDriver,
+    public yarp::dev::IThreeAxisGyroscopes,
+    public yarp::dev::IThreeAxisLinearAccelerometers,
+    public yarp::dev::IThreeAxisMagnetometers,
+    public yarp::dev::IOrientationSensors
 {
 public:
     GazeboYarpIMUDriver();
@@ -55,24 +60,80 @@ public:
      */
 
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //GENERIC SENSOR
-    virtual bool read(yarp::sig::Vector& outVector);
-    virtual bool getChannels(int* numberOfChannels);
-    virtual bool calibrate(int channelIndex, double v);
+    bool read(yarp::sig::Vector& outVector) override;
+    bool getChannels(int* numberOfChannels) override;
+    bool calibrate(int channelIndex, double v) override;
 
     //PRECISELY TIMED
-    virtual yarp::os::Stamp getLastInputStamp();
+    yarp::os::Stamp getLastInputStamp() override;
+
+    /* IThreeAxisGyroscopes methods */
+
+    size_t getNrOfThreeAxisGyroscopes() const override;
+
+    yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const override;
+
+    bool getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const override;
+
+    bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const override;
+
+    bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IThreeAxisLinearAccelerometers methods */
+
+    size_t getNrOfThreeAxisLinearAccelerometers() const override;
+
+    yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const override;
+
+    bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const override;
+
+    bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
+
+    bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IThreeAxisMagnetometers methods */
+
+    size_t getNrOfThreeAxisMagnetometers() const override;
+
+    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
+
+    bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const override;
+
+    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
+
+    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IOrientationSensors methods */
+
+    size_t getNrOfOrientationSensors() const override;
+
+    yarp::dev::MAS_status getOrientationSensorStatus(size_t sens_index) const override;
+
+    bool getOrientationSensorName(size_t sens_index, std::string &name) const override;
+
+    bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
+
+    bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
 
 
 private:
+
+    yarp::dev::MAS_status genericGetStatus(size_t sens_index) const;
+    bool genericGetSensorName(size_t sens_index, std::string &name) const;
+    bool genericGetFrameName(size_t sens_index, std::string &frameName) const;
+    bool genericGetMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp, size_t startIdx) const;
+
     yarp::sig::Vector m_imuData; //buffer for imu data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
-    yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    mutable yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    std::string m_sensorName{"sensor_imu_gazebo"};
+    std::string m_frameName{"sensor_imu_gazebo"};
 
-    gazebo::sensors::ImuSensor* m_parentSensor;
+    gazebo::sensors::ImuSensor* m_parentSensor{};
     gazebo::event::ConnectionPtr m_updateConnection;
 
 };

@@ -17,7 +17,6 @@ env:
 
 compiler:
    - gcc
-   - clang
 
 before_install:
   - if [ ! $TRAVIS_BRANCH = "master" ] ; then DEPS_BRANCH_DOCKER="devel" ; fi

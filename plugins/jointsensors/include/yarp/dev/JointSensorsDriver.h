@@ -10,7 +10,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/physics/Model.hh>

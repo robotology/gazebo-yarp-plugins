@@ -11,7 +11,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/LaserMeasurementData.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <boost/shared_ptr.hpp>
 
 #include <gazebo/common/Plugin.hh>

@@ -9,7 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Time.h>
 
 #include <boost/shared_ptr.hpp>

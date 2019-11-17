@@ -11,7 +11,6 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/physics/Model.hh>
@@ -79,7 +78,7 @@ private:
 
     yarp::os::Stamp last_timestamp; //buffer for last timestamp data
 
-    yarp::os::Semaphore data_mutex; //mutex for accessing the data
+    std::mutex data_mutex; //mutex for accessing the data
 
     gazebo::event::ConnectionPtr updateConnection;
 

@@ -46,7 +46,8 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
     /** \todo TODO ensure that the timestamp is the right one */
     m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
 
-    m_dataMutex.wait();
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
 
     for (unsigned i = 0; i < 3; i++) {
         m_imuData[0 + i] = GazeboYarpPlugins::convertRadiansToDegrees(euler_orientation[i]);
@@ -60,15 +61,15 @@ void GazeboYarpIMUDriver::onUpdate(const gazebo::common::UpdateInfo &/*_info*/)
         m_imuData[6 + i] = GazeboYarpPlugins::convertRadiansToDegrees(angular_velocity[i]);
     }
 
-    m_dataMutex.post();
 }
 
 //DEVICE DRIVER
 bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
 {
-    m_dataMutex.wait();
-    m_imuData.resize(YarpIMUChannelsNumber, 0.0);
-    m_dataMutex.post();
+    {
+        std::lock_guard<std::mutex> lock(m_dataMutex);
+        m_imuData.resize(YarpIMUChannelsNumber, 0.0);
+    }
 
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpIMUScopedName).asString());
@@ -108,9 +109,8 @@ bool GazeboYarpIMUDriver::read(yarp::sig::Vector &out)
         out.resize(m_imuData.size());
     }
 
-    m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     out = m_imuData;
-    m_dataMutex.post();
 
     return true;
 }
@@ -280,12 +280,12 @@ bool GazeboYarpIMUDriver::genericGetMeasure(size_t sens_index, yarp::sig::Vector
     }
 
     out.resize(3);
-    m_dataMutex.wait();
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     out[0] = m_imuData[startIdx];
     out[1] = m_imuData[startIdx + 1];
     out[2] = m_imuData[startIdx + 2];
 
     timestamp = m_lastTimestamp.getTime();
-    m_dataMutex.post();
     return true;
 }

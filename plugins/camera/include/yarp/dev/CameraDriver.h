@@ -11,12 +11,13 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 
 #include <boost/shared_ptr.hpp>
 #include <gazebo/rendering/Camera.hh>
 #include <gazebo/sensors/CameraSensor.hh>
+
+#include <mutex>
 
 
 //Forward declarations
@@ -108,7 +109,7 @@ private:
     bool m_display_timestamp;
 
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
-    yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    std::mutex m_dataMutex; //mutex for accessing the data
 
     unsigned char *m_imageBuffer;
     int counter;

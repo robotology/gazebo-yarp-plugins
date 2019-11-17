@@ -93,19 +93,18 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     m_imageFrame_BufferSize = m_depthCameraPtr->ImageDepth() * m_width * m_height;
     m_depthFrame_BufferSize = m_width * m_height * sizeof(float);
 
-    m_depthFrameMutex.wait();
 
-    m_depthFrame_Buffer = new float[m_width * m_height];
-    memset(m_depthFrame_Buffer, 0x00, m_depthFrame_BufferSize);
+    {
+        std::lock_guard<std::mutex> lock(m_depthFrameMutex);
+        m_depthFrame_Buffer = new float[m_width * m_height];
+        memset(m_depthFrame_Buffer, 0x00, m_depthFrame_BufferSize);
+    }
 
-    m_depthFrameMutex.post();
-
-    m_colorFrameMutex.wait();
-
-    m_imageFrame_Buffer = new unsigned char[m_imageFrame_BufferSize];
-    memset(m_imageFrame_Buffer, 0x00, m_imageFrame_BufferSize);
-
-    m_colorFrameMutex.post();
+    {
+        std::lock_guard<std::mutex> lock(m_colorFrameMutex);
+        m_imageFrame_Buffer = new unsigned char[m_imageFrame_BufferSize];
+        memset(m_imageFrame_Buffer, 0x00, m_imageFrame_BufferSize);
+    }
 
     //Connect the driver to the gazebo simulation
     auto imageConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewImageFrame, this, _1, _2, _3, _4, _5);
@@ -164,7 +163,8 @@ void GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char* _image, U
      * R8G8B8 = RGB_INT8 = BGR_INT8 = B8G8R8 = 3
      * BAYER_RGGB8 = BAYER_BGGR8 = BAYER_GBRG8 = BAYER_GRBG8 = 1
      * */
-    m_colorFrameMutex.wait();
+
+    std::lock_guard<std::mutex> lock(m_colorFrameMutex);
 
     if(m_format2VocabPixel.find(_format) == m_format2VocabPixel.end())
     {
@@ -188,7 +188,6 @@ void GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char* _image, U
     }
 
     m_colorTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
-    m_colorFrameMutex.post();
     return;
 }
 
@@ -200,7 +199,7 @@ void GazeboYarpDepthCameraDriver::OnNewRGBPointCloud(const float * /*_pcd*/, UIn
 
 void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float* image, UInt _width, UInt _height, UInt _depth, const string& _format)
 {
-    m_depthFrameMutex.wait();
+    std::lock_guard<std::mutex> lock(m_depthFrameMutex);
 
     if (_format != "FLOAT32")
     {
@@ -222,8 +221,6 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float* image, UInt _widt
         memcpy(m_depthFrame_Buffer, image, _width * _height * sizeof(float));
         m_depthTimestamp.update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
     }
-    
-    m_depthFrameMutex.post();
 }
 
 //IRGBDSensor
@@ -282,12 +279,11 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
         return false;
     }
 
-    m_colorFrameMutex.wait();
+    std::lock_guard<std::mutex> lock(m_colorFrameMutex);
 
     if(m_width == 0 || m_height == 0)
     {
         myError("gazebo returned an invalid image size");
-        m_colorFrameMutex.post();
         return false;
     }
     rgbImage.setPixelCode(m_imageFormat);
@@ -295,7 +291,6 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
     memcpy(rgbImage.getRawImage(), m_imageFrame_Buffer, m_imageFrame_BufferSize);
     timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
 
-    m_colorFrameMutex.post();
     return true;
 }
 
@@ -399,12 +394,12 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
         myError("gazeboDepthCameraDriver: timestamp pointer invalid!");
         return false;
     }
-    m_depthFrameMutex.wait();
+
+    std::lock_guard<std::mutex> lock(m_depthFrameMutex);
 
     if(m_width == 0 || m_height == 0)
     {
         myError("gazebo returned an invalid image size");
-        m_depthFrameMutex.post();
         return false;
     }
 
@@ -414,7 +409,6 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
 
     timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
 
-    m_depthFrameMutex.post();
     return true;
 }
 bool GazeboYarpDepthCameraDriver::getExtrinsicParam(yarp::sig::Matrix& extrinsic)

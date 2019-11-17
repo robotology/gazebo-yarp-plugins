@@ -11,7 +11,6 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Semaphore.h>
 
 #include <yarp/sig/Matrix.h>
 
@@ -32,6 +31,8 @@
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Matrix3.hh>
 #include <ignition/math.hh>
+
+#include <mutex>
 
 namespace yarp
 {
@@ -208,7 +209,7 @@ class yarp::dev::GazeboYarpContactLoadCellArrayDriver : public yarp::dev::IAnalo
         yarp::os::Stamp m_stamp;
     
         // Mutex
-        yarp::os::Mutex m_dataMutex;
+        std::mutex m_dataMutex;
         
         // Vector of magnitudes of contact normal forces acting at load cell locations
         yarp::sig::Vector m_contactNormalForces;

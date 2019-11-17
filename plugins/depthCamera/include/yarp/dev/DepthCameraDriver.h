@@ -10,7 +10,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 
 #include <boost/shared_ptr.hpp>
@@ -19,6 +18,7 @@
 #include <gazebo/rendering/DepthCamera.hh>
 #include <gazebo/sensors/DepthCameraSensor.hh>
 
+#include <mutex>
 
 //Forward declarations
 namespace yarp {
@@ -113,8 +113,8 @@ private:
 
     yarp::os::Stamp     m_colorTimestamp; // last timestamp data
     yarp::os::Stamp     m_depthTimestamp; // last timestamp data
-    yarp::os::Semaphore m_colorFrameMutex;  //mutex for accessing the data
-    yarp::os::Semaphore m_depthFrameMutex;  //mutex for accessing the data
+    std::mutex          m_colorFrameMutex;  //mutex for accessing the data
+    std::mutex          m_depthFrameMutex;  //mutex for accessing the data
 
     unsigned char*      m_imageFrame_Buffer;
     float*              m_depthFrame_Buffer;

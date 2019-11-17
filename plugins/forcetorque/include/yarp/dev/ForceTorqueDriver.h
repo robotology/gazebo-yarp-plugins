@@ -11,10 +11,11 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
 #include <boost/shared_ptr.hpp>
 
 #include <gazebo/common/Plugin.hh>
+
+#include <mutex>
 
 namespace yarp {
     namespace dev {
@@ -80,7 +81,7 @@ public:
 private:
     yarp::sig::Vector m_forceTorqueData; //buffer for forcetorque sensor data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
-    yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    std::mutex m_dataMutex; //mutex for accessing the data
     gazebo::sensors::ForceTorqueSensor* m_parentSensor;
     gazebo::event::ConnectionPtr m_updateConnection;
 

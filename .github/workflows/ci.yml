@@ -62,6 +62,7 @@ jobs:
         cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install ..
         cmake --build . --config ${{ matrix.build_type }} --target install 
         # YARP
+        cd ${GITHUB_WORKSPACE}
         git clone https://github.com/robotology/yarp
         cd yarp
         git checkout ${{ matrix.yarp_version }}

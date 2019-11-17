@@ -11,30 +11,46 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <WorldInterfaceServer.h>
+#include <GazeboYarpPlugins/WorldInterfaceServer.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 namespace GazeboYarpPlugins {
 
-class WorldInterfaceServer_makeSphere :
+class WorldInterfaceServer_makeSphere_helper :
         public yarp::os::Portable
 {
 public:
-    double radius;
-    Pose pose;
-    Color color;
-    std::string frame_name;
-    std::string object_name;
-    bool gravity_enable;
-    bool collision_enable;
-    std::string _return;
-    void init(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
+    explicit WorldInterfaceServer_makeSphere_helper(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_radius;
+    Pose m_pose;
+    Color m_color;
+    std::string m_frame_name;
+    std::string m_object_name;
+    bool m_gravity_enable;
+    bool m_collision_enable;
+
+    thread_local static std::string s_return_helper;
 };
 
-bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connection) const
+thread_local std::string WorldInterfaceServer_makeSphere_helper::s_return_helper = {};
+
+WorldInterfaceServer_makeSphere_helper::WorldInterfaceServer_makeSphere_helper(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable) :
+        m_radius{radius},
+        m_pose{pose},
+        m_color{color},
+        m_frame_name{frame_name},
+        m_object_name{object_name},
+        m_gravity_enable{gravity_enable},
+        m_collision_enable{collision_enable}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_makeSphere_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(15)) {
@@ -43,75 +59,81 @@ bool WorldInterfaceServer_makeSphere::write(yarp::os::ConnectionWriter& connecti
     if (!writer.writeTag("makeSphere", 1, 1)) {
         return false;
     }
-    if (!writer.writeFloat64(radius)) {
+    if (!writer.writeFloat64(m_radius)) {
         return false;
     }
-    if (!writer.write(pose)) {
+    if (!writer.write(m_pose)) {
         return false;
     }
-    if (!writer.write(color)) {
+    if (!writer.write(m_color)) {
         return false;
     }
-    if (!writer.writeString(frame_name)) {
+    if (!writer.writeString(m_frame_name)) {
         return false;
     }
-    if (!writer.writeString(object_name)) {
+    if (!writer.writeString(m_object_name)) {
         return false;
     }
-    if (!writer.writeBool(gravity_enable)) {
+    if (!writer.writeBool(m_gravity_enable)) {
         return false;
     }
-    if (!writer.writeBool(collision_enable)) {
+    if (!writer.writeBool(m_collision_enable)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_makeSphere::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_makeSphere_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(_return)) {
+    if (!reader.readString(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_makeSphere::init(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
-{
-    _return = "";
-    this->radius = radius;
-    this->pose = pose;
-    this->color = color;
-    this->frame_name = frame_name;
-    this->object_name = object_name;
-    this->gravity_enable = gravity_enable;
-    this->collision_enable = collision_enable;
-}
-
-class WorldInterfaceServer_makeBox :
+class WorldInterfaceServer_makeBox_helper :
         public yarp::os::Portable
 {
 public:
-    double width;
-    double height;
-    double thickness;
-    Pose pose;
-    Color color;
-    std::string frame_name;
-    std::string object_name;
-    bool gravity_enable;
-    bool collision_enable;
-    std::string _return;
-    void init(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
+    explicit WorldInterfaceServer_makeBox_helper(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_width;
+    double m_height;
+    double m_thickness;
+    Pose m_pose;
+    Color m_color;
+    std::string m_frame_name;
+    std::string m_object_name;
+    bool m_gravity_enable;
+    bool m_collision_enable;
+
+    thread_local static std::string s_return_helper;
 };
 
-bool WorldInterfaceServer_makeBox::write(yarp::os::ConnectionWriter& connection) const
+thread_local std::string WorldInterfaceServer_makeBox_helper::s_return_helper = {};
+
+WorldInterfaceServer_makeBox_helper::WorldInterfaceServer_makeBox_helper(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable) :
+        m_width{width},
+        m_height{height},
+        m_thickness{thickness},
+        m_pose{pose},
+        m_color{color},
+        m_frame_name{frame_name},
+        m_object_name{object_name},
+        m_gravity_enable{gravity_enable},
+        m_collision_enable{collision_enable}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_makeBox_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(17)) {
@@ -120,82 +142,85 @@ bool WorldInterfaceServer_makeBox::write(yarp::os::ConnectionWriter& connection)
     if (!writer.writeTag("makeBox", 1, 1)) {
         return false;
     }
-    if (!writer.writeFloat64(width)) {
+    if (!writer.writeFloat64(m_width)) {
         return false;
     }
-    if (!writer.writeFloat64(height)) {
+    if (!writer.writeFloat64(m_height)) {
         return false;
     }
-    if (!writer.writeFloat64(thickness)) {
+    if (!writer.writeFloat64(m_thickness)) {
         return false;
     }
-    if (!writer.write(pose)) {
+    if (!writer.write(m_pose)) {
         return false;
     }
-    if (!writer.write(color)) {
+    if (!writer.write(m_color)) {
         return false;
     }
-    if (!writer.writeString(frame_name)) {
+    if (!writer.writeString(m_frame_name)) {
         return false;
     }
-    if (!writer.writeString(object_name)) {
+    if (!writer.writeString(m_object_name)) {
         return false;
     }
-    if (!writer.writeBool(gravity_enable)) {
+    if (!writer.writeBool(m_gravity_enable)) {
         return false;
     }
-    if (!writer.writeBool(collision_enable)) {
+    if (!writer.writeBool(m_collision_enable)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_makeBox::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_makeBox_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(_return)) {
+    if (!reader.readString(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_makeBox::init(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
-{
-    _return = "";
-    this->width = width;
-    this->height = height;
-    this->thickness = thickness;
-    this->pose = pose;
-    this->color = color;
-    this->frame_name = frame_name;
-    this->object_name = object_name;
-    this->gravity_enable = gravity_enable;
-    this->collision_enable = collision_enable;
-}
-
-class WorldInterfaceServer_makeCylinder :
+class WorldInterfaceServer_makeCylinder_helper :
         public yarp::os::Portable
 {
 public:
-    double radius;
-    double length;
-    Pose pose;
-    Color color;
-    std::string frame_name;
-    std::string object_name;
-    bool gravity_enable;
-    bool collision_enable;
-    std::string _return;
-    void init(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
+    explicit WorldInterfaceServer_makeCylinder_helper(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_radius;
+    double m_length;
+    Pose m_pose;
+    Color m_color;
+    std::string m_frame_name;
+    std::string m_object_name;
+    bool m_gravity_enable;
+    bool m_collision_enable;
+
+    thread_local static std::string s_return_helper;
 };
 
-bool WorldInterfaceServer_makeCylinder::write(yarp::os::ConnectionWriter& connection) const
+thread_local std::string WorldInterfaceServer_makeCylinder_helper::s_return_helper = {};
+
+WorldInterfaceServer_makeCylinder_helper::WorldInterfaceServer_makeCylinder_helper(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable) :
+        m_radius{radius},
+        m_length{length},
+        m_pose{pose},
+        m_color{color},
+        m_frame_name{frame_name},
+        m_object_name{object_name},
+        m_gravity_enable{gravity_enable},
+        m_collision_enable{collision_enable}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_makeCylinder_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(16)) {
@@ -204,77 +229,80 @@ bool WorldInterfaceServer_makeCylinder::write(yarp::os::ConnectionWriter& connec
     if (!writer.writeTag("makeCylinder", 1, 1)) {
         return false;
     }
-    if (!writer.writeFloat64(radius)) {
+    if (!writer.writeFloat64(m_radius)) {
         return false;
     }
-    if (!writer.writeFloat64(length)) {
+    if (!writer.writeFloat64(m_length)) {
         return false;
     }
-    if (!writer.write(pose)) {
+    if (!writer.write(m_pose)) {
         return false;
     }
-    if (!writer.write(color)) {
+    if (!writer.write(m_color)) {
         return false;
     }
-    if (!writer.writeString(frame_name)) {
+    if (!writer.writeString(m_frame_name)) {
         return false;
     }
-    if (!writer.writeString(object_name)) {
+    if (!writer.writeString(m_object_name)) {
         return false;
     }
-    if (!writer.writeBool(gravity_enable)) {
+    if (!writer.writeBool(m_gravity_enable)) {
         return false;
     }
-    if (!writer.writeBool(collision_enable)) {
+    if (!writer.writeBool(m_collision_enable)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_makeCylinder::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_makeCylinder_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(_return)) {
+    if (!reader.readString(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_makeCylinder::init(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
-{
-    _return = "";
-    this->radius = radius;
-    this->length = length;
-    this->pose = pose;
-    this->color = color;
-    this->frame_name = frame_name;
-    this->object_name = object_name;
-    this->gravity_enable = gravity_enable;
-    this->collision_enable = collision_enable;
-}
-
-class WorldInterfaceServer_makeFrame :
+class WorldInterfaceServer_makeFrame_helper :
         public yarp::os::Portable
 {
 public:
-    double size;
-    Pose pose;
-    Color color;
-    std::string frame_name;
-    std::string object_name;
-    bool gravity_enable;
-    bool collision_enable;
-    std::string _return;
-    void init(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
+    explicit WorldInterfaceServer_makeFrame_helper(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_size;
+    Pose m_pose;
+    Color m_color;
+    std::string m_frame_name;
+    std::string m_object_name;
+    bool m_gravity_enable;
+    bool m_collision_enable;
+
+    thread_local static std::string s_return_helper;
 };
 
-bool WorldInterfaceServer_makeFrame::write(yarp::os::ConnectionWriter& connection) const
+thread_local std::string WorldInterfaceServer_makeFrame_helper::s_return_helper = {};
+
+WorldInterfaceServer_makeFrame_helper::WorldInterfaceServer_makeFrame_helper(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable) :
+        m_size{size},
+        m_pose{pose},
+        m_color{color},
+        m_frame_name{frame_name},
+        m_object_name{object_name},
+        m_gravity_enable{gravity_enable},
+        m_collision_enable{collision_enable}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_makeFrame_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(15)) {
@@ -283,68 +311,67 @@ bool WorldInterfaceServer_makeFrame::write(yarp::os::ConnectionWriter& connectio
     if (!writer.writeTag("makeFrame", 1, 1)) {
         return false;
     }
-    if (!writer.writeFloat64(size)) {
+    if (!writer.writeFloat64(m_size)) {
         return false;
     }
-    if (!writer.write(pose)) {
+    if (!writer.write(m_pose)) {
         return false;
     }
-    if (!writer.write(color)) {
+    if (!writer.write(m_color)) {
         return false;
     }
-    if (!writer.writeString(frame_name)) {
+    if (!writer.writeString(m_frame_name)) {
         return false;
     }
-    if (!writer.writeString(object_name)) {
+    if (!writer.writeString(m_object_name)) {
         return false;
     }
-    if (!writer.writeBool(gravity_enable)) {
+    if (!writer.writeBool(m_gravity_enable)) {
         return false;
     }
-    if (!writer.writeBool(collision_enable)) {
+    if (!writer.writeBool(m_collision_enable)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_makeFrame::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_makeFrame_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(_return)) {
+    if (!reader.readString(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_makeFrame::init(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
-{
-    _return = "";
-    this->size = size;
-    this->pose = pose;
-    this->color = color;
-    this->frame_name = frame_name;
-    this->object_name = object_name;
-    this->gravity_enable = gravity_enable;
-    this->collision_enable = collision_enable;
-}
-
-class WorldInterfaceServer_changeColor :
+class WorldInterfaceServer_changeColor_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    Color color;
-    bool _return;
-    void init(const std::string& id, const Color& color);
+    explicit WorldInterfaceServer_changeColor_helper(const std::string& id, const Color& color);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+    Color m_color;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_changeColor::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_changeColor_helper::s_return_helper = {};
+
+WorldInterfaceServer_changeColor_helper::WorldInterfaceServer_changeColor_helper(const std::string& id, const Color& color) :
+        m_id{id},
+        m_color{color}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_changeColor_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(5)) {
@@ -353,49 +380,54 @@ bool WorldInterfaceServer_changeColor::write(yarp::os::ConnectionWriter& connect
     if (!writer.writeTag("changeColor", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
-    if (!writer.write(color)) {
+    if (!writer.write(m_color)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_changeColor::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_changeColor_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_changeColor::init(const std::string& id, const Color& color)
-{
-    _return = false;
-    this->id = id;
-    this->color = color;
-}
-
-class WorldInterfaceServer_setPose :
+class WorldInterfaceServer_setPose_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    Pose pose;
-    std::string frame_name;
-    bool _return;
-    void init(const std::string& id, const Pose& pose, const std::string& frame_name);
+    explicit WorldInterfaceServer_setPose_helper(const std::string& id, const Pose& pose, const std::string& frame_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+    Pose m_pose;
+    std::string m_frame_name;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_setPose::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_setPose_helper::s_return_helper = {};
+
+WorldInterfaceServer_setPose_helper::WorldInterfaceServer_setPose_helper(const std::string& id, const Pose& pose, const std::string& frame_name) :
+        m_id{id},
+        m_pose{pose},
+        m_frame_name{frame_name}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_setPose_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(9)) {
@@ -404,52 +436,55 @@ bool WorldInterfaceServer_setPose::write(yarp::os::ConnectionWriter& connection)
     if (!writer.writeTag("setPose", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
-    if (!writer.write(pose)) {
+    if (!writer.write(m_pose)) {
         return false;
     }
-    if (!writer.writeString(frame_name)) {
+    if (!writer.writeString(m_frame_name)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_setPose::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_setPose_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_setPose::init(const std::string& id, const Pose& pose, const std::string& frame_name)
-{
-    _return = false;
-    this->id = id;
-    this->pose = pose;
-    this->frame_name = frame_name;
-}
-
-class WorldInterfaceServer_enableGravity :
+class WorldInterfaceServer_enableGravity_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    bool enable;
-    bool _return;
-    void init(const std::string& id, const bool enable);
+    explicit WorldInterfaceServer_enableGravity_helper(const std::string& id, const bool enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+    bool m_enable;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_enableGravity::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_enableGravity_helper::s_return_helper = {};
+
+WorldInterfaceServer_enableGravity_helper::WorldInterfaceServer_enableGravity_helper(const std::string& id, const bool enable) :
+        m_id{id},
+        m_enable{enable}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_enableGravity_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -458,48 +493,52 @@ bool WorldInterfaceServer_enableGravity::write(yarp::os::ConnectionWriter& conne
     if (!writer.writeTag("enableGravity", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
-    if (!writer.writeBool(enable)) {
+    if (!writer.writeBool(m_enable)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_enableGravity::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_enableGravity_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_enableGravity::init(const std::string& id, const bool enable)
-{
-    _return = false;
-    this->id = id;
-    this->enable = enable;
-}
-
-class WorldInterfaceServer_enableCollision :
+class WorldInterfaceServer_enableCollision_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    bool enable;
-    bool _return;
-    void init(const std::string& id, const bool enable);
+    explicit WorldInterfaceServer_enableCollision_helper(const std::string& id, const bool enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+    bool m_enable;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_enableCollision::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_enableCollision_helper::s_return_helper = {};
+
+WorldInterfaceServer_enableCollision_helper::WorldInterfaceServer_enableCollision_helper(const std::string& id, const bool enable) :
+        m_id{id},
+        m_enable{enable}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_enableCollision_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -508,48 +547,51 @@ bool WorldInterfaceServer_enableCollision::write(yarp::os::ConnectionWriter& con
     if (!writer.writeTag("enableCollision", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
-    if (!writer.writeBool(enable)) {
+    if (!writer.writeBool(m_enable)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_enableCollision::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_enableCollision_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_enableCollision::init(const std::string& id, const bool enable)
-{
-    _return = false;
-    this->id = id;
-    this->enable = enable;
-}
-
-class WorldInterfaceServer_getPose :
+class WorldInterfaceServer_getPose_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    std::string frame_name;
-    Pose _return;
-    void init(const std::string& id, const std::string& frame_name);
+    explicit WorldInterfaceServer_getPose_helper(const std::string& id, const std::string& frame_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+    std::string m_frame_name;
+
+    thread_local static Pose s_return_helper;
 };
 
-bool WorldInterfaceServer_getPose::write(yarp::os::ConnectionWriter& connection) const
+thread_local Pose WorldInterfaceServer_getPose_helper::s_return_helper = {};
+
+WorldInterfaceServer_getPose_helper::WorldInterfaceServer_getPose_helper(const std::string& id, const std::string& frame_name) :
+        m_id{id},
+        m_frame_name{frame_name}
+{
+}
+
+bool WorldInterfaceServer_getPose_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -558,46 +600,50 @@ bool WorldInterfaceServer_getPose::write(yarp::os::ConnectionWriter& connection)
     if (!writer.writeTag("getPose", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
-    if (!writer.writeString(frame_name)) {
+    if (!writer.writeString(m_frame_name)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_getPose::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_getPose_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(_return)) {
+    if (!reader.read(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_getPose::init(const std::string& id, const std::string& frame_name)
-{
-    this->id = id;
-    this->frame_name = frame_name;
-}
-
-class WorldInterfaceServer_loadModelFromFile :
+class WorldInterfaceServer_loadModelFromFile_helper :
         public yarp::os::Portable
 {
 public:
-    std::string filename;
-    bool _return;
-    void init(const std::string& filename);
+    explicit WorldInterfaceServer_loadModelFromFile_helper(const std::string& filename);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_filename;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_loadModelFromFile::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_loadModelFromFile_helper::s_return_helper = {};
+
+WorldInterfaceServer_loadModelFromFile_helper::WorldInterfaceServer_loadModelFromFile_helper(const std::string& filename) :
+        m_filename{filename}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_loadModelFromFile_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -606,43 +652,47 @@ bool WorldInterfaceServer_loadModelFromFile::write(yarp::os::ConnectionWriter& c
     if (!writer.writeTag("loadModelFromFile", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(filename)) {
+    if (!writer.writeString(m_filename)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_loadModelFromFile::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_loadModelFromFile_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_loadModelFromFile::init(const std::string& filename)
-{
-    _return = false;
-    this->filename = filename;
-}
-
-class WorldInterfaceServer_deleteObject :
+class WorldInterfaceServer_deleteObject_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    bool _return;
-    void init(const std::string& id);
+    explicit WorldInterfaceServer_deleteObject_helper(const std::string& id);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_deleteObject::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_deleteObject_helper::s_return_helper = {};
+
+WorldInterfaceServer_deleteObject_helper::WorldInterfaceServer_deleteObject_helper(const std::string& id) :
+        m_id{id}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_deleteObject_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -651,42 +701,44 @@ bool WorldInterfaceServer_deleteObject::write(yarp::os::ConnectionWriter& connec
     if (!writer.writeTag("deleteObject", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_deleteObject::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_deleteObject_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_deleteObject::init(const std::string& id)
-{
-    _return = false;
-    this->id = id;
-}
-
-class WorldInterfaceServer_deleteAll :
+class WorldInterfaceServer_deleteAll_helper :
         public yarp::os::Portable
 {
 public:
-    bool _return;
-    void init();
+    explicit WorldInterfaceServer_deleteAll_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_deleteAll::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_deleteAll_helper::s_return_helper = {};
+
+WorldInterfaceServer_deleteAll_helper::WorldInterfaceServer_deleteAll_helper()
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_deleteAll_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -698,35 +750,37 @@ bool WorldInterfaceServer_deleteAll::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool WorldInterfaceServer_deleteAll::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_deleteAll_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_deleteAll::init()
-{
-    _return = false;
-}
-
-class WorldInterfaceServer_getList :
+class WorldInterfaceServer_getList_helper :
         public yarp::os::Portable
 {
 public:
-    std::vector<std::string> _return;
-    void init();
+    explicit WorldInterfaceServer_getList_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static std::vector<std::string> s_return_helper;
 };
 
-bool WorldInterfaceServer_getList::write(yarp::os::ConnectionWriter& connection) const
+thread_local std::vector<std::string> WorldInterfaceServer_getList_helper::s_return_helper = {};
+
+WorldInterfaceServer_getList_helper::WorldInterfaceServer_getList_helper()
+{
+}
+
+bool WorldInterfaceServer_getList_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -738,19 +792,19 @@ bool WorldInterfaceServer_getList::write(yarp::os::ConnectionWriter& connection)
     return true;
 }
 
-bool WorldInterfaceServer_getList::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_getList_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    _return.clear();
+    s_return_helper.clear();
     uint32_t _size0;
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
-    _return.resize(_size0);
-    for (auto& _elem4 : _return) {
-        if (!reader.readString(_elem4)) {
+    s_return_helper.resize(_size0);
+    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+        if (!reader.readString(s_return_helper[_i4])) {
             reader.fail();
             return false;
         }
@@ -759,23 +813,30 @@ bool WorldInterfaceServer_getList::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-void WorldInterfaceServer_getList::init()
-{
-}
-
-class WorldInterfaceServer_attach :
+class WorldInterfaceServer_attach_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    std::string link_name;
-    bool _return;
-    void init(const std::string& id, const std::string& link_name);
+    explicit WorldInterfaceServer_attach_helper(const std::string& id, const std::string& link_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+    std::string m_link_name;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_attach::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_attach_helper::s_return_helper = {};
+
+WorldInterfaceServer_attach_helper::WorldInterfaceServer_attach_helper(const std::string& id, const std::string& link_name) :
+        m_id{id},
+        m_link_name{link_name}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_attach_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -784,47 +845,50 @@ bool WorldInterfaceServer_attach::write(yarp::os::ConnectionWriter& connection) 
     if (!writer.writeTag("attach", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
-    if (!writer.writeString(link_name)) {
+    if (!writer.writeString(m_link_name)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_attach::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_attach_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_attach::init(const std::string& id, const std::string& link_name)
-{
-    _return = false;
-    this->id = id;
-    this->link_name = link_name;
-}
-
-class WorldInterfaceServer_detach :
+class WorldInterfaceServer_detach_helper :
         public yarp::os::Portable
 {
 public:
-    std::string id;
-    bool _return;
-    void init(const std::string& id);
+    explicit WorldInterfaceServer_detach_helper(const std::string& id);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_id;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_detach::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_detach_helper::s_return_helper = {};
+
+WorldInterfaceServer_detach_helper::WorldInterfaceServer_detach_helper(const std::string& id) :
+        m_id{id}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_detach_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -833,44 +897,49 @@ bool WorldInterfaceServer_detach::write(yarp::os::ConnectionWriter& connection) 
     if (!writer.writeTag("detach", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(id)) {
+    if (!writer.writeString(m_id)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_detach::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_detach_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void WorldInterfaceServer_detach::init(const std::string& id)
-{
-    _return = false;
-    this->id = id;
-}
-
-class WorldInterfaceServer_rename :
+class WorldInterfaceServer_rename_helper :
         public yarp::os::Portable
 {
 public:
-    std::string old_name;
-    std::string new_name;
-    bool _return;
-    void init(const std::string& old_name, const std::string& new_name);
+    explicit WorldInterfaceServer_rename_helper(const std::string& old_name, const std::string& new_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_old_name;
+    std::string m_new_name;
+
+    thread_local static bool s_return_helper;
 };
 
-bool WorldInterfaceServer_rename::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool WorldInterfaceServer_rename_helper::s_return_helper = {};
+
+WorldInterfaceServer_rename_helper::WorldInterfaceServer_rename_helper(const std::string& old_name, const std::string& new_name) :
+        m_old_name{old_name},
+        m_new_name{new_name}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_rename_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -879,33 +948,26 @@ bool WorldInterfaceServer_rename::write(yarp::os::ConnectionWriter& connection) 
     if (!writer.writeTag("rename", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(old_name)) {
+    if (!writer.writeString(m_old_name)) {
         return false;
     }
-    if (!writer.writeString(new_name)) {
+    if (!writer.writeString(m_new_name)) {
         return false;
     }
     return true;
 }
 
-bool WorldInterfaceServer_rename::read(yarp::os::ConnectionReader& connection)
+bool WorldInterfaceServer_rename_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
-}
-
-void WorldInterfaceServer_rename::init(const std::string& old_name, const std::string& new_name)
-{
-    _return = false;
-    this->old_name = old_name;
-    this->new_name = new_name;
 }
 
 // Constructor
@@ -916,194 +978,162 @@ WorldInterfaceServer::WorldInterfaceServer()
 
 std::string WorldInterfaceServer::makeSphere(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
 {
-    std::string _return = "";
-    WorldInterfaceServer_makeSphere helper;
-    helper.init(radius,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+    WorldInterfaceServer_makeSphere_helper helper{radius, pose, color, frame_name, object_name, gravity_enable, collision_enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string WorldInterfaceServer::makeSphere(const double radius, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_makeSphere_helper::s_return_helper : std::string{};
 }
 
 std::string WorldInterfaceServer::makeBox(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
 {
-    std::string _return = "";
-    WorldInterfaceServer_makeBox helper;
-    helper.init(width,height,thickness,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+    WorldInterfaceServer_makeBox_helper helper{width, height, thickness, pose, color, frame_name, object_name, gravity_enable, collision_enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string WorldInterfaceServer::makeBox(const double width, const double height, const double thickness, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_makeBox_helper::s_return_helper : std::string{};
 }
 
 std::string WorldInterfaceServer::makeCylinder(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
 {
-    std::string _return = "";
-    WorldInterfaceServer_makeCylinder helper;
-    helper.init(radius,length,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+    WorldInterfaceServer_makeCylinder_helper helper{radius, length, pose, color, frame_name, object_name, gravity_enable, collision_enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string WorldInterfaceServer::makeCylinder(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_makeCylinder_helper::s_return_helper : std::string{};
 }
 
 std::string WorldInterfaceServer::makeFrame(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)
 {
-    std::string _return = "";
-    WorldInterfaceServer_makeFrame helper;
-    helper.init(size,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+    WorldInterfaceServer_makeFrame_helper helper{size, pose, color, frame_name, object_name, gravity_enable, collision_enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string WorldInterfaceServer::makeFrame(const double size, const Pose& pose, const Color& color, const std::string& frame_name, const std::string& object_name, const bool gravity_enable, const bool collision_enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_makeFrame_helper::s_return_helper : std::string{};
 }
 
 bool WorldInterfaceServer::changeColor(const std::string& id, const Color& color)
 {
-    bool _return = false;
-    WorldInterfaceServer_changeColor helper;
-    helper.init(id,color);
+    WorldInterfaceServer_changeColor_helper helper{id, color};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::changeColor(const std::string& id, const Color& color)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_changeColor_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose, const std::string& frame_name)
 {
-    bool _return = false;
-    WorldInterfaceServer_setPose helper;
-    helper.init(id,pose,frame_name);
+    WorldInterfaceServer_setPose_helper helper{id, pose, frame_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::setPose(const std::string& id, const Pose& pose, const std::string& frame_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_setPose_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::enableGravity(const std::string& id, const bool enable)
 {
-    bool _return = false;
-    WorldInterfaceServer_enableGravity helper;
-    helper.init(id,enable);
+    WorldInterfaceServer_enableGravity_helper helper{id, enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::enableGravity(const std::string& id, const bool enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_enableGravity_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::enableCollision(const std::string& id, const bool enable)
 {
-    bool _return = false;
-    WorldInterfaceServer_enableCollision helper;
-    helper.init(id,enable);
+    WorldInterfaceServer_enableCollision_helper helper{id, enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::enableCollision(const std::string& id, const bool enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_enableCollision_helper::s_return_helper : bool{};
 }
 
 Pose WorldInterfaceServer::getPose(const std::string& id, const std::string& frame_name)
 {
-    Pose _return;
-    WorldInterfaceServer_getPose helper;
-    helper.init(id,frame_name);
+    WorldInterfaceServer_getPose_helper helper{id, frame_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "Pose WorldInterfaceServer::getPose(const std::string& id, const std::string& frame_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_getPose_helper::s_return_helper : Pose{};
 }
 
 bool WorldInterfaceServer::loadModelFromFile(const std::string& filename)
 {
-    bool _return = false;
-    WorldInterfaceServer_loadModelFromFile helper;
-    helper.init(filename);
+    WorldInterfaceServer_loadModelFromFile_helper helper{filename};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::loadModelFromFile(const std::string& filename)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_loadModelFromFile_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::deleteObject(const std::string& id)
 {
-    bool _return = false;
-    WorldInterfaceServer_deleteObject helper;
-    helper.init(id);
+    WorldInterfaceServer_deleteObject_helper helper{id};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::deleteObject(const std::string& id)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_deleteObject_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::deleteAll()
 {
-    bool _return = false;
-    WorldInterfaceServer_deleteAll helper;
-    helper.init();
+    WorldInterfaceServer_deleteAll_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::deleteAll()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_deleteAll_helper::s_return_helper : bool{};
 }
 
 std::vector<std::string> WorldInterfaceServer::getList()
 {
-    std::vector<std::string> _return;
-    WorldInterfaceServer_getList helper;
-    helper.init();
+    WorldInterfaceServer_getList_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::vector<std::string> WorldInterfaceServer::getList()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_getList_helper::s_return_helper : std::vector<std::string>{};
 }
 
 bool WorldInterfaceServer::attach(const std::string& id, const std::string& link_name)
 {
-    bool _return = false;
-    WorldInterfaceServer_attach helper;
-    helper.init(id,link_name);
+    WorldInterfaceServer_attach_helper helper{id, link_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::attach(const std::string& id, const std::string& link_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_attach_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::detach(const std::string& id)
 {
-    bool _return = false;
-    WorldInterfaceServer_detach helper;
-    helper.init(id);
+    WorldInterfaceServer_detach_helper helper{id};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::detach(const std::string& id)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_detach_helper::s_return_helper : bool{};
 }
 
 bool WorldInterfaceServer::rename(const std::string& old_name, const std::string& new_name)
 {
-    bool _return = false;
-    WorldInterfaceServer_rename helper;
-    helper.init(old_name,new_name);
+    WorldInterfaceServer_rename_helper helper{old_name, new_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool WorldInterfaceServer::rename(const std::string& old_name, const std::string& new_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? WorldInterfaceServer_rename_helper::s_return_helper : bool{};
 }
 
 // help method
@@ -1320,14 +1350,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readBool(collision_enable)) {
                 collision_enable = 1;
             }
-            std::string _return;
-            _return = makeSphere(radius,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+            WorldInterfaceServer_makeSphere_helper::s_return_helper = makeSphere(radius, pose, color, frame_name, object_name, gravity_enable, collision_enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(_return)) {
+                if (!writer.writeString(WorldInterfaceServer_makeSphere_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1376,14 +1405,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readBool(collision_enable)) {
                 collision_enable = 1;
             }
-            std::string _return;
-            _return = makeBox(width,height,thickness,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+            WorldInterfaceServer_makeBox_helper::s_return_helper = makeBox(width, height, thickness, pose, color, frame_name, object_name, gravity_enable, collision_enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(_return)) {
+                if (!writer.writeString(WorldInterfaceServer_makeBox_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1427,14 +1455,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readBool(collision_enable)) {
                 collision_enable = 1;
             }
-            std::string _return;
-            _return = makeCylinder(radius,length,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+            WorldInterfaceServer_makeCylinder_helper::s_return_helper = makeCylinder(radius, length, pose, color, frame_name, object_name, gravity_enable, collision_enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(_return)) {
+                if (!writer.writeString(WorldInterfaceServer_makeCylinder_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1473,14 +1500,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readBool(collision_enable)) {
                 collision_enable = 1;
             }
-            std::string _return;
-            _return = makeFrame(size,pose,color,frame_name,object_name,gravity_enable,collision_enable);
+            WorldInterfaceServer_makeFrame_helper::s_return_helper = makeFrame(size, pose, color, frame_name, object_name, gravity_enable, collision_enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(_return)) {
+                if (!writer.writeString(WorldInterfaceServer_makeFrame_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1498,14 +1524,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = changeColor(id,color);
+            WorldInterfaceServer_changeColor_helper::s_return_helper = changeColor(id, color);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_changeColor_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1527,14 +1552,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readString(frame_name)) {
                 frame_name = "";
             }
-            bool _return;
-            _return = setPose(id,pose,frame_name);
+            WorldInterfaceServer_setPose_helper::s_return_helper = setPose(id, pose, frame_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_setPose_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1552,14 +1576,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = enableGravity(id,enable);
+            WorldInterfaceServer_enableGravity_helper::s_return_helper = enableGravity(id, enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_enableGravity_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1577,14 +1600,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = enableCollision(id,enable);
+            WorldInterfaceServer_enableCollision_helper::s_return_helper = enableCollision(id, enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_enableCollision_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1601,14 +1623,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readString(frame_name)) {
                 frame_name = "";
             }
-            Pose _return;
-            _return = getPose(id,frame_name);
+            WorldInterfaceServer_getPose_helper::s_return_helper = getPose(id, frame_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(6)) {
                     return false;
                 }
-                if (!writer.write(_return)) {
+                if (!writer.write(WorldInterfaceServer_getPose_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1621,14 +1642,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = loadModelFromFile(filename);
+            WorldInterfaceServer_loadModelFromFile_helper::s_return_helper = loadModelFromFile(filename);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_loadModelFromFile_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1641,14 +1661,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = deleteObject(id);
+            WorldInterfaceServer_deleteObject_helper::s_return_helper = deleteObject(id);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_deleteObject_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1656,14 +1675,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "deleteAll") {
-            bool _return;
-            _return = deleteAll();
+            WorldInterfaceServer_deleteAll_helper::s_return_helper = deleteAll();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_deleteAll_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1671,17 +1689,16 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "getList") {
-            std::vector<std::string> _return;
-            _return = getList();
+            WorldInterfaceServer_getList_helper::s_return_helper = getList();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(_return.size()))) {
+                if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(WorldInterfaceServer_getList_helper::s_return_helper.size()))) {
                     return false;
                 }
-                for (const auto& _item5 : _return) {
+                for (const auto& _item5 : WorldInterfaceServer_getList_helper::s_return_helper) {
                     if (!writer.writeString(_item5)) {
                         return false;
                     }
@@ -1704,14 +1721,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = attach(id,link_name);
+            WorldInterfaceServer_attach_helper::s_return_helper = attach(id, link_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_attach_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1724,14 +1740,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = detach(id);
+            WorldInterfaceServer_detach_helper::s_return_helper = detach(id);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_detach_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1749,14 +1764,13 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = rename(old_name,new_name);
+            WorldInterfaceServer_rename_helper::s_return_helper = rename(old_name, new_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(WorldInterfaceServer_rename_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -1768,7 +1782,7 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readString(functionName)) {
                 functionName = "--all";
             }
-            auto _return = help(functionName);
+            auto help_strings = help(functionName);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
@@ -1777,11 +1791,11 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeTag("many", 1, 0)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) {
+                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size()))) {
                     return false;
                 }
-                for (const auto& _ret : _return) {
-                    if (!writer.writeString(_ret)) {
+                for (const auto& help_string : help_strings) {
+                    if (!writer.writeString(help_string)) {
                         return false;
                     }
                 }

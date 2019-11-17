@@ -37,7 +37,7 @@ jobs:
       shell: bash
       run: |
         brew cask install xquartz
-        brew install osrf/simulation/${{ matrix.gazebo_version }}
+        brew install ace eigen3 opencv@3 osrf/simulation/${{ matrix.gazebo_version }}
     
     - name: Dependencies [Ubuntu]
       if: matrix.os == 'ubuntu-latest'
@@ -46,7 +46,7 @@ jobs:
         sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list'
         wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install git build-essential cmake 
+        sudo apt-get install git build-essential cmake libace-dev libeigen3-dev libopencv-dev 
         sudo apt-get install lib${{ matrix.gazebo_version }}-dev
         
     - name: Source-based Dependencies [Ubuntu/macOS] 

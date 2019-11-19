@@ -10,14 +10,14 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Time.h>
 
 #include <boost/shared_ptr.hpp>
 #include <gazebo/rendering/Camera.hh>
 #include <gazebo/sensors/MultiCameraSensor.hh>
 
+#include <mutex>
 
 //Forward declarations
 namespace yarp {
@@ -97,7 +97,7 @@ private:
     bool m_vertical;
 
     std::vector<yarp::os::Stamp> m_lastTimestamp; // buffer for last timestamp data
-    std::vector<yarp::os::Semaphore*> m_dataMutex; // mutex for accessing the data
+    std::vector<std::mutex*> m_dataMutex; // mutex for accessing the data
 
     std::vector<unsigned char*> m_imageBuffer;
     int m_counter;

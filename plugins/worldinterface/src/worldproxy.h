@@ -15,17 +15,18 @@
 #include <gazebo/physics/PhysicsEngine.hh>
 #include <gazebo/physics/Link.hh>
 
-#include "WorldInterfaceServer.h"
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Semaphore.h>
 
+#include "WorldInterfaceServer.h"
+
 #include <map>
+#include <mutex>
 #include <queue>
 
 
 class SynchronizationHelper
 {
-  yarp::os::Mutex mutex;
+  std::mutex mutex;
   yarp::os::Semaphore semaphore;
   int queued;
 public:
@@ -59,7 +60,7 @@ public:
 
 class WorldProxy:public GazeboYarpPlugins::WorldInterfaceServer
 {
-  yarp::os::Mutex mutex;
+  std::mutex mutex;
   SynchronizationHelper synchHelper;
   bool isSynchro;
 

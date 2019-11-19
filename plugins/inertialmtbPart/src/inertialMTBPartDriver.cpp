@@ -99,12 +99,11 @@ void GazeboYarpInertialMTBPartDriver::onUpdate(const gazebo::common::UpdateInfo 
 
         //Fill the 3 channels measurement data, applying the m/s^2 to raw
         //fullscale gain
-        m_dataMutex.wait();
+        std::lock_guard<std::mutex> lock(m_dataMutex);
         m_inertialmtbOutBuffer[bufferOffset] = sensorLastTimestamp;
         for (unsigned idx = 0; idx < 3; idx++) {
             m_inertialmtbOutBuffer[bufferOffset+1+idx] = 1e04/5.9855*linear_acceleration[idx];
         }
-        m_dataMutex.post();
     }
 }
 
@@ -144,9 +143,8 @@ int GazeboYarpInertialMTBPartDriver::read(yarp::sig::Vector &out)
         return AS_ERROR;
     }
 
-    m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     out = m_inertialmtbOutBuffer;
-    m_dataMutex.post();
 
     return AS_OK;
 }
@@ -237,7 +235,7 @@ bool GazeboYarpInertialMTBPartDriver::buildOutBufferFixedData(std::string robotP
     /*
      * Go through the buffer and fill the metadata
      */
-    m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
 
     // number of enabled sensors and VERsion of the format
     m_inertialmtbOutBuffer(0) = double(enabledSensors.size());
@@ -260,8 +258,6 @@ bool GazeboYarpInertialMTBPartDriver::buildOutBufferFixedData(std::string robotP
     }
 
     // The remaining content is already by default set to zero
-
-    m_dataMutex.post();
 
     return true;
 }

@@ -9,7 +9,6 @@
 #include <GazeboYarpPlugins/Handler.hh>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 #include <gazebo/sensors/sensors.hh>
 #include <yarp/os/LogStream.h>
 
@@ -28,7 +27,7 @@ GazeboYarpLaserSensorDriver::~GazeboYarpLaserSensorDriver() {}
  */
 void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     this->m_parentSensor->Ranges(m_sensorData);
 
@@ -41,7 +40,7 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
 //DEVICE DRIVER
 bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpLaserSensorScopedName.c_str()).asString().c_str());
@@ -146,7 +145,7 @@ yarp::os::Stamp GazeboYarpLaserSensorDriver::getLastInputStamp()
 
 bool GazeboYarpLaserSensorDriver::getRawData (yarp::sig::Vector &data)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
     /*
     if( (int)m_forceTorqueData.size() != YarpForceTorqueChannelsNumber ||
@@ -207,7 +206,7 @@ bool GazeboYarpLaserSensorDriver::getRawData (yarp::sig::Vector &data)
 
 bool GazeboYarpLaserSensorDriver::getLaserMeasurement (std::vector<yarp::dev::LaserMeasurementData> &data)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     ///< \todo TODO in my opinion the reader should care of passing a vector of the proper dimension to the driver, but apparently this is not the case
     /*
     if( (int)m_forceTorqueData.size() != YarpForceTorqueChannelsNumber ||
@@ -268,14 +267,14 @@ bool GazeboYarpLaserSensorDriver::getLaserMeasurement (std::vector<yarp::dev::La
 
 bool GazeboYarpLaserSensorDriver::getDeviceStatus (Device_status &status)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     status = m_device_status;
     return true;
 }
 
 bool GazeboYarpLaserSensorDriver::getDistanceRange (double &min, double &max)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_gazebo_range;
     max = m_max_gazebo_range;
     return true;
@@ -283,14 +282,14 @@ bool GazeboYarpLaserSensorDriver::getDistanceRange (double &min, double &max)
 
 bool GazeboYarpLaserSensorDriver::setDistanceRange (double min, double max)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yError() << "setDistanceRange() Not yet implemented";
     return false;
 }
 
 bool GazeboYarpLaserSensorDriver::getScanLimits (double &min, double &max)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_angle;
     max = m_max_angle;
     return true;
@@ -298,35 +297,35 @@ bool GazeboYarpLaserSensorDriver::getScanLimits (double &min, double &max)
 
 bool GazeboYarpLaserSensorDriver::setScanLimits (double min, double max)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yError() << "setScanLimits() Not yet implemented";
     return false;
 }
 
 bool GazeboYarpLaserSensorDriver::getHorizontalResolution (double &step)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     step = fabs(m_max_angle-m_min_angle)/m_samples;
     return true;
 }
 
 bool GazeboYarpLaserSensorDriver::setHorizontalResolution (double step)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yError() << "setHorizontalResolution() Not yet implemented";
     return false;
 }
 
 bool GazeboYarpLaserSensorDriver::getScanRate (double &rate)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     rate = m_rate;
     return true;
 }
 
 bool GazeboYarpLaserSensorDriver::setScanRate (double rate)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     if (rate<0)
     {
       yError() << "Invalid setScanRate";
@@ -339,6 +338,6 @@ bool GazeboYarpLaserSensorDriver::setScanRate (double rate)
 
 bool GazeboYarpLaserSensorDriver::getDeviceInfo (std::string &device_info)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     return true;
 }

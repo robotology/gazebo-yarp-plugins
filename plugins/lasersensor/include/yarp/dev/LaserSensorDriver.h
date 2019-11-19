@@ -11,11 +11,12 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/LaserMeasurementData.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <boost/shared_ptr.hpp>
 
 #include <gazebo/common/Plugin.hh>
+
+#include <mutex>
 
 namespace yarp {
     namespace dev {
@@ -102,7 +103,7 @@ private:
     
     std::vector<double> m_sensorData; //buffer for laser data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
-    yarp::os::Mutex m_mutex; //mutex for accessing the data
+    std::mutex m_mutex; //mutex for accessing the data
     gazebo::sensors::RaySensor* m_parentSensor;
     gazebo::event::ConnectionPtr m_updateConnection;
 

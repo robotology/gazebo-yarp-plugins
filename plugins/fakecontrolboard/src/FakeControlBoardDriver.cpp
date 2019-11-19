@@ -14,7 +14,6 @@
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/transport.hh>
 
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 
 namespace yarp { 
@@ -75,7 +74,7 @@ bool GazeboYarpFakeControlBoardDriver::close()
 
 void GazeboYarpFakeControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
-    yarp::os::LockGuard lock(m_lastTimestampMutex);
+    std::lock_guard<std::mutex> lock(m_lastTimestampMutex);
     m_lastTimestamp.update(_info.simTime.Double());
 }
 

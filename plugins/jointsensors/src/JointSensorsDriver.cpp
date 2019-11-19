@@ -34,7 +34,7 @@ void GazeboYarpJointSensorsDriver::onUpdate(const gazebo::common::UpdateInfo & _
     /** \todo ensure that the timestamp is the right one */
     last_timestamp.update(_info.simTime.Double());
 
-    data_mutex.wait();
+    std::lock_guard<std::mutex> lock(data_mutex);
     for ( unsigned int jnt_cnt=0; jnt_cnt < joint_ptrs.size(); jnt_cnt++ )
     {
         switch(jointsensors_type) {
@@ -56,7 +56,6 @@ void GazeboYarpJointSensorsDriver::onUpdate(const gazebo::common::UpdateInfo & _
                 break;
         }
     }
-    data_mutex.post();
 
     return;
 }
@@ -92,8 +91,10 @@ bool GazeboYarpJointSensorsDriver::open(yarp::os::Searchable& config)
     }
 
     data_mutex.wait();
-    jointsensors_data.resize(jointsensors_nr_of_channels,0.0);
-    data_mutex.post();
+    {
+        std::lock_guard<std::mutex> lock(data_mutex);
+        jointsensors_data.resize(jointsensors_nr_of_channels,0.0);
+    }
 
     //Connect the driver to the gazebo simulation
     this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin (
@@ -205,9 +206,8 @@ int GazeboYarpJointSensorsDriver::read(yarp::sig::Vector &out)
         out.resize(jointsensors_nr_of_channels);
     }
 
-    data_mutex.wait();
+    std::lock_guard<std::mutex> lock(data_mutex);
     out = jointsensors_data;
-    data_mutex.post();
 
     return AS_OK;
 }

@@ -12,7 +12,8 @@
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
+
 
 #include <string>
 #include <yarp/os/Log.h>

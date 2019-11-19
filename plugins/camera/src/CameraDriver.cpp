@@ -123,11 +123,12 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
 
     m_bufferSize = 3*m_width*m_height;
 
-    m_dataMutex.wait();
-    m_imageBuffer = new unsigned char[3*m_width*m_height];
-    memset(m_imageBuffer, 0x00, 3*m_width*m_height);
-    m_lastTimestamp.update();
-    m_dataMutex.post();
+    {
+        std::lock_guard<std::mutex> lock(m_dataMutex);
+        m_imageBuffer = new unsigned char[3*m_width*m_height];
+        memset(m_imageBuffer, 0x00, 3*m_width*m_height);
+        m_lastTimestamp.update();
+    }
 
     //Connect the driver to the gazebo simulation
     this->m_updateConnection = m_camera->ConnectNewImageFrame(boost::bind(&GazeboYarpCameraDriver::captureImage, this, _1, _2, _3, _4, _5));
@@ -155,7 +156,7 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
                           unsigned int _width, unsigned int _height,
                           unsigned int _depth, const std::string &_format)
 {
-    m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
 
     if(m_parentSensor->IsActive())
         memcpy(m_imageBuffer, m_parentSensor->ImageData(), m_bufferSize);
@@ -173,7 +174,6 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
     	print (m_imageBuffer,_width,_height,0,0,txtbuf, len);
     }
 
-    m_dataMutex.post();
     return true;
 }
 
@@ -181,7 +181,7 @@ bool GazeboYarpCameraDriver::captureImage(const unsigned char *_image,
 // IFRAMEGRABBER IMAGE
 bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _image)
 {
-     m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     _image.resize(m_width, m_height);
 
     unsigned char *pBuffer = _image.getRawImage();
@@ -250,7 +250,6 @@ bool GazeboYarpCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _
         }
     } 
 
-    m_dataMutex.post();
 
     return true;
 }

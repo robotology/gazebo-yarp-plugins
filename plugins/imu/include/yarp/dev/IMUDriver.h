@@ -11,10 +11,11 @@
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 #include <boost/shared_ptr.hpp>
+
+#include <mutex>
 
 //Forward declarations
 namespace yarp {
@@ -129,7 +130,7 @@ private:
 
     yarp::sig::Vector m_imuData; //buffer for imu data
     yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
-    mutable yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    mutable std::mutex m_dataMutex; //mutex for accessing the data
     std::string m_sensorName{"sensor_imu_gazebo"};
     std::string m_frameName{"sensor_imu_gazebo"};
 

@@ -12,10 +12,11 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 #include <boost/shared_ptr.hpp>
+
+#include <mutex>
 
 //Forward declarations
 namespace yarp {
@@ -118,7 +119,7 @@ private:
                       //is set to all zeros.
 
     //Inner parameters
-    yarp::os::Semaphore m_dataMutex; //mutex for accessing the data
+    std::mutex m_dataMutex; //mutex for accessing the data
     std::vector<gazebo::sensors::ImuSensor*> m_enabledSensors;
     static std::map<std::string,int> LUTpart2maxSensors;
 

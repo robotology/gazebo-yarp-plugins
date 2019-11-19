@@ -22,7 +22,6 @@
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 
 #include <boost/shared_ptr.hpp>

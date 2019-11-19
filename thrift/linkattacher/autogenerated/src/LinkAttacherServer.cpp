@@ -11,25 +11,36 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <LinkAttacherServer.h>
+#include <GazeboYarpPlugins/LinkAttacherServer.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 namespace GazeboYarpPlugins {
 
-class LinkAttacherServer_enableGravity :
+class LinkAttacherServer_enableGravity_helper :
         public yarp::os::Portable
 {
 public:
-    std::string model_name;
-    bool enable;
-    bool _return;
-    void init(const std::string& model_name, const bool enable);
+    explicit LinkAttacherServer_enableGravity_helper(const std::string& model_name, const bool enable);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_model_name;
+    bool m_enable;
+
+    thread_local static bool s_return_helper;
 };
 
-bool LinkAttacherServer_enableGravity::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool LinkAttacherServer_enableGravity_helper::s_return_helper = {};
+
+LinkAttacherServer_enableGravity_helper::LinkAttacherServer_enableGravity_helper(const std::string& model_name, const bool enable) :
+        m_model_name{model_name},
+        m_enable{enable}
+{
+    s_return_helper = {};
+}
+
+bool LinkAttacherServer_enableGravity_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -38,50 +49,56 @@ bool LinkAttacherServer_enableGravity::write(yarp::os::ConnectionWriter& connect
     if (!writer.writeTag("enableGravity", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(model_name)) {
+    if (!writer.writeString(m_model_name)) {
         return false;
     }
-    if (!writer.writeBool(enable)) {
+    if (!writer.writeBool(m_enable)) {
         return false;
     }
     return true;
 }
 
-bool LinkAttacherServer_enableGravity::read(yarp::os::ConnectionReader& connection)
+bool LinkAttacherServer_enableGravity_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void LinkAttacherServer_enableGravity::init(const std::string& model_name, const bool enable)
-{
-    _return = false;
-    this->model_name = model_name;
-    this->enable = enable;
-}
-
-class LinkAttacherServer_attachUnscoped :
+class LinkAttacherServer_attachUnscoped_helper :
         public yarp::os::Portable
 {
 public:
-    std::string model_name;
-    std::string model_link_name;
-    std::string robot_name;
-    std::string robot_link_name;
-    bool _return;
-    void init(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name);
+    explicit LinkAttacherServer_attachUnscoped_helper(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_model_name;
+    std::string m_model_link_name;
+    std::string m_robot_name;
+    std::string m_robot_link_name;
+
+    thread_local static bool s_return_helper;
 };
 
-bool LinkAttacherServer_attachUnscoped::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool LinkAttacherServer_attachUnscoped_helper::s_return_helper = {};
+
+LinkAttacherServer_attachUnscoped_helper::LinkAttacherServer_attachUnscoped_helper(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name) :
+        m_model_name{model_name},
+        m_model_link_name{model_link_name},
+        m_robot_name{robot_name},
+        m_robot_link_name{robot_link_name}
+{
+    s_return_helper = {};
+}
+
+bool LinkAttacherServer_attachUnscoped_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(5)) {
@@ -90,56 +107,58 @@ bool LinkAttacherServer_attachUnscoped::write(yarp::os::ConnectionWriter& connec
     if (!writer.writeTag("attachUnscoped", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(model_name)) {
+    if (!writer.writeString(m_model_name)) {
         return false;
     }
-    if (!writer.writeString(model_link_name)) {
+    if (!writer.writeString(m_model_link_name)) {
         return false;
     }
-    if (!writer.writeString(robot_name)) {
+    if (!writer.writeString(m_robot_name)) {
         return false;
     }
-    if (!writer.writeString(robot_link_name)) {
+    if (!writer.writeString(m_robot_link_name)) {
         return false;
     }
     return true;
 }
 
-bool LinkAttacherServer_attachUnscoped::read(yarp::os::ConnectionReader& connection)
+bool LinkAttacherServer_attachUnscoped_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void LinkAttacherServer_attachUnscoped::init(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name)
-{
-    _return = false;
-    this->model_name = model_name;
-    this->model_link_name = model_link_name;
-    this->robot_name = robot_name;
-    this->robot_link_name = robot_link_name;
-}
-
-class LinkAttacherServer_detachUnscoped :
+class LinkAttacherServer_detachUnscoped_helper :
         public yarp::os::Portable
 {
 public:
-    std::string model_name;
-    std::string model_link_name;
-    bool _return;
-    void init(const std::string& model_name, const std::string& model_link_name);
+    explicit LinkAttacherServer_detachUnscoped_helper(const std::string& model_name, const std::string& model_link_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_model_name;
+    std::string m_model_link_name;
+
+    thread_local static bool s_return_helper;
 };
 
-bool LinkAttacherServer_detachUnscoped::write(yarp::os::ConnectionWriter& connection) const
+thread_local bool LinkAttacherServer_detachUnscoped_helper::s_return_helper = {};
+
+LinkAttacherServer_detachUnscoped_helper::LinkAttacherServer_detachUnscoped_helper(const std::string& model_name, const std::string& model_link_name) :
+        m_model_name{model_name},
+        m_model_link_name{model_link_name}
+{
+    s_return_helper = {};
+}
+
+bool LinkAttacherServer_detachUnscoped_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -148,33 +167,26 @@ bool LinkAttacherServer_detachUnscoped::write(yarp::os::ConnectionWriter& connec
     if (!writer.writeTag("detachUnscoped", 1, 1)) {
         return false;
     }
-    if (!writer.writeString(model_name)) {
+    if (!writer.writeString(m_model_name)) {
         return false;
     }
-    if (!writer.writeString(model_link_name)) {
+    if (!writer.writeString(m_model_link_name)) {
         return false;
     }
     return true;
 }
 
-bool LinkAttacherServer_detachUnscoped::read(yarp::os::ConnectionReader& connection)
+bool LinkAttacherServer_detachUnscoped_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(_return)) {
+    if (!reader.readBool(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
-}
-
-void LinkAttacherServer_detachUnscoped::init(const std::string& model_name, const std::string& model_link_name)
-{
-    _return = false;
-    this->model_name = model_name;
-    this->model_link_name = model_link_name;
 }
 
 // Constructor
@@ -185,38 +197,32 @@ LinkAttacherServer::LinkAttacherServer()
 
 bool LinkAttacherServer::enableGravity(const std::string& model_name, const bool enable)
 {
-    bool _return = false;
-    LinkAttacherServer_enableGravity helper;
-    helper.init(model_name,enable);
+    LinkAttacherServer_enableGravity_helper helper{model_name, enable};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool LinkAttacherServer::enableGravity(const std::string& model_name, const bool enable)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? LinkAttacherServer_enableGravity_helper::s_return_helper : bool{};
 }
 
 bool LinkAttacherServer::attachUnscoped(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name)
 {
-    bool _return = false;
-    LinkAttacherServer_attachUnscoped helper;
-    helper.init(model_name,model_link_name,robot_name,robot_link_name);
+    LinkAttacherServer_attachUnscoped_helper helper{model_name, model_link_name, robot_name, robot_link_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool LinkAttacherServer::attachUnscoped(const std::string& model_name, const std::string& model_link_name, const std::string& robot_name, const std::string& robot_link_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? LinkAttacherServer_attachUnscoped_helper::s_return_helper : bool{};
 }
 
 bool LinkAttacherServer::detachUnscoped(const std::string& model_name, const std::string& model_link_name)
 {
-    bool _return = false;
-    LinkAttacherServer_detachUnscoped helper;
-    helper.init(model_name,model_link_name);
+    LinkAttacherServer_detachUnscoped_helper helper{model_name, model_link_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool LinkAttacherServer::detachUnscoped(const std::string& model_name, const std::string& model_link_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? LinkAttacherServer_detachUnscoped_helper::s_return_helper : bool{};
 }
 
 // help method
@@ -294,14 +300,13 @@ bool LinkAttacherServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = enableGravity(model_name,enable);
+            LinkAttacherServer_enableGravity_helper::s_return_helper = enableGravity(model_name, enable);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(LinkAttacherServer_enableGravity_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -329,14 +334,13 @@ bool LinkAttacherServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = attachUnscoped(model_name,model_link_name,robot_name,robot_link_name);
+            LinkAttacherServer_attachUnscoped_helper::s_return_helper = attachUnscoped(model_name, model_link_name, robot_name, robot_link_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(LinkAttacherServer_attachUnscoped_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -354,14 +358,13 @@ bool LinkAttacherServer::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            bool _return;
-            _return = detachUnscoped(model_name,model_link_name);
+            LinkAttacherServer_detachUnscoped_helper::s_return_helper = detachUnscoped(model_name, model_link_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(_return)) {
+                if (!writer.writeBool(LinkAttacherServer_detachUnscoped_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -373,7 +376,7 @@ bool LinkAttacherServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readString(functionName)) {
                 functionName = "--all";
             }
-            auto _return = help(functionName);
+            auto help_strings = help(functionName);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
@@ -382,11 +385,11 @@ bool LinkAttacherServer::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeTag("many", 1, 0)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) {
+                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size()))) {
                     return false;
                 }
-                for (const auto& _ret : _return) {
-                    if (!writer.writeString(_ret)) {
+                for (const auto& help_string : help_strings) {
+                    if (!writer.writeString(help_string)) {
                         return false;
                     }
                 }

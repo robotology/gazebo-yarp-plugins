@@ -9,6 +9,8 @@
 
 #include <gazebo/physics/Model.hh>
 
+#include <mutex>
+
 namespace yarp {
     namespace dev {
         enum TrajectoryType
@@ -35,7 +37,7 @@ public:
 class RampFilter
 {
 private:
-    yarp::os::Semaphore m_mutex;
+    std::mutex m_mutex;
     double m_final_reference;
     double m_current_value;
     double m_step;
@@ -52,7 +54,7 @@ public:
 class TrajectoryGenerator
 {
 protected:
-    yarp::os::Semaphore m_mutex;
+    std::mutex m_mutex;
     gazebo::physics::Model* m_robot;
     bool   m_trajectory_complete;
     double m_x0;

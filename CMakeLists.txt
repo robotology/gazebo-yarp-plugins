@@ -8,7 +8,7 @@ PROJECT(GazeboYARPPlugins)
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)
 set(${PROJECT_NAME}_MINOR_VERSION 2)
-set(${PROJECT_NAME}_PATCH_VERSION 0)
+set(${PROJECT_NAME}_PATCH_VERSION 100)
 
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
@@ -18,7 +18,7 @@ set(${PROJECT_NAME}_VERSION
 include(GNUInstallDirs)
 
 # Finding dependencies
-find_package(YARP 3.0.101 REQUIRED)
+find_package(YARP 3.2.102 REQUIRED)
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 7.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})

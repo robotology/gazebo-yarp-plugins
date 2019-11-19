@@ -18,9 +18,9 @@ namespace GazeboYarpPlugins {
 
 Handler* Handler::s_handle = NULL;
 
-yarp::os::Semaphore& Handler::mutex()
+std::mutex& Handler::mutex()
 {
-    static yarp::os::Semaphore s_mutex(1);
+    static std::mutex s_mutex;
     return s_mutex;
 }
 
@@ -33,13 +33,12 @@ Handler::Handler() : m_robotMap(), m_sensorsMap(), m_devicesMap()
 
 Handler* Handler::getHandler()
 {
-    mutex().wait();
+    std::lock_guard<std::mutex> lock(mutex());
     if (!s_handle) {
         s_handle = new Handler();
         if (!s_handle)
             yError() << "Error while calling GazeboYarpPluginHandler constructor";
     }
-    mutex().post();
 
     return s_handle;
 }

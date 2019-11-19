@@ -8,7 +8,6 @@
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
@@ -201,7 +200,7 @@ bool GazeboYarpContactLoadCellArrayDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    yarp::os::LockGuard guard(m_dataMutex);
+    std::lock_guard<std::mutex> guard(m_dataMutex);
 
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpContactLoadCellArrayDriver::onUpdate, this, _1));
     this->m_sensor->SetActive(true);
@@ -211,7 +210,7 @@ bool GazeboYarpContactLoadCellArrayDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpContactLoadCellArrayDriver::close()
 {
-    yarp::os::LockGuard guard(m_dataMutex);
+    std::lock_guard<std::mutex> guard(m_dataMutex);
     this->m_updateConnection.reset();
     return true;
 }
@@ -276,7 +275,7 @@ bool GazeboYarpContactLoadCellArrayDriver::initContactSensor()
 
     this->m_linkCollisionName = m_robot->GetName() + "::" + m_sensorLink->GetName() + "::" + collisionName;
 
-    yarp::os::LockGuard guard(m_dataMutex);
+    std::lock_guard<std::mutex> guard(m_dataMutex);
     gazebo::sensors::SensorManager *mgr = gazebo::sensors::SensorManager::Instance();
 
     // If sensors are not initialized, fail.
@@ -417,7 +416,7 @@ bool GazeboYarpContactLoadCellArrayDriver::prepareLinkInformation()
 
 int GazeboYarpContactLoadCellArrayDriver::read(yarp::sig::Vector& out)
 {
-    yarp::os::LockGuard guard(m_dataMutex);
+    std::lock_guard<std::mutex> guard(m_dataMutex);
 
     if (!m_dataAvailable)
     {

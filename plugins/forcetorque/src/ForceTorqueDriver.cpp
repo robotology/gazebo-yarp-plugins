@@ -36,7 +36,7 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_
     m_lastTimestamp.update(this->m_parentSensor->LastUpdateTime().Double());
 
 
-    m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
 
     for (unsigned i = 0; i < 3; i++) {
         m_forceTorqueData[0 + i] = force[i];
@@ -46,16 +46,16 @@ void GazeboYarpForceTorqueDriver::onUpdate(const gazebo::common::UpdateInfo& /*_
         m_forceTorqueData[3 + i] = torque[i];
     }
 
-    m_dataMutex.post();
     return;
 }
 
 //DEVICE DRIVER
 bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
 {
-    m_dataMutex.wait();
-    m_forceTorqueData.resize(YarpForceTorqueChannelsNumber, 0.0);
-    m_dataMutex.post();
+    {
+        std::lock_guard<std::mutex> lock(m_dataMutex);
+        m_forceTorqueData.resize(YarpForceTorqueChannelsNumber, 0.0);
+    }
 
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
@@ -99,9 +99,8 @@ int GazeboYarpForceTorqueDriver::read(yarp::sig::Vector& out)
        out.resize(YarpForceTorqueChannelsNumber);
    }
 
-    m_dataMutex.wait();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     out = m_forceTorqueData;
-    m_dataMutex.post();
 
     return AS_OK;
 }

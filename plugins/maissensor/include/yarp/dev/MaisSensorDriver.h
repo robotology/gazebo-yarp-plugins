@@ -15,13 +15,13 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Mutex.h>
 #include <string>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
+
+#include <mutex>
 
 namespace yarp {
     namespace dev {
@@ -107,7 +107,7 @@ private:
 
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
 
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
     yarp::sig::VectorOf<JointType> m_jointTypes;
 
     int m_channels_num;

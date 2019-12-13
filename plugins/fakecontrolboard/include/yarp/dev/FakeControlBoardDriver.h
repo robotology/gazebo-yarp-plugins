@@ -19,12 +19,13 @@
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <string>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
+
+#include <mutex>
 
 extern const double RobotPositionTolerance;
 
@@ -318,7 +319,7 @@ private:
      * Connection to the WorldUpdateBegin Gazebo event
      */
     gazebo::event::ConnectionPtr m_updateConnection;
-    yarp::os::Mutex m_lastTimestampMutex; /**< Mutex protecting the m_lastTimestamp variable. */
+    std::mutex m_lastTimestampMutex; /**< Mutex protecting the m_lastTimestamp variable. */
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
 };
 

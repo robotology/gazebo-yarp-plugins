@@ -14,7 +14,8 @@
 #include <yarp/os/LogStream.h>
 #include <gazebo/sensors/DepthCameraSensor.hh>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
+
 
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpDepthCamera)

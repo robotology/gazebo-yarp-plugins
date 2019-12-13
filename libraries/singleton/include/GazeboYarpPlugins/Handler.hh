@@ -25,7 +25,7 @@ namespace sdf {
 
 #endif
 
-#include <yarp/os/Semaphore.h>
+#include <mutex>
 
 namespace gazebo
 {
@@ -152,7 +152,7 @@ private:
 
     // singleton stuff
     static Handler* s_handle;
-    static yarp::os::Semaphore& mutex();
+    static std::mutex& mutex();
 
 
     Handler();

@@ -3,9 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [3.3.0] - 2019-12-13
+
+### Added
+- Add the usage of `MultipleAnalogInterfaces`(https://www.yarp.it/group__dev__iface__multiple__analog.html)
+  in the `gazebo_yarp_imu`.
+
 ### Fixed 
 - Fixed compilation on Gazebo 7 by disabling compilation of `externalwrench` plugin if the project is configured with Gazebo 7 (https://github.com/robotology/gazebo-yarp-plugins/pull/434).
+
+### Removed
+- Support for YARP <= 3.2 was removed. This release requires the use of YARP 3.3 .
 
 ## [3.2.0] - 2019-07-01
 ### Added
@@ -19,3 +27,5 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Fixed
 - Fix invalid camera parameters in `gazebo_depthCamera` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/408).
+
+

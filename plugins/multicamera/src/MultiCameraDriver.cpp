@@ -113,11 +113,12 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
         m_max_height = std::max(m_max_height, m_height[i]);
 
         m_bufferSize.push_back(3 * m_width[i] * m_height[i]);
-        m_dataMutex.push_back(new yarp::os::Semaphore());
-        m_dataMutex[i]->wait();
-        m_imageBuffer.push_back(new unsigned char[m_bufferSize[i]]);
-        memset(m_imageBuffer[i], 0x00, m_bufferSize[i]);
-        m_dataMutex[i]->post();
+        m_dataMutex.push_back(new std::mutex());
+        {
+            std::lock_guard<std::mutex> lock(*m_dataMutex[i]);
+            m_imageBuffer.push_back(new unsigned char[m_bufferSize[i]]);
+            memset(m_imageBuffer[i], 0x00, m_bufferSize[i]);
+        }
 
         m_lastTimestamp.push_back(yarp::os::Stamp());
     }
@@ -151,7 +152,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::captureImage(unsigned int _camera,
                                                           unsigned int _depth,
                                                           const std::string &_format)
 {
-    m_dataMutex[_camera]->wait();
+    std::lock_guard<std::mutex> lock(*m_dataMutex[_camera]);
 
     yAssert(_width  == m_width[_camera]);
     yAssert(_height == m_height[_camera]);
@@ -194,7 +195,6 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::captureImage(unsigned int _camera,
             print(m_imageBuffer[_camera], _width, _height, 0, 0, txtbuf, len);
     }
 
-    m_dataMutex[_camera]->post();
     return true;
 }
 
@@ -202,7 +202,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::captureImage(unsigned int _camera,
 bool yarp::dev::GazeboYarpMultiCameraDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& _image)
 {
     for (unsigned int i = 0; i < m_camera_count; ++i) {
-        m_dataMutex[i]->wait();
+        m_dataMutex[i]->lock();
     }
 
     if (m_vertical) {
@@ -253,7 +253,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::getImage(yarp::sig::ImageOf<yarp::s
     }
 
     for (unsigned int i = 0; i < m_camera_count; ++i) {
-        m_dataMutex[i]->post();
+        m_dataMutex[i]->unlock();
     }
 
     return true;

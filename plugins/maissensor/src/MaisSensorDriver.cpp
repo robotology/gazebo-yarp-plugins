@@ -15,7 +15,6 @@
 #include <gazebo/transport/Node.hh>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -125,7 +124,7 @@ bool GazeboYarpMaisSensorDriver::configureJointType()
 
 void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_clock++;
 
     // measurements acquisition
@@ -273,47 +272,47 @@ double * GazeboYarpMaisSensorDriver::convertUserToGazebo(double *values)
 
 int GazeboYarpMaisSensorDriver::read(yarp::sig::Vector &out)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     out = m_positions;
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 int GazeboYarpMaisSensorDriver::getState(int ch)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     return yarp::dev::IAnalogSensor::AS_OK;
 }
 
 int GazeboYarpMaisSensorDriver::getChannels()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     return m_channels_num;
 }
 
 int GazeboYarpMaisSensorDriver::calibrateSensor()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     // not implemented
     return 0; 
 }
 
 int GazeboYarpMaisSensorDriver::calibrateSensor(const yarp::sig::Vector& value)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     // not implemented
     return 0;
 }
 
 int GazeboYarpMaisSensorDriver::calibrateChannel(int ch)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     // not implemented
     return 0;
 }
 
 int GazeboYarpMaisSensorDriver::calibrateChannel(int ch, double value)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     // not implemented
     return 0;
 }

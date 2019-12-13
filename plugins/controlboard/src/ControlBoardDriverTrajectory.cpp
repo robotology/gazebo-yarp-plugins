@@ -58,24 +58,22 @@ RampFilter::RampFilter()
 
 void RampFilter::setReference(double ref, double step)
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_final_reference = ref;
     m_step = step;
-    m_mutex.post();
 }
 
 void RampFilter::stop()
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_final_reference = 0.0;
     m_current_value = 0.0;
     m_step = 0.0;
-    m_mutex.post();
 }
 
 void RampFilter::update()
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     double tmp = 0;
     double error_abs = fabs(m_final_reference - m_current_value);
 
@@ -94,7 +92,6 @@ void RampFilter::update()
     }
 
     m_current_value = m_current_value + tmp;
-    m_mutex.post();
 }
 
 double RampFilter::getCurrentValue()
@@ -196,15 +193,14 @@ bool MinJerkTrajectoryGenerator::p_abortTrajectory (double limit)
 
 bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     bool ret = p_abortTrajectory(limit);
-    m_mutex.post();
     return ret;
 }
 
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
 #if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
 #else
@@ -217,7 +213,6 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
 
     if (speed <= 0)
     {
-        m_mutex.post();
         return false;
     }
 
@@ -243,7 +238,6 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
     {
         p_abortTrajectory (final_pos);
         m_step=0;
-        m_mutex.post();
         return false;
     }
     else
@@ -254,7 +248,6 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
     m_cur_step = 0;
     m_trajectory_complete =  false;
 
-    m_mutex.post();
     return true;
 }
 
@@ -310,9 +303,8 @@ double MinJerkTrajectoryGenerator::p_computeTrajectoryStep()
 
 double MinJerkTrajectoryGenerator::computeTrajectoryStep()
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     double ret = p_computeTrajectoryStep();
-    m_mutex.post();
     return ret;
 }
 
@@ -362,9 +354,8 @@ double MinJerkTrajectoryGenerator::p_computeTrajectory()
 
 double MinJerkTrajectoryGenerator::computeTrajectory()
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     double ret = p_computeTrajectory();
-    m_mutex.post();
     return ret;
 }
 
@@ -385,7 +376,7 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
 #if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
 #else
@@ -398,7 +389,6 @@ bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double f
     else if(m_xf < m_joint_min) m_xf = m_joint_min;
     m_speed = speed;
     m_computed_reference = m_x0;
-    m_mutex.post();
     return true;
 }
 
@@ -410,9 +400,8 @@ bool ConstSpeedTrajectoryGenerator::p_abortTrajectory(double limit)
 
 bool ConstSpeedTrajectoryGenerator::abortTrajectory(double limit)
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     bool ret = p_abortTrajectory(limit);
-    m_mutex.post();
     return ret;
 }
 
@@ -441,17 +430,15 @@ double ConstSpeedTrajectoryGenerator::p_computeTrajectoryStep()
 
 double ConstSpeedTrajectoryGenerator::computeTrajectoryStep()
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     double ret = p_computeTrajectoryStep();
-    m_mutex.post();
     return ret;
 }
 
 double ConstSpeedTrajectoryGenerator::computeTrajectory()
 {
-    m_mutex.wait();
+    std::lock_guard<std::mutex> lock(m_mutex);
     double ret = p_computeTrajectory();
-    m_mutex.post();
     return ret;
 }
 

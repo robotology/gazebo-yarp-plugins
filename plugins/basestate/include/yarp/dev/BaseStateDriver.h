@@ -27,17 +27,16 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Mutex.h>
-#include <yarp/os/LockGuard.h>
 
 #include <yarp/sig/Vector.h>
 
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
+#include <mutex>
 
 namespace yarp
 {
@@ -134,7 +133,7 @@ class yarp::dev::GazeboYarpBaseStateDriver : public yarp::dev::IAnalogSensor,
         const int m_stateDimensions = 18;                     ///< State dimensions to include 6D Pose, 6D velocity and 6D acceleration 
         yarp::sig::Vector m_baseState;                        ///< Vector for the base state
         yarp::os::Stamp m_stamp;                              ///< Current timestamp
-        yarp::os::Mutex m_dataMutex;                          ///< Mutex for resource sharing 
+        std::mutex m_dataMutex;                               ///< Mutex for resource sharing
         bool m_dataAvailable = false;                         ///< flag to check data is available
         gazebo::event::ConnectionPtr m_updateConnection;      ///< Event Pointer to the callback for updating the Gazebo information
                

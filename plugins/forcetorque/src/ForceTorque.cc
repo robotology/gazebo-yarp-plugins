@@ -13,7 +13,8 @@
 
 #include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 

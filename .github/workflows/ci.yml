@@ -1,0 +1,99 @@
+name: C++ CI Workflow
+
+on:
+  push:
+  pull_request:
+  schedule:
+  # * is a special character in YAML so you have to quote this string
+  # Execute a "nightly" build at 2 AM UTC 
+  - cron:  '0 2 * * *'
+  
+  
+jobs:
+  build:
+    name: '[${{ matrix.os }}@${{ matrix.build_type }}@yarp:${{ matrix.yarp_version }}@gazebo:${{ matrix.gazebo_version }}]'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+        os: [ubuntu-latest, macOS-latest]
+        gazebo_version: [gazebo9, gazebo10]
+        yarp_version: [devel]
+
+    steps:
+    - uses: actions/checkout@master
+        
+    # Print environment variables to simplify development and debugging
+    - name: Environment Variables
+      shell: bash
+      run: env
+        
+    # ============
+    # DEPENDENCIES
+    # ============
+            
+    - name: Dependencies [macOS]
+      if: matrix.os == 'macOS-latest'
+      shell: bash
+      run: |
+        brew cask install xquartz
+        brew install ace eigen opencv@3 osrf/simulation/${{ matrix.gazebo_version }}
+    
+    - name: Dependencies [Ubuntu]
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: |
+        sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list'
+        wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+        sudo apt-get update
+        sudo apt-get install git build-essential cmake libace-dev libeigen3-dev libopencv-dev 
+        sudo apt-get install lib${{ matrix.gazebo_version }}-dev
+        
+    - name: Source-based Dependencies [Ubuntu/macOS] 
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest'
+      shell: bash
+      run: |
+        # YCM
+        git clone https://github.com/robotology/ycm
+        cd ycm
+        git checkout devel
+        mkdir -p build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install ..
+        cmake --build . --config ${{ matrix.build_type }} --target install 
+        # YARP
+        cd ${GITHUB_WORKSPACE}
+        git clone https://github.com/robotology/yarp
+        cd yarp
+        git checkout ${{ matrix.yarp_version }}
+        mkdir -p build
+        cd build
+        cmake  -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install ..
+        cmake --build . --config ${{ matrix.build_type }} --target install 
+ 
+    # ===================
+    # CMAKE-BASED PROJECT
+    # ===================
+   
+    - name: Configure [Ubuntu/macOS]
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest'
+      shell: bash
+      run: |
+        mkdir -p build
+        cd build    
+        cmake -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install ..
+        
+    - name: Build
+      shell: bash
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.build_type }} 
+        
+    - name: Install [Ubuntu/macOS]
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest'
+      shell: bash
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.build_type }} --target install
+        

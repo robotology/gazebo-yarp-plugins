@@ -71,7 +71,7 @@ bool GazeboYarpBaseStateDriver::open(yarp::os::Searchable& config)
 
 bool GazeboYarpBaseStateDriver::close()
 {
-    yarp::os::LockGuard guard(m_dataMutex);
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     this->m_updateConnection.reset();
     return true;
 }
@@ -148,8 +148,8 @@ void GazeboYarpBaseStateDriver::onUpdate(const gazebo::common::UpdateInfo& _info
 
 int GazeboYarpBaseStateDriver::read(yarp::sig::Vector& out)
 {
-    yarp::os::LockGuard guard(m_dataMutex);
-    
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+
     if (!m_dataAvailable)
     {
       return AS_TIMEOUT;

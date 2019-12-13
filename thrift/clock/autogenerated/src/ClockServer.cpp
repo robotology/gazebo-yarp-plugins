@@ -11,22 +11,26 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <ClockServer.h>
+#include <GazeboYarpPlugins/ClockServer.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 namespace GazeboYarpPlugins {
 
-class ClockServer_pauseSimulation :
+class ClockServer_pauseSimulation_helper :
         public yarp::os::Portable
 {
 public:
-    void init();
+    explicit ClockServer_pauseSimulation_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_pauseSimulation::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_pauseSimulation_helper::ClockServer_pauseSimulation_helper()
+{
+}
+
+bool ClockServer_pauseSimulation_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -38,26 +42,26 @@ bool ClockServer_pauseSimulation::write(yarp::os::ConnectionWriter& connection) 
     return true;
 }
 
-bool ClockServer_pauseSimulation::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_pauseSimulation_helper::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
 }
 
-void ClockServer_pauseSimulation::init()
-{
-}
-
-class ClockServer_continueSimulation :
+class ClockServer_continueSimulation_helper :
         public yarp::os::Portable
 {
 public:
-    void init();
+    explicit ClockServer_continueSimulation_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_continueSimulation::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_continueSimulation_helper::ClockServer_continueSimulation_helper()
+{
+}
+
+bool ClockServer_continueSimulation_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -69,27 +73,29 @@ bool ClockServer_continueSimulation::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool ClockServer_continueSimulation::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_continueSimulation_helper::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
 }
 
-void ClockServer_continueSimulation::init()
-{
-}
-
-class ClockServer_stepSimulation :
+class ClockServer_stepSimulation_helper :
         public yarp::os::Portable
 {
 public:
-    std::int32_t numberOfSteps;
-    void init(const std::int32_t numberOfSteps);
+    explicit ClockServer_stepSimulation_helper(const std::int32_t numberOfSteps);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::int32_t m_numberOfSteps;
 };
 
-bool ClockServer_stepSimulation::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_stepSimulation_helper::ClockServer_stepSimulation_helper(const std::int32_t numberOfSteps) :
+        m_numberOfSteps{numberOfSteps}
+{
+}
+
+bool ClockServer_stepSimulation_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -98,34 +104,35 @@ bool ClockServer_stepSimulation::write(yarp::os::ConnectionWriter& connection) c
     if (!writer.writeTag("stepSimulation", 1, 1)) {
         return false;
     }
-    if (!writer.writeI32(numberOfSteps)) {
+    if (!writer.writeI32(m_numberOfSteps)) {
         return false;
     }
     return true;
 }
 
-bool ClockServer_stepSimulation::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_stepSimulation_helper::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
 }
 
-void ClockServer_stepSimulation::init(const std::int32_t numberOfSteps)
-{
-    this->numberOfSteps = numberOfSteps;
-}
-
-class ClockServer_stepSimulationAndWait :
+class ClockServer_stepSimulationAndWait_helper :
         public yarp::os::Portable
 {
 public:
-    std::int32_t numberOfSteps;
-    void init(const std::int32_t numberOfSteps);
+    explicit ClockServer_stepSimulationAndWait_helper(const std::int32_t numberOfSteps);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::int32_t m_numberOfSteps;
 };
 
-bool ClockServer_stepSimulationAndWait::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_stepSimulationAndWait_helper::ClockServer_stepSimulationAndWait_helper(const std::int32_t numberOfSteps) :
+        m_numberOfSteps{numberOfSteps}
+{
+}
+
+bool ClockServer_stepSimulationAndWait_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -134,13 +141,13 @@ bool ClockServer_stepSimulationAndWait::write(yarp::os::ConnectionWriter& connec
     if (!writer.writeTag("stepSimulationAndWait", 1, 1)) {
         return false;
     }
-    if (!writer.writeI32(numberOfSteps)) {
+    if (!writer.writeI32(m_numberOfSteps)) {
         return false;
     }
     return true;
 }
 
-bool ClockServer_stepSimulationAndWait::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_stepSimulationAndWait_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -149,21 +156,20 @@ bool ClockServer_stepSimulationAndWait::read(yarp::os::ConnectionReader& connect
     return true;
 }
 
-void ClockServer_stepSimulationAndWait::init(const std::int32_t numberOfSteps)
-{
-    this->numberOfSteps = numberOfSteps;
-}
-
-class ClockServer_resetSimulationTime :
+class ClockServer_resetSimulationTime_helper :
         public yarp::os::Portable
 {
 public:
-    void init();
+    explicit ClockServer_resetSimulationTime_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_resetSimulationTime::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_resetSimulationTime_helper::ClockServer_resetSimulationTime_helper()
+{
+}
+
+bool ClockServer_resetSimulationTime_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -175,27 +181,31 @@ bool ClockServer_resetSimulationTime::write(yarp::os::ConnectionWriter& connecti
     return true;
 }
 
-bool ClockServer_resetSimulationTime::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_resetSimulationTime_helper::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
 }
 
-void ClockServer_resetSimulationTime::init()
-{
-}
-
-class ClockServer_getSimulationTime :
+class ClockServer_getSimulationTime_helper :
         public yarp::os::Portable
 {
 public:
-    double _return;
-    void init();
+    explicit ClockServer_getSimulationTime_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static double s_return_helper;
 };
 
-bool ClockServer_getSimulationTime::write(yarp::os::ConnectionWriter& connection) const
+thread_local double ClockServer_getSimulationTime_helper::s_return_helper = {};
+
+ClockServer_getSimulationTime_helper::ClockServer_getSimulationTime_helper()
+{
+    s_return_helper = {};
+}
+
+bool ClockServer_getSimulationTime_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -207,35 +217,38 @@ bool ClockServer_getSimulationTime::write(yarp::os::ConnectionWriter& connection
     return true;
 }
 
-bool ClockServer_getSimulationTime::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_getSimulationTime_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readFloat64(_return)) {
+    if (!reader.readFloat64(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void ClockServer_getSimulationTime::init()
-{
-    _return = (double)0;
-}
-
-class ClockServer_getStepSize :
+class ClockServer_getStepSize_helper :
         public yarp::os::Portable
 {
 public:
-    double _return;
-    void init();
+    explicit ClockServer_getStepSize_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static double s_return_helper;
 };
 
-bool ClockServer_getStepSize::write(yarp::os::ConnectionWriter& connection) const
+thread_local double ClockServer_getStepSize_helper::s_return_helper = {};
+
+ClockServer_getStepSize_helper::ClockServer_getStepSize_helper()
+{
+    s_return_helper = {};
+}
+
+bool ClockServer_getStepSize_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -247,34 +260,33 @@ bool ClockServer_getStepSize::write(yarp::os::ConnectionWriter& connection) cons
     return true;
 }
 
-bool ClockServer_getStepSize::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_getStepSize_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readFloat64(_return)) {
+    if (!reader.readFloat64(s_return_helper)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-void ClockServer_getStepSize::init()
-{
-    _return = (double)0;
-}
-
-class ClockServer_resetSimulation :
+class ClockServer_resetSimulation_helper :
         public yarp::os::Portable
 {
 public:
-    void init();
+    explicit ClockServer_resetSimulation_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_resetSimulation::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_resetSimulation_helper::ClockServer_resetSimulation_helper()
+{
+}
+
+bool ClockServer_resetSimulation_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -286,26 +298,26 @@ bool ClockServer_resetSimulation::write(yarp::os::ConnectionWriter& connection) 
     return true;
 }
 
-bool ClockServer_resetSimulation::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_resetSimulation_helper::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
 }
 
-void ClockServer_resetSimulation::init()
-{
-}
-
-class ClockServer_resetSimulationState :
+class ClockServer_resetSimulationState_helper :
         public yarp::os::Portable
 {
 public:
-    void init();
+    explicit ClockServer_resetSimulationState_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool ClockServer_resetSimulationState::write(yarp::os::ConnectionWriter& connection) const
+ClockServer_resetSimulationState_helper::ClockServer_resetSimulationState_helper()
+{
+}
+
+bool ClockServer_resetSimulationState_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
@@ -317,14 +329,10 @@ bool ClockServer_resetSimulationState::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool ClockServer_resetSimulationState::read(yarp::os::ConnectionReader& connection)
+bool ClockServer_resetSimulationState_helper::read(yarp::os::ConnectionReader& connection)
 {
     YARP_UNUSED(connection);
     return true;
-}
-
-void ClockServer_resetSimulationState::init()
-{
 }
 
 // Constructor
@@ -335,8 +343,7 @@ ClockServer::ClockServer()
 
 void ClockServer::pauseSimulation()
 {
-    ClockServer_pauseSimulation helper;
-    helper.init();
+    ClockServer_pauseSimulation_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::pauseSimulation()");
     }
@@ -345,8 +352,7 @@ void ClockServer::pauseSimulation()
 
 void ClockServer::continueSimulation()
 {
-    ClockServer_continueSimulation helper;
-    helper.init();
+    ClockServer_continueSimulation_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::continueSimulation()");
     }
@@ -355,8 +361,7 @@ void ClockServer::continueSimulation()
 
 void ClockServer::stepSimulation(const std::int32_t numberOfSteps)
 {
-    ClockServer_stepSimulation helper;
-    helper.init(numberOfSteps);
+    ClockServer_stepSimulation_helper helper{numberOfSteps};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::stepSimulation(const std::int32_t numberOfSteps)");
     }
@@ -365,8 +370,7 @@ void ClockServer::stepSimulation(const std::int32_t numberOfSteps)
 
 void ClockServer::stepSimulationAndWait(const std::int32_t numberOfSteps)
 {
-    ClockServer_stepSimulationAndWait helper;
-    helper.init(numberOfSteps);
+    ClockServer_stepSimulationAndWait_helper helper{numberOfSteps};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::stepSimulationAndWait(const std::int32_t numberOfSteps)");
     }
@@ -375,8 +379,7 @@ void ClockServer::stepSimulationAndWait(const std::int32_t numberOfSteps)
 
 void ClockServer::resetSimulationTime()
 {
-    ClockServer_resetSimulationTime helper;
-    helper.init();
+    ClockServer_resetSimulationTime_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::resetSimulationTime()");
     }
@@ -385,32 +388,27 @@ void ClockServer::resetSimulationTime()
 
 double ClockServer::getSimulationTime()
 {
-    double _return = (double)0;
-    ClockServer_getSimulationTime helper;
-    helper.init();
+    ClockServer_getSimulationTime_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double ClockServer::getSimulationTime()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? ClockServer_getSimulationTime_helper::s_return_helper : double{};
 }
 
 double ClockServer::getStepSize()
 {
-    double _return = (double)0;
-    ClockServer_getStepSize helper;
-    helper.init();
+    ClockServer_getStepSize_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double ClockServer::getStepSize()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? helper._return : _return;
+    return ok ? ClockServer_getStepSize_helper::s_return_helper : double{};
 }
 
 void ClockServer::resetSimulation()
 {
-    ClockServer_resetSimulation helper;
-    helper.init();
+    ClockServer_resetSimulation_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::resetSimulation()");
     }
@@ -419,8 +417,7 @@ void ClockServer::resetSimulation()
 
 void ClockServer::resetSimulationState()
 {
-    ClockServer_resetSimulationState helper;
-    helper.init();
+    ClockServer_resetSimulationState_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void ClockServer::resetSimulationState()");
     }
@@ -521,9 +518,8 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
     while (!reader.isError()) {
         if (tag == "pauseSimulation") {
             if (!direct) {
-                ClockServer_pauseSimulation helper;
-                helper.init();
-                yarp().callback(helper,*this, "__direct__");
+                ClockServer_pauseSimulation_helper helper{};
+                yarp().callback(helper, *this, "__direct__");
             } else {
                 pauseSimulation();
             }
@@ -538,9 +534,8 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "continueSimulation") {
             if (!direct) {
-                ClockServer_continueSimulation helper;
-                helper.init();
-                yarp().callback(helper,*this, "__direct__");
+                ClockServer_continueSimulation_helper helper{};
+                yarp().callback(helper, *this, "__direct__");
             } else {
                 continueSimulation();
             }
@@ -559,9 +554,8 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
                 numberOfSteps = 1;
             }
             if (!direct) {
-                ClockServer_stepSimulation helper;
-                helper.init(numberOfSteps);
-                yarp().callback(helper,*this, "__direct__");
+                ClockServer_stepSimulation_helper helper{numberOfSteps};
+                yarp().callback(helper, *this, "__direct__");
             } else {
                 stepSimulation(numberOfSteps);
             }
@@ -591,9 +585,8 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "resetSimulationTime") {
             if (!direct) {
-                ClockServer_resetSimulationTime helper;
-                helper.init();
-                yarp().callback(helper,*this, "__direct__");
+                ClockServer_resetSimulationTime_helper helper{};
+                yarp().callback(helper, *this, "__direct__");
             } else {
                 resetSimulationTime();
             }
@@ -607,14 +600,13 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "getSimulationTime") {
-            double _return;
-            _return = getSimulationTime();
+            ClockServer_getSimulationTime_helper::s_return_helper = getSimulationTime();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeFloat64(_return)) {
+                if (!writer.writeFloat64(ClockServer_getSimulationTime_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -622,14 +614,13 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "getStepSize") {
-            double _return;
-            _return = getStepSize();
+            ClockServer_getStepSize_helper::s_return_helper = getStepSize();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeFloat64(_return)) {
+                if (!writer.writeFloat64(ClockServer_getStepSize_helper::s_return_helper)) {
                     return false;
                 }
             }
@@ -638,9 +629,8 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "resetSimulation") {
             if (!direct) {
-                ClockServer_resetSimulation helper;
-                helper.init();
-                yarp().callback(helper,*this, "__direct__");
+                ClockServer_resetSimulation_helper helper{};
+                yarp().callback(helper, *this, "__direct__");
             } else {
                 resetSimulation();
             }
@@ -655,9 +645,8 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "resetSimulationState") {
             if (!direct) {
-                ClockServer_resetSimulationState helper;
-                helper.init();
-                yarp().callback(helper,*this, "__direct__");
+                ClockServer_resetSimulationState_helper helper{};
+                yarp().callback(helper, *this, "__direct__");
             } else {
                 resetSimulationState();
             }
@@ -675,7 +664,7 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
             if (!reader.readString(functionName)) {
                 functionName = "--all";
             }
-            auto _return = help(functionName);
+            auto help_strings = help(functionName);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
@@ -684,11 +673,11 @@ bool ClockServer::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeTag("many", 1, 0)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) {
+                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size()))) {
                     return false;
                 }
-                for (const auto& _ret : _return) {
-                    if (!writer.writeString(_ret)) {
+                for (const auto& help_string : help_strings) {
+                    if (!writer.writeString(help_string)) {
                         return false;
                     }
                 }

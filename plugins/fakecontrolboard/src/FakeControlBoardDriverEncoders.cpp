@@ -6,7 +6,6 @@
 
 #include "FakeControlBoardDriver.h"
 
-#include <yarp/os/LockGuard.h>
 
 using namespace yarp::dev;
 
@@ -31,7 +30,7 @@ bool GazeboYarpFakeControlBoardDriver::getEncoders(double *encs) //WORKS
 
 bool GazeboYarpFakeControlBoardDriver::getEncodersTimed(double *encs, double *time)
 {
-    yarp::os::LockGuard lock(m_lastTimestampMutex);
+    std::lock_guard<std::mutex> lock(m_lastTimestampMutex);
 
     double my_time = m_lastTimestamp.getTime();
     for (unsigned int i = 0; i <m_numberOfJoints; ++i) {
@@ -51,7 +50,7 @@ bool GazeboYarpFakeControlBoardDriver::getEncodersTimed(double *encs, double *ti
  */
 bool GazeboYarpFakeControlBoardDriver::getEncoderTimed(int j, double *encs, double *time)
 {
-    yarp::os::LockGuard lock(m_lastTimestampMutex);
+    std::lock_guard<std::mutex> lock(m_lastTimestampMutex);
 
     if (time && encs && j >= 0 && j < (int)m_numberOfJoints) {
         *encs = m_positions[j]-m_zeroPosition[j];

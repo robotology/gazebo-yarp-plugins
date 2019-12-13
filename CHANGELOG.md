@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [3.3.0] - 2019-12-13
 
 ### Added
 - Add the usage of `MultipleAnalogInterfaces`(https://www.yarp.it/group__dev__iface__multiple__analog.html)

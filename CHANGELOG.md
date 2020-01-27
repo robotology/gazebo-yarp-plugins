@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- Add the possibility to create different types of joints with the `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/461).
+
 ## [3.3.0] - 2019-12-13
 
 ### Added

@@ -29,6 +29,10 @@ public:
     // single wrench or multiple wrenches
     std::string         m_mode;
 
+    // variable for orientation mode
+    // base link or local orientations
+    std::string         m_orient;
+
     int                 wrenchCount;
 
     virtual bool        threadInit();

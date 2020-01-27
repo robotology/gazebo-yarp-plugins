@@ -107,6 +107,9 @@ void ApplyExternalWrench::onReset()
     // Change the operation mode to default option 'single'
     this->m_rpcThread.m_mode = "single";
 
+    // Change the orientation to default option 'orient_base'
+    this->m_rpcThread.m_mode = "orient_base";
+
     // Reset wrench count
     this->m_rpcThread.wrenchCount = 0;
 
@@ -129,6 +132,9 @@ bool RPCServerThread::threadInit()
     // Set the default operation mode
     this->m_mode = "single";
 
+    // Set the default operation mode
+    this->m_orient = "orient_base";
+
     // Set wrench count default value
     this->wrenchCount = 0;
 
@@ -142,8 +148,10 @@ void RPCServerThread::run()
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
-            this->m_reply.addString ( "The defaul operation mode is with single wrench" );
+            this->m_reply.addString ( "The default operation mode is with single wrench" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
+            this->m_reply.addString ( "The default frame orientation is the one of the base/root frame" );
+            this->m_reply.addString ( "Insert [orient_base] or [orient_local] to change the operation mode" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
@@ -151,7 +159,7 @@ void RPCServerThread::run()
             this->m_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame" );
             this->m_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame" );
             this->m_reply.addString ( "[duration]: (double) Duration of the applied force in seconds" );
-            this->m_reply.addString ( "Note: The reference frame is the base/root robot frame with x pointing backwards and z upwards.");
+            this->m_reply.addString ( "Note: If orientation is set to [orient_base], the reference frame is the base/root robot frame with x pointing backwards and z upwards.");
             this->m_rpcPort.reply ( this->m_reply );
         } else{
             if((command.size() == 8) && (command.get(0).isString() \
@@ -216,27 +224,69 @@ void RPCServerThread::run()
             }
             else if (command.size() == 1 && command.get(0).isString()) {
 
-                this->m_mode = command.get(0).asString();
+                if (command.get(0).asString() == "single") {
 
-                this->m_message = command.get(0).asString() + " wrench operation mode set";
+                    this->m_mode = command.get(0).asString();
 
-                // Reset wrench count
-                wrenchCount = 0;
+                    this->m_message = command.get(0).asString() + " wrench operation mode set";
 
-                // Delete the previous wrenches
-                if (wrenchesVector.size() != 0) {
-                    this->m_message = this->m_message + " . Clearing previous wrenches.";
-                    for (int i = 0; i < wrenchesVector.size(); i++)
-                    {
-                        ExternalWrench wrench = wrenchesVector.at(i);
-                        wrench.deleteWrench();
+                    // Reset wrench count
+                    wrenchCount = 0;
+
+                    // Delete the previous wrenches
+                    if (wrenchesVector.size() != 0) {
+                        this->m_message = this->m_message + " . Clearing previous wrenches.";
+                        for (int i = 0; i < wrenchesVector.size(); i++)
+                        {
+                            ExternalWrench wrench = wrenchesVector.at(i);
+                            wrench.deleteWrench();
+                        }
+                        wrenchesVector.clear();
                     }
-                    wrenchesVector.clear();
+                }
+                else if (command.get(0).asString() == "multiple") {
+
+                    this->m_mode = command.get(0).asString();
+
+                    this->m_message = command.get(0).asString() + " wrench operation mode set";
+
+                    // Reset wrench count
+                    wrenchCount = 0;
+
+                    // Delete the previous wrenches
+                    if (wrenchesVector.size() != 0) {
+                        this->m_message = this->m_message + " . Clearing previous wrenches.";
+                        for (int i = 0; i < wrenchesVector.size(); i++)
+                        {
+                            ExternalWrench wrench = wrenchesVector.at(i);
+                            wrench.deleteWrench();
+                        }
+                        wrenchesVector.clear();
+                    }
+                }
+                else if (command.get(0).asString() == "orient_base") {
+                    this->m_orient = command.get(0).asString();
+
+                    this->m_message = command.get(0).asString() + " wrench orientation option set";
+
+                    // Not clearing previous wrenches!
+
+                }
+                else if (command.get(0).asString() == "orient_local") {
+                    this->m_orient = command.get(0).asString();
+
+                    this->m_message = command.get(0).asString() + " wrench orientation option set";
+
+                    // Not clearing previous wrenches!
+
+                }
+                else {
+                    this->m_reply.clear();
+                    this->m_message = "ERROR: Incorrect command format. Insert [help] to know the correct command format";
                 }
 
                 this->m_reply.addString (m_message);
                 this->m_rpcPort.reply ( m_reply );
-
             }
             else {
                 this->m_reply.clear();

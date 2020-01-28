@@ -7,6 +7,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Added
 - Add the option for the external force orientation to be reperesented in the link frame with the `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/463).
+- Add the possibility to create different types of joints with the `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/461).
 
 ## [3.3.0] - 2019-12-13
 

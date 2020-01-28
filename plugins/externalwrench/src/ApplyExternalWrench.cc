@@ -157,14 +157,14 @@ void RPCServerThread::run()
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
             this->m_reply.addString ( "The default operation mode is with single wrench" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
-            this->m_reply.addString ( "The default frame orientation is the one of the base/root frame" );
+            this->m_reply.addString ( "The default frame orientation is the one of the base/root frame ([orient_global])" );
             this->m_reply.addString ( "Insert [orient_global] or [orient_local] to change the frame orientation mode" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
             this->m_reply.addString ( "[link]:     (string) Link ID of the robot as specified in robot's SDF" );
-            this->m_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame (or link refernce frame if [orient_local] is selected)" );
-            this->m_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame (or link refernce frame if [orient_local] is selected)" );
+            this->m_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame (or link reference frame if [orient_local] is selected)" );
+            this->m_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame (or link reference frame if [orient_local] is selected)" );
             this->m_reply.addString ( "[duration]: (double) Duration of the applied force in seconds" );
             this->m_reply.addString ( "Note: If orientation is set to [orient_global], the reference frame is the base/root robot frame with x pointing backwards and z upwards.");
             this->m_rpcPort.reply ( this->m_reply );

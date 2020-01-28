@@ -130,7 +130,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
     else return false;
 }
 
-void ExternalWrench::applyWrench()
+void ExternalWrench::applyGlobalOrientationWrench()
 {
     if((tock-tick) < wrench.duration)
     {
@@ -162,6 +162,115 @@ void ExternalWrench::applyWrench()
         math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
         math::Quaterniond forceOrientation = rotation.Rotation();
         math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
+#endif
+
+#if GAZEBO_MAJOR_VERSION == 7
+        msgs::Set(visualMsg.mutable_pose(), linkCoGPose.Ign());
+#else
+        msgs::Set(visualMsg.mutable_pose(), linkCoGPose);
+#endif
+#if GAZEBO_MAJOR_VERSION >= 9
+        msgs::Set(visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));
+#else
+        msgs::Set(visualMsg.mutable_material()->mutable_ambient(),common::Color(color[0],color[1],color[2],color[3]));
+#endif
+        visualMsg.set_visible(1);
+        visPub->Publish(visualMsg);
+    }
+    else
+    {
+        deleteWrench();
+    }
+}
+
+void ExternalWrench::applyLocalOrientationWrench()
+{
+    if((tock-tick) < wrench.duration)
+    {
+#if GAZEBO_MAJOR_VERSION >= 8
+        ignition::math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
+        ignition::math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
+
+        //Frames:
+        //World frame = W
+        //Link frame = L
+        //Link CoG frame = Lg
+        //Applied Forece frame = F
+
+        //Quantities:
+        //Rotation Matrix = R
+        //Transformation Matrix = T
+        //Quaternion = Q
+        //Pose 3d = P
+        //Position 3d = p
+
+        //Examples:
+        //W_T_L = the Transformation Matrix from the World frame to the Link frame
+        //Lg_Q_F = the Quaternion from the Link CoG frame to the Applied Force frame
+
+        ignition::math::Vector3d linkCoGPos = link->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
+        ignition::math::Vector3d newZ = force.Normalized(); // normalized force. I want the z axis of the cylinder's reference frame to coincide with my force vector
+        ignition::math::Vector3d newX = newZ.Cross (ignition::math::Vector3d::UnitZ);
+        ignition::math::Vector3d newY = newZ.Cross (newX);
+
+        ignition::math::Matrix4d Lg_T_F = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
+        ignition::math::Quaterniond Lg_Q_F = Lg_T_F.Rotation();
+
+        ignition::math::Vector3d W_p_Lg = link->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
+        ignition::math::Quaterniond W_Q_Lg = link->WorldCoGPose().Rot();
+        ignition::math::Matrix4d W_T_Lg = ignition::math::Matrix4d (link->WorldCoGPose());
+
+        link->AddRelativeForce(force);
+        link->AddRelativeTorque(torque);
+
+        ignition::math::Quaterniond W_Q_F = W_Q_Lg*Lg_Q_F;
+        ignition::math::Matrix4d W_T_F = W_T_Lg*Lg_T_F;
+
+        const ignition::math::Vector3d cylinderHalfLenght = ignition::math::Vector3d ( 0,0,-0.15 );
+
+        ignition::math::Pose3d linkCoGPose (W_T_F*cylinderHalfLenght, W_Q_F);
+#else
+        math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
+        math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
+
+        //Frames:
+        //World frame = W
+        //Link frame = L
+        //Link CoG frame = Lg
+        //Applied Forece frame = F
+
+        //Quantities:
+        //Rotation Matrix = R
+        //Transformation Matrix = T
+        //Quaternion = Q
+        //Pose 3d = P
+        //Position 3d = p
+
+        //Examples:
+        //W_T_L = the Transformation Matrix from the World frame to the Link frame
+        //Lg_Q_F = the Quaternion from the Link CoG frame to the Applied Force frame
+
+        math::Vector3d linkCoGPos = link->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
+        math::Vector3d newZ = force.Normalized(); // normalized force. I want the z axis of the cylinder's reference frame to coincide with my force vector
+        math::Vector3d newX = newZ.Cross (math::Vector3d::UnitZ);
+        math::Vector3d newY = newZ.Cross (newX);
+
+        math::Matrix4d Lg_T_F = math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
+        math::Quaterniond forceOrientation = Lg_T_F.Rotation();
+
+        math::Vector3d W_p_Lg = link->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
+        math::Quaterniond W_Q_Lg = link->WorldCoGPose().Rot();
+        math::Matrix4d W_T_Lg = math::Matrix4d (link->WorldCoGPose());
+
+        link->AddForce(W_Q_Lg.RotateVectorReverse(force));
+        link->AddTorque(W_Q_Lg.RotateVectorReverse(torque));
+
+        math::Quaterniond W_Q_F = W_Q_Lg*Lg_Q_F;
+        math::Matrix4d W_T_F = W_T_Lg*Lg_T_F;
+
+        const math::Vector3d cylinderHalfLenght = ignition::math::Vector3d ( 0,0,-0.15 );
+
+        math::Pose3d linkCoGPose (W_T_F*cylinderHalfLenght, W_Q_F);
 #endif
 
 #if GAZEBO_MAJOR_VERSION == 7

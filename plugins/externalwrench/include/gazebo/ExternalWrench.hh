@@ -80,7 +80,8 @@ public:
     void setTick(double& tickTime);
     void setTock(double& tockTime);
     void setVisual();
-    void applyWrench();
+    void applyGlobalOrientationWrench();
+    void applyLocalOrientationWrench();
     void deleteWrench();
     void setModel();
 };

@@ -84,7 +84,14 @@ void ApplyExternalWrench::onUpdate(const gazebo::common::UpdateInfo& _info)
         bool duration_check = m_rpcThread.wrenchesVector.at(i).duration_done;
         if(duration_check == false)
         {
-            m_rpcThread.wrenchesVector.at(i).applyWrench();
+            if(this->m_rpcThread.m_orient == "orient_global")
+            {
+                m_rpcThread.wrenchesVector.at(i).applyGlobalOrientationWrench();
+            }
+            else if(this->m_rpcThread.m_orient == "orient_local")
+            {
+                m_rpcThread.wrenchesVector.at(i).applyLocalOrientationWrench();
+            }
         }
     }
     this->m_lock.unlock();
@@ -107,8 +114,8 @@ void ApplyExternalWrench::onReset()
     // Change the operation mode to default option 'single'
     this->m_rpcThread.m_mode = "single";
 
-    // Change the orientation to default option 'orient_base'
-    this->m_rpcThread.m_mode = "orient_base";
+    // Change the orientation to default option 'orient_global'
+    this->m_rpcThread.m_orient = "orient_global";
 
     // Reset wrench count
     this->m_rpcThread.wrenchCount = 0;
@@ -133,7 +140,7 @@ bool RPCServerThread::threadInit()
     this->m_mode = "single";
 
     // Set the default operation mode
-    this->m_orient = "orient_base";
+    this->m_orient = "orient_global";
 
     // Set wrench count default value
     this->wrenchCount = 0;
@@ -151,7 +158,7 @@ void RPCServerThread::run()
             this->m_reply.addString ( "The default operation mode is with single wrench" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
             this->m_reply.addString ( "The default frame orientation is the one of the base/root frame" );
-            this->m_reply.addString ( "Insert [orient_base] or [orient_local] to change the operation mode" );
+            this->m_reply.addString ( "Insert [orient_global] or [orient_local] to change the frame orientation mode" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
@@ -159,7 +166,7 @@ void RPCServerThread::run()
             this->m_reply.addString ( "[force]:    (double x, y, z) Force components in N w.r.t. world reference frame" );
             this->m_reply.addString ( "[torque]:   (double x, y, z) Torque components in N.m w.r.t world reference frame" );
             this->m_reply.addString ( "[duration]: (double) Duration of the applied force in seconds" );
-            this->m_reply.addString ( "Note: If orientation is set to [orient_base], the reference frame is the base/root robot frame with x pointing backwards and z upwards.");
+            this->m_reply.addString ( "Note: If orientation is set to [orient_global], the reference frame is the base/root robot frame with x pointing backwards and z upwards.");
             this->m_rpcPort.reply ( this->m_reply );
         } else{
             if((command.size() == 8) && (command.get(0).isString() \
@@ -264,7 +271,7 @@ void RPCServerThread::run()
                         wrenchesVector.clear();
                     }
                 }
-                else if (command.get(0).asString() == "orient_base") {
+                else if (command.get(0).asString() == "orient_global") {
                     this->m_orient = command.get(0).asString();
 
                     this->m_message = command.get(0).asString() + " wrench orientation option set";

@@ -30,7 +30,7 @@ public:
     std::string         m_mode;
 
     // variable for orientation mode
-    // base link or local orientations
+    // global or local orientation modes
     std::string         m_orient;
 
     int                 wrenchCount;

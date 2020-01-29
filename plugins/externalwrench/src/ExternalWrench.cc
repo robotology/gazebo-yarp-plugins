@@ -147,7 +147,7 @@ void ExternalWrench::applyGlobalOrientationWrench()
         ignition::math::Vector3d newY = newZ.Cross (newX);
         ignition::math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
         ignition::math::Quaterniond forceOrientation = rotation.Rotation();
-        ignition::math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
+        ignition::math::Pose3d W_p_F (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
 #else
         math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
         math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
@@ -161,13 +161,13 @@ void ExternalWrench::applyGlobalOrientationWrench()
         math::Vector3d newY = newZ.Cross (newX);
         math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
         math::Quaterniond forceOrientation = rotation.Rotation();
-        math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
+        math::Pose3d W_p_F (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
 #endif
 
 #if GAZEBO_MAJOR_VERSION == 7
-        msgs::Set(visualMsg.mutable_pose(), linkCoGPose.Ign());
+        msgs::Set(visualMsg.mutable_pose(), W_p_F.Ign());
 #else
-        msgs::Set(visualMsg.mutable_pose(), linkCoGPose);
+        msgs::Set(visualMsg.mutable_pose(), W_p_F);
 #endif
 #if GAZEBO_MAJOR_VERSION >= 9
         msgs::Set(visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));
@@ -226,9 +226,9 @@ void ExternalWrench::applyLocalOrientationWrench()
         ignition::math::Quaterniond W_Q_F = W_Q_Lg*Lg_Q_F;
         ignition::math::Matrix4d W_T_F = W_T_Lg*Lg_T_F;
 
-        const ignition::math::Vector3d cylinderHalfLenght = ignition::math::Vector3d ( 0,0,-0.15 );
+        const ignition::math::Vector3d cylinderHalfLength = ignition::math::Vector3d ( 0,0,-0.15 );
 
-        ignition::math::Pose3d linkCoGPose (W_T_F*cylinderHalfLenght, W_Q_F);
+        ignition::math::Pose3d W_p_F (W_T_F*cylinderHalfLength, W_Q_F);
 #else
         math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
         math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
@@ -268,15 +268,15 @@ void ExternalWrench::applyLocalOrientationWrench()
         math::Quaterniond W_Q_F = W_Q_Lg*Lg_Q_F;
         math::Matrix4d W_T_F = W_T_Lg*Lg_T_F;
 
-        const math::Vector3d cylinderHalfLenght = ignition::math::Vector3d ( 0,0,-0.15 );
+        const math::Vector3d cylinderHalfLength = ignition::math::Vector3d ( 0,0,-0.15 );
 
-        math::Pose3d linkCoGPose (W_T_F*cylinderHalfLenght, W_Q_F);
+        math::Pose3d W_p_F (W_T_F*cylinderHalfLength, W_Q_F);
 #endif
 
 #if GAZEBO_MAJOR_VERSION == 7
-        msgs::Set(visualMsg.mutable_pose(), linkCoGPose.Ign());
+        msgs::Set(visualMsg.mutable_pose(), W_p_F.Ign());
 #else
-        msgs::Set(visualMsg.mutable_pose(), linkCoGPose);
+        msgs::Set(visualMsg.mutable_pose(), W_p_F);
 #endif
 #if GAZEBO_MAJOR_VERSION >= 9
         msgs::Set(visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));

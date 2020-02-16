@@ -9,6 +9,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - Add the option for the external force orientation to be reperesented in the link frame with the `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/463).
 - Add the possibility to create different types of joints with the `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/461).
 
+### Fixed
+- Fixed the case if the user writes any 1-word command other than single, the mode is switched to multiple wrenches mode (see https://github.com/robotology/gazebo-yarp-plugins/pull/418). Now, if the user writes any 1-word command other than `single`, `multiple`, `orient_global`, `orient_local`, they will receive an error message (https://github.com/robotology/gazebo-yarp-plugins/pull/463).
+
 ## [3.3.0] - 2019-12-13
 
 ### Added

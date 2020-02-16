@@ -276,16 +276,32 @@ void RPCServerThread::run()
 
                     this->m_message = command.get(0).asString() + " wrench orientation option set";
 
-                    // Not clearing previous wrenches!
-
+                    // Delete the previous wrenches
+                    if (wrenchesVector.size() != 0) {
+                        this->m_message = this->m_message + " . Clearing previous wrenches.";
+                        for (int i = 0; i < wrenchesVector.size(); i++)
+                        {
+                            ExternalWrench wrench = wrenchesVector.at(i);
+                            wrench.deleteWrench();
+                        }
+                        wrenchesVector.clear();
+                    }
                 }
                 else if (command.get(0).asString() == "orient_local") {
                     this->m_orient = command.get(0).asString();
 
                     this->m_message = command.get(0).asString() + " wrench orientation option set";
 
-                    // Not clearing previous wrenches!
-
+                    // Delete the previous wrenches
+                    if (wrenchesVector.size() != 0) {
+                        this->m_message = this->m_message + " . Clearing previous wrenches.";
+                        for (int i = 0; i < wrenchesVector.size(); i++)
+                        {
+                            ExternalWrench wrench = wrenchesVector.at(i);
+                            wrench.deleteWrench();
+                        }
+                        wrenchesVector.clear();
+                    }
                 }
                 else {
                     this->m_reply.clear();

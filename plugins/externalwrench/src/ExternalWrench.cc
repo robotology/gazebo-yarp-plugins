@@ -227,15 +227,13 @@ void ExternalWrench::applyLocalOrientationWrench()
         ignition::math::Vector3d newY = newZ.Cross (newX);
 
         ignition::math::Matrix4d Lg_T_F = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
-        ignition::math::Quaterniond Lg_R_F = Lg_T_F.Rotation();
 
         //Transformation from World frame -> Link CoG (Lg) frame
         ignition::math::Matrix4d W_T_Lg = ignition::math::Matrix4d (link->WorldCoGPose());
-        ignition::math::Quaterniond W_R_Lg = W_T_Lg.Rotation();
 
         //Transformation from World frame ->  Applied Force (F) frame
         ignition::math::Matrix4d W_T_F = W_T_Lg*Lg_T_F;
-        ignition::math::Quaterniond W_R_F = W_R_Lg*Lg_R_F;
+        ignition::math::Quaterniond W_R_F = W_T_F.Rotation();
 
         //For the cylindrical shapes used to visualize the applied forces
         const ignition::math::Vector3d cylinderHalfLength = ignition::math::Vector3d ( 0,0,-0.15 );
@@ -272,15 +270,13 @@ void ExternalWrench::applyLocalOrientationWrench()
         math::Vector3d newY = newZ.Cross (newX);
 
         math::Matrix4d Lg_T_F = math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
-        math::Quaterniond Lg_R_F = Lg_T_F.Rotation();
 
         //Transformation from World frame -> Link CoG (Lg) frame
         math::Matrix4d W_T_Lg = math::Matrix4d (link->WorldCoGPose());
-        math::Quaterniond W_R_Lg = W_T_Lg.Rotation();
 
         //Transformation from World frame ->  Applied Force (F) frame
         math::Matrix4d W_T_F = W_T_Lg*Lg_T_F;
-        math::Quaterniond W_R_F = W_R_Lg*Lg_R_F;
+        math::Quaterniond W_R_F = W_T_F.Rotation();
 
         //For the cylindrical shapes used to visualize the applied forces
         const math::Vector3d cylinderHalfLength = math::Vector3d ( 0,0,-0.15 );

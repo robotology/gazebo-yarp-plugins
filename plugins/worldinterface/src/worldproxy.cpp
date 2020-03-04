@@ -6,7 +6,7 @@
  *
  */
 
- #include "worldproxy.h"
+#include "worldproxy.h"
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
 #include <math.h>
@@ -165,7 +165,16 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
   sdf::ElementPtr model = getSDFRoot(sphereSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
+  bool insert = true;
+  unsigned int m_count = world->ModelCount();
   world->InsertModelSDF(sphereSDF);
+  // the insert is non blocking; need to finish the insertion before request it
+  int periods = 0;
+  while (insert || (periods<20)) {
+    insert = (m_count == world->ModelCount());
+    yarp::os::Time::delay(0.1);
+    periods++;
+  }
 
 #if GAZEBO_MAJOR_VERSION >= 8
   physics::ModelPtr tmp=world->ModelByName(objlabel.str());
@@ -181,7 +190,7 @@ std::string WorldProxy::makeSphere(const double radius, const GazeboYarpPlugins:
     if (collision_enable) {tmp->SetCollideMode("all");}
     else {tmp->SetCollideMode("none");}
   }
-  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
+  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT. -> fixed by waiting for insert
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
 
   if (isSynchronous())
@@ -294,7 +303,17 @@ string WorldProxy::makeBox(const double width, const double height, const double
   sdf::ElementPtr model = getSDFRoot(boxSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
+  bool insert = true;
+  unsigned int m_count = world->ModelCount();
   world->InsertModelSDF(boxSDF);
+  // the insert is non blocking; need to finish the insertion before request it
+  int periods = 0;
+  while (insert || (periods<20)) {
+    insert = (m_count == world->ModelCount());
+    yarp::os::Time::delay(0.1);
+    periods++;
+  }
+
 #if GAZEBO_MAJOR_VERSION >= 8
   physics::ModelPtr tmp=world->ModelByName(objlabel.str());
 #else
@@ -309,7 +328,7 @@ string WorldProxy::makeBox(const double width, const double height, const double
     if (collision_enable) {tmp->SetCollideMode("all");}
     else {tmp->SetCollideMode("none");}
   }
-  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
+  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT. -> fixed by waiting for insert
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
 
   if (isSynchronous())
@@ -423,7 +442,16 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
 
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
+  bool insert = true;
+  unsigned int m_count = world->ModelCount();
   world->InsertModelSDF(cylSDF);
+  // the insert is non blocking; need to finish the insertion before request it
+  int periods = 0;
+  while (insert || (periods<20)) {
+    insert = (m_count == world->ModelCount());
+    yarp::os::Time::delay(0.1);
+    periods++;
+  }
 
 #if GAZEBO_MAJOR_VERSION >= 8
   physics::ModelPtr tmp=world->ModelByName(objlabel.str());
@@ -433,12 +461,14 @@ string WorldProxy::makeCylinder(const double radius, const double length, const 
   if (tmp==0)
   {
     yWarning() << "Internal error during object creation. Unimplemented feature in gazebo 7.";
-    return "";
   }
-
-  objects.insert(std::pair<string,physics::ModelPtr>(objlabel.str(), tmp));
-  if (collision_enable) {tmp->SetCollideMode("all");}
-  else {tmp->SetCollideMode("none");}
+  else
+  {
+    if (collision_enable) {tmp->SetCollideMode("all");}
+    else {tmp->SetCollideMode("none");}
+  }
+  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT. -> fixed by waiting for insert
+  objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
 
   if (isSynchronous())
      waitForEngine();
@@ -654,7 +684,16 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
   sdf::ElementPtr model = getSDFRoot(frameSDF)->GetElement("model");
 
   model->GetAttribute("name")->SetFromString(objlabel.str());
+  bool insert = true;
+  unsigned int m_count = world->ModelCount();
   world->InsertModelSDF(frameSDF);
+  // the insert is non blocking; need to finish the insertion before request it
+  int periods = 0;
+  while (insert || (periods<20)) {
+    insert = (m_count == world->ModelCount());
+    yarp::os::Time::delay(0.1);
+    periods++;
+  }
 
 #if GAZEBO_MAJOR_VERSION >= 8
     physics::ModelPtr tmp=world->ModelByName(objlabel.str());
@@ -670,7 +709,7 @@ std::string WorldProxy::makeFrame(const double size, const GazeboYarpPlugins::Po
     if (collision_enable) {tmp->SetCollideMode("all");}
     else {tmp->SetCollideMode("none");}
   }
-  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT.
+  //HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT. -> fixed by waiting for insert
   objects.insert(pair<string,physics::ModelPtr>(objlabel.str(), tmp));
 
   if (isSynchronous())
@@ -1088,10 +1127,66 @@ std::vector<std::string> WorldProxy::getList()
   return ret;
 }
 
-bool WorldProxy::loadModelFromFile(const std::string& filename)
-{
-  yError()<<"loadFromModelFile not yet implemented\n";
-  return false;
+std::string WorldProxy::loadModelFromFile(const std::string &filename, const GazeboYarpPlugins::Pose &pose) {
+
+  string model_name = "";
+
+  sdf::SDFPtr modelSDF_ptr(new sdf::SDF());
+  if (!sdf::init(modelSDF_ptr))
+  { 
+    std::cerr << "[Error] SDF init failed" << std::endl;
+    return "";
+  }
+
+  if (!sdf::readFile(filename, modelSDF_ptr))
+  {
+    std::cerr << "[Error] SDF parsing the xml failed" << std::endl;
+    return "";
+  }
+
+  sdf::ElementPtr model = modelSDF_ptr->Root()->GetElement("model");
+
+  model_name = model->GetAttribute("name")->GetAsString();
+
+  int nobjects = ++objects.count;
+  ostringstream objlabel;
+  objlabel << model_name << nobjects;
+
+
+
+  ostringstream model_pose;
+  model_pose << pose.x << " " << pose.y << " " <<  pose.z << " " <<  pose.roll << " " <<  pose.pitch << " " <<  pose.yaw;
+
+  model->GetAttribute("name")->SetFromString(objlabel.str());
+  model->GetElement("pose")->Set(model_pose.str());
+
+  bool insert = true;
+  unsigned int m_count = world->ModelCount();
+  world->InsertModelString(modelSDF_ptr->ToString());
+  // the insert is non blocking; need to finish the insertion before request it
+  int periods = 0;
+  while (insert || (periods<20)) {
+    insert = (m_count == world->ModelCount());
+    yarp::os::Time::delay(0.1);
+    periods++;
+  }
+
+#if GAZEBO_MAJOR_VERSION >= 8
+  physics::ModelPtr tmp = world->ModelByName(objlabel.str());
+#else
+  physics::ModelPtr tmp = world->GetModel(objlabel.str());
+#endif
+  if (tmp == 0) {
+    yWarning() << "Internal error during object creation. Unimplemented "
+                  "feature in gazebo 7.";
+  }
+  // HERE TMP IS ALWAYS NULL, so the following insertion is not valid. I DON'T KNOW TO FIX IT. -> fixed by waiting for insert
+  objects.insert(pair<string, physics::ModelPtr>(objlabel.str(), tmp));
+
+  if (isSynchronous())
+    waitForEngine();
+
+  return objlabel.str();
 }
 
 void WorldProxy::update(const common::UpdateInfo & _info)

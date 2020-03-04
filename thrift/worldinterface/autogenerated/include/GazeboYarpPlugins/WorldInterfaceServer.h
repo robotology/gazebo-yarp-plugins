@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -127,9 +127,10 @@ public:
     /**
      * Load a model from file.
      * @param id string that specifies the name of the model
-     * @return returns true/false on success failure.
+     * @param pose pose of the model [m]
+     * @return returns a string that contains the name of the model in the world
      */
-    virtual bool loadModelFromFile(const std::string& filename);
+    virtual std::string loadModelFromFile(const std::string& filename, const Pose& pose);
 
     /**
      * Delete an object.

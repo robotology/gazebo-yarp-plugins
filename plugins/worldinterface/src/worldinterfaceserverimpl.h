@@ -80,7 +80,7 @@ public:
      */
     virtual bool enableCollision(const std::string& id, const bool enable);
 
-    virtual bool loadModelFromFile(const std::string& filename);
+    virtual std::string loadModelFromFile(const std::string& filename, const GazeboYarpPlugins::Pose& pose);
 
     /**
      * Make a reference frame.

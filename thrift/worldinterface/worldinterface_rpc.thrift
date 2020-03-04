@@ -123,9 +123,10 @@ service WorldInterfaceServer {
     /**
     * Load a model from file.
     * @param id string that specifies the name of the model
-    * @return returns true/false on success failure.
+    * @param pose pose of the model [m]
+    * @return returns a string that contains the name of the model in the world
     */
-    bool loadModelFromFile(1:string filename);
+    string loadModelFromFile(1: string filename, 2: Pose pose);
     
      /** 
     * Delete an object.

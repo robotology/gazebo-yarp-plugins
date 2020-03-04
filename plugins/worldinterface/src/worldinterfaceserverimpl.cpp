@@ -55,9 +55,9 @@ bool WorldInterfaceServerImpl::enableCollision(const std::string& id, const bool
   return proxy->enableCollision(id, enable);
 }
 
-bool WorldInterfaceServerImpl::loadModelFromFile(const std::string& filename)
+std::string WorldInterfaceServerImpl::loadModelFromFile(const std::string& filename, const GazeboYarpPlugins::Pose& pose)
 {
-  return proxy->loadModelFromFile(filename);  
+  return proxy->loadModelFromFile(filename, pose);  
 }
 
 bool WorldInterfaceServerImpl::deleteObject(const std::string& id)

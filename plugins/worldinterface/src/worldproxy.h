@@ -191,9 +191,10 @@ public:
   /**
    * Load a model from file.
    * @param id string that specifies the name of the model
+   * @param pose pose of the sphere [m]
    * @return returns true/false on success failure.
    */
-  virtual bool loadModelFromFile(const std::string& filename);
+  virtual std::string loadModelFromFile(const std::string& filename, const GazeboYarpPlugins::Pose &pose);
 
   /**
    * Attach an object to a link of the robot.

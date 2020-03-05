@@ -164,4 +164,27 @@ public:
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
+class HandMk3CouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    HandMk3CouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+    
+protected:
+    double decouple (double q2, double lut[]);
+
+    double thumb_lut[4096];
+    double index_lut[4096];
+};
+
 #endif //GAZEBOYARP_COUPLING_H

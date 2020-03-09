@@ -571,16 +571,19 @@ yarp::sig::Vector CerHandCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq
 //------------------------------------------------------------------------------------------------------------------
 
 HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names), LUTSIZE(4096)
 {
     const double RAD2DEG = 180.0/atan2(0.0,-1.0);
     const double DEG2RAD = 1.0/RAD2DEG;
     
     m_couplingSize = 11;
     
-    double num[4096];
+    thumb_lut = new double[LUTSIZE];
+    index_lut = new double[LUTSIZE];
     
-    for (int n = 0; n < 4096; ++n)
+    double num[LUTSIZE];
+    
+    for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         thumb_lut[n] = 0.0;
@@ -629,7 +632,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             num[iindex + 1] += w;
         }
         
-        for (int n = 0; n < 4096; ++n)
+        for (int n = 0; n < LUTSIZE; ++n)
         {
             if (num[n] > 0.0)
             {
@@ -639,7 +642,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
     }
     
     
-    for (int n = 0; n < 4096; ++n)
+    for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         index_lut[n] = 0.0;
@@ -688,7 +691,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             num[iindex + 1] += w;
         }
         
-        for (int n = 0; n < 4096; ++n)
+        for (int n = 0; n < LUTSIZE; ++n)
         {
             if (num[n] > 0.0)
             {
@@ -696,6 +699,12 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             }
         }
     }
+}
+
+HandMk3CouplingHandler::~HandMk3CouplingHandler()
+{
+    delete [] thumb_lut;
+    delete [] index_lut;
 }
 
 bool HandMk3CouplingHandler::decouplePos (yarp::sig::Vector& current_pos)

@@ -638,7 +638,6 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
         }
     }
     
-    //for (int n=0; n<1500; ++n) yDebug() << thumb_lut[n];
     
     for (int n = 0; n < 4096; ++n)
     {

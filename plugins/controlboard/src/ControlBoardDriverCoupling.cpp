@@ -581,7 +581,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
     thumb_lut = new double[LUTSIZE];
     index_lut = new double[LUTSIZE];
     
-    double num[LUTSIZE];
+    std::vector<double> num(LUTSIZE);
     
     for (int n = 0; n < LUTSIZE; ++n)
     {

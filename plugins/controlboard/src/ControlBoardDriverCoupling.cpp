@@ -578,8 +578,8 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
     
     m_couplingSize = 11;
     
-    thumb_lut = new double[LUTSIZE];
-    index_lut = new double[LUTSIZE];
+    thumb_lut.resize(LUTSIZE);
+    index_lut.resize(LUTSIZE);
     
     std::vector<double> num(LUTSIZE);
     
@@ -701,12 +701,6 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
     }
 }
 
-HandMk3CouplingHandler::~HandMk3CouplingHandler()
-{
-    delete [] thumb_lut;
-    delete [] index_lut;
-}
-
 bool HandMk3CouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
@@ -746,7 +740,7 @@ bool HandMk3CouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
     return false;
 }
 
-double HandMk3CouplingHandler::decouple (double q2, double lut[])
+double HandMk3CouplingHandler::decouple (double q2, std::vector<double>& lut)
 {
     double dindex = q2*10.0;
     int iindex = int(dindex);

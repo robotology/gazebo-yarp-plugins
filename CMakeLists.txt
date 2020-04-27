@@ -18,7 +18,7 @@ set(${PROJECT_NAME}_VERSION
 include(GNUInstallDirs)
 
 # Finding dependencies
-find_package(YARP 3.2.102 REQUIRED)
+find_package(YARP 3.2.102 REQUIRED COMPONENTS os sig dev math cv)
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 7.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})

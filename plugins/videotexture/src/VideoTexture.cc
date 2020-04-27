@@ -14,6 +14,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/cv/Cv.h>
 
 using namespace Ogre;
 namespace gazebo 
@@ -50,7 +51,7 @@ namespace gazebo
             const cv::Mat*    image_ptr;
             pixelBuff         pixelBuffer;
 
-            image       = cv::cvarrToMat( static_cast<IplImage*>(img->getIplImage()) );
+            image       = yarp::cv::toCvMat(*img);
             image_ptr   = &image;
             pixelBuffer = this->m_texture->getBuffer();
 

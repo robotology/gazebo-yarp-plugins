@@ -5,6 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Fixed 
+- Fix linking on MSVC when not using the vcpkg's CMAKE_TOOLCHAIN_FILE (https://github.com/robotology/gazebo-yarp-plugins/pull/483).
+
 ## [3.3.1] - 2020-03-05
 
 ### Fixed 

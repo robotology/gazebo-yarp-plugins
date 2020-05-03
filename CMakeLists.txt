@@ -32,6 +32,9 @@ if(MSVC)
     # It is tipically better to use target_include_directories in place of
     # global include_directories, but in this case it is more compact to use include_directories
     include_directories(${OGRE_Paging_INCLUDE_DIRS})
+    
+    # Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/482
+    add_definitions(-D__TBB_NO_IMPLICIT_LINKAGE=1)
 endif()
 
 

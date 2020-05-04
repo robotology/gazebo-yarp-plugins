@@ -23,9 +23,6 @@ add_subdirectory(showmodelcom)
 add_subdirectory(multicamera)
 add_subdirectory(maissensor)
 
-find_package(OpenCV QUIET)
-option(GAZEBO_YARP_PLUGINS_HAS_OPENCV "Compile plugins that depend on OpenCV" ${OpenCV_FOUND})
-
 if(GAZEBO_YARP_PLUGINS_HAS_OPENCV)
     add_subdirectory(videotexture)
 else()

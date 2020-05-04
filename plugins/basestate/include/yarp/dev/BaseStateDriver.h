@@ -52,6 +52,9 @@ namespace yarp
  * - absolute pose of the base link (x, y, z. roll, pitch, yaw)
  * - linear and angular velocity of the base link in the world frame
  * - linear and angular acceleration of the base link in the world frame
+ * \warning Note that the position angles, angular velocity and angular accelerations 
+ *          are expressed in radians-based units which is different from 
+ *          the usual YARP convention of expressing angles in degrees
  * 
  * This device can be used by adding the following line in the SDF file of your robot,
  *  ```

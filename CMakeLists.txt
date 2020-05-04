@@ -8,7 +8,7 @@ PROJECT(GazeboYARPPlugins)
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)
 set(${PROJECT_NAME}_MINOR_VERSION 3)
-set(${PROJECT_NAME}_PATCH_VERSION 0)
+set(${PROJECT_NAME}_PATCH_VERSION 1)
 
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
@@ -32,6 +32,9 @@ if(MSVC)
     # It is tipically better to use target_include_directories in place of
     # global include_directories, but in this case it is more compact to use include_directories
     include_directories(${OGRE_Paging_INCLUDE_DIRS})
+    
+    # Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/482
+    add_definitions(-D__TBB_NO_IMPLICIT_LINKAGE=1)
 endif()
 
 

@@ -3,17 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
 ## [Unreleased]
+
+## [3.4.0] - 2020-05-19
 
 ### Added
 - Add the possibility to create different types of joints with the `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/461).
 
 ### Fixed
 - Fixed initialization of the local simulation time from Gazebo simTime on first call of onUpdate (https://github.com/robotology/gazebo-yarp-plugins/pull/478).
-
-## [UnreleasedStable]
-
-### Fixed 
 - Fix linking on MSVC when not using the vcpkg's CMAKE_TOOLCHAIN_FILE (https://github.com/robotology/gazebo-yarp-plugins/pull/483).
 
 ## [3.3.1] - 2020-03-05
@@ -21,7 +20,6 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Fixed 
 - Solve the problem of setting the interaction mode when the mode of actuator has been already set on the same requested interaction mode (https://github.com/robotology/gazebo-yarp-plugins/pull/464).
 - Fix implementation of `yarp::dev::IPositionControl::relativeMove` in `gazebo_yarp_controlboard` (https://github.com/robotology/gazebo-yarp-plugins/pull/466).
->>>>>>> master
 
 ## [3.3.0] - 2019-12-13
 

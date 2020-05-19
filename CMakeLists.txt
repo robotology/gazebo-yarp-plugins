@@ -7,8 +7,8 @@ PROJECT(GazeboYARPPlugins)
 
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)
-set(${PROJECT_NAME}_MINOR_VERSION 3)
-set(${PROJECT_NAME}_PATCH_VERSION 2)
+set(${PROJECT_NAME}_MINOR_VERSION 4)
+set(${PROJECT_NAME}_PATCH_VERSION 0)
 
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
@@ -18,7 +18,17 @@ set(${PROJECT_NAME}_VERSION
 include(GNUInstallDirs)
 
 # Finding dependencies
-find_package(YARP 3.2.102 REQUIRED)
+find_package(OpenCV QUIET)
+option(GAZEBO_YARP_PLUGINS_HAS_OPENCV "Compile plugins that depend on OpenCV" ${OpenCV_FOUND})
+
+if(GAZEBO_YARP_PLUGINS_HAS_OPENCV)
+    find_package(OpenCV REQUIRED)
+    set(YARP_ADDITIONAL_COMPONENTS_REQUIRED "cv")
+else()
+    set(YARP_ADDITIONAL_COMPONENTS_REQUIRED "")
+endif()
+
+find_package(YARP 3.2.102 REQUIRED COMPONENTS os sig dev math ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 7.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})

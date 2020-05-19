@@ -53,6 +53,21 @@ void LinkAttacher::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
       return;
   }
 
+  std::string jointType;
+  if(m_parameters.check("jointType"))
+  {
+      jointType = m_parameters.find("jointType").asString();
+  }
+  else
+  {
+      jointType="fixed";
+  }
+
+  if(!m_la_server.setJointType(jointType))
+  {
+      return;
+  }
+  
   std::string portname;
   if(m_parameters.check("name"))
   {
@@ -72,5 +87,4 @@ void LinkAttacher::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   }
 
   m_la_server.yarp().attachAsServer(*m_rpcport);
-
 }

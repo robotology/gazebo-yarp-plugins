@@ -577,7 +577,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         }
         else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
-            double q = m_positions[j] - m_zeroPosition[j];
+            double q = m_motPositions[j] - m_zeroPosition[j];
             forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
         else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF))
@@ -594,12 +594,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_POSITION][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_positions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motPositions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
 
         }
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
-            double q = m_positions[j] - m_zeroPosition[j];
+            double q = m_motPositions[j] - m_zeroPosition[j];
             forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
         else if (m_controlMode[j] == VOCAB_CM_TORQUE)

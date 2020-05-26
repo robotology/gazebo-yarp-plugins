@@ -62,6 +62,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_zeroPosition.resize(m_numberOfJoints);
     m_jntReferenceVelocities.resize(m_numberOfJoints);
     m_velocities.resize(m_numberOfJoints);
+    m_motVelocities.resize(m_numberOfJoints);
     m_amp.resize(m_numberOfJoints);
     m_torques.resize(m_numberOfJoints); m_torques.zero();
     m_measTorques.resize(m_numberOfJoints); m_measTorques.zero();
@@ -101,6 +102,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_motPositions.zero();
     m_zeroPosition.zero();
     m_velocities.zero();
+    m_motVelocities.zero();
     m_motReferencePositions.zero();
     m_motReferenceVelocities.zero();
     m_motReferenceTorques.zero();
@@ -479,6 +481,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 
     m_motPositions=m_positions;
+    m_motVelocities=m_velocities;
     //measurements decoupling
     for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
     {
@@ -574,30 +577,30 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         }
         else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
-            double q = m_positions[j] - m_zeroPosition[j];
-            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_velocities[j] + m_torqueOffset[j];
+            double q = m_motPositions[j] - m_zeroPosition[j];
+            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
         else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_velocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motVelocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
         }
         else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_velocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motVelocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
             yWarning("Compliant velocity control not yet implemented");
         }
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_POSITION][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_positions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motPositions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
 
         }
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
-            double q = m_positions[j] - m_zeroPosition[j];
-            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_velocities[j] + m_torqueOffset[j];
+            double q = m_motPositions[j] - m_zeroPosition[j];
+            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
         else if (m_controlMode[j] == VOCAB_CM_TORQUE)
         {

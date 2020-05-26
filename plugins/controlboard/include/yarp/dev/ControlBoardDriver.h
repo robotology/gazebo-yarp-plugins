@@ -385,6 +385,7 @@ private:
 
     yarp::sig::Vector m_positions;          /**< joint positions [Degrees] */
     yarp::sig::Vector m_motPositions;      /**< motor positions [Degrees] */
+    yarp::sig::Vector m_motVelocities;      /**< motor velocities [Degrees/Seconds] */
     yarp::sig::Vector m_velocities;         /**< joint velocities [Degrees/Seconds] */
     yarp::sig::Vector m_torques;            /**< joint torques [Netwon Meters] */
     yarp::sig::Vector m_measTorques;        /**< joint torques from virtual analog sensor [Newton Meters] */

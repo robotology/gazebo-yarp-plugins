@@ -113,11 +113,7 @@ bool GazeboYarpControlBoardDriver::getRefSpeeds(double *spds) //WORKS
 
 bool GazeboYarpControlBoardDriver::relativeMove(int j, double delta) //NOT TESTED
 {
-    if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints) {
-        m_trajectoryGenerationReferencePosition[j] = m_positions[j] + delta; //TODO check if this is ok or m_trajectoryGenerationReferencePosition=m_trajectoryGenerationReferencePosition+delta!!!
-        return true;
-    }
-    return false;
+    return positionMove(j, m_positions[j] + delta);
 }
 
 bool GazeboYarpControlBoardDriver::relativeMove(const double *deltas) //NOT TESTED

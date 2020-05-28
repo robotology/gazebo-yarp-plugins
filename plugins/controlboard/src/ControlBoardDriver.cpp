@@ -21,7 +21,7 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : m_deviceName("") {}
+GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : m_deviceName(""), m_initTime(true) {}
 
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
 
@@ -117,6 +117,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_isMotionDone = new bool[m_numberOfJoints];
     m_clock = 0;
     m_torqueOffset = 0;
+    m_initTime = true; // Set to initialize the simulation time to Gazebo simTime on the first call to onUpdate().
 
 
     m_trajectory_generator.resize(m_numberOfJoints, NULL);
@@ -450,10 +451,8 @@ bool GazeboYarpControlBoardDriver::configureJointType()
 
 void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
-    //TODO: how to properly reset the initial time?
-    static bool firstTime = true;
-    if (firstTime) {
-        firstTime = false;
+    if (m_initTime) {
+        m_initTime = false;
         m_previousTime = _info.simTime;
     }
     gazebo::common::Time stepTime = _info.simTime - m_previousTime;
@@ -632,6 +631,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
 void GazeboYarpControlBoardDriver::onReset()
 {
     m_previousTime = gazebo::common::Time::Zero;
+    m_initTime = true;
     resetPositionsAndTrajectoryGenerators();
 }
 

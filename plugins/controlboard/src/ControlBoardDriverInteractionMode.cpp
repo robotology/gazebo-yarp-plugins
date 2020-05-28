@@ -40,6 +40,12 @@ bool GazeboYarpControlBoardDriver::getInteractionModes(yarp::dev::InteractionMod
 
 bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
+    // The joint is already in the specified interaction mode, return
+    // See https://github.com/robotology/gazebo-yarp-plugins/issues/460 for more details
+    if (m_interactionMode[j] == mode) {
+        return true;
+    }
+
     resetAllPidsForJointAtIndex(j);
     m_interactionMode[j] = static_cast<int>(mode);
 

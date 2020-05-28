@@ -26,12 +26,18 @@
 #include <LinkAttacherServer.h>
 
 const std::string LogPrefix = "LinkAttacher:";
+// available joint types in SDF (http://sdformat.org/spec?ver=1.6&elem=joint#joint_type)
+// with the exception of gearbox joint
+const std::vector<std::string> jointTypes { "revolute", "revolute2",
+                                            "prismatic", "ball", "screw",
+                                            "universal", "fixed"};
 
 class LinkAttacherServerImpl: public GazeboYarpPlugins::LinkAttacherServer
 {
 private:
   gazebo::physics::WorldPtr _world;
   gazebo::physics::ModelPtr _model;
+  std::string jointType;
 
 public:
   LinkAttacherServerImpl();
@@ -72,6 +78,8 @@ public:
   {
     _model=p;
   }
+
+  bool setJointType(const std::string j);
 
 };
 

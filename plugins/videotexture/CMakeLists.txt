@@ -7,11 +7,6 @@ PROJECT(Plugin_Videotexture)
 
 include(AddGazeboYarpPluginTarget)
 
-
-
-# find opencv dependency
-find_package(OpenCV REQUIRED)
-
 add_gazebo_yarp_plugin_target(LIBRARY_NAME videotexture
                               INCLUDE_DIRS include/gazebo include/yarp/dev
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS}

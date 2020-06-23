@@ -109,7 +109,7 @@ void ExternalWrench::setVisual()
     visualMsg.set_cast_shadows(false);
 }
 
-bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, double& simulationUpdatePeriod, bool& wrenchSmoothing)
+bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, const double& simulationUpdatePeriod, const bool& wrenchSmoothing)
 {
     model = _model;
 
@@ -184,7 +184,9 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     std::vector<double> smoothingCoefficients;
 
     for (int timeStep = 0; timeStep <= steps; timeStep++) {
-        // Second derivative of minimum jerk trajectory
+
+        // Second derivative of minimum jerk trajectory equation
+        // Reference : https://mika-s.github.io/python/control-theory/trajectory-generation/2017/12/06/trajectory-generation-with-a-minimum-jerk-trajectory.html
         double smoothingCoefficient = duration*(30 * std::pow(time/duration, 2) - 60 * std::pow(time/duration, 3) + 30 * std::pow(time/duration, 4));
         smoothingCoefficients.push_back(smoothingCoefficient);
 

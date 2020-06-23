@@ -153,7 +153,7 @@ void RPCServerThread::run()
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
-            this->m_reply.addString ( "The defaul operation mode is with single wrench without wrench smoothing" );
+            this->m_reply.addString ( "The default operation mode is with single wrench without wrench smoothing" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
             this->m_reply.addString ( "Insert [smoothing on] or [smoothing off] to set the wrench smoothing option" );
             this->m_reply.addString ( "Insert a command with the following format:" );

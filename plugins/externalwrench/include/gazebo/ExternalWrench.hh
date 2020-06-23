@@ -79,7 +79,7 @@ public:
     ExternalWrench();
     ~ExternalWrench();
 
-    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&, double&, bool&);
+    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&, const double&, const bool&);
     bool smoothWrench(const yarp::os::Bottle&, const double&);
     bool getLink();
 

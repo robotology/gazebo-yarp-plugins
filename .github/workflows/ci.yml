@@ -23,10 +23,11 @@ jobs:
         combination: [0]
         include:
           - os: ubuntu-18.04
+            combination: 0
             gazebo_version: gazebo9
           - os: ubuntu-18.04
-            gazebo_version: gazebo10
             combination: 1
+            gazebo_version: gazebo10
           - os: ubuntu-20.04
             gazebo_version: gazebo11
           - os: macOS-latest

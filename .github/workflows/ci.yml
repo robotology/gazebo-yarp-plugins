@@ -18,13 +18,15 @@ jobs:
         build_type: [Release, Debug]
         os: [ubuntu-18.04, ubuntu-20.04, macOS-latest]
         yarp_version: [yarp-3.3]
+        # Dummy value to specify additional combination in the include matrix, see
+        # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-new-combinations
+        combination: [0]
         include:
           - os: ubuntu-18.04
             gazebo_version: gazebo9
-          # See https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-new-combinations
           - os: ubuntu-18.04
             gazebo_version: gazebo10
-            additional: true
+            combination: 1
           - os: ubuntu-20.04
             gazebo_version: gazebo11
           - os: macOS-latest

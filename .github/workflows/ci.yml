@@ -20,9 +20,7 @@ jobs:
         yarp_version: [yarp-3.3]
         include:
           - os: ubuntu-18.04
-            gazebo_version: gazebo9
-          - os: ubuntu-18.04
-            gazebo_version: gazebo10
+            gazebo_version: [gazebo9, gazebo10]
           - os: ubuntu-20.04
             gazebo_version: gazebo11
           - os: macOS-latest

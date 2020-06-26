@@ -16,12 +16,14 @@ jobs:
     strategy:
       matrix:
         build_type: [Release, Debug]
-        os: [ubuntu-18.04, ubuntu-20.04, macOS-latest]
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-latest, macOS-latest]
         yarp_version: [yarp-3.3]
         include:
           - os: ubuntu-18.04
-            gazebo_version: [gazebo9, gazebo10]
+            gazebo_version: gazebo9
           - os: ubuntu-20.04
+            gazebo_version: gazebo10
+          - os: ubuntu-latest
             gazebo_version: gazebo11
           - os: macOS-latest
             gazebo_version: gazebo11

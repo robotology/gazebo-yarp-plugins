@@ -5,6 +5,7 @@
  */
 
 #include "ApplyExternalWrench.hh"
+#include <gazebo/physics/PhysicsTypes.hh>
 
 namespace gazebo
 {
@@ -59,6 +60,10 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
         yError ( "ERROR: rpcThread did not start correctly" );
     }
 
+    // Get gazebo simulation update period
+    gazebo::physics::PhysicsEnginePtr physicsEngine = _model->GetWorld()->Physics();
+    m_rpcThread.m_simulationUpdatePeriod = physicsEngine->GetUpdatePeriod();
+
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::onUpdate, this, _1 ) );
@@ -107,6 +112,9 @@ void ApplyExternalWrench::onReset()
     // Change the operation mode to default option 'single'
     this->m_rpcThread.m_mode = "single";
 
+    // Change the wrench smoothing option to default false
+    this->m_rpcThread.m_wrenchSmoothing = false;
+
     // Reset wrench count
     this->m_rpcThread.wrenchCount = 0;
 
@@ -129,6 +137,9 @@ bool RPCServerThread::threadInit()
     // Set the default operation mode
     this->m_mode = "single";
 
+    // Set the default smoothing option
+    this->m_wrenchSmoothing = false;
+
     // Set wrench count default value
     this->wrenchCount = 0;
 
@@ -142,8 +153,9 @@ void RPCServerThread::run()
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
             this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
-            this->m_reply.addString ( "The defaul operation mode is with single wrench" );
+            this->m_reply.addString ( "The default operation mode is with single wrench without wrench smoothing" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
+            this->m_reply.addString ( "Insert [smoothing on] or [smoothing off] to set the wrench smoothing option" );
             this->m_reply.addString ( "Insert a command with the following format:" );
             this->m_reply.addString ( "[link] [force] [torque] [duration]" );
             this->m_reply.addString ( "e.g. chest 10 0 0 0 0 0 1");
@@ -167,6 +179,8 @@ void RPCServerThread::run()
 
                 if (this->m_mode == "single") {
 
+                    this->m_lock.lock();
+
                     // Reset wrench count
                     wrenchCount = 0;
 
@@ -180,52 +194,81 @@ void RPCServerThread::run()
                         wrenchesVector.clear();
                     }
 
+                    this->m_lock.unlock();
                 }
 
-                // Create new instances of external wrenches
-                ExternalWrench newWrench;
-                if(newWrench.setWrench(m_robotModel, m_cmd))
-                {
-                    // Update wrench count
-                    wrenchCount++;
+                if (command.get(7).asDouble() > 0 || command.get(7).asInt() > 0 ) {
 
-                    // Set wrench tick time
-                    yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
-                    double tickTime = tickTimeStamp.getTime();
-                    newWrench.setTick(tickTime);
+                    if (this->m_wrenchSmoothing == true && (command.get(7).asDouble() <= m_simulationUpdatePeriod)) {
+                        this->m_message = this->m_message + " but the entered duration is less than or equal to the simulation update period";
+                        this->m_reply.addString ( m_message );
+                        this->m_rpcPort.reply ( m_reply );
 
-                    // Set wrench index
-                    newWrench.setWrenchIndex(wrenchCount);
+                        m_reply.clear();
+                        command.clear();
 
-                    // Set wrench color
-                    newWrench.setWrenchColor();
+                        continue;
+                    }
 
-                    // Set wrench visual
-                    newWrench.setVisual();
+                    // Create new instances of external wrenches
+                    ExternalWrench newWrench;
+                    if(newWrench.setWrench(m_robotModel, m_cmd, m_simulationUpdatePeriod, m_wrenchSmoothing))
+                    {
+                        // Update wrench count
+                        wrenchCount++;
 
-                    this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
-                    this->m_reply.addString ( m_message);
-                    this->m_rpcPort.reply ( m_reply );
-                    wrenchesVector.push_back(newWrench);
+                        // Set wrench tick time
+                        yarp::os::Stamp tickTimeStamp = this->getLastTimeStamp();
+                        double tickTime = tickTimeStamp.getTime();
+                        newWrench.setTick(tickTime);
+
+                        // Set wrench index
+                        newWrench.setWrenchIndex(wrenchCount);
+
+                        // Set wrench color
+                        newWrench.setWrenchColor();
+
+                        // Set wrench visual
+                        newWrench.setVisual();
+
+                        this->m_message = this->m_message + " and " + command.get(0).asString() + " link found in the model" ;
+                        this->m_reply.addString ( m_message);
+                        this->m_rpcPort.reply ( m_reply );
+                        wrenchesVector.push_back(newWrench);
+                    }
+                    else
+                    {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link not found in the model" ;
+                        this->m_reply.addString ( m_message );
+                        this->m_rpcPort.reply ( m_reply );
+                    }
                 }
-                else
-                {   this->m_message = this->m_message + " but " + command.get(0).asString() + " link found in the model" ;
+                else {
+                    this->m_message = this->m_message + " but the entered duration is invalid";
                     this->m_reply.addString ( m_message );
                     this->m_rpcPort.reply ( m_reply );
                 }
             }
-            else if (command.size() == 1 && command.get(0).isString()) {
+            else if (command.size() == 1 && command.get(0).isString() && (command.get(0).asString() == "single" || command.get(0).asString() == "multiple")) {
 
                 this->m_mode = command.get(0).asString();
 
                 this->m_message = command.get(0).asString() + " wrench operation mode set";
 
+                if (this->m_wrenchSmoothing == true) {
+                    this->m_message = this->m_message + " with wrench smoothing on";
+                }
+                else {
+                    this->m_message = this->m_message + " with wrench smoothing off";
+                }
+
                 // Reset wrench count
                 wrenchCount = 0;
 
+                this->m_lock.lock();
+
                 // Delete the previous wrenches
                 if (wrenchesVector.size() != 0) {
-                    this->m_message = this->m_message + " . Clearing previous wrenches.";
+                    this->m_message = this->m_message + ". Clearing previous wrenches.";
                     for (int i = 0; i < wrenchesVector.size(); i++)
                     {
                         ExternalWrench wrench = wrenchesVector.at(i);
@@ -234,9 +277,26 @@ void RPCServerThread::run()
                     wrenchesVector.clear();
                 }
 
+                this->m_lock.unlock();
+
                 this->m_reply.addString (m_message);
                 this->m_rpcPort.reply ( m_reply );
 
+            }
+            else if (command.size() == 2 && command.get(0).isString() && command.get(1).isString() && \
+                    (command.get(0).asString() == "smoothing" && (command.get(1).asString() == "on" || command.get(1).asString() == "off"))) {
+
+                if (command.get(1).asString() == "on") {
+                    this->m_wrenchSmoothing = true;
+                    this->m_message = "Wrench smoothing is on starting from the next wrench";
+                }
+                else if (command.get(1).asString() == "off") {
+                    this->m_wrenchSmoothing = false;
+                    this->m_message = "Wrench smoothing is off starting from the next wrench";
+                }
+
+                this->m_reply.addString (m_message);
+                this->m_rpcPort.reply ( m_reply );
             }
             else {
                 this->m_reply.clear();

@@ -9,6 +9,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Fixed
 - Fixed wrong measurements feedback used for coupled joints in `gazebo_yarp_controlboard`(https://github.com/robotology/gazebo-yarp-plugins/pull/492).
 
+### Added
+- Add external wrench smoothing feature for `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/495)
+
 ## [3.4.0] - 2020-05-19
 
 ### Added
@@ -23,7 +26,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [3.3.1] - 2020-03-05
 
-### Fixed 
+### Fixed
 - Solve the problem of setting the interaction mode when the mode of actuator has been already set on the same requested interaction mode (https://github.com/robotology/gazebo-yarp-plugins/pull/464).
 - Fix implementation of `yarp::dev::IPositionControl::relativeMove` in `gazebo_yarp_controlboard` (https://github.com/robotology/gazebo-yarp-plugins/pull/466).
 

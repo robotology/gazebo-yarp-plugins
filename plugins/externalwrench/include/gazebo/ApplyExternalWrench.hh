@@ -29,6 +29,12 @@ public:
     // single wrench or multiple wrenches
     std::string         m_mode;
 
+    // wrench smoothing flag
+    bool                m_wrenchSmoothing;
+
+    // gazebo simulation update period
+    double              m_simulationUpdatePeriod;
+
     int                 wrenchCount;
 
     virtual bool        threadInit();

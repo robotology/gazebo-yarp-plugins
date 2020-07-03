@@ -86,5 +86,33 @@ void LinkAttacher::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     return;
   }
 
+  if(m_parameters.check("STARTUP"))
+  {
+      yarp::os::Bottle startupConfig = m_parameters.findGroup("STARTUP");
+
+      for(size_t i=1; i<startupConfig.size(); i++)
+      {
+          if(startupConfig.get(i).check("attachUnscoped") && startupConfig.get(i).find("attachUnscoped").isList() && startupConfig.get(i).find("attachUnscoped").asList()->size()==4)
+          {
+              yarp::os::Bottle* attachConfigList = startupConfig.get(i).find("attachUnscoped").asList();
+              m_la_server.attachUnscoped(attachConfigList->get(0).asString(), attachConfigList->get(1).asString(), attachConfigList->get(2).asString(), attachConfigList->get(3).asString());
+          }
+          else if(startupConfig.get(i).check("detachUnscoped") && startupConfig.get(i).find("detachUnscoped").isList() && startupConfig.get(i).find("detachUnscoped").asList()->size()==2)
+          {
+              yarp::os::Bottle* detachConfigList = startupConfig.get(i).find("detachUnscoped").asList();
+              m_la_server.detachUnscoped(detachConfigList->get(0).asString(), detachConfigList->get(1).asString());
+          }
+          else if(startupConfig.get(i).check("enableGravity") && startupConfig.get(i).find("enableGravity").isList() && startupConfig.get(i).find("enableGravity").asList()->size()==2)
+          {
+              yarp::os::Bottle* enableGravityConfigList = startupConfig.get(i).find("enableGravity").asList();
+              m_la_server.enableGravity(enableGravityConfigList->get(0).asString(), enableGravityConfigList->get(1).asBool());
+          }
+          else
+          {
+              yWarning() << LogPrefix << "Failed to load startup configuration line [" << i << "]";
+          }
+      }
+  }
+
   m_la_server.yarp().attachAsServer(*m_rpcport);
 }

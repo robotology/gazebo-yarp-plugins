@@ -11,6 +11,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Added
 - Add external wrench smoothing feature for `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/495)
+- Add the possibility to define initial configuration for `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/497)
 
 ## [3.4.0] - 2020-05-19
 

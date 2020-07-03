@@ -88,8 +88,6 @@ void LinkAttacher::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   if(m_parameters.check("STARTUP"))
   {
-      yInfo() << LogPrefix << "Applying commands at startup";
-
       yarp::os::Bottle startupConfig = m_parameters.findGroup("STARTUP");
 
       for(size_t i=1; i<startupConfig.size(); i++)

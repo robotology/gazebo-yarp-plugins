@@ -47,16 +47,14 @@ bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max)
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
     if (!min || !max) return false;
-    *min = m_jointPosLimits[axis].min;
-    *max = m_jointPosLimits[axis].max;
+    getUserDOFLimit(axis, *min, *max);
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //WORKS
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
-    m_jointPosLimits[axis].max = max;
-    m_jointPosLimits[axis].min = min;
+    setUserDOFLimit(axis, min, max);
     return true;
 }
 

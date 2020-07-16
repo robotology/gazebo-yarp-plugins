@@ -15,7 +15,10 @@ bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
     if (j >= 0 && static_cast<size_t>(j) < m_numberOfJoints)
     {
         m_trajectoryGenerationReferencePosition[j] = ref; //we will use this m_trajectoryGenerationReferencePosition in the next simulation onUpdate call to ask gazebo to set PIDs m_trajectoryGenerationReferencePosition to this value
-        m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
+
+        double limit_min, limit_max;
+        getUserDOFLimit(j, limit_min, limit_max);
+        m_trajectory_generator[j]->setLimits(limit_min, limit_max);
         m_trajectory_generator[j]->initTrajectory (m_positions[j], m_trajectoryGenerationReferencePosition[j], m_trajectoryGenerationReferenceSpeed[j]);
         return true;
     }

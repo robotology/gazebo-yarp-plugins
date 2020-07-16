@@ -25,6 +25,7 @@
 #include <yarp/os/Stamp.h>
 
 #include <boost/shared_ptr.hpp>
+#include <ControlBoardDriverRange.h>
 #include <ControlBoardDriverTrajectory.h>
 #include <ControlBoardDriverCoupling.h>
 
@@ -347,12 +348,6 @@ private:
         JointType_Unknown = 0,
         JointType_Revolute,
         JointType_Prismatic
-    };
-
-    struct Range {
-        Range() : min(0), max(0){}
-        double min;
-        double max;
     };
 
     std::string m_deviceName;

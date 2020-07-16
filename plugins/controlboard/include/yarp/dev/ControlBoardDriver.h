@@ -472,6 +472,8 @@ private:
     bool setPositionsToleranceLinear();
 
     bool isValidUserDOF(int joint_index);
+    void setUserDOFLimit(int joint_index, const double& min, const double& max);
+    void getUserDOFLimit(int joint_index, double& min, double& max);
 
     bool findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const;
 

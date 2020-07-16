@@ -158,3 +158,31 @@ bool GazeboYarpControlBoardDriver::isValidUserDOF(int joint_index)
 
     return true;
 }
+
+void GazeboYarpControlBoardDriver::setUserDOFLimit(int joint_index, const double& min, const double& max)
+{
+    if (m_coupling_handler.size() > 0 && m_coupling_handler[0]->checkJointIsCoupled(joint_index))
+    {
+        // Only the case of 1 coupling handler is supported
+        m_coupling_handler[0]->setCoupledJointLimit(joint_index, min, max);
+    }
+    else
+    {
+        m_jointPosLimits[joint_index].max = max;
+        m_jointPosLimits[joint_index].min = min;
+    }
+}
+
+void GazeboYarpControlBoardDriver::getUserDOFLimit(int joint_index, double& min, double& max)
+{
+    // Only the case of 1 coupling handler is supported
+    if (m_coupling_handler.size() > 0 && m_coupling_handler[0]->checkJointIsCoupled(joint_index))
+    {
+        m_coupling_handler[0]->getCoupledJointLimit(joint_index, min, max);
+    }
+    else
+    {
+        min = m_jointPosLimits[joint_index].min;
+        max = m_jointPosLimits[joint_index].max;
+    }
+}

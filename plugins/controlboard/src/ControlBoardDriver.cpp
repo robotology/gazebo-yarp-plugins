@@ -433,23 +433,43 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
 
         yDebug() << "Initializing Trajectory Generator with default values";
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
-            m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+            if (isValidUserDOF(i)) {
+
+                double limit_min, limit_max;
+                getUserDOFLimit(i, limit_min, limit_max);
+                m_trajectory_generator[i]->setLimits(limit_min, limit_max);
+
+                m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+            }
         }
     }
     else
     {
         yDebug() << "Initializing Trajectory Generator with current values";
-        for (unsigned int i = 0; i < m_numberOfJoints; ++i)
-        {
+        yarp::sig::Vector initial_positions;
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
 #if GAZEBO_MAJOR_VERSION >= 8
-            double gazeboPos = m_jointPointers[i]->Position(0);
+                double gazeboPos = m_jointPointers[i]->Position(0);
 #else
-            double gazeboPos = m_jointPointers[i]->GetAngle(0).Radian();
+                double gazeboPos = m_jointPointers[i]->GetAngle(0).Radian();
 #endif
-            m_positions[i] = convertGazeboToUser(i, gazeboPos);
-            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
-            m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+                initial_positions.push_back(convertGazeboToUser(i, gazeboPos));
+        }
+
+        for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
+            if (m_coupling_handler[cpl_cnt])
+                m_coupling_handler[cpl_cnt]->decouplePos(initial_positions);
+        }
+
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+            if (isValidUserDOF(i)) {
+
+                double limit_min, limit_max;
+                getUserDOFLimit(i, limit_min, limit_max);
+                m_trajectory_generator[i]->setLimits(limit_min, limit_max);
+
+                m_trajectory_generator[i]->initTrajectory(initial_positions[i],initial_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+            }
         }
     }
 

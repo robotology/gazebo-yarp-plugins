@@ -471,6 +471,8 @@ private:
     bool setPositionsToleranceRevolute();
     bool setPositionsToleranceLinear();
 
+    bool isValidUserDOF(int joint_index);
+
     bool findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const;
 
     bool check_joint_within_limits_override_torque(int i, double&ref );

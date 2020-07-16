@@ -137,3 +137,24 @@ bool GazeboYarpControlBoardDriver::calibrationDone(int j) // NOT IMPLEMENTED
     yDebug("fakebot: calibration done on joint %d.\n", j);
     return true;
 }
+
+bool GazeboYarpControlBoardDriver::isValidUserDOF(int joint_index)
+{
+    if (m_coupling_handler.size() > 0)
+    {
+        // Only the case of 1 coupling handler is supported
+        const std::string coupled_joint_name = m_coupling_handler[0]->getCoupledJointName(joint_index);
+
+        // The joint *is not* part of the coupled group
+        // hence it is a normal and *valid* jont from the user point of view
+        if (coupled_joint_name == "gyp_invalid")
+            return true;
+
+        // The joint *is* part of the coupled group but is reserved
+        // hence it cannot be commanded by the user and is invalid
+        if (coupled_joint_name == "reserved")
+            return false;
+    }
+
+    return true;
+}

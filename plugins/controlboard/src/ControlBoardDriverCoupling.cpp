@@ -61,7 +61,7 @@ std::string BaseCouplingHandler::getCoupledJointName(int joint)
     }
     else
     {
-        return std::string("invalid");
+        return std::string("gyp_invalid");
     }
 }
 

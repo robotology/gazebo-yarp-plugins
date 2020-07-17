@@ -262,7 +262,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             {
                 BaseCouplingHandler* cpl = new HandMk3CouplingHandler(m_robot,coupled_joints, coupled_joint_names);
                 m_coupling_handler.push_back(cpl);
-                yInfo() << "using left_hand_control";
+                yInfo() << "using icub_hand_mk3";
             }
             else if (coupling_bottle->get(0).asString()=="none")
             {

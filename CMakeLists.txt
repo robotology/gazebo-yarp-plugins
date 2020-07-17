@@ -47,10 +47,6 @@ if(MSVC)
     add_definitions(-D__TBB_NO_IMPLICIT_LINKAGE=1)
 endif()
 
-
-# Add Gazebo CXX flags, to support Gazebo 6 reckless dependency on C++11
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
-
 # On Windows, export all symbols by default as *nix
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 

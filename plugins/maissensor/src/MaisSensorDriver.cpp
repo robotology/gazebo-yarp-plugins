@@ -55,10 +55,11 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
 
     if (!setJointNames()) return false;      // this function also fills in the m_jointPointers vector
 
-    m_channels_num = 16;
+    m_channels_num = 15;
     m_numberOfJoints = m_jointNames.size();
 
     m_positions.resize(m_numberOfJoints);
+    m_jointPositionLimits.resize(m_numberOfJoints);
 
     m_jointTypes.resize(m_numberOfJoints);
 
@@ -74,6 +75,8 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
     // This must be after zeroing of vectors
     if(!configureJointType() )
         return false;
+
+    configureJointsLimits();
 
     this->m_updateConnection =  gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpMaisSensorDriver::onUpdate,  this, _1));
 
@@ -120,6 +123,20 @@ bool GazeboYarpMaisSensorDriver::configureJointType()
         }
     }
     return ret;
+}
+
+void GazeboYarpMaisSensorDriver::configureJointsLimits()
+{
+    for (size_t i = 0; i < m_numberOfJoints; ++i)
+    {
+#if GAZEBO_MAJOR_VERSION >= 8
+        m_jointPositionLimits[i].max = m_jointPointers[i]->UpperLimit(0);
+        m_jointPositionLimits[i].min = m_jointPointers[i]->LowerLimit(0);
+#else
+        m_jointPositionLimits[i].max = m_jointPointers[i]->GetUpperLimit(0).Radian();
+        m_jointPositionLimits[i].min = m_jointPointers[i]->GetLowerLimit(0).Radian();
+#endif
+    }
 }
 
 void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
@@ -208,7 +225,15 @@ double GazeboYarpMaisSensorDriver::convertGazeboToUser(int joint, double value)
     {
         case JointType_Revolute:
         {
-            newValue = GazeboYarpPlugins::convertRadiansToDegrees(value);
+            // get hw limits
+            const double& limit_min = m_jointPositionLimits[joint].min;
+            const double& limit_max = m_jointPositionLimits[joint].max;
+
+            // evaluate new value in the range 0 - 255 such that
+            // 255 is reached when the joint reading is <= limit_min
+            // 0 is reached when the joints reading is >= limit_max
+            // i.e. rejecting readings having values < limit_min or > limit_max
+            newValue = 255 * (1 - std::min(1.0, std::max(0.0, (value - limit_min) / (limit_max - limit_min))));
             break;
         }
 

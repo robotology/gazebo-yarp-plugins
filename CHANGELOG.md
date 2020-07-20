@@ -8,10 +8,12 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Fixed
 - Fixed wrong measurements feedback used for coupled joints in `gazebo_yarp_controlboard`(https://github.com/robotology/gazebo-yarp-plugins/pull/492).
+- Fixed mismatched behavior, with respect to the real robot, of coupling handler FingersAbductionCouplingHandler in 'gazebo_yarp_controlboard' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/499)
 
 ### Added
 - Add external wrench smoothing feature for `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/495)
 - Add the possibility to define initial configuration for `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/497)
+- Add the possibility to specify limits for coupled joints for `gazebo_yarp_controlboard` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/499)
 
 ## [3.4.0] - 2020-05-19
 

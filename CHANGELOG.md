@@ -9,6 +9,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Fixed
 - Fixed wrong measurements feedback used for coupled joints in `gazebo_yarp_controlboard`(https://github.com/robotology/gazebo-yarp-plugins/pull/492).
 - Fixed mismatched behavior, with respect to the real robot, of coupling handler FingersAbductionCouplingHandler in 'gazebo_yarp_controlboard' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/499)
+- Fixed mismatched behavior, with respect to the real robot, of mais analog sensors in 'gazebo_yarp_maissensor' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/500)
 
 ### Added
 - Add external wrench smoothing feature for `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/495)

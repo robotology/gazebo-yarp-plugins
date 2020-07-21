@@ -92,7 +92,14 @@ private:
         JointType_Revolute,
         JointType_Prismatic
     };
-    
+
+    struct Range
+    {
+        Range() : min(0), max(0){}
+        double min;
+        double max;
+    };
+
     std::string deviceName;
     gazebo::physics::Model* m_robot;
     gazebo::event::ConnectionPtr m_updateConnection;
@@ -103,7 +110,7 @@ private:
 
     yarp::sig::Vector m_positions; /**< joint positions [Degrees] */
     unsigned int m_numberOfJoints; /**< number of joints controlled by the control board */
-
+    std::vector<Range> m_jointPositionLimits;
 
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
 
@@ -125,6 +132,7 @@ private:
      * Private methods
      */
     bool configureJointType();
+    void configureJointsLimits();
     bool setJointNames();  //WORKS
 
     virtual int read(yarp::sig::Vector &out);

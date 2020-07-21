@@ -49,13 +49,17 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
     resetAllPidsForJointAtIndex(j);
     m_interactionMode[j] = static_cast<int>(mode);
 
+    // get limits for trajectory generation
+    double limit_min, limit_max;
+    getUserDOFLimit(j, limit_min, limit_max);
+
     //the following code (copy and pasted from changeControlMode) is used to reset control references / trajectory generator to the current position etc.
     switch (m_controlMode[j])
     {
         case VOCAB_CM_POSITION :
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
-            m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
+            m_trajectory_generator[j]->setLimits(limit_min, limit_max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
             break;
         case VOCAB_CM_POSITION_DIRECT :
@@ -69,7 +73,7 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_jntReferenceVelocities[j] = 0.0;
-            m_trajectory_generator[j]->setLimits(m_jointPosLimits[j].min,m_jointPosLimits[j].max);
+            m_trajectory_generator[j]->setLimits(limit_min, limit_max);
             m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
             break;
         case VOCAB_CM_TORQUE :

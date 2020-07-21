@@ -47,16 +47,14 @@ bool GazeboYarpControlBoardDriver::getLimits(int axis, double *min, double *max)
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
     if (!min || !max) return false;
-    *min = m_jointPosLimits[axis].min;
-    *max = m_jointPosLimits[axis].max;
+    getUserDOFLimit(axis, *min, *max);
     return true;
 }
 
 bool GazeboYarpControlBoardDriver::setLimits(int axis, double min, double max) //WORKS
 {
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
-    m_jointPosLimits[axis].max = max;
-    m_jointPosLimits[axis].min = min;
+    setUserDOFLimit(axis, min, max);
     return true;
 }
 
@@ -136,4 +134,53 @@ bool GazeboYarpControlBoardDriver::calibrationDone(int j) // NOT IMPLEMENTED
 {
     yDebug("fakebot: calibration done on joint %d.\n", j);
     return true;
+}
+
+bool GazeboYarpControlBoardDriver::isValidUserDOF(int joint_index)
+{
+    if (m_coupling_handler.size() > 0)
+    {
+        // Only the case of 1 coupling handler is supported
+        const std::string coupled_joint_name = m_coupling_handler[0]->getCoupledJointName(joint_index);
+
+        // The joint *is not* part of the coupled group
+        // hence it is a normal and *valid* jont from the user point of view
+        if (coupled_joint_name == "gyp_invalid")
+            return true;
+
+        // The joint *is* part of the coupled group but is reserved
+        // hence it cannot be commanded by the user and is invalid
+        if (coupled_joint_name == "reserved")
+            return false;
+    }
+
+    return true;
+}
+
+void GazeboYarpControlBoardDriver::setUserDOFLimit(int joint_index, const double& min, const double& max)
+{
+    if (m_coupling_handler.size() > 0 && m_coupling_handler[0]->checkJointIsCoupled(joint_index))
+    {
+        // Only the case of 1 coupling handler is supported
+        m_coupling_handler[0]->setCoupledJointLimit(joint_index, min, max);
+    }
+    else
+    {
+        m_jointPosLimits[joint_index].max = max;
+        m_jointPosLimits[joint_index].min = min;
+    }
+}
+
+void GazeboYarpControlBoardDriver::getUserDOFLimit(int joint_index, double& min, double& max)
+{
+    // Only the case of 1 coupling handler is supported
+    if (m_coupling_handler.size() > 0 && m_coupling_handler[0]->checkJointIsCoupled(joint_index))
+    {
+        m_coupling_handler[0]->getCoupledJointLimit(joint_index, min, max);
+    }
+    else
+    {
+        min = m_jointPosLimits[joint_index].min;
+        max = m_jointPosLimits[joint_index].max;
+    }
 }

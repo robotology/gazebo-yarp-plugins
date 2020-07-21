@@ -23,11 +23,23 @@ using namespace yarp::dev;
 // BaseCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-BaseCouplingHandler::BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
+BaseCouplingHandler::BaseCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
 {
     m_robot = model;
     m_coupledJoints=coupled_joints;
     m_coupledJointNames=coupled_joint_names;
+
+    // Configure a map between coupled joints and limits
+    for (std::size_t i = 0, j = 0; i < coupled_joints.size(); i++)
+    {
+        const int coupled_joint_index = coupled_joints(i);
+        const std::string coupled_joint_name = getCoupledJointName(coupled_joint_index);
+        if (coupled_joint_name != "gyp_invalid" && coupled_joint_name != "reserved")
+        {
+            m_coupledJointLimits[coupled_joints[i]] = coupled_joint_limits[j];
+            j++;
+        }
+    }
     //m_couplingSize = m_coupledJoints.size();
 }
 
@@ -61,7 +73,29 @@ std::string BaseCouplingHandler::getCoupledJointName(int joint)
     }
     else
     {
-        return std::string("invalid");
+        return std::string("gyp_invalid");
+    }
+}
+
+void BaseCouplingHandler::setCoupledJointLimit(int joint, const double& min, const double& max)
+{
+    const std::string coupled_joint_name = getCoupledJointName(joint);
+
+    if (coupled_joint_name != "reserved" && coupled_joint_name != "gyp_invalid")
+    {
+        m_coupledJointLimits.at(joint).min = min;
+        m_coupledJointLimits.at(joint).max = max;
+    }
+}
+
+void BaseCouplingHandler::getCoupledJointLimit(int joint, double& min, double& max)
+{
+    const std::string coupled_joint_name = getCoupledJointName(joint);
+
+    if (coupled_joint_name != "reserved" && coupled_joint_name != "gyp_invalid")
+    {
+        min = m_coupledJointLimits.at(joint).min;
+        max = m_coupledJointLimits.at(joint).max;
     }
 }
 
@@ -69,8 +103,8 @@ std::string BaseCouplingHandler::getCoupledJointName(int joint)
 // EyesCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-EyesCouplingHandler::EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+EyesCouplingHandler::EyesCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize = 2;
 }
@@ -139,8 +173,8 @@ yarp::sig::Vector EyesCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_re
 // ThumbCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-ThumbCouplingHandler::ThumbCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+ThumbCouplingHandler::ThumbCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize = 4;
 }
@@ -209,8 +243,8 @@ yarp::sig::Vector ThumbCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_r
 // IndexCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-IndexCouplingHandler::IndexCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+IndexCouplingHandler::IndexCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize = 3;
 }
@@ -276,8 +310,8 @@ yarp::sig::Vector IndexCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_r
 // MiddleCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-MiddleCouplingHandler::MiddleCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+MiddleCouplingHandler::MiddleCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize=3;
 }
@@ -343,8 +377,8 @@ yarp::sig::Vector MiddleCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_
 // PinkyCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-PinkyCouplingHandler::PinkyCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+PinkyCouplingHandler::PinkyCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize=6;
 }
@@ -419,8 +453,8 @@ yarp::sig::Vector PinkyCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_r
 // FingersAbductionCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-FingersAbductionCouplingHandler::FingersAbductionCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+FingersAbductionCouplingHandler::FingersAbductionCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize = 4;
 }
@@ -428,14 +462,14 @@ FingersAbductionCouplingHandler::FingersAbductionCouplingHandler(gazebo::physics
 bool FingersAbductionCouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
-    current_pos[m_coupledJoints[0]] = current_pos[m_coupledJoints[3]];
+    current_pos[m_coupledJoints[0]] = (20.0 - current_pos[m_coupledJoints[2]])*3;
     return true;
 }
 
 bool FingersAbductionCouplingHandler::decoupleVel (yarp::sig::Vector& current_vel)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
-    current_vel[m_coupledJoints[0]] = current_vel[m_coupledJoints[3]];
+    current_vel[m_coupledJoints[0]] = -current_vel[m_coupledJoints[2]]*3;
     return true;
 }
 
@@ -443,7 +477,7 @@ bool FingersAbductionCouplingHandler::decoupleAcc (yarp::sig::Vector& current_ac
 {
 
     if (m_coupledJoints.size()!=m_couplingSize) return false;
-    current_acc[m_coupledJoints[0]] = current_acc[m_coupledJoints[3]];
+    current_acc[m_coupledJoints[0]] = -current_acc[m_coupledJoints[2]]*3;
     return true;
 }
 
@@ -457,10 +491,10 @@ yarp::sig::Vector FingersAbductionCouplingHandler::decoupleRefPos (yarp::sig::Ve
 {
     yarp::sig::Vector out = pos_ref;
     if (m_coupledJoints.size()!=m_couplingSize) {yError() << "FingersAbductionCouplingHandler: Invalid coupling vector"; return out;}
-    out[m_coupledJoints[0]] = -pos_ref[m_coupledJoints[0]]/2;
+    out[m_coupledJoints[0]] = -(20.0 - pos_ref[m_coupledJoints[0]]/3);
     out[m_coupledJoints[1]] = 0.0;
-    out[m_coupledJoints[2]] = pos_ref[m_coupledJoints[0]]/2;
-    out[m_coupledJoints[3]] = pos_ref[m_coupledJoints[0]];
+    out[m_coupledJoints[2]] = 20.0 - pos_ref[m_coupledJoints[0]]/3;
+    out[m_coupledJoints[3]] = 20.0 - pos_ref[m_coupledJoints[0]]/3;
     return out;
 }
 
@@ -468,10 +502,10 @@ yarp::sig::Vector FingersAbductionCouplingHandler::decoupleRefVel (yarp::sig::Ve
 {
     yarp::sig::Vector out = vel_ref;
     if (m_coupledJoints.size()!=m_couplingSize) {yError() << "FingersAbductionCouplingHandler: Invalid coupling vector"; return out;}
-    out[m_coupledJoints[0]] = -vel_ref[m_coupledJoints[0]]/2;
+    out[m_coupledJoints[0]] = vel_ref[m_coupledJoints[0]]/3;
     out[m_coupledJoints[1]] = 0.0;
-    out[m_coupledJoints[2]] = vel_ref[m_coupledJoints[0]]/2;
-    out[m_coupledJoints[3]] = vel_ref[m_coupledJoints[0]];
+    out[m_coupledJoints[2]] = -vel_ref[m_coupledJoints[0]]/3;
+    out[m_coupledJoints[3]] = -vel_ref[m_coupledJoints[0]]/3;
     return out;
 }
 
@@ -479,10 +513,10 @@ yarp::sig::Vector FingersAbductionCouplingHandler::decoupleRefTrq (yarp::sig::Ve
 {
     yarp::sig::Vector out =trq_ref;
     if (m_coupledJoints.size()!=m_couplingSize) {yError() << "FingersAbductionCouplingHandler: Invalid coupling vector"; return out;}
-    out[m_coupledJoints[0]] = -trq_ref[m_coupledJoints[0]]/2;
+    out[m_coupledJoints[0]] = trq_ref[m_coupledJoints[0]]/3;
     out[m_coupledJoints[1]] = 0.0;
-    out[m_coupledJoints[2]] = trq_ref[m_coupledJoints[0]]/2;
-    out[m_coupledJoints[3]] = trq_ref[m_coupledJoints[0]];
+    out[m_coupledJoints[2]] = -trq_ref[m_coupledJoints[0]]/3;
+    out[m_coupledJoints[3]] = -trq_ref[m_coupledJoints[0]]/3;
     return out;
 }
 
@@ -490,8 +524,8 @@ yarp::sig::Vector FingersAbductionCouplingHandler::decoupleRefTrq (yarp::sig::Ve
 // CerHandCouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-CerHandCouplingHandler::CerHandCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names)
+CerHandCouplingHandler::CerHandCouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits)
 {
     m_couplingSize = 4;
 }
@@ -570,8 +604,8 @@ yarp::sig::Vector CerHandCouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq
 // HandMk3CouplingHandler
 //------------------------------------------------------------------------------------------------------------------
 
-HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names)
-: BaseCouplingHandler(model, coupled_joints,coupled_joint_names), LUTSIZE(4096)
+HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits), LUTSIZE(4096)
 {
     const double RAD2DEG = 180.0/atan2(0.0,-1.0);
     const double DEG2RAD = 1.0/RAD2DEG;

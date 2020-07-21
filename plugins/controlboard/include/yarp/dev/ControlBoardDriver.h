@@ -25,6 +25,7 @@
 #include <yarp/os/Stamp.h>
 
 #include <boost/shared_ptr.hpp>
+#include <ControlBoardDriverRange.h>
 #include <ControlBoardDriverTrajectory.h>
 #include <ControlBoardDriverCoupling.h>
 
@@ -349,12 +350,6 @@ private:
         JointType_Prismatic
     };
 
-    struct Range {
-        Range() : min(0), max(0){}
-        double min;
-        double max;
-    };
-
     std::string m_deviceName;
     gazebo::physics::Model* m_robot;
 
@@ -475,6 +470,10 @@ private:
     bool setMaxTorques();
     bool setPositionsToleranceRevolute();
     bool setPositionsToleranceLinear();
+
+    bool isValidUserDOF(int joint_index);
+    void setUserDOFLimit(int joint_index, const double& min, const double& max);
+    void getUserDOFLimit(int joint_index, double& min, double& max);
 
     bool findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const;
 

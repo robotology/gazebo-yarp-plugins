@@ -33,11 +33,12 @@ set(controlBoard_source     src/ControlBoard.cc
 
 set(controlBoard_headers    include/gazebo/ControlBoard.hh
                             include/yarp/dev/ControlBoardDriver.h
+                            include/yarp/dev/ControlBoardDriverRange.h
                             include/yarp/dev/ControlBoardDriverTrajectory.h
                             include/yarp/dev/ControlBoardDriverCoupling.h)
-                            
-                            
-                            
+
+
+
 add_gazebo_yarp_plugin_target(LIBRARY_NAME controlboard
                               INCLUDE_DIRS include/gazebo include/yarp/dev
                               SYSTEM_INCLUDE_DIRS ${GAZEBO_YARP_COMMON_HEADERS} ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS}  ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}

@@ -14,7 +14,7 @@ set(Singleton_HEADERS include/GazeboYarpPlugins/Handler.hh
 add_gazebo_yarp_plugin_target(LIBRARY_NAME singleton
                               INCLUDE_DIRS include/GazeboYarpPlugins
                               SYSTEM_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS} ${SDFORMAT_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}
-                              LINKED_LIBRARIES ${YARP_LIBRARIES} ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES}
+                              LINKED_LIBRARIES YARP::YARP_os YARP::YARP_dev ${SDFORMAT_LIBRARIES} ${GAZEBO_LIBRARIES} ${PROTOBUF_LIBRARIES} ${Boost_LIBRARIES}
                               HEADERS ${Singleton_HEADERS}
                               SOURCES src/Handler.cc
                                       src/ConfHelpers.cc)

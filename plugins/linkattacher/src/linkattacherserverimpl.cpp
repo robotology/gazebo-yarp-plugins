@@ -6,6 +6,9 @@
 
 #include <linkattacherserverimpl.h>
 
+#include <algorithm>
+#include <vector>
+
 using namespace gazebo;
 using namespace std;
 using namespace yarp::os;
@@ -92,34 +95,34 @@ bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, con
     }
 
     //This is joint creation
-    gazebo::physics::JointPtr fixed_joint;
+    gazebo::physics::JointPtr joint;
 
     #if GAZEBO_MAJOR_VERSION >= 8
-    fixed_joint = _world->Physics()->CreateJoint("fixed",parent_model);
+    joint = _world->Physics()->CreateJoint(jointType,parent_model);
     #else
-    fixed_joint = _world->GetPhysicsEngine()->CreateJoint("fixed",parent_model);
+    joint = _world->GetPhysicsEngine()->CreateJoint(jointType,parent_model);
     #endif
 
-    if(!fixed_joint)
+    if(!joint)
     {
         yError() << LogPrefix << "Attach: Unable to create joint";
         return false;
     }
 
-    std::string joint_name = parent_model_link_name + "_fixed_joint";
-    fixed_joint->SetName(joint_name);
-    yInfo() << LogPrefix << "Attach: fixed joint: " << fixed_joint->GetName() << " created";
+    std::string joint_name = parent_model_link_name + "_" + jointType + "_joint";
+    joint->SetName(joint_name);
+    yInfo() << LogPrefix << "Attach: joint: " << joint->GetName() << " created";
 
-    fixed_joint->SetModel(parent_model);
+    joint->SetModel(parent_model);
 
     #if GAZEBO_MAJOR_VERSION >= 8
-    fixed_joint->Load(parent_model_link,child_model_link,ignition::math::Pose3d());
+    joint->Load(parent_model_link,child_model_link,ignition::math::Pose3d());
     #else
-    fixed_joint->Load(parent_model_link,child_model_link,gazebo::math::Pose());
+    joint->Load(parent_model_link,child_model_link,gazebo::math::Pose());
     #endif
 
     //Attach(parent_link,child_link)
-    fixed_joint->Attach(parent_model_link,child_model_link);
+    joint->Attach(parent_model_link,child_model_link);
 
     return true;
 }
@@ -162,27 +165,27 @@ bool LinkAttacherServerImpl::detachUnscoped(const string& model_name, const stri
     	return false;
     }
 
-    std::string joint_name = model_name + "::" + model_link_name + "_fixed_joint";
+    std::string joint_name = model_name + "::" + model_link_name + "_" + jointType + "_joint";
 
     //Get all the joints at the object link
     gazebo::physics::Joint_V joints_v = model_link->GetChildJoints();
-    gazebo::physics::JointPtr fixed_joint;
+    gazebo::physics::JointPtr joint;
     for(int i=0; i < joints_v.size(); i++)
     {
         std::string candidate_joint_name = joints_v[i]->GetScopedName();
         if(candidate_joint_name == joint_name)
         {
-            fixed_joint = joints_v[i];
-            if(fixed_joint)
+            joint = joints_v[i];
+            if(joint)
             {
-                fixed_joint->Detach();
-                yInfo() << LogPrefix << "Detach: Found joint: " << fixed_joint->GetName() << " detached";
+                joint->Detach();
+                yInfo() << LogPrefix << "Detach: Found joint: " << joint->GetName() << " detached";
             }
         }
     }
-    if(!fixed_joint)
+    if(!joint)
     {
-        yError() << LogPrefix << "Detach: fixed Joint not found";
+        yError() << LogPrefix << "Detach: Joint not found";
         return false;
     }
     return true;
@@ -213,4 +216,19 @@ bool LinkAttacherServerImpl::enableGravity(const string& model_name, const bool 
   }
 
   return true;
+}
+
+bool LinkAttacherServerImpl::setJointType(const std::string j)
+{
+    if(std::find(jointTypes.begin(), jointTypes.end(), j) != jointTypes.end())
+    {
+        jointType=j;
+    }
+    else
+    {
+        yError() << LogPrefix << "the choosen joint type [" << j << "] is not valid";
+        return false;
+    }
+
+    return true;
 }

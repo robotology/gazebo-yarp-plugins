@@ -456,6 +456,7 @@ private:
     int m_clock;
     int _T_controller;
     gazebo::common::Time m_previousTime;
+    bool m_initTime; // Flag to reset the initial simulation time from Gazebo simTime.
 
     /**
      * Private methods

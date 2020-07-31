@@ -6,6 +6,13 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Added
+- Add the implementation to import models in the gazebo world in two configuration. First, load it directly with the pose in the sdf-file or second, load it with a given pose. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
+
+### Fixed
+- Fixed empty string return for creation of the cylinder object. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
+- Fixed empty pointer error in the creation process of the objects (sphere, box, cylinder) and the frame. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
+
 ## [3.4.0] - 2020-05-19
 
 ### Added

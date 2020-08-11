@@ -8,9 +8,12 @@
 #include "LaserSensorDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
 
+#include <boost/bind/bind.hpp>
 #include <yarp/os/LogStream.h>
 #include <gazebo/sensors/sensors.hh>
 #include <yarp/os/LogStream.h>
+
+using namespace boost::placeholders;
 
 using namespace yarp::dev;
 

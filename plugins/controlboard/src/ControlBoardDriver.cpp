@@ -62,6 +62,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_zeroPosition.resize(m_numberOfJoints);
     m_jntReferenceVelocities.resize(m_numberOfJoints);
     m_velocities.resize(m_numberOfJoints);
+    m_motVelocities.resize(m_numberOfJoints);
     m_amp.resize(m_numberOfJoints);
     m_torques.resize(m_numberOfJoints); m_torques.zero();
     m_measTorques.resize(m_numberOfJoints); m_measTorques.zero();
@@ -101,6 +102,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_motPositions.zero();
     m_zeroPosition.zero();
     m_velocities.zero();
+    m_motVelocities.zero();
     m_motReferencePositions.zero();
     m_motReferenceVelocities.zero();
     m_motReferenceTorques.zero();
@@ -175,6 +177,28 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_velocity_watchdog[j] = new Watchdog(0.200); //watchdog set to 200ms
     }
 
+    yDebug() << "done";
+    for (size_t j = 0; j < m_numberOfJoints; ++j)
+    {
+        m_controlMode[j] = VOCAB_CM_POSITION;
+        m_interactionMode[j] = VOCAB_IM_STIFF;
+        m_jointTypes[j] = JointType_Unknown;
+        m_isMotionDone[j] = true;
+    }
+    // End zeroing of vectors
+
+    // This must be after zeroing of vectors
+    if(!configureJointType() )
+        return false;
+
+    if (!setMinMaxPos())
+    {
+        yError()<<"Failed to get joint limits";
+        return false;
+    }
+
+    // This must be after calling setMinMaxPos as we need to access m_jointPosLimits variables
+    // once they are initialized
     yarp::os::Bottle& coupling_group_bottle = m_pluginParameters.findGroup("COUPLING");
     if (!coupling_group_bottle.isNull())
     {
@@ -190,7 +214,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         {
             yarp::os::Bottle* coupling_bottle = coupling_group_bottle.get(cnt).asList();
 
-            if (coupling_bottle == 0 || coupling_bottle->size() != 3)
+            if (coupling_bottle == 0 || (coupling_bottle->size() != 3 && coupling_bottle->size() != 5))
             {
                 yError() << "Error parsing coupling parameter"; return false;
             }
@@ -213,51 +237,100 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 yError() << "Error parsing coupling parameter, wrong size of the joint names list";
                 return false;
             }
+            std::size_t number_coupled_joints = 0;
             for (int is=0;is<b2->size();is++) {
-                coupled_joint_names.push_back(b2->get(is).asString());
+                const std::string& joint_name = b2->get(is).asString();
+                coupled_joint_names.push_back(joint_name);
+
+                if (joint_name != "reserved")
+                    number_coupled_joints++;
+            }
+
+            // Fill limits for coupled joints
+            std::vector<Range> coupled_joint_limits;
+            if (coupling_bottle->size() == 5)
+            {
+                // Min limits of coupled joints.
+                Bottle* b3 = coupling_bottle->get(3).asList();
+                if (b3==0 || b3->size()!=number_coupled_joints)
+                {
+                    yError() << "Error parsing coupling parameter, wrong size of the joint min limits list";
+                    return false;
+                }
+
+                // Max limits of coupled joints.
+                Bottle* b4 = coupling_bottle->get(4).asList();
+                if (b4==0 || b4->size()!=number_coupled_joints)
+                {
+                    yError() << "Error parsing coupling parameter, wrong size of the joint max limits list";
+                    return false;
+                }
+
+                // Populate vector of limits
+                for (std::size_t i=0; i<b3->size(); i++)
+                {
+                    Range range;
+                    range.min = b3->get(i).asDouble();
+                    range.max = b4->get(i).asDouble();
+
+                    coupled_joint_limits.push_back(range);
+                }
+            }
+            else
+            {
+                yWarning() << "The coupling handler entry does not specify coupled limits. The limits available in the [LIMITS] section will be employed instead. Please consider filling up the limits section in the coupling handler to avoid misbheaviors.";
+
+                for (unsigned int i = 0; i < coupled_joints.size(); ++i)
+                    coupled_joint_limits.push_back(m_jointPosLimits[coupled_joints[i]]);
             }
 
             if (coupling_bottle->get(0).asString()=="eyes_vergence_control")
             {
-                BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using eyes_vergence_control";
             }
             else if (coupling_bottle->get(0).asString()=="fingers_abduction_control")
             {
-                BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using fingers_abduction_control";
             }
             else if (coupling_bottle->get(0).asString()=="thumb_control")
             {
-                BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using thumb_control";
             }
             else if (coupling_bottle->get(0).asString()=="index_control")
             {
-                BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using index_control";
             }
             else if (coupling_bottle->get(0).asString()=="middle_control")
             {
-                BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using middle_control";
             }
             else if (coupling_bottle->get(0).asString()=="pinky_control")
             {
-                BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using pinky_control";
             }
             else if (coupling_bottle->get(0).asString()=="cer_hand")
             {
-                BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints, coupled_joint_names);
+                BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yInfo() << "using cer_hand_control";
+            }
+            else if (coupling_bottle->get(0).asString()=="icub_hand_mk3")
+            {
+                BaseCouplingHandler* cpl = new HandMk3CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+                m_coupling_handler.push_back(cpl);
+                yInfo() << "using icub_hand_mk3";
             }
             else if (coupling_bottle->get(0).asString()=="none")
             {
@@ -271,26 +344,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
         }
     }
-    yDebug() << "done";
-    for (size_t j = 0; j < m_numberOfJoints; ++j)
-    {
-        m_controlMode[j] = VOCAB_CM_POSITION;
-        m_interactionMode[j] = VOCAB_IM_STIFF;
-        m_jointTypes[j] = JointType_Unknown;
-        m_isMotionDone[j] = true;
-    }
-    // End zeroing of vectors
-
-    // This must be after zeroing of vectors
-    if(!configureJointType() )
-        return false;
-
-    if (!setMinMaxPos())
-    {
-        yError()<<"Failed to get joint limits";
-        return false;
-    }
-
 
     if (!setMinMaxVel())
     {
@@ -380,23 +433,43 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
 
         yDebug() << "Initializing Trajectory Generator with default values";
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
-            m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+            if (isValidUserDOF(i)) {
+
+                double limit_min, limit_max;
+                getUserDOFLimit(i, limit_min, limit_max);
+                m_trajectory_generator[i]->setLimits(limit_min, limit_max);
+
+                m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+            }
         }
     }
     else
     {
         yDebug() << "Initializing Trajectory Generator with current values";
-        for (unsigned int i = 0; i < m_numberOfJoints; ++i)
-        {
+        yarp::sig::Vector initial_positions;
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
 #if GAZEBO_MAJOR_VERSION >= 8
-            double gazeboPos = m_jointPointers[i]->Position(0);
+                double gazeboPos = m_jointPointers[i]->Position(0);
 #else
-            double gazeboPos = m_jointPointers[i]->GetAngle(0).Radian();
+                double gazeboPos = m_jointPointers[i]->GetAngle(0).Radian();
 #endif
-            m_positions[i] = convertGazeboToUser(i, gazeboPos);
-            m_trajectory_generator[i]->setLimits(m_jointPosLimits[i].min,m_jointPosLimits[i].max);
-            m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+                initial_positions.push_back(convertGazeboToUser(i, gazeboPos));
+        }
+
+        for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
+            if (m_coupling_handler[cpl_cnt])
+                m_coupling_handler[cpl_cnt]->decouplePos(initial_positions);
+        }
+
+        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+            if (isValidUserDOF(i)) {
+
+                double limit_min, limit_max;
+                getUserDOFLimit(i, limit_min, limit_max);
+                m_trajectory_generator[i]->setLimits(limit_min, limit_max);
+
+                m_trajectory_generator[i]->initTrajectory(initial_positions[i],initial_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+            }
         }
     }
 
@@ -479,6 +552,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     }
 
     m_motPositions=m_positions;
+    m_motVelocities=m_velocities;
     //measurements decoupling
     for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
     {
@@ -574,30 +648,30 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         }
         else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
-            double q = m_positions[j] - m_zeroPosition[j];
-            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_velocities[j] + m_torqueOffset[j];
+            double q = m_motPositions[j] - m_zeroPosition[j];
+            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
         else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_velocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motVelocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
         }
         else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_velocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motVelocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
             yWarning("Compliant velocity control not yet implemented");
         }
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_POSITION][j];
-            forceReference = pid.Update(convertUserToGazebo(j, m_positions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
+            forceReference = pid.Update(convertUserToGazebo(j, m_motPositions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
 
         }
         else if ((m_controlMode[j] == VOCAB_CM_MIXED) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
-            double q = m_positions[j] - m_zeroPosition[j];
-            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_velocities[j] + m_torqueOffset[j];
+            double q = m_motPositions[j] - m_zeroPosition[j];
+            forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
         else if (m_controlMode[j] == VOCAB_CM_TORQUE)
         {

@@ -29,6 +29,9 @@ ExternalWrench::ExternalWrench()
     tick = 0; // Default tick value
     tock = 0; // Default tock value
     duration_done = false;
+
+    wrenchSmoothingFlag = false;
+    timeStepIndex = 0;
 }
 
 void ExternalWrench::setWrenchColor()
@@ -106,7 +109,7 @@ void ExternalWrench::setVisual()
     visualMsg.set_cast_shadows(false);
 }
 
-bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
+bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, const double& simulationUpdatePeriod, const bool& wrenchSmoothing)
 {
     model = _model;
 
@@ -115,19 +118,100 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd)
 
     if(getLink())
     {
-        wrench.force[0]  =  cmd.get(1).asDouble();
-        wrench.force[1]  =  cmd.get(2).asDouble();
-        wrench.force[2]  =  cmd.get(3).asDouble();
-
-        wrench.torque[0] = cmd.get(4).asDouble();
-        wrench.torque[1] = cmd.get(5).asDouble();
-        wrench.torque[2] = cmd.get(6).asDouble();
-
+        // Get wrench duration
         wrench.duration  = cmd.get(7).asDouble();
 
-        return true;
+        if (wrenchSmoothing) {
+            wrenchSmoothingFlag = true;
+            bool wrenchSmoothingStatus = smoothWrench(cmd, simulationUpdatePeriod);
+
+            if (wrenchSmoothingStatus) {
+
+                // Get the first elements of the smoothed wrench
+                yarp::sig::Vector initSmoothedWrench = wrench.smoothedWrenchVec.at(timeStepIndex);
+
+                wrench.force[0] = initSmoothedWrench[0];
+                wrench.force[1] = initSmoothedWrench[1];
+                wrench.force[2] = initSmoothedWrench[2];
+
+                wrench.torque[0] = initSmoothedWrench[3];
+                wrench.torque[1] = initSmoothedWrench[4];
+                wrench.torque[2] = initSmoothedWrench[5];
+
+                return true;
+            }
+            else return  false;
+        }
+        else {
+
+            wrench.force[0]  =  cmd.get(1).asDouble();
+            wrench.force[1]  =  cmd.get(2).asDouble();
+            wrench.force[2]  =  cmd.get(3).asDouble();
+
+            wrench.torque[0] = cmd.get(4).asDouble();
+            wrench.torque[1] = cmd.get(5).asDouble();
+            wrench.torque[2] = cmd.get(6).asDouble();
+
+            return true;
+        }
+
     }
     else return false;
+}
+
+bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& simulationUpdatePeriod)
+{
+    // Clear smoothed wrenches vector
+    wrench.smoothedWrenchVec.clear();
+
+    double duration = cmd.get(7).asDouble();
+
+    // Compute time steps
+    steps = duration/simulationUpdatePeriod;
+
+    // Get original wrench
+    yarp::sig::Vector originalWrench;
+    originalWrench.resize(6,0);
+
+    originalWrench[0]  =  cmd.get(1).asDouble();
+    originalWrench[1]  =  cmd.get(2).asDouble();
+    originalWrench[2]  =  cmd.get(3).asDouble();
+    originalWrench[3]  =  cmd.get(4).asDouble();
+    originalWrench[4]  =  cmd.get(5).asDouble();
+    originalWrench[5]  =  cmd.get(6).asDouble();
+
+    double time = 0;
+    std::vector<double> smoothingCoefficients;
+
+    for (int timeStep = 0; timeStep <= steps; timeStep++) {
+
+        // Second derivative of minimum jerk trajectory equation
+        // Reference : https://mika-s.github.io/python/control-theory/trajectory-generation/2017/12/06/trajectory-generation-with-a-minimum-jerk-trajectory.html
+        double smoothingCoefficient = duration*(30 * std::pow(time/duration, 2) - 60 * std::pow(time/duration, 3) + 30 * std::pow(time/duration, 4));
+        smoothingCoefficients.push_back(smoothingCoefficient);
+
+        // Update time
+        time = time + simulationUpdatePeriod;
+    }
+
+    // Normalize smoothing coefficients
+    double smoothingCoefficientMax = *std::max_element(smoothingCoefficients.begin(), smoothingCoefficients.end());
+    for (int timeStep = 0; timeStep <= steps; timeStep++) {
+        smoothingCoefficients.at(timeStep) =  smoothingCoefficients.at(timeStep) / smoothingCoefficientMax;
+    }
+
+    yarp::sig::Vector smoothedWrench;
+    smoothedWrench.resize(6,0);
+
+    for (int timeStep = 0; timeStep <= steps; timeStep++) {
+
+        smoothedWrench = originalWrench * smoothingCoefficients.at(timeStep);
+
+        wrench.smoothedWrenchVec.push_back(smoothedWrench);
+        smoothedWrench.clear();
+    }
+
+    return true;
 }
 
 void ExternalWrench::applyWrench()
@@ -135,8 +219,34 @@ void ExternalWrench::applyWrench()
     if((tock-tick) < wrench.duration)
     {
 #if GAZEBO_MAJOR_VERSION >= 8
-        ignition::math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
-        ignition::math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
+        ignition::math::Vector3d force;
+        ignition::math::Vector3d torque;
+
+        if (wrenchSmoothingFlag) {
+
+            // Update time step index
+            if (timeStepIndex < steps) {
+                timeStepIndex++;
+            }
+
+            yarp::sig::Vector smoothedWrench = wrench.smoothedWrenchVec.at(timeStepIndex);
+
+            wrench.force[0] = smoothedWrench[0];
+            wrench.force[1] = smoothedWrench[1];
+            wrench.force[2] = smoothedWrench[2];
+
+            wrench.torque[0] = smoothedWrench[3];
+            wrench.torque[1] = smoothedWrench[4];
+            wrench.torque[2] = smoothedWrench[5];
+        }
+
+        force[0] = wrench.force[0];
+        force[1] = wrench.force[1];
+        force[2] = wrench.force[2];
+
+        torque[0] = wrench.torque[0];
+        torque[1] = wrench.torque[1];
+        torque[2] = wrench.torque[2];
 
         link->AddForce(force);
         link->AddTorque(torque);
@@ -189,6 +299,10 @@ void ExternalWrench::deleteWrench()
     this->wrench.force.clear();
     this->wrench.torque.clear();
     this->wrench.duration = 0;
+
+    if (wrenchSmoothingFlag && !this->wrench.smoothedWrenchVec.empty()) {
+        this->wrench.smoothedWrenchVec.clear();
+    }
 
     this->visualMsg.set_visible(0);
     this->visualMsg.clear_geometry();

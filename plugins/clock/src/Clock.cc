@@ -8,6 +8,7 @@
 #include "Clock.hh"
 #include "ClockServerImpl.h"
 
+#include <boost/bind/bind.hpp>
 #include <gazebo/gazebo_config.h>
 #include <gazebo/common/Events.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -21,6 +22,8 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <iostream>
+
+using namespace boost::placeholders;
 
 namespace gazebo
 {

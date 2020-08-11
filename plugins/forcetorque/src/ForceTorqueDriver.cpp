@@ -8,9 +8,12 @@
 #include "ForceTorqueDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
 
+#include <boost/bind/bind.hpp>
 #include <gazebo/sensors/ForceTorqueSensor.hh>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+
+using namespace boost::placeholders;
 
 using namespace yarp::dev;
 

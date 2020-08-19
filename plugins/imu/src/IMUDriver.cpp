@@ -9,9 +9,12 @@
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
+#include <boost/bind/bind.hpp>
 #include <gazebo/sensors/ImuSensor.hh>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+
+using namespace boost::placeholders;
 
 using namespace yarp::dev;
 

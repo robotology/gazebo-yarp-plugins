@@ -6,6 +6,11 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [3.4.1] - 2020-08-24
+
+### Fixed 
+- Fixed compilation with Boost 1.73 (https://github.com/robotology/gazebo-yarp-plugins/pull/505).
+
 ## [3.4.0] - 2020-05-19
 
 ### Added

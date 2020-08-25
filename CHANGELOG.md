@@ -6,6 +6,11 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [3.4.2] - 2020-08-25
+
+### Fixed 
+- Removed Windows end of lines (https://github.com/robotology/gazebo-yarp-plugins/pull/507).
+
 ## [3.4.1] - 2020-08-24
 
 ### Fixed 

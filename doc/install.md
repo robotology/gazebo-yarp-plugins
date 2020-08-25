@@ -57,4 +57,4 @@ You can use a robot model already equipped for simulating its YARP-interfaces, s
 * The Coman model, available at https://github.com/ADVRHumanoids/iit-coman-ros-pkg .
 * The Vizzy model, available at https://github.com/vislab-tecnico-lisboa/vizzy .
 
-To embed the plugins contained in gazebo-yarp-plugins in a new Gazebo model, check \ref embed_plugins . 
+To embed the plugins contained in gazebo-yarp-plugins in a new Gazebo model, check \ref embed_plugins .

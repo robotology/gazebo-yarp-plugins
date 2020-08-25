@@ -19,6 +19,17 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - Fixed mismatched behavior, with respect to the real robot, of coupling handler FingersAbductionCouplingHandler in 'gazebo_yarp_controlboard' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/499)
 - Fixed mismatched behavior, with respect to the real robot, of mais analog sensors in 'gazebo_yarp_maissensor' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/500)
 
+## [3.4.2] - 2020-08-25
+
+### Fixed 
+- Removed Windows end of lines (https://github.com/robotology/gazebo-yarp-plugins/pull/507).
+
+## [3.4.1] - 2020-08-24
+
+### Fixed 
+- Fixed compilation with Boost 1.73 (https://github.com/robotology/gazebo-yarp-plugins/pull/505).
+>>>>>>> master
+
 ## [3.4.0] - 2020-05-19
 
 ### Added

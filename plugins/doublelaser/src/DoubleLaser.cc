@@ -173,7 +173,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
             yError() << "GazeboYarpDoubleLaser: LASERFRONT-CFG group is missing in configuration file";
             return;
         }
-
         doublelaser_dev_parameters.addGroup("LASERFRONT-CFG").fromString(m_parameters.findGroup("LASERFRONT-CFG").toString());
 
         if(!m_parameters.check("LASERBACK-CFG"))
@@ -182,7 +181,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
             return;
         }
         doublelaser_dev_parameters.addGroup("LASERBACK-CFG").fromString(m_parameters.findGroup("LASERBACK-CFG").toString());
-
+        
+        if(m_parameters.check("SENSOR")) {doublelaser_dev_parameters.addGroup("SENSOR").fromString(m_parameters.findGroup("SENSOR").toString());}
+        if(m_parameters.check("SKIP"))   {doublelaser_dev_parameters.addGroup("SKIP").fromString(m_parameters.findGroup("SKIP").toString());}
+                
         if(!m_driver_doublelaser.open(doublelaser_dev_parameters) )
         {
             yError()<<"GazeboYarpDoubleLaser: error opening DoubleLaser yarp device ";

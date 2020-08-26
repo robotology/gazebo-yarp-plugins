@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -16,8 +16,8 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <Color.h>
-#include <Pose.h>
+#include <GazeboYarpPlugins/Color.h>
+#include <GazeboYarpPlugins/Pose.h>
 
 namespace GazeboYarpPlugins {
 
@@ -126,10 +126,19 @@ public:
 
     /**
      * Load a model from file.
-     * @param id string that specifies the name of the model
-     * @return returns true/false on success failure.
+     * @param filename string that specifies the name of the model
+     * @return returns true or false on success failure
      */
     virtual bool loadModelFromFile(const std::string& filename);
+
+    /**
+     * Load a model from file.
+     * @param filename string that specifies the name of the model
+     * @param pose pose to place the model at: position (x,y,z), orientation (roll, pitch, yaw)]
+     * @param timeout (optional) time for the creation of the model [s]
+     * @return returns a string that contains the name of the model in the world
+     */
+    virtual std::string loadModelFromFileWithPose(const std::string& filename, const Pose& pose, const std::string& object_name = "", const double timeout = 2);
 
     /**
      * Delete an object.

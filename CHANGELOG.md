@@ -6,6 +6,19 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Added
+- Add the implementation to import models in the gazebo world in two configuration. First, load it directly with the pose in the sdf-file or second, load it with a given pose. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
+- Add external wrench smoothing feature for `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/495)
+- Add the possibility to define initial configuration for `linkattacher` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/497)
+- Add the possibility to specify limits for coupled joints for `gazebo_yarp_controlboard` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/499)
+
+### Fixed
+- Fixed empty string return for creation of the cylinder object. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
+- Fixed empty pointer error in the creation process of the objects (sphere, box, cylinder) and the frame. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
+- Fixed wrong measurements feedback used for coupled joints in `gazebo_yarp_controlboard`(https://github.com/robotology/gazebo-yarp-plugins/pull/492).
+- Fixed mismatched behavior, with respect to the real robot, of coupling handler FingersAbductionCouplingHandler in 'gazebo_yarp_controlboard' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/499)
+- Fixed mismatched behavior, with respect to the real robot, of mais analog sensors in 'gazebo_yarp_maissensor' plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/500)
+
 ## [3.4.2] - 2020-08-25
 
 ### Fixed 
@@ -30,7 +43,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [3.3.1] - 2020-03-05
 
-### Fixed 
+### Fixed
 - Solve the problem of setting the interaction mode when the mode of actuator has been already set on the same requested interaction mode (https://github.com/robotology/gazebo-yarp-plugins/pull/464).
 - Fix implementation of `yarp::dev::IPositionControl::relativeMove` in `gazebo_yarp_controlboard` (https://github.com/robotology/gazebo-yarp-plugins/pull/466).
 

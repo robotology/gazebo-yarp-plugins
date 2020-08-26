@@ -122,11 +122,20 @@ service WorldInterfaceServer {
     
     /**
     * Load a model from file.
-    * @param id string that specifies the name of the model
-    * @return returns true/false on success failure.
+    * @param filename string that specifies the name of the model
+    * @return returns true or false on success failure
     */
-    bool loadModelFromFile(1:string filename);
-    
+    bool loadModelFromFile(1: string filename);
+
+    /**
+    * Load a model from file.
+    * @param filename string that specifies the name of the model
+    * @param pose pose to place the model at: position (x,y,z), orientation (roll, pitch, yaw)]
+    * @param timeout (optional) time for the creation of the model [s]
+    * @return returns a string that contains the name of the model in the world
+    */
+    string loadModelFromFileWithPose(1: string filename, 2: Pose pose, 3: string object_name="", 4: double timeout=2.0);
+
      /** 
     * Delete an object.
     * @param id string that identifies object in gazebo (returned after creation)

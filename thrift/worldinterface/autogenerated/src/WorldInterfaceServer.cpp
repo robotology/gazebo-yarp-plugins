@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -671,6 +671,70 @@ bool WorldInterfaceServer_loadModelFromFile_helper::read(yarp::os::ConnectionRea
     return true;
 }
 
+class WorldInterfaceServer_loadModelFromFileWithPose_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit WorldInterfaceServer_loadModelFromFileWithPose_helper(const std::string& filename, const Pose& pose, const std::string& object_name, const double timeout);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_filename;
+    Pose m_pose;
+    std::string m_object_name;
+    double m_timeout;
+
+    thread_local static std::string s_return_helper;
+};
+
+thread_local std::string WorldInterfaceServer_loadModelFromFileWithPose_helper::s_return_helper = {};
+
+WorldInterfaceServer_loadModelFromFileWithPose_helper::WorldInterfaceServer_loadModelFromFileWithPose_helper(const std::string& filename, const Pose& pose, const std::string& object_name, const double timeout) :
+        m_filename{filename},
+        m_pose{pose},
+        m_object_name{object_name},
+        m_timeout{timeout}
+{
+    s_return_helper = {};
+}
+
+bool WorldInterfaceServer_loadModelFromFileWithPose_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(10)) {
+        return false;
+    }
+    if (!writer.writeTag("loadModelFromFileWithPose", 1, 1)) {
+        return false;
+    }
+    if (!writer.writeString(m_filename)) {
+        return false;
+    }
+    if (!writer.write(m_pose)) {
+        return false;
+    }
+    if (!writer.writeString(m_object_name)) {
+        return false;
+    }
+    if (!writer.writeFloat64(m_timeout)) {
+        return false;
+    }
+    return true;
+}
+
+bool WorldInterfaceServer_loadModelFromFileWithPose_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readString(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
 class WorldInterfaceServer_deleteObject_helper :
         public yarp::os::Portable
 {
@@ -1076,6 +1140,16 @@ bool WorldInterfaceServer::loadModelFromFile(const std::string& filename)
     return ok ? WorldInterfaceServer_loadModelFromFile_helper::s_return_helper : bool{};
 }
 
+std::string WorldInterfaceServer::loadModelFromFileWithPose(const std::string& filename, const Pose& pose, const std::string& object_name, const double timeout)
+{
+    WorldInterfaceServer_loadModelFromFileWithPose_helper helper{filename, pose, object_name, timeout};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "std::string WorldInterfaceServer::loadModelFromFileWithPose(const std::string& filename, const Pose& pose, const std::string& object_name, const double timeout)");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? WorldInterfaceServer_loadModelFromFileWithPose_helper::s_return_helper : std::string{};
+}
+
 bool WorldInterfaceServer::deleteObject(const std::string& id)
 {
     WorldInterfaceServer_deleteObject_helper helper{id};
@@ -1153,6 +1227,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
         helpString.emplace_back("enableCollision");
         helpString.emplace_back("getPose");
         helpString.emplace_back("loadModelFromFile");
+        helpString.emplace_back("loadModelFromFileWithPose");
         helpString.emplace_back("deleteObject");
         helpString.emplace_back("deleteAll");
         helpString.emplace_back("getList");
@@ -1251,8 +1326,16 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
         if (functionName == "loadModelFromFile") {
             helpString.emplace_back("bool loadModelFromFile(const std::string& filename) ");
             helpString.emplace_back("Load a model from file. ");
-            helpString.emplace_back("@param id string that specifies the name of the model ");
-            helpString.emplace_back("@return returns true/false on success failure. ");
+            helpString.emplace_back("@param filename string that specifies the name of the model ");
+            helpString.emplace_back("@return returns true or false on success failure ");
+        }
+        if (functionName == "loadModelFromFileWithPose") {
+            helpString.emplace_back("std::string loadModelFromFileWithPose(const std::string& filename, const Pose& pose, const std::string& object_name = \"\", const double timeout = 2) ");
+            helpString.emplace_back("Load a model from file. ");
+            helpString.emplace_back("@param filename string that specifies the name of the model ");
+            helpString.emplace_back("@param pose pose to place the model at: position (x,y,z), orientation (roll, pitch, yaw)] ");
+            helpString.emplace_back("@param timeout (optional) time for the creation of the model [s] ");
+            helpString.emplace_back("@return returns a string that contains the name of the model in the world ");
         }
         if (functionName == "deleteObject") {
             helpString.emplace_back("bool deleteObject(const std::string& id) ");
@@ -1649,6 +1732,38 @@ bool WorldInterfaceServer::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
                 if (!writer.writeBool(WorldInterfaceServer_loadModelFromFile_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "loadModelFromFileWithPose") {
+            std::string filename;
+            Pose pose;
+            std::string object_name;
+            double timeout;
+            if (!reader.readString(filename)) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.read(pose)) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(object_name)) {
+                object_name = "";
+            }
+            if (!reader.readFloat64(timeout)) {
+                timeout = 2;
+            }
+            WorldInterfaceServer_loadModelFromFileWithPose_helper::s_return_helper = loadModelFromFileWithPose(filename, pose, object_name, timeout);
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeString(WorldInterfaceServer_loadModelFromFileWithPose_helper::s_return_helper)) {
                     return false;
                 }
             }

@@ -42,28 +42,35 @@ class ExternalWrench
 {
 private:
 
-   float      color[4];
-   struct wrenchCommand
-   {
+    float      color[4];
+    struct wrenchCommand
+    {
         std::string              link_name;
         yarp::sig::Vector        force;
         yarp::sig::Vector        torque;
         double                   duration;
-   } wrench;
 
-   double                        tick;
-   double                        tock;
+        // Smoothed wrench vector
+        std::vector<yarp::sig::Vector> smoothedWrenchVec;
+    } wrench;
 
-   int                           wrenchIndex;
+    bool                          wrenchSmoothingFlag;
+    int                           timeStepIndex;
+    std::size_t                   steps;
 
-   physics::ModelPtr             model;
-   physics::LinkPtr              link;
+    double                        tick;
+    double                        tock;
 
-   transport::NodePtr            node;
-   transport::PublisherPtr       visPub;
-   msgs::Visual                  visualMsg;
+    int                           wrenchIndex;
 
-   event::ConnectionPtr          updateConnection;
+    physics::ModelPtr             model;
+    physics::LinkPtr              link;
+
+    transport::NodePtr            node;
+    transport::PublisherPtr       visPub;
+    msgs::Visual                  visualMsg;
+
+    event::ConnectionPtr          updateConnection;
 
 public:
 
@@ -72,7 +79,8 @@ public:
     ExternalWrench();
     ~ExternalWrench();
 
-    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&);
+    bool setWrench(physics::ModelPtr&, yarp::os::Bottle&, const double&, const bool&);
+    bool smoothWrench(const yarp::os::Bottle&, const double&);
     bool getLink();
 
     void setWrenchIndex(int& index);

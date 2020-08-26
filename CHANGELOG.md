@@ -6,6 +6,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [3.5.0] - 2020-08-26
+
 ### Added
 - Add the implementation to import models in the gazebo world in two configuration. First, load it directly with the pose in the sdf-file or second, load it with a given pose. (https://github.com/robotology/gazebo-yarp-plugins/pull/467)
 - Add external wrench smoothing feature for `externalwrench` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/495)

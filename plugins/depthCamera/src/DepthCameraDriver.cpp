@@ -254,7 +254,7 @@ bool GazeboYarpDepthCameraDriver::setRgbFOV(double horizontalFov, double vertica
     ignition::math::Angle hFov;
     hFov.Degree(horizontalFov);
     m_depthCameraSensorPtr->DepthCamera()->SetHFOV(hFov);
-    yWarning() << "GazeboDepthCameraDriver: only horizontal fov setted!";
+    yWarning() << "GazeboDepthCameraDriver: only horizontal fov set!";
     return true;
 }
 bool GazeboYarpDepthCameraDriver::getRgbMirroring(bool& mirror)

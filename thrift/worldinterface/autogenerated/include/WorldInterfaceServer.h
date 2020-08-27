@@ -59,7 +59,7 @@ public:
     /**
      * Make a cylinder.
      * @param radius radius of the cylinder [m]
-     * @param length lenght of the cylinder [m]
+     * @param length length of the cylinder [m]
      * @param pose pose of the cylinder [m]
      * @param color color of the cylinder
      * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.

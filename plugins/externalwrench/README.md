@@ -16,7 +16,7 @@ On launching the model in Gazebo, the _rpc_ port will be opened e.g. `/<model>/a
 
 ```
 Responses:
-  The defaul operation mode is with single wrench
+  The default operation mode is with single wrench
   Insert [single] or [multiple] to change the operation mode
   Insert a command with the following format:
   [link] [force] [torque] [duration]

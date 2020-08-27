@@ -453,7 +453,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName)
         if (functionName == "stepSimulation") {
             helpString.emplace_back("void stepSimulation(const std::int32_t numberOfSteps = 1) ");
             helpString.emplace_back("Steps the simulation for the provided number of steps. ");
-            helpString.emplace_back("The input paramter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed) ");
+            helpString.emplace_back("The input parameter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed) ");
             helpString.emplace_back("@note: this function (will be) not blocking, i.e. it will return immediately. Currently calling this function ");
             helpString.emplace_back("twice before the previous call actually ends its computation gives and undefined behavior. ");
             helpString.emplace_back("@param numberOfSteps number of steps to simulate ");
@@ -461,7 +461,7 @@ std::vector<std::string> ClockServer::help(const std::string& functionName)
         if (functionName == "stepSimulationAndWait") {
             helpString.emplace_back("void stepSimulationAndWait(const std::int32_t numberOfSteps = 1) ");
             helpString.emplace_back("Steps the simulation for the provided number of steps. ");
-            helpString.emplace_back("The input paramter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed) ");
+            helpString.emplace_back("The input parameter is the number of steps, not the time (Usually 1 step = 1ms but this is not guaranteed) ");
             helpString.emplace_back("@note: this function is blocking ");
             helpString.emplace_back("@param numberOfSteps number of steps to simulate ");
         }

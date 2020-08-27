@@ -1266,7 +1266,7 @@ std::vector<std::string> WorldInterfaceServer::help(const std::string& functionN
             helpString.emplace_back("std::string makeCylinder(const double radius, const double length, const Pose& pose, const Color& color, const std::string& frame_name = \"\", const std::string& object_name = \"\", const bool gravity_enable = 0, const bool collision_enable = 1) ");
             helpString.emplace_back("Make a cylinder. ");
             helpString.emplace_back("@param radius radius of the cylinder [m] ");
-            helpString.emplace_back("@param length lenght of the cylinder [m] ");
+            helpString.emplace_back("@param length length of the cylinder [m] ");
             helpString.emplace_back("@param pose pose of the cylinder [m] ");
             helpString.emplace_back("@param color color of the cylinder ");
             helpString.emplace_back("@param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used. ");

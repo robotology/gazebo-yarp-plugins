@@ -226,7 +226,7 @@ bool LinkAttacherServerImpl::setJointType(const std::string j)
     }
     else
     {
-        yError() << LogPrefix << "the choosen joint type [" << j << "] is not valid";
+        yError() << LogPrefix << "the chosen joint type [" << j << "] is not valid";
         return false;
     }
 

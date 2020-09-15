@@ -42,7 +42,7 @@ public:
     /**
      * Make a cylinder.
      * @param radius radius of the cylinder [m]
-     * @param length lenght of the cylinder [m]
+     * @param length length of the cylinder [m]
      * @param pose pose of the cylinder [m]
      * @param color color of the cylinder
      * @return returns a string that contains the name of the object in the world or empty string on error

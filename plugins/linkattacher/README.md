@@ -31,7 +31,7 @@ The available commands are:
 (The `link_name` can be both the scoped or unscoped name of the link)
 
 ### Startup Configuration
-It is possible to apply a set of choosen command at the startup of Gazebo. In order to do so, it is required to add a `[STARTUP]` group in the `.ini` file with the desired commands and argouments.
+It is possible to apply a set of chosen command at the startup of Gazebo. In order to do so, it is required to add a `[STARTUP]` group in the `.ini` file with the desired commands and argouments.
 
 e.g.
 ```

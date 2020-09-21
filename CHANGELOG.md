@@ -6,6 +6,16 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Added
+- Add `velocityControlImplementationType` option to the `VELOCITY_CONTROL` group of the `gazebo_yarp_controlboard` plugin
+  configuration. This option permits to switch between `direct_velocity_pid`, that is using a velocity PID for the Velocity Control Mode
+  (what has been implemented until now) and `integrator_and_position_pid` that uses an integrator that integrates the velocity reference and then uses the position low level PID, similarly to what is implement on real YARP-powered robot such as iCub or R1.
+  The setting is now optional and if not present will default to `direct_velocity_pid`, but it will be compulsory in
+  gazebo-yarp-plugins 4.x (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
+
+### Fixed 
+- Fixed use of the `VOCAB_CM_MIXED` control mode when the physics timestep is different from 1 millisecond (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
+
 ## [3.5.0] - 2020-08-26
 
 ### Added

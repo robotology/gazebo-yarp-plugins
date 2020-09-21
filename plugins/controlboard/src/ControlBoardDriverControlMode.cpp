@@ -127,6 +127,9 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             break;
         case VOCAB_CM_VELOCITY :
+            if (m_velocity_control_type == IntegratorAndPositionPID) {
+                m_jntReferencePositions[j] = m_positions[j];
+            }
             m_jntReferenceVelocities[j] = 0.0;
             m_speed_ramp_handler[j]->stop();
             break;

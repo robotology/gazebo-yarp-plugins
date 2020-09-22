@@ -413,6 +413,8 @@ private:
     std::vector<BaseCouplingHandler*>  m_coupling_handler;
     std::vector<RampFilter*> m_speed_ramp_handler;
     std::vector<Watchdog*> m_velocity_watchdog;
+    std::vector<Watchdog*> m_velocityControl;
+
 
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/
@@ -428,7 +430,18 @@ private:
 
     std::vector<gazebo::common::PID> m_impedancePosPDs;
 
+    enum VelocityControlImplementationType {
+        // DirectVelocityPID: use a low level velocity PID
+        DirectVelocityPID,
+        // IntegratorAndPositionPID: integrate the velocity reference
+        // and use the low level Position PID already used for the
+        // IPositionDirect implementation
+        IntegratorAndPositionPID
+    };
+    VelocityControlImplementationType m_velocity_control_type{DirectVelocityPID};
     std::vector<std::string> m_position_control_law;
+    // Type of the velocity low level control, ignored
+    // if m_velocity_control_type is IntegratorAndPositionPID
     std::vector<std::string> m_velocity_control_law;
     std::vector<std::string> m_impedance_control_law;
     std::vector<std::string> m_torque_control_law;
@@ -460,7 +473,7 @@ private:
     bool configureJointType();
     bool setMinMaxPos();  //NOT TESTED
     bool setMinMaxVel();
-    bool setJointNames();  //WORKS
+    bool setJointNames();
     bool setPIDsForGroup(std::string, PIDMap::mapped_type&, enum PIDFeedbackTerm pidTerms);
     bool setPIDsForGroup_POSITION(  std::vector<std::string>& control_law, PIDMap::mapped_type&);
     bool setPIDsForGroup_VELOCITY(  std::vector<std::string>& control_law, PIDMap::mapped_type&);

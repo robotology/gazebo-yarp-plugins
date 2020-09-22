@@ -606,7 +606,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         {
             if (m_clock % _T_controller == 0)
             {
-                double computed_ref_speed = m_speed_ramp_handler[j]->getCurrentValue() / 1000.0 * 1;  //controller period
+                double computed_ref_speed = m_speed_ramp_handler[j]->getCurrentValue()*stepTime.Double();  //controller period
                 double computed_ref_pos =  m_jntReferencePositions[j] + m_trajectory_generator[j]->computeTrajectoryStep();
                 m_jntReferencePositions[j] = computed_ref_pos + computed_ref_speed;
                 //yDebug() << computed_ref_pos << " " << computed_ref_speed;
@@ -618,6 +618,12 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
             if (m_clock % _T_controller == 0)
             {
                 if (m_speed_ramp_handler[j]) m_jntReferenceVelocities[j] = m_speed_ramp_handler[j]->getCurrentValue();
+            }
+
+            if (m_velocity_control_type == IntegratorAndPositionPID)
+            {
+                // All quantities are in degrees for revolute, and meters for linear
+                m_jntReferencePositions[j] = m_jntReferencePositions[j] + m_speed_ramp_handler[j]->getCurrentValue()*stepTime.Double();
             }
         }
     }
@@ -641,22 +647,22 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         double forceReference = 0;
 
         //set pos joint value, set m_referenceVelocities joint value
-        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+        if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT || (m_controlMode[j] == VOCAB_CM_VELOCITY && m_velocity_control_type == IntegratorAndPositionPID))      && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_POSITION][j];
             forceReference = pid.Update(convertUserToGazebo(j, m_motPositions[j]) - convertUserToGazebo(j, m_motReferencePositions[j]), stepTime);
         }
-        else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
+        else if ((m_controlMode[j] == VOCAB_CM_POSITION || m_controlMode[j] == VOCAB_CM_POSITION_DIRECT || (m_controlMode[j] == VOCAB_CM_VELOCITY && m_velocity_control_type == IntegratorAndPositionPID)) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
             double q = m_motPositions[j] - m_zeroPosition[j];
             forceReference  = -m_impedancePosPDs[j].GetPGain() * (q - m_motReferencePositions[j]) - m_impedancePosPDs[j].GetDGain() * m_motVelocities[j] + m_torqueOffset[j];
         }
-        else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_STIFF))
+        else if ((m_controlMode[j] == VOCAB_CM_VELOCITY && m_velocity_control_type == DirectVelocityPID) && (m_interactionMode[j] == VOCAB_IM_STIFF))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
             forceReference = pid.Update(convertUserToGazebo(j, m_motVelocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
         }
-        else if ((m_controlMode[j] == VOCAB_CM_VELOCITY) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
+        else if ((m_controlMode[j] == VOCAB_CM_VELOCITY && m_velocity_control_type == DirectVelocityPID) && (m_interactionMode[j] == VOCAB_IM_COMPLIANT))
         {
             gazebo::common::PID &pid = m_pids[VOCAB_PIDTYPE_VELOCITY][j];
             forceReference = pid.Update(convertUserToGazebo(j, m_motVelocities[j]) - convertUserToGazebo(j, m_motReferenceVelocities[j]), stepTime);
@@ -1038,78 +1044,98 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
         Bottle xtmp;
         Bottle pidGroup = m_pluginParameters.findGroup("VELOCITY_CONTROL");
 
-        //control units block
-        enum units_type {metric=0, si=1} c_units=metric;
-        xtmp = pidGroup.findGroup("controlUnits");
-        if (!xtmp.isNull())
-        {
-            if      (xtmp.get(1).asString()==std::string("metric_units"))  {
-                c_units=metric;
-            } else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
-            else    {yError() << "invalid controlUnits value"; return false;}
-        }
-        else
-        {
-            yError ("VELOCITY_CONTROL: 'controlUnits' param missing. Cannot continue");
-            return false;
-        }
+        // Check velocityControlImplementationType value
+        // If not present, default to direct_velocity_pid for now
+        if (m_pluginParameters.find("velocityControlImplementationType").isNull()) {
+            yWarning("VELOCITY_CONTROL: 'velocityControlImplementationType' param missing. "
+                     " Using the default value of 'direct_velocity_pid', but the parameter will be compulsory gazebo-yarp-plugins 4.");
+        } else {
+            std::string velocityControlImplementationType = m_pluginParameters.find("velocityControlImplementationType").toString();
 
-        //control law block
-        xtmp = pidGroup.findGroup("controlLaw");
-        if (!xtmp.isNull())
-        {
-            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
-            {
-                for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
+            if (velocityControlImplementationType == "direct_velocity_pid") {
+                m_velocity_control_type = DirectVelocityPID;
+            } else if(velocityControlImplementationType == "integrator_and_position_pid") {
+                m_velocity_control_type = IntegratorAndPositionPID;
+            } else {
+               yError("VELOCITY_CONTROL: 'velocityControlImplementationType' param has unsupported value '%s'.", velocityControlImplementationType.c_str());
+               return false;
             }
-            else    {yError() << "invalid controlLaw value"; return false;}
-        }
-        else
-        {
-            yError ("VELOCITY_CONTROL: 'controlLaw' param missing. Cannot continue");
-            return false;
         }
 
-        std::vector<dev::Pid> yarpPid(m_numberOfJoints);
-        bool error=false;
-        size_t j=0;
-
-        //control parameters
-        if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asDouble();}
-
-        if (error)
-        {
-            return false;
-        }
-        else
-        {
-            for (j = 0; j < m_numberOfJoints; ++j)
+        if (m_velocity_control_type == DirectVelocityPID) {
+            // control units block
+            enum units_type {metric=0, si=1} c_units=metric;
+            xtmp = pidGroup.findGroup("controlUnits");
+            if (!xtmp.isNull())
             {
-                gazebo::common::PID pidValue;
-                if (c_units==metric)
-                {
-                    pidValue.SetPGain(convertUserGainToGazeboGain(j,yarpPid[j].kp)/pow(2,yarpPid[j].scale));
-                    pidValue.SetIGain(convertUserGainToGazeboGain(j,yarpPid[j].ki)/pow(2,yarpPid[j].scale));
-                    pidValue.SetDGain(convertUserGainToGazeboGain(j,yarpPid[j].kd)/pow(2,yarpPid[j].scale));
-                }
-                else if (c_units==si)
-                {
-                    pidValue.SetPGain(yarpPid[j].kp/pow(2,yarpPid[j].scale));
-                    pidValue.SetIGain(yarpPid[j].ki/pow(2,yarpPid[j].scale));
-                    pidValue.SetDGain(yarpPid[j].kd/pow(2,yarpPid[j].scale));
-                }
-                pidValue.SetIMax(yarpPid[j].max_int);
-                pidValue.SetIMin(-yarpPid[j].max_int);
-                pidValue.SetCmdMax(yarpPid[j].max_output);
-                pidValue.SetCmdMin(-yarpPid[j].max_output);
+                if      (xtmp.get(1).asString()==std::string("metric_units"))  {
+                    c_units=metric;
+                } else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+                else    {yError() << "invalid controlUnits value"; return false;}
+            }
+            else
+            {
+                yError ("VELOCITY_CONTROL: 'controlUnits' param missing. Cannot continue");
+                return false;
+            }
 
-                pids.push_back(pidValue);
+            //control law block
+            xtmp = pidGroup.findGroup("controlLaw");
+            if (!xtmp.isNull())
+            {
+                if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+                {
+                    for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
+                }
+                else    {yError() << "invalid controlLaw value"; return false;}
+            }
+            else
+            {
+                yError ("VELOCITY_CONTROL: 'controlLaw' param missing. Cannot continue");
+                return false;
+            }
+
+            std::vector<dev::Pid> yarpPid(m_numberOfJoints);
+            bool error=false;
+            size_t j=0;
+
+            //control parameters
+            if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asDouble();}
+
+            if (error)
+            {
+                return false;
+            }
+            else
+            {
+                for (j = 0; j < m_numberOfJoints; ++j)
+                {
+                    gazebo::common::PID pidValue;
+                    if (c_units==metric)
+                    {
+                        pidValue.SetPGain(convertUserGainToGazeboGain(j,yarpPid[j].kp)/pow(2,yarpPid[j].scale));
+                        pidValue.SetIGain(convertUserGainToGazeboGain(j,yarpPid[j].ki)/pow(2,yarpPid[j].scale));
+                        pidValue.SetDGain(convertUserGainToGazeboGain(j,yarpPid[j].kd)/pow(2,yarpPid[j].scale));
+                    }
+                    else if (c_units==si)
+                    {
+                        pidValue.SetPGain(yarpPid[j].kp/pow(2,yarpPid[j].scale));
+                        pidValue.SetIGain(yarpPid[j].ki/pow(2,yarpPid[j].scale));
+                        pidValue.SetDGain(yarpPid[j].kd/pow(2,yarpPid[j].scale));
+                    }
+                    pidValue.SetIMax(yarpPid[j].max_int);
+                    pidValue.SetIMin(-yarpPid[j].max_int);
+                    pidValue.SetCmdMax(yarpPid[j].max_output);
+                    pidValue.SetCmdMin(-yarpPid[j].max_output);
+
+                    pids.push_back(pidValue);
+                }
             }
         }
 

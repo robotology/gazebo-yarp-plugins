@@ -1046,11 +1046,11 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
 
         // Check velocityControlImplementationType value
         // If not present, default to direct_velocity_pid for now
-        if (m_pluginParameters.find("velocityControlImplementationType").isNull()) {
+        if (pidGroup.find("velocityControlImplementationType").isNull()) {
             yWarning("VELOCITY_CONTROL: 'velocityControlImplementationType' param missing. "
                      " Using the default value of 'direct_velocity_pid', but the parameter will be compulsory gazebo-yarp-plugins 4.");
         } else {
-            std::string velocityControlImplementationType = m_pluginParameters.find("velocityControlImplementationType").toString();
+            std::string velocityControlImplementationType = pidGroup.find("velocityControlImplementationType").toString();
 
             if (velocityControlImplementationType == "direct_velocity_pid") {
                 m_velocity_control_type = DirectVelocityPID;

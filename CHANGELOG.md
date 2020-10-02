@@ -15,6 +15,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Fixed 
 - Fixed use of the `VOCAB_CM_MIXED` control mode when the physics timestep is different from 1 millisecond (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
+- Fixed missing initialization of a pointer in `gazebo_yarp_controlboard` . In some cases this was causing crashes when a model that contained a `gazebo_yarp_controlboard` 
+  plugin was removed from the simulation (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
 
 ## [3.5.0] - 2020-08-26
 

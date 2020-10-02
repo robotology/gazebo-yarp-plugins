@@ -16,7 +16,7 @@ namespace yarp {
             if (ch < 0 || ch >= this->getVirtualAnalogSensorChannels())
             {
                 yError() << "GazeboYarpControlBoardDriver: VirtualAnalogServer: getState failed: requested channel " << ch << 
-                            "while the client is configured wtih " << this->getVirtualAnalogSensorChannels() << "channels";
+                            "while the client is configured with " << this->getVirtualAnalogSensorChannels() << "channels";
             
                 return VAS_status::VAS_ERROR;
             }

@@ -23,14 +23,14 @@ namespace gazebo
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
-    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(0)
+    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(nullptr)
     {}
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
         if (m_iWrap) {
             m_iWrap->detachAll();
-            m_iWrap = 0;
+            m_iWrap = nullptr;
         }
 
         if (m_wrapper.isValid()) {
@@ -40,7 +40,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         if (m_iVirtAnalogSensorWrap) 
         {
             m_iVirtAnalogSensorWrap->detachAll();
-            m_iVirtAnalogSensorWrap = 0;
+            m_iVirtAnalogSensorWrap = nullptr;
         }
         
         if (m_virtAnalogSensorWrapper.isValid())

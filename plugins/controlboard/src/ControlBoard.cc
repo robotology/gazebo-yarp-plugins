@@ -23,7 +23,8 @@ namespace gazebo
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
-    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(nullptr)
+    GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(nullptr),
+                                                       m_iVirtAnalogSensorWrap(nullptr)
     {}
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()

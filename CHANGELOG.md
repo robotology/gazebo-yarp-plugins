@@ -6,6 +6,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [3.5.1] - 2020-10-05
+
 ### Added
 - Add `velocityControlImplementationType` option to the `VELOCITY_CONTROL` group of the `gazebo_yarp_controlboard` plugin
   configuration. This option permits to switch between `direct_velocity_pid`, that is using a velocity PID for the Velocity Control Mode

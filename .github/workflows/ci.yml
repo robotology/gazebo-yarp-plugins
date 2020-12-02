@@ -49,6 +49,8 @@ jobs:
       shell: bash
       run: |
         brew cask install xquartz
+        brew update
+        brew upgrade
         brew install ace eigen opencv@3 osrf/simulation/${{ matrix.gazebo_version }}
     
     - name: Dependencies [Ubuntu]

@@ -128,7 +128,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_useVirtualAnalogSensor = m_pluginParameters.check("useVirtualAnalogSensor", yarp::os::Value(false)).asBool();
 
     VectorOf<int> trajectory_generator_type;
-    trajectory_generator_type.resize(m_numberOfJoints);
+    trajectory_generator_type.resize(m_numberOfJoints, yarp::dev::TRAJECTORY_TYPE_MIN_JERK);
 
     yarp::os::Bottle& traj_bottle = m_pluginParameters.findGroup("TRAJECTORY_GENERATION");
     if (!traj_bottle.isNull())
@@ -137,26 +137,20 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         if (!traj_type.isNull())
         {
             std::string traj_type_s = traj_type.get(1).asString();
-            if      (traj_type_s == "minimum_jerk")      {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
-            else if (traj_type_s == "constant_speed")    {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
+            if      (traj_type_s == "constant_speed")    {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
             else if (traj_type_s == "trapezoidal_speed") {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_TRAP_SPEED;}}
-            else                                         {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
+            else if (traj_type_s == "minimum_jerk")      {/* default */}
+            else                                         {yError() << "Unsupported trajectory_type:" << traj_type_s; return false;}
+            yDebug() << "trajectory_type:" << traj_type_s;
         }
         else
         {
             yWarning() << "Missing TRAJECTORY_GENERATION group. Missing trajectory_type param. Assuming minimum_jerk";
-            for (size_t i = 0; i < m_numberOfJoints; ++i) {
-                trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;
-            }
         }
     }
     else
     {
         yWarning() << "Missing trajectory_type param. Assuming minimum_jerk";
-        for(size_t i = 0; i < m_numberOfJoints; ++i)
-        {
-            trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;
-        }
     }
 
     for (size_t j = 0; j < m_numberOfJoints; ++j)

@@ -255,7 +255,7 @@ public:
     virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
     virtual bool getRefCurrents(double *t) override;
     virtual bool getRefCurrent(int j, double *t) override;
-    
+
     // Virtual Analog Sensor Interface
     virtual VAS_status getVirtualAnalogSensorStatus(int ch) override;
     virtual int getVirtualAnalogSensorChannels() override;
@@ -290,7 +290,7 @@ public:
     /*
      * Probably useless stuff here
      */
-    
+
     //AMPLIFIER CONTROL (inside comanOthers.cpp)
     virtual bool enableAmp(int j) override; //NOT IMPLEMENTED
     virtual bool disableAmp(int j) override; //NOT IMPLEMENTED
@@ -390,7 +390,7 @@ private:
 
     yarp::sig::VectorOf<JointType> m_jointTypes;
     yarp::sig::Vector m_amp;
-    
+
     //Desired Control variables
     yarp::sig::Vector m_jntReferencePositions; /**< desired reference positions.
                                                  Depending on the position mode,
@@ -418,7 +418,7 @@ private:
 
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */
     yarp::sig::Vector m_trajectoryGenerationReferenceSpeed; /**< reference speed for trajectory generation in position mode [Degrees/Seconds]*/
-    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleration; /**< reference acceleration for trajectory generation in position mode. Currently NOT USED in trajectory generation! [Degrees/Seconds^2] */
+    yarp::sig::Vector m_trajectoryGenerationReferenceAcceleration; /**< reference acceleration for trajectory generation in position mode [Degrees/Seconds^2] */
 
     std::vector<std::string> m_jointNames;
     std::vector<std::string> controlboard_joint_names;
@@ -459,7 +459,7 @@ private:
     bool* m_isMotionDone;
     int * m_controlMode;
     int * m_interactionMode;
-    
+
     bool m_useVirtualAnalogSensor = false;
     bool m_started;
     int m_clock;
@@ -473,6 +473,7 @@ private:
     bool configureJointType();
     bool setMinMaxPos();  //NOT TESTED
     bool setMinMaxVel();
+    bool setTrajectoryReferences();
     bool setJointNames();
     bool setPIDsForGroup(std::string, PIDMap::mapped_type&, enum PIDFeedbackTerm pidTerms);
     bool setPIDsForGroup_POSITION(  std::vector<std::string>& control_law, PIDMap::mapped_type&);

@@ -67,13 +67,13 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_torques.resize(m_numberOfJoints); m_torques.zero();
     m_measTorques.resize(m_numberOfJoints); m_measTorques.zero();
     m_maxTorques.resize(m_numberOfJoints, 2000.0);
-    m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_jntReferencePositions.resize(m_numberOfJoints);
     m_motReferencePositions.resize(m_numberOfJoints);
     m_motReferenceVelocities.resize(m_numberOfJoints);
     m_motReferenceTorques.resize(m_numberOfJoints);
     m_oldReferencePositions.resize(m_numberOfJoints);
     m_trajectoryGenerationReferencePosition.resize(m_numberOfJoints);
+    m_trajectoryGenerationReferenceSpeed.resize(m_numberOfJoints);
     m_trajectoryGenerationReferenceAcceleration.resize(m_numberOfJoints);
     m_jntReferenceTorques.resize(m_numberOfJoints);
     m_jointPosLimits.resize(m_numberOfJoints);
@@ -106,13 +106,12 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_motReferencePositions.zero();
     m_motReferenceVelocities.zero();
     m_motReferenceTorques.zero();
-    m_trajectoryGenerationReferenceSpeed.zero();
     m_jntReferencePositions.zero();
     m_jntReferenceVelocities.zero();
     m_jntReferenceTorques.zero();
     m_trajectoryGenerationReferencePosition.zero();
-    // m_trajectoryGenerationReferenceAcceleration.zero();
-    m_trajectoryGenerationReferenceAcceleration=10.0; //default value in deg/s^2
+    m_trajectoryGenerationReferenceSpeed.zero();
+    m_trajectoryGenerationReferenceAcceleration.zero();
     m_amp = 1;
     m_controlMode = new int[m_numberOfJoints];
     m_interactionMode = new int[m_numberOfJoints];
@@ -128,7 +127,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_velocity_watchdog.resize(m_numberOfJoints, NULL);
 
     m_useVirtualAnalogSensor = m_pluginParameters.check("useVirtualAnalogSensor", yarp::os::Value(false)).asBool();
-    
+
     VectorOf<int> trajectory_generator_type;
     trajectory_generator_type.resize(m_numberOfJoints);
 
@@ -350,13 +349,12 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         yError()<<"Failed to get Velocity Limits";
         //return false; //to be added soon
     }
-    for (size_t j = 0; j < m_numberOfJoints; ++j)
+
+    // NOTE: This has to be after setMinMaxVel function
+    if (!setTrajectoryReferences())
     {
-        // NOTE: This has to be after setMinMaxVel function
-        m_trajectoryGenerationReferenceSpeed[j]=0.0;
-        if      (m_jointTypes[j]==JointType_Revolute)  m_trajectoryGenerationReferenceSpeed[j] = 10.0; //deg/s
-        else if (m_jointTypes[j]==JointType_Prismatic) m_trajectoryGenerationReferenceSpeed[j] = 0.010; //m/s
-        if (m_trajectoryGenerationReferenceSpeed[j] >  m_jointVelLimits[j].max) m_trajectoryGenerationReferenceSpeed[j]= m_jointVelLimits[j].max/10;
+        yError()<<"Failed to get Trajectory References";
+        return false;
     }
 
     if (!setPositionsToleranceLinear())
@@ -804,6 +802,80 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
     return true;
 }
 
+bool GazeboYarpControlBoardDriver::setTrajectoryReferences()
+{
+    // set sensible defaults
+    for (size_t j = 0; j < m_numberOfJoints; ++j)
+    {
+        if (m_jointTypes[j] == JointType_Revolute)
+        {
+            m_trajectoryGenerationReferenceSpeed[j] = 10.0; // deg/s
+            m_trajectoryGenerationReferenceAcceleration[j] = 10.0; // deg/s^2
+        }
+        else if (m_jointTypes[j] == JointType_Prismatic)
+        {
+            m_trajectoryGenerationReferenceSpeed[j] = 0.010; // m/s
+            m_trajectoryGenerationReferenceAcceleration[j] = 0.010; // m/s^2
+        }
+    }
+
+    // pick user values, if any
+    yarp::os::Bottle& traj_bottle = m_pluginParameters.findGroup("TRAJECTORY_GENERATION");
+
+    if (!traj_bottle.isNull())
+    {
+        yarp::os::Bottle& refSpeeds = traj_bottle.findGroup("refSpeed");
+
+        if (!refSpeeds.isNull())
+        {
+            if (static_cast<size_t>(refSpeeds.size()) - 1 == m_numberOfJoints)
+            {
+                for (size_t j = 0; j < m_numberOfJoints; ++j)
+                {
+                    m_trajectoryGenerationReferenceSpeed[j] = refSpeeds.get(j + 1).asDouble();
+                }
+            }
+            else
+            {
+                yError() << "Invalid number of refSpeed params";
+                return false;
+            }
+        }
+
+        yarp::os::Bottle& refAccelerations = traj_bottle.findGroup("refAcceleration");
+
+        if (!refAccelerations.isNull())
+        {
+            if (static_cast<size_t>(refAccelerations.size()) - 1 == m_numberOfJoints)
+            {
+                for (size_t j = 0; j < m_numberOfJoints; ++j)
+                {
+                    m_trajectoryGenerationReferenceAcceleration[j] = refAccelerations.get(j + 1).asDouble();
+                }
+            }
+            else
+            {
+                yError() << "Invalid number of refAcceleration params";
+                return false;
+            }
+        }
+    }
+
+    // clip values according to joint limits
+    for (size_t j = 0; j < m_numberOfJoints; ++j)
+    {
+        if (m_trajectoryGenerationReferenceSpeed[j] > m_jointVelLimits[j].max)
+        {
+            m_trajectoryGenerationReferenceSpeed[j] = m_jointVelLimits[j].max;
+        }
+    }
+
+    yDebug() << "refSpeed: [ " << m_trajectoryGenerationReferenceSpeed.toString() << " ] ";
+    yDebug() << "refAcceleration: [ " << m_trajectoryGenerationReferenceAcceleration.toString() << " ] ";
+
+    return true;
+}
+
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
     yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
@@ -928,7 +1000,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
             yError ("POSITION_CONTROL: 'controlLaw' param missing. Cannot continue");
             return false;
         }
-  
+
         std::vector<dev::Pid> yarpPid(m_numberOfJoints);
 
         bool error=false;
@@ -1276,7 +1348,7 @@ bool GazeboYarpControlBoardDriver::setPositionsToleranceLinear()
         return false;
     }
 
-    m_robotPositionToleranceLinear=tmp.asDouble();       
+    m_robotPositionToleranceLinear=tmp.asDouble();
 
     yDebug()<<"positionToleranceLinear: [ "<<m_robotPositionToleranceLinear<<" ]";
 
@@ -1307,7 +1379,7 @@ bool GazeboYarpControlBoardDriver::setPositionsToleranceRevolute()
         return false;
     }
 
-    m_robotPositionToleranceRevolute=tmp.asDouble();       
+    m_robotPositionToleranceRevolute=tmp.asDouble();
 
     yDebug()<<"positionToleranceRevolute: [ "<<m_robotPositionToleranceRevolute<<" ]";
     return true;
@@ -1599,12 +1671,13 @@ double GazeboYarpControlBoardDriver::convertUserGainToGazeboGain(int joint, doub
             newValue = GazeboYarpPlugins::convertRadiansToDegrees(value);
             break;
         }
-            
+
         case JointType_Prismatic:
         {
             newValue = value;
             break;
         }
+
         case JointType_Unknown:
         {
             yError() << "Cannot convert measure from User to Gazebo units, type of joint not supported";
@@ -1624,13 +1697,13 @@ double GazeboYarpControlBoardDriver::convertGazeboGainToUserGain(int joint, doub
             newValue = GazeboYarpPlugins::convertDegreesToRadians(value);
             break;
         }
-            
+
         case JointType_Prismatic:
         {
             newValue = value;
             break;
         }
-            
+
         case JointType_Unknown:
         {
             yError() << "Cannot convert measure from Gazebo gains to User gain units, type of joint not supported for axes " <<

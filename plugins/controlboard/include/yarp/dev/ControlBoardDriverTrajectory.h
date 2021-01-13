@@ -109,6 +109,8 @@ private:
     double m_tb;
     double m_tf;
     double m_tick;
+    double m_v0;
+    double m_computed_reference_velocity;
 
     double p_computeTrajectoryStep();
 

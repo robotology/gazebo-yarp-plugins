@@ -477,7 +477,9 @@ yarp::dev::TrajectoryType ConstSpeedTrajectoryGenerator::getTrajectoryType()
 //------------------------------------------------------------------------------------------------------------------
 
 TrapezoidalSpeedTrajectoryGenerator::TrapezoidalSpeedTrajectoryGenerator(gazebo::physics::Model* model)
-: TrajectoryGenerator(model) {}
+: TrajectoryGenerator(model)
+, m_computed_reference_velocity(0.0)
+{}
 
 TrapezoidalSpeedTrajectoryGenerator::~TrapezoidalSpeedTrajectoryGenerator() {}
 
@@ -498,33 +500,42 @@ bool TrapezoidalSpeedTrajectoryGenerator::initTrajectory(double current_pos, dou
 
     m_x0 = current_pos;
     m_xf = final_pos;
-    m_speed = speed;
-    m_acceleration = acceleration;
-    m_computed_reference = current_pos;
-    m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0; // milliseconds
+    m_v0 = m_computed_reference_velocity; // last computed velocity from previous trajectory
 
     if (m_xf > m_joint_max) m_xf = m_joint_max;
     else if (m_xf < m_joint_min) m_xf = m_joint_min;
 
-    double distance = std::abs(m_xf - m_x0);
-    double ramp = 0.5 * std::pow(m_speed, 2.0) / m_acceleration;
+    double sign = (m_xf >= m_x0) ? 1.0 : -1.0;
+    m_speed = sign * speed;
+    m_acceleration = sign * acceleration;
 
-    if (ramp >= 0.5 * distance)
+    // hypothetic distance traveled using a double-ramp (i.e. triangular) trajectory that reaches m_speed
+    double deltaTriMax = 0.5 * (2 * m_speed * m_speed - m_v0 * m_v0) / m_acceleration;
+    double deltaTotal = m_xf - m_x0;
+
+    if (std::abs(deltaTotal) > std::abs(deltaTriMax))
     {
-        // triangular profile
-        m_ta = m_tb = std::sqrt(distance / m_acceleration);
-        m_tf = 2 * m_ta;
+        // trapezoidal profile
+        double deltaRamp1 = 0.5 * (m_speed * m_speed - m_v0 * m_v0) / m_acceleration;
+        double deltaRamp2 = 0.5 * m_speed * m_speed / m_acceleration;
+        m_ta = (m_speed - m_v0) / m_acceleration;
+        m_tb = m_ta + (deltaTotal - deltaRamp1 - deltaRamp2) / m_speed;
+        m_tf = m_tb + (m_speed / m_acceleration);
     }
     else
     {
-        // trapezoidal profile
-        m_ta = m_speed / m_acceleration;
-        m_tb = m_ta + (distance - 2 * ramp) / m_speed;
-        m_tf = m_ta + m_tb;
+        // triangular profile
+        double peakVelocity = sign * std::sqrt(0.5 * (2 * m_acceleration * deltaTotal + m_v0 * m_v0));
+        m_ta = (peakVelocity - m_v0) / m_acceleration;
+        m_tb = m_ta;
+        m_tf = m_ta + (peakVelocity / m_acceleration);
     }
 
+    m_computed_reference = current_pos;
+    m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0; // milliseconds
     m_tick = 0;
     m_trajectory_complete = false;
+
     return true;
 }
 
@@ -532,6 +543,7 @@ bool TrapezoidalSpeedTrajectoryGenerator::abortTrajectory(double limit)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_trajectory_complete = true;
+    m_computed_reference_velocity = 0.0;
     return true;
 }
 
@@ -559,27 +571,27 @@ double TrapezoidalSpeedTrajectoryGenerator::p_computeTrajectoryStep()
     double instant = m_tick * period; // current time since start (in seconds)
     double step = 0;
 
-    if (instant <= m_ta) // ramp up
+    if (instant <= m_ta) // first ramp
     {
-        step = 0.5 * m_acceleration * std::pow(period, 2.0) * (2 * m_tick + 1);
+        step = 0.5 * m_acceleration * period * period * (2 * m_tick + 1) + m_v0 * period;
+        m_computed_reference_velocity = m_acceleration * instant + m_v0;
     }
-    else if (instant > m_tb) // ramp down
+    else if (instant > m_tb) // second ramp
     {
-        step = m_acceleration * (m_tb * period - 0.5 * std::pow(period, 2.0) * (2 * m_tick + 1)) + m_speed * period;
+        step = m_acceleration * (m_tf * period - 0.5 * period * period * (2 * m_tick + 1));
+        m_computed_reference_velocity = m_acceleration * (m_tf - instant);
     }
     else // constant speed interval between ramps (if any)
     {
         step = m_speed * period;
+        m_computed_reference_velocity = m_speed;
     }
 
-    if (step >= std::abs(m_xf - m_computed_reference))
+    if (std::abs(step) >= std::abs(m_xf - m_computed_reference) || instant > m_tf)
     {
         step = m_xf - m_computed_reference;
         m_trajectory_complete = true;
-    }
-    else if (m_xf < m_x0)
-    {
-        step = -step;
+        m_computed_reference_velocity = 0.0;
     }
 
     m_tick++;

@@ -102,6 +102,13 @@ bool GazeboYarpLaserSensorDriver::close()
     return true;
 }
 
+bool GazeboYarpLaserSensorDriver::updateLogic()
+{
+    //Not used.
+    //GazeboYarpLaserSensorDriver::onUpdate manages the all the logic
+    return true;
+}
+
 //PRECISELY TIMED
 yarp::os::Stamp GazeboYarpLaserSensorDriver::getLastInputStamp()
 {

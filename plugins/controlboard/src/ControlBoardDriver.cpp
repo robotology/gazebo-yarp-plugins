@@ -120,7 +120,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     m_torqueOffset = 0;
     m_initTime = true; // Set to initialize the simulation time to Gazebo simTime on the first call to onUpdate().
 
-
     m_trajectory_generator.resize(m_numberOfJoints, NULL);
     m_coupling_handler.clear();
     m_speed_ramp_handler.resize(m_numberOfJoints, NULL);
@@ -137,9 +136,11 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         yarp::os::Bottle& traj_type = traj_bottle.findGroup("trajectory_type");
         if (!traj_type.isNull())
         {
-            if       (traj_type.get(1).asString()=="minimum_jerk")   {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
-            else if  (traj_type.get(1).asString()=="constant_speed") {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
-            else                                                     {for(unsigned int i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i]=yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
+            std::string traj_type_s = traj_type.get(1).asString();
+            if      (traj_type_s == "minimum_jerk")      {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
+            else if (traj_type_s == "constant_speed")    {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
+            else if (traj_type_s == "trapezoidal_speed") {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_TRAP_SPEED;}}
+            else                                         {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_MIN_JERK;}}
         }
         else
         {
@@ -160,13 +161,17 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
 
     for (size_t j = 0; j < m_numberOfJoints; ++j)
     {
-        if (trajectory_generator_type[j]==yarp::dev::TRAJECTORY_TYPE_MIN_JERK)
+        switch (trajectory_generator_type[j])
         {
+        case yarp::dev::TRAJECTORY_TYPE_MIN_JERK:
             m_trajectory_generator[j] = new MinJerkTrajectoryGenerator(m_robot);
-        }
-        else
-        {
+            break;
+        case yarp::dev::TRAJECTORY_TYPE_CONST_SPEED:
             m_trajectory_generator[j] = new ConstSpeedTrajectoryGenerator(m_robot);
+            break;
+        case yarp::dev::TRAJECTORY_TYPE_TRAP_SPEED:
+            m_trajectory_generator[j] = new TrapezoidalSpeedTrajectoryGenerator(m_robot);
+            break;
         }
     }
 
@@ -437,7 +442,10 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
                 getUserDOFLimit(i, limit_min, limit_max);
                 m_trajectory_generator[i]->setLimits(limit_min, limit_max);
 
-                m_trajectory_generator[i]->initTrajectory(m_positions[i],m_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+                m_trajectory_generator[i]->initTrajectory(m_positions[i],
+                                                          m_positions[i],
+                                                          m_trajectoryGenerationReferenceSpeed[i],
+                                                          m_trajectoryGenerationReferenceAcceleration[i]);
             }
         }
     }
@@ -466,7 +474,10 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
                 getUserDOFLimit(i, limit_min, limit_max);
                 m_trajectory_generator[i]->setLimits(limit_min, limit_max);
 
-                m_trajectory_generator[i]->initTrajectory(initial_positions[i],initial_positions[i],m_trajectoryGenerationReferenceSpeed[i]);
+                m_trajectory_generator[i]->initTrajectory(initial_positions[i],
+                                                          initial_positions[i],
+                                                          m_trajectoryGenerationReferenceSpeed[i],
+                                                          m_trajectoryGenerationReferenceAcceleration[i]);
             }
         }
     }

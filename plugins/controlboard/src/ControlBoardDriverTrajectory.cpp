@@ -9,6 +9,7 @@
 #include <GazeboYarpPlugins/common.h>
 
 #include <ControlBoardDriverTrajectory.h>
+#include <cmath>
 #include <cstdio>
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -107,6 +108,7 @@ TrajectoryGenerator::TrajectoryGenerator(gazebo::physics::Model* model)
 : m_robot(model)
 , m_trajectory_complete(true)
 , m_speed(0)
+, m_acceleration(0)
 , m_joint_min(0)
 , m_joint_max(0)
 {}
@@ -198,7 +200,7 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
     return ret;
 }
 
-bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
+bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed, double acceleration)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -223,6 +225,7 @@ bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double fina
     if (m_xf > m_joint_max) m_xf = m_joint_max;
     else if(m_xf < m_joint_min) m_xf = m_joint_min;
     m_speed = speed;
+    m_acceleration = acceleration; // unused
 
     //double step = (m_trajectoryGenerationReferenceSpeed[j] / 1000.0) * m_robotRefreshPeriod * _T_controller;
 
@@ -364,7 +367,6 @@ yarp::dev::TrajectoryType MinJerkTrajectoryGenerator::getTrajectoryType()
     return yarp::dev::TRAJECTORY_TYPE_MIN_JERK;
 }
 
-
 //------------------------------------------------------------------------------------------------------------------
 // ConstSpeedTrajectoryGenerator
 //------------------------------------------------------------------------------------------------------------------
@@ -374,7 +376,7 @@ ConstSpeedTrajectoryGenerator::ConstSpeedTrajectoryGenerator(gazebo::physics::Mo
 
 ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 
-bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed)
+bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed, double acceleration)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -388,6 +390,7 @@ bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double f
     if (m_xf > m_joint_max) m_xf = m_joint_max;
     else if(m_xf < m_joint_min) m_xf = m_joint_min;
     m_speed = speed;
+    m_acceleration = acceleration; // unused
     m_computed_reference = m_x0;
     return true;
 }
@@ -467,4 +470,123 @@ double ConstSpeedTrajectoryGenerator::p_computeTrajectory()
 yarp::dev::TrajectoryType ConstSpeedTrajectoryGenerator::getTrajectoryType()
 {
     return yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;
+}
+
+//------------------------------------------------------------------------------------------------------------------
+// TrapezoidalSpeedTrajectoryGenerator
+//------------------------------------------------------------------------------------------------------------------
+
+TrapezoidalSpeedTrajectoryGenerator::TrapezoidalSpeedTrajectoryGenerator(gazebo::physics::Model* model)
+: TrajectoryGenerator(model) {}
+
+TrapezoidalSpeedTrajectoryGenerator::~TrapezoidalSpeedTrajectoryGenerator() {}
+
+bool TrapezoidalSpeedTrajectoryGenerator::initTrajectory(double current_pos, double final_pos, double speed, double acceleration)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+#if GAZEBO_MAJOR_VERSION >= 8
+    gazebo::physics::PhysicsEnginePtr physics = m_robot->GetWorld()->Physics();
+#else
+    gazebo::physics::PhysicsEnginePtr physics = m_robot->GetWorld()->GetPhysicsEngine();
+#endif
+
+    if (speed <= 0.0 || acceleration <= 0.0)
+    {
+        return false;
+    }
+
+    m_x0 = current_pos;
+    m_xf = final_pos;
+    m_speed = speed;
+    m_acceleration = acceleration;
+    m_computed_reference = current_pos;
+    m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0; // milliseconds
+
+    if (m_xf > m_joint_max) m_xf = m_joint_max;
+    else if (m_xf < m_joint_min) m_xf = m_joint_min;
+
+    double distance = std::abs(m_xf - m_x0);
+    double ramp = 0.5 * std::pow(m_speed, 2.0) / m_acceleration;
+
+    if (ramp >= 0.5 * distance)
+    {
+        // triangular profile
+        m_ta = m_tb = std::sqrt(distance / m_acceleration);
+        m_tf = 2 * m_ta;
+    }
+    else
+    {
+        // trapezoidal profile
+        m_ta = m_speed / m_acceleration;
+        m_tb = m_ta + (distance - 2 * ramp) / m_speed;
+        m_tf = m_ta + m_tb;
+    }
+
+    m_tick = 0;
+    m_trajectory_complete = false;
+    return true;
+}
+
+bool TrapezoidalSpeedTrajectoryGenerator::abortTrajectory(double limit)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_trajectory_complete = true;
+    return true;
+}
+
+double TrapezoidalSpeedTrajectoryGenerator::computeTrajectory()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_computed_reference += p_computeTrajectoryStep();
+    return m_computed_reference;
+}
+
+double TrapezoidalSpeedTrajectoryGenerator::computeTrajectoryStep()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return p_computeTrajectoryStep();
+}
+
+double TrapezoidalSpeedTrajectoryGenerator::p_computeTrajectoryStep()
+{
+    if (m_trajectory_complete)
+    {
+        return 0;
+    }
+
+    double period = m_controllerPeriod / 1000.0; // in seconds
+    double instant = m_tick * period; // current time since start (in seconds)
+    double step = 0;
+
+    if (instant <= m_ta) // ramp up
+    {
+        step = 0.5 * m_acceleration * std::pow(period, 2.0) * (2 * m_tick + 1);
+    }
+    else if (instant > m_tb) // ramp down
+    {
+        step = m_acceleration * (m_tb * period - 0.5 * std::pow(period, 2.0) * (2 * m_tick + 1)) + m_speed * period;
+    }
+    else // constant speed interval between ramps (if any)
+    {
+        step = m_speed * period;
+    }
+
+    if (step >= std::abs(m_xf - m_computed_reference))
+    {
+        step = m_xf - m_computed_reference;
+        m_trajectory_complete = true;
+    }
+    else if (m_xf < m_x0)
+    {
+        step = -step;
+    }
+
+    m_tick++;
+    return step;
+}
+
+yarp::dev::TrajectoryType TrapezoidalSpeedTrajectoryGenerator::getTrajectoryType()
+{
+    return yarp::dev::TRAJECTORY_TYPE_TRAP_SPEED;
 }

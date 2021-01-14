@@ -69,7 +69,7 @@ public:
 
 public:
     //Lidar2DDeviceBase
-    bool updateLogic() final;
+    bool acquireDataFromHW() override final;
     
 private:
     double m_gazebo_max_angle;

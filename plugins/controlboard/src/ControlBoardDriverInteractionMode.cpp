@@ -60,7 +60,10 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_trajectory_generator[j]->setLimits(limit_min, limit_max);
-            m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
+            m_trajectory_generator[j]->initTrajectory(m_positions[j],
+                                                      m_trajectoryGenerationReferencePosition[j],
+                                                      m_trajectoryGenerationReferenceSpeed[j],
+                                                      m_trajectoryGenerationReferenceAcceleration[j]);
             break;
         case VOCAB_CM_POSITION_DIRECT :
             m_jntReferencePositions[j] = m_positions[j];
@@ -74,7 +77,10 @@ bool GazeboYarpControlBoardDriver::changeInteractionMode(int j, yarp::dev::Inter
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_jntReferenceVelocities[j] = 0.0;
             m_trajectory_generator[j]->setLimits(limit_min, limit_max);
-            m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
+            m_trajectory_generator[j]->initTrajectory(m_positions[j],
+                                                      m_trajectoryGenerationReferencePosition[j],
+                                                      m_trajectoryGenerationReferenceSpeed[j],
+                                                      m_trajectoryGenerationReferenceAcceleration[j]);
             break;
         case VOCAB_CM_TORQUE :
         case VOCAB_CM_PWM :

@@ -16,7 +16,8 @@ namespace yarp {
         enum TrajectoryType
         {
             TRAJECTORY_TYPE_CONST_SPEED = 0,
-            TRAJECTORY_TYPE_MIN_JERK = 1
+            TRAJECTORY_TYPE_MIN_JERK = 1,
+            TRAJECTORY_TYPE_TRAP_SPEED = 2
         };
     }
 }
@@ -60,6 +61,7 @@ protected:
     double m_x0;
     double m_xf;
     double m_speed;
+    double m_acceleration;
     double m_computed_reference;
     double m_controllerPeriod;
     double m_joint_min;
@@ -68,7 +70,7 @@ protected:
 
 public:
     virtual ~TrajectoryGenerator();
-    virtual bool initTrajectory (double current_pos, double final_pos, double speed) = 0;
+    virtual bool initTrajectory(double current_pos, double final_pos, double speed, double acceleration) = 0;
     virtual bool abortTrajectory(double limit) = 0;
     virtual double computeTrajectory() = 0;
     virtual double computeTrajectoryStep() = 0;
@@ -87,9 +89,33 @@ private:
     double p_computeTrajectory();
     double p_computeTrajectoryStep();
     bool   p_abortTrajectory (double limit);
-      
+
 public:
-    bool initTrajectory(double current_pos, double final_pos, double speed);
+    bool initTrajectory(double current_pos, double final_pos, double speed, double acceleration);
+    bool abortTrajectory(double limit);
+    double computeTrajectory();
+    double computeTrajectoryStep();
+    yarp::dev::TrajectoryType getTrajectoryType();
+};
+
+class TrapezoidalSpeedTrajectoryGenerator: public TrajectoryGenerator
+{
+public:
+    TrapezoidalSpeedTrajectoryGenerator(gazebo::physics::Model* model);
+    virtual ~TrapezoidalSpeedTrajectoryGenerator();
+
+private:
+    double m_ta;
+    double m_tb;
+    double m_tf;
+    double m_tick;
+    double m_v0;
+    double m_computed_reference_velocity;
+
+    double p_computeTrajectoryStep();
+
+public:
+    bool initTrajectory(double current_pos, double final_pos, double speed, double acceleration);
     bool abortTrajectory(double limit);
     double computeTrajectory();
     double computeTrajectoryStep();
@@ -116,13 +142,13 @@ private:
     double p_computeTrajectory();
     double p_computeTrajectoryStep();
     bool   p_abortTrajectory (double limit);
-        
+
     double p_compute_p5f(double t);
     double p_compute_p5f_vel(double t);
     double p_compute_current_vel();
 
 public:
-    bool initTrajectory(double current_pos, double final_pos, double speed);
+    bool initTrajectory(double current_pos, double final_pos, double speed, double acceleration);
     bool abortTrajectory(double limit);
     double computeTrajectory();
     double computeTrajectoryStep();

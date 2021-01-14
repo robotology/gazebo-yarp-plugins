@@ -19,7 +19,10 @@ bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
         double limit_min, limit_max;
         getUserDOFLimit(j, limit_min, limit_max);
         m_trajectory_generator[j]->setLimits(limit_min, limit_max);
-        m_trajectory_generator[j]->initTrajectory (m_positions[j], m_trajectoryGenerationReferencePosition[j], m_trajectoryGenerationReferenceSpeed[j]);
+        m_trajectory_generator[j]->initTrajectory(m_positions[j],
+                                                  m_trajectoryGenerationReferencePosition[j],
+                                                  m_trajectoryGenerationReferenceSpeed[j],
+                                                  m_trajectoryGenerationReferenceAcceleration[j]);
         return true;
     }
     return false;

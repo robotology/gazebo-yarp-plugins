@@ -120,7 +120,10 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
             m_jntReferencePositions[j] = m_positions[j];
             m_trajectoryGenerationReferencePosition[j] = m_positions[j];
             m_trajectory_generator[j]->setLimits(limit_min, limit_max);
-            m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
+            m_trajectory_generator[j]->initTrajectory(m_positions[j],
+                                                      m_trajectoryGenerationReferencePosition[j],
+                                                      m_trajectoryGenerationReferenceSpeed[j],
+                                                      m_trajectoryGenerationReferenceAcceleration[j]);
             break;
         case VOCAB_CM_POSITION_DIRECT :
             m_jntReferencePositions[j] = m_positions[j];
@@ -139,7 +142,10 @@ bool GazeboYarpControlBoardDriver::changeControlMode(const int j, const int mode
             m_jntReferenceVelocities[j] = 0.0;
             m_speed_ramp_handler[j]->stop();
             m_trajectory_generator[j]->setLimits(limit_min, limit_max);
-            m_trajectory_generator[j]->initTrajectory(m_positions[j],m_trajectoryGenerationReferencePosition[j],m_trajectoryGenerationReferenceSpeed[j]);
+            m_trajectory_generator[j]->initTrajectory(m_positions[j],
+                                                      m_trajectoryGenerationReferencePosition[j],
+                                                      m_trajectoryGenerationReferenceSpeed[j],
+                                                      m_trajectoryGenerationReferenceAcceleration[j]);
             break;
         case VOCAB_CM_TORQUE :
         case VOCAB_CM_PWM :

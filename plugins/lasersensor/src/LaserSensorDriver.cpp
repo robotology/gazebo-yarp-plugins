@@ -102,7 +102,7 @@ bool GazeboYarpLaserSensorDriver::close()
     return true;
 }
 
-bool GazeboYarpLaserSensorDriver::updateLogic()
+bool GazeboYarpLaserSensorDriver::acquireDataFromHW()
 {
     //Not used.
     //GazeboYarpLaserSensorDriver::onUpdate manages the all the logic

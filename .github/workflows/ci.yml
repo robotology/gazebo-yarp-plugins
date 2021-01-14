@@ -14,10 +14,11 @@ jobs:
     name: '[${{ matrix.os }}@${{ matrix.build_type }}@yarp:${{ matrix.yarp_version }}@gazebo:${{ matrix.gazebo_version }}]'
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         build_type: [Release, Debug]
         os: [ubuntu-18.04, ubuntu-20.04, macOS-latest]
-        yarp_version: [yarp-3.4]
+        yarp_version: [master]
         # Dummy value to specify additional combination in the include matrix, see
         # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-new-combinations
         combination: [0]
@@ -68,7 +69,7 @@ jobs:
         # YCM
         git clone https://github.com/robotology/ycm
         cd ycm
-        git checkout ycm-0.11
+        git checkout ycm-0.12
         mkdir -p build
         cd build
         cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install ..

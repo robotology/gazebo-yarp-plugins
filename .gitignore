@@ -4,4 +4,7 @@ build*/
 *.kdev4
 
 .DS_Store
-
+.project
+.cproject
+.settings/
+.vscode/

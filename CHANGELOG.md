@@ -7,15 +7,26 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ## [Unreleased]
 
 ### Added
+- Add `refSpeed` and `refAcceleration` options to the `TRAJECTORY_GENERATION` group of the `gazebo_yarp_controlboard` plugin
+  configuration. They are expected to hold exactly n_joints values (an error is reported otherwise) describing reference speeds
+  and accelerations, respectively, for use by the selected trajectory generator (if necessary).
+- Add `trapezoidal_speed` as a new supported value for option `trajectory_type` of the `gazebo_yarp_controlboard` plugin
+  configuration. This generator enables the trajectory to follow a trapezoidal speed profile in position control mode, limited
+  by provided reference speed (saturation) and acceleration (both ramps) values. If already executing a trajectory in this manner,
+  newly generated trajectories take into account previous joint velocities and update the motion accordingly.
+
+## [3.5.1] - 2020-10-05
+
+### Added
 - Add `velocityControlImplementationType` option to the `VELOCITY_CONTROL` group of the `gazebo_yarp_controlboard` plugin
   configuration. This option permits to switch between `direct_velocity_pid`, that is using a velocity PID for the Velocity Control Mode
   (what has been implemented until now) and `integrator_and_position_pid` that uses an integrator that integrates the velocity reference and then uses the position low level PID, similarly to what is implement on real YARP-powered robot such as iCub or R1.
   The setting is now optional and if not present will default to `direct_velocity_pid`, but it will be compulsory in
   gazebo-yarp-plugins 4.x (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
 
-### Fixed 
+### Fixed
 - Fixed use of the `VOCAB_CM_MIXED` control mode when the physics timestep is different from 1 millisecond (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
-- Fixed missing initialization of a pointer in `gazebo_yarp_controlboard` . In some cases this was causing crashes when a model that contained a `gazebo_yarp_controlboard` 
+- Fixed missing initialization of a pointer in `gazebo_yarp_controlboard` . In some cases this was causing crashes when a model that contained a `gazebo_yarp_controlboard`
   plugin was removed from the simulation (https://github.com/robotology/gazebo-yarp-plugins/pull/514).
 
 ## [3.5.0] - 2020-08-26
@@ -35,12 +46,12 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [3.4.2] - 2020-08-25
 
-### Fixed 
+### Fixed
 - Removed Windows end of lines (https://github.com/robotology/gazebo-yarp-plugins/pull/507).
 
 ## [3.4.1] - 2020-08-24
 
-### Fixed 
+### Fixed
 - Fixed compilation with Boost 1.73 (https://github.com/robotology/gazebo-yarp-plugins/pull/505).
 
 ## [3.4.0] - 2020-05-19

@@ -32,3 +32,5 @@ target_compile_definitions(ControlBoardControlTest PRIVATE -DCMAKE_CURRENT_SOURC
 target_compile_definitions(ControlBoardControlTest PRIVATE -DCMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}")
 target_compile_definitions(ControlBoardControlTest PRIVATE -DGAZEBO_YARP_PLUGINS_DIR="$<TARGET_FILE_DIR:gazebo_yarp_controlboard>")
 add_test(NAME ControlBoardControlTest COMMAND ControlBoardControlTest)
+# Ensure that YARP devices can be found
+set_property(TEST ControlBoardControlTest PROPERTY ENVIRONMENT YARP_DATA_DIRS=${YARP_DATA_INSTALL_DIR_FULL})

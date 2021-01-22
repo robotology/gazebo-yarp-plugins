@@ -17,6 +17,12 @@ set(${PROJECT_NAME}_VERSION
 # See https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
 include(GNUInstallDirs)
 
+#
+option(BUILD_TESTING "Create tests using CMake" OFF)
+if(BUILD_TESTING)
+    enable_testing()
+endif()
+
 # Finding dependencies
 find_package(OpenCV QUIET)
 option(GAZEBO_YARP_PLUGINS_HAS_OPENCV "Compile plugins that depend on OpenCV" ${OpenCV_FOUND})
@@ -90,6 +96,11 @@ install_basic_package_files(${PROJECT_NAME}
                             TARGETS_PROPERTY ${PROJECT_NAME}_TARGETS
                             NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 
 # add a dox target to generate doxygen documentation
 add_subdirectory(doc)
+
+

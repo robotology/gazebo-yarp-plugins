@@ -50,9 +50,14 @@ jobs:
       if: matrix.os == 'macOS-latest'
       shell: bash
       run: |
-        brew cask install xquartz
+        # https://github.com/actions/virtual-environments/issues/2322
+        rm -f /usr/local/bin/2to3
+        # https://github.com/actions/virtual-environments/issues/2391
+        brew unlink gcc@8
+        brew unlink gcc@9
         brew update
         brew upgrade
+        brew install --cask xquartz
         brew install ace eigen opencv@3 osrf/simulation/${{ matrix.gazebo_version }}
     
     - name: Dependencies [Ubuntu]

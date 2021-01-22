@@ -28,6 +28,8 @@ jobs:
           - os: ubuntu-18.04
             combination: 1
             gazebo_version: gazebo10
+            yarp_version: yarp-3.4
+            build_type: Release
           - os: ubuntu-20.04
             gazebo_version: gazebo11
           - os: macOS-latest

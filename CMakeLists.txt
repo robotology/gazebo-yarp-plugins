@@ -8,7 +8,7 @@ PROJECT(GazeboYARPPlugins)
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)
 set(${PROJECT_NAME}_MINOR_VERSION 5)
-set(${PROJECT_NAME}_PATCH_VERSION 1)
+set(${PROJECT_NAME}_PATCH_VERSION 100)
 
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})
@@ -16,6 +16,12 @@ set(${PROJECT_NAME}_VERSION
 # Defines the CMAKE_INSTALL_LIBDIR, CMAKE_INSTALL_BINDIR and many other useful macros
 # See https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
 include(GNUInstallDirs)
+
+# Build all the plugins in the same directory to simplify running tests
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+
 
 #
 option(BUILD_TESTING "Create tests using CMake" OFF)
@@ -26,6 +32,7 @@ endif()
 # Finding dependencies
 find_package(OpenCV QUIET)
 option(GAZEBO_YARP_PLUGINS_HAS_OPENCV "Compile plugins that depend on OpenCV" ${OpenCV_FOUND})
+option(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE "Compile plugins that depend on libYARP_robotinterface" ON)
 
 if(GAZEBO_YARP_PLUGINS_HAS_OPENCV)
     find_package(OpenCV REQUIRED)
@@ -34,7 +41,12 @@ else()
     set(YARP_ADDITIONAL_COMPONENTS_REQUIRED "")
 endif()
 
-find_package(YARP 3.4.101 REQUIRED COMPONENTS os sig dev math ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
+if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
+    list(APPEND YARP_ADDITIONAL_COMPONENTS_REQUIRED "robotinterface")
+endif()
+
+find_package(YARP 3.4.101 REQUIRED COMPONENTS os sig dev math robotinterface ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
+
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 7.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})

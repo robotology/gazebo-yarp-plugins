@@ -34,3 +34,7 @@ target_compile_definitions(ControlBoardControlTest PRIVATE -DGAZEBO_YARP_PLUGINS
 add_test(NAME ControlBoardControlTest COMMAND ControlBoardControlTest)
 # Ensure that YARP devices can be found
 set_property(TEST ControlBoardControlTest PROPERTY ENVIRONMENT YARP_DATA_DIRS=${YARP_DATA_INSTALL_DIR_FULL})
+
+if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
+  add_subdirectory(robotinterface)
+endif()

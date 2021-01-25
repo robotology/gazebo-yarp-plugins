@@ -37,11 +37,8 @@ namespace gazebo
     }
 }
 
-namespace yarp {
-    namespace dev {
-        class PolyDriver;
-    }
-}
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/PolyDriverList.h>
 
 namespace GazeboYarpPlugins {
 
@@ -120,6 +117,16 @@ public:
      *  \param deviceName the name of the device to be removed
      */
     void removeDevice(const std::string& deviceName);
+
+    /** 
+     * \brief Returns a list of the opened devices
+     * \note This list acts just as a view of the available devices, 
+     *       and it does not transfer or share ownership of the devices.
+     *       The consumer code needs to make sure that the driver lifetime
+     *       is longer then the consumer lifetime.
+     */
+    void getDevicesAsPolyDriverList(yarp::dev::PolyDriverList& list);
+    
 
     /** Destructor
      */

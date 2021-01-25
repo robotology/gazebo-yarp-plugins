@@ -228,4 +228,15 @@ void Handler::removeDevice(const std::string& deviceName)
     return;
 }
 
+void Handler::getDevicesAsPolyDriverList(yarp::dev::PolyDriverList& list)
+{
+    for(auto&& devicesMapElem: m_devicesMap) {
+        yDebug() << "DEBUG TO REMOVE: Add device to " << devicesMapElem.first;
+        list.push(devicesMapElem.second.object(), devicesMapElem.first.c_str());
+    }
+
+    return;
+}
+
+
 }

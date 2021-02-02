@@ -263,7 +263,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
         
         // 9) Register the device with the given name
-        if(!doublelaser_dev_parameters.check("yarpDeviceName"))
+        if(!m_parameters.check("yarpDeviceName"))
         {
            yError()<<"GazeboYarpDoubleLaser: cannot find yarpDeviceName parameter in ini file.";
            //return;
@@ -271,7 +271,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         else
         {
             std::string robotName = _parent->GetScopedName();
-            std::string deviceId = doublelaser_dev_parameters.find("yarpDeviceName").asString();
+            std::string deviceId = m_parameters.find("yarpDeviceName").asString();
             std::string scopedDeviceName = robotName + "::" + deviceId; 
              
             if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_driver_doublelaser))
@@ -279,6 +279,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
                yError()<<"GazeboYarpDoubleLaser: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
                return;
             }
+            //yDebug() << "GazeboYarpDoubleLaser: register device:" << scopedDeviceName;
         }
      }
 

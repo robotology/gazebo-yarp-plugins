@@ -98,18 +98,38 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
+    //Register the device with the given name
+#if 0
     if(!driver_properties.check("deviceId"))
     {
         yError()<<"GazeboYarpLaserSensor Plugin failed: cannot find deviceId parameter in ini file.";
         return;
     }
     std::string deviceId = driver_properties.find("deviceId").asString();
-
     if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(deviceId, &m_laserDriver))
     {
         yError()<<"GazeboYarpLaserSensor: failed setting deviceId(=" << deviceId << ")";
         return;
     }
+#else
+    if(!driver_properties.check("yarpDeviceName"))
+    {
+       yError()<<"GazeboYarpLaserSensor: cannot find yarpDeviceName parameter in ini file.";
+       //return;
+    }
+    else
+    {
+        std::string sensorName = _sensor->ScopedName();
+        std::string deviceId = driver_properties.find("yarpDeviceName").asString();
+        std::string scopedDeviceName = sensorName + "::" + deviceId; 
+
+        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_laserDriver))
+        {
+           yError()<<"GazeboYarpLaserSensor: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+           return;
+        }
+    }
+#endif
 
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;

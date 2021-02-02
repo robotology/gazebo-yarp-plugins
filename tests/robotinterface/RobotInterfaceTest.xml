@@ -12,7 +12,7 @@
       <action phase="startup" level="5" type="attach">
         <paramlist name="networks">
           <!-- This should match the name of the device in the .ini file loaded in the Gazebo plugin, prefied by the Gazebo model name -->
-          <elem name="pendulum_with_base::pendulum">  pendulum_with_base::pendulum </elem>
+          <elem name="FirstSetOfJoints">  pendulum_with_base::pendulum_aaa </elem>
         </paramlist>
       </action>
       <action phase="shutdown" level="5" type="detach" />

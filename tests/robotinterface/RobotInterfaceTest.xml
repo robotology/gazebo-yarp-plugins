@@ -14,7 +14,7 @@
           <!-- This should match the yarpDeviceName in the .ini file loaded in the Gazebo plugin. -->
           <!-- The yarpDeviceName plays the same role of the name attribute of the device XML element 
                for devices that are created via the robotinterface XML format. -->
-          <elem name="FirstSetOfJoints">  pendulum_controlboard_ </elem>
+          <elem name="FirstSetOfJoints">  pendulum_controlboard </elem>
         </paramlist>
       </action>
       <action phase="shutdown" level="5" type="detach" />

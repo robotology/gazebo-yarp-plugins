@@ -85,18 +85,22 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
 
     // Extract externalDriverList of  devices from the one that have been already opened in the Gazebo model by other gazebo_yarp plugins 
     yarp::dev::PolyDriverList externalDriverList;
-    GazeboYarpPlugins::Handler::getHandler()->getDevicesAsPolyDriverList(externalDriverList);
+    GazeboYarpPlugins::Handler::getHandler()->getDevicesAsPolyDriverList(_parentModel->GetScopedName(), externalDriverList);
 
     // Set external devices from the one that have been already opened in the Gazebo model by other gazebo_yarp plugins 
     bool ok = m_xmlRobotInterfaceResult.robot.setExternalDevices(externalDriverList);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface : impossible to set external devices";
+        return;
     }
 
     // Start robotinterface 
     ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface : impossible to start robotinterface";
+        m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
+        m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
+        return;
     }
 }
 

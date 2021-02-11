@@ -68,7 +68,20 @@ namespace gazebo
 
     void GazeboYarpClock::Load(int _argc, char **_argv)
     {
-        m_network = new yarp::os::Network();
+        // To avoid deadlock during initialation if YARP_CLOCK is set,
+        // if the YARP network is not initialized we always initialize
+        // it with system clock, and then we
+        // This avoid the problems discussed in https://github.com/robotology/gazebo-yarp-plugins/issues/526
+        bool networkIsNotInitialized = !yarp::os::NetworkBase::isNetworkInitialized();
+
+        if (networkIsNotInitialized) {
+            m_network = new yarp::os::Network(yarp::os::YARP_CLOCK_SYSTEM);
+            m_resetYARPClockAfterPortCreation = true;
+        } else {
+            m_network = new yarp::os::Network();
+            m_resetYARPClockAfterPortCreation = false;
+        }
+
         if (!m_network
             || !yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
             yError() << "GazeboYarpClock::Load error: yarp network does not seem to be available, is the yarpserver running?";
@@ -88,7 +101,7 @@ namespace gazebo
             m_portName = portName.asString();
         }
 
-        yDebug() << "GazeboYarpClock loaded. Clock port will be " << m_portName;
+        yInfo() << "GazeboYarpClock loaded. Clock port will be " << m_portName;
 
         //The proper loading is done when the world is created
         m_worldCreatedEvent = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboYarpClock::gazeboYarpClockLoad,this,_1));
@@ -157,6 +170,19 @@ namespace gazebo
             b.addInt(currentTime.sec);
             b.addInt(currentTime.nsec);
             m_clockPort->write();
+        }
+
+        // As the port is now created and contains streams data,
+        // if necessary reset the YARP clock to YARP_CLOCK_DEFAULT
+        // Unfortunatly, the yarpClockInit blocks on the port until it
+        // receives data, so we need to launch it in a different thread
+        if (m_resetYARPClockAfterPortCreation) {
+            std::cerr << "Resetting YARP clock to default" << std::endl;
+            auto resetYARPNetworkClockLambda =
+                []() { yarp::os::NetworkBase::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT); };
+            std::thread resetYARPNetworkClockThread(resetYARPNetworkClockLambda);
+            resetYARPNetworkClockThread.detach();
+            m_resetYARPClockAfterPortCreation = false;
         }
     }
 

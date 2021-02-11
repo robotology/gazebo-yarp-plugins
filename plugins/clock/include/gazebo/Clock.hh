@@ -132,6 +132,10 @@ private:
     yarp::os::Port *m_rpcPort;
     GazeboYarpPlugins::ClockServer *m_clockServer;
 
+    // True if the YARP network needs to be reset to
+    // YARP_CLOCK_DEFAULT after the port has been created
+    bool m_resetYARPClockAfterPortCreation;
+
 };
 
 

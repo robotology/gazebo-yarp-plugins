@@ -18,7 +18,6 @@ namespace gazebo
 
 GazeboYarpRobotInterface::GazeboYarpRobotInterface()
 {
-    std::cerr << "GazeboYarpRobotInterface constructor" << std::endl;
 }
 
 GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
@@ -32,6 +31,8 @@ GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible  to run phase ActionPhaseShutdown in robotinterface";
     }
+
+    GazeboYarpPlugins::Handler::getHandler()->releaseDevicesInList(m_deviceScopedNames);
 
     yarp::os::Network::fini();
 }
@@ -85,7 +86,7 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
 
     // Extract externalDriverList of  devices from the one that have been already opened in the Gazebo model by other gazebo_yarp plugins 
     yarp::dev::PolyDriverList externalDriverList;
-    GazeboYarpPlugins::Handler::getHandler()->getDevicesAsPolyDriverList(_parentModel->GetScopedName(), externalDriverList);
+    GazeboYarpPlugins::Handler::getHandler()->getDevicesAsPolyDriverList(_parentModel->GetScopedName(), externalDriverList, m_deviceScopedNames);
 
     // Set external devices from the one that have been already opened in the Gazebo model by other gazebo_yarp plugins 
     bool ok = m_xmlRobotInterfaceResult.robot.setExternalDevices(externalDriverList);

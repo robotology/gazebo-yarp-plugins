@@ -31,6 +31,7 @@ public:
 private:
     yarp::robotinterface::experimental::XMLReader m_xmlRobotInterfaceReader;
     yarp::robotinterface::experimental::XMLReaderResult m_xmlRobotInterfaceResult;
+    std::vector<std::string> m_deviceScopedNames;
 };
 
 

@@ -145,8 +145,18 @@ public:
      * If after removing the scope two devices have the same yarpDeviceName, the getModelDevicesAsPolyDriverList
      * prints an error and returns false, while true is returned if everything works as expected.
      */
-    bool getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list);
+    bool getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, std::vector<std::string>& deviceScopedNames);
     
+    /** 
+     * \brief Decrease the usage count for the devices that are acquired with the getDevicesAsPolyDriverList
+     * 
+     * As Gazebo plugins are not denstructed in the same order that they are loaded, it is necessary to keep 
+     * a count of the users of each device, to ensure that is only destructed when no device are still attached to it.
+     * 
+     * This function needs to be called by any plugin that has called the getDevicesAsPolyDriverList method during
+     * the unload/destruction process.
+     */
+    void releaseDevicesInList(const std::vector<std::string>& deviceScopedNames);
 
     /** Destructor
      */

@@ -237,8 +237,10 @@ inline bool startsWith(const std::string&completeString,
     return (completeString.rfind(candidatePrefix, 0) == 0);
 } 
 
-bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list)
+bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, std::vector<std::string>& deviceScopedNames)
 {
+    deviceScopedNames.resize(0);
+
     list = yarp::dev::PolyDriverList();
 
     // This map contains only the yarpDeviceName that we actually added
@@ -246,9 +248,6 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
     std::unordered_map<std::string, std::string> inserted_yarpDeviceName2deviceDatabaseKey;
 
     for (auto&& devicesMapElem: m_devicesMap) {
-        yDebug() << "DEBUG TO REMOVE: Add device deviceDatabaseKey " << devicesMapElem.first
-                 << " modelScopedName "  << modelScopedName;
-
         std::string deviceDatabaseKey = devicesMapElem.first;
 
         std::string yarpDeviceName;
@@ -267,7 +266,9 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
                 // If no name collision is found, insert and continue
                 inserted_yarpDeviceName2deviceDatabaseKey.insert({yarpDeviceName, deviceDatabaseKey});
                 list.push(devicesMapElem.second.object(), yarpDeviceName.c_str());
-                yDebug() << " add  yarpDeviceName " << yarpDeviceName;
+                deviceScopedNames.push_back(deviceDatabaseKey);
+                // Increase usage counter
+                setDevice(deviceDatabaseKey, devicesMapElem.second.object());
             } else {
                 // If a name collision is found, print a clear error and return
                 yError() << "GazeboYARPPlugins robotinterface getDevicesAsPolyDriverList error: ";
@@ -277,6 +278,8 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
                 yError() << "Second instance: " << deviceDatabaseKey;
                 yError() << "Please eliminate or rename one of the two instances. ";
                 list = yarp::dev::PolyDriverList();
+                releaseDevicesInList(deviceScopedNames);
+                deviceScopedNames.resize(0);
                 return false;
             }
 
@@ -285,6 +288,15 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
     }
 
     return true;
+}
+
+
+void Handler::releaseDevicesInList(const std::vector<std::string>& deviceScopedNames)
+{
+    for (auto&& deviceScopedName: deviceScopedNames) {
+        removeDevice(deviceScopedName);
+    }
+    return;
 }
 
 

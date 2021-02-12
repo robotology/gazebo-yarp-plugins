@@ -68,9 +68,9 @@ namespace gazebo
 
     void GazeboYarpClock::Load(int _argc, char **_argv)
     {
-        // To avoid deadlock during initialation if YARP_CLOCK is set,
+        // To avoid deadlock during initialization if YARP_CLOCK is set,
         // if the YARP network is not initialized we always initialize
-        // it with system clock, and then we
+        // it with system clock, and then we switch back to the default clock later
         // This avoid the problems discussed in https://github.com/robotology/gazebo-yarp-plugins/issues/526
         bool networkIsNotInitialized = !yarp::os::NetworkBase::isNetworkInitialized();
 

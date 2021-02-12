@@ -24,9 +24,6 @@ if(NOT gazebo-classic-gtest_POPULATED)
   target_include_directories(gyp-gazebo-classic-gtest PUBLIC ${gazebo-classic-gtest_SOURCE_DIR} ${gazebo-classic-gtest_SOURCE_DIR}/include)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-include(Fetchtiny-process-library)
-
 add_executable(ControlBoardControlTest ControlBoardControlTest.cc)
 target_include_directories(ControlBoardControlTest PUBLIC ${GAZEBO_INCLUDE_DIRS})
 find_library(GAZEBO_TEST_LIB NAMES gazebo_test_fixture HINTS ${GAZEBO_LIBRARY_DIRS})
@@ -38,5 +35,9 @@ add_test(NAME ControlBoardControlTest COMMAND ControlBoardControlTest)
 # Ensure that YARP devices can be found
 set_property(TEST ControlBoardControlTest PROPERTY ENVIRONMENT YARP_DATA_DIRS=${YARP_DATA_INSTALL_DIR_FULL})
 
-
-add_subdirectory(clock)
+# Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/530
+if(NOT APPLE)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+  include(Fetchtiny-process-library)
+  add_subdirectory(clock)
+endif()

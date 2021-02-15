@@ -14,6 +14,11 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
   configuration. This generator enables the trajectory to follow a trapezoidal speed profile in position control mode, limited
   by provided reference speed (saturation) and acceleration (both ramps) values. If already executing a trajectory in this manner,
   newly generated trajectories take into account previous joint velocities and update the motion accordingly.
+  
+### Fixed
+- Fix the support for running Gazebo itself with the `gazebo_yarp_clock` with YARP_CLOCK set, without Gazebo freezing at startup.  
+  In particular, setting YARP_CLOCK is suggested to ensure that all the threads of YARP Network Wrapper Servers are executed with 
+  the frequency correctly synchronized with the Gazebo simulation (https://github.com/robotology/gazebo-yarp-plugins/pull/537).
 
 ## [3.5.1] - 2020-10-05
 

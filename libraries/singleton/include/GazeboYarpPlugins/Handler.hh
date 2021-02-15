@@ -100,7 +100,7 @@ public:
 
     /** \brief Adds a new yarp device pointer to the "database".
      *
-     * The YARP device are stored in these database using the following schema:
+     * The YARP devices are stored in this database using the following schema:
      *  * For YARP devices created by Model plugins, the deviceDatabaseKey is 
      *    defined as deviceDatabaseKey = Model::GetScopedName() + "::" + yarpDeviceName
      *  * For YARP devices created by Sensor plugins, the deviceDatabaseKey is 

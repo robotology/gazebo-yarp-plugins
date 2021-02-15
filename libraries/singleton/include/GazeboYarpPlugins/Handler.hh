@@ -150,7 +150,7 @@ public:
     /** 
      * \brief Decrease the usage count for the devices that are acquired with the getDevicesAsPolyDriverList
      * 
-     * As Gazebo plugins are not denstructed in the same order that they are loaded, it is necessary to keep 
+     * As Gazebo plugins are not destructed in the same order that they are loaded, it is necessary to keep 
      * a count of the users of each device, to ensure that is only destructed when no device are still attached to it.
      * 
      * This function needs to be called by any plugin that has called the getDevicesAsPolyDriverList method during

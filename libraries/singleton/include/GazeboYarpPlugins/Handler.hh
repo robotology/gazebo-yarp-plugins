@@ -140,7 +140,7 @@ public:
      * This method returns all the YARP devices that have been created by the specified model, 
      * and by all its nested model and sensors. As the PolyDriverList is effectively a map in which 
      * the key is a string and the value is the PolyDriver pointer, in this case the key of the PolyDriverList
-     * is the yarpDeviceName without any scope, i.e. the yarpDeviceName and not the deviceDatabaseKey .
+     * is the yarpDeviceName without any scope, i.e. not the deviceDatabaseKey .
      * 
      * If after removing the scope two devices have the same yarpDeviceName, the getModelDevicesAsPolyDriverList
      * prints an error and returns false, while true is returned if everything works as expected.

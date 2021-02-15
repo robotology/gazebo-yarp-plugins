@@ -125,7 +125,6 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     if(!m_driverParameters.check("yarpDeviceName"))
     {
         yError()<<"GazeboYarpDepthCamera: cannot find yarpDeviceName parameter in ini file.";
-        //return;
     }
     else
     {

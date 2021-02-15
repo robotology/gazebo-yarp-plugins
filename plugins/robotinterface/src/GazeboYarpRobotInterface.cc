@@ -71,7 +71,7 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
             if (m_xmlRobotInterfaceResult.parsingIsSuccessful) {
                 loaded_configuration = true;
             } else {
-                yError() << "GazeboYarpRobotInterface error: failure in loading robotinterface configuration for model" << _parentModel->GetName() << "\n"
+                yError() << "GazeboYarpRobotInterface error: failure in parsing robotinterface configuration for model" << _parentModel->GetName() << "\n"
                       << "GazeboYarpRobotInterface error: yarpRobotInterfaceConfigurationFile : " << robotinterface_file_name << "\n"
                       << "GazeboYarpRobotInterface error: yarpRobotInterfaceConfigurationFile absolute path : " << robotinterface_file_path;
                 loaded_configuration = false; 

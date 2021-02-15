@@ -16,7 +16,7 @@ The `gazebo_yarp_robotinterface` plugin can be used by including in any SDF mode
   <!-- Insert other plugins -->
   <!-- ... -->
   
-  <!-- Insert other gazebo_yarp_robotinterface -->
+  <!-- Insert gazebo_yarp_robotinterface -->
   <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
     <!-- This file can be specified with the model:// URI already used in Gazebo, see http://gazebosim.org/tutorials?tut=components&cat=get_started -->
     <yarpRobotInterfaceConfigurationFile>model://RobotInterfaceConfigurationFile.xml</yarpRobotInterfaceConfigurationFile>
@@ -65,7 +65,7 @@ The `gazebo_yarp_robotinterface` can be attached to any YARP device created by a
 
 For historic reason, not all the `gazebo-yarp-plugins` support specifying the **YARP device instance name** for the device that they spawn to permit to use them with the `gazebo_yarp_robotinterface` plugin. If you need to have this functionality in a specific plugin, feel free to open an issue. 
 
-**Warning: as the YARP device instance name is specified without any specific Gazebo model or sensor namespace, it is important to use the `gazebo_yarp_robotinterface` plugin that all the YARP devices contained in the model have a unique YARP device instance name. If this is not the case, the plugin will print a clear error and exit without starting.**
+**Warning: as the YARP device instance name is specified without any specific Gazebo model or sensor namespace, it is important to observe, while using the `gazebo_yarp_robotinterface` plugin, that all the YARP devices contained in the model have a unique YARP device instance name. If this is not the case, the plugin will print a clear error and exit without starting.**
 
 The plugins that spawn YARP devices in a way that they can be then attached to the yarprobotinterface as specified in the following table, together with the details with which the **YARP device instance name** can be specified:
 
@@ -75,7 +75,6 @@ The plugins that spawn YARP devices in a way that they can be then attached to t
 | `gazebo_yarp_depthcamera` | This plugin can create a YARP device that expose a depth-camera interface. For this plugin, the **YARP device instance name** can be specified by the `yarpDeviceName` parameter in the plugin configuration. |
 | `gazebo_yarp_lasersensor` | This plugin can create a YARP device that expose a laser-seensor interface. For this plugin, the **YARP device instance name** can be specified by the `yarpDeviceName` parameter in the plugin configuration. |
 | `gazebo_yarp_doublelaser` | This plugin can create a YARP device network wrapper server that expose two existing laser sensors. For this plugin, the **YARP device instance name** can be specified by the `yarpDeviceName` parameter in the plugin configuration. |
-
 
 
 

@@ -113,6 +113,8 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }} 
       
     - name: Test
+      # Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/530
+      if: contains(matrix.os, 'ubuntu')
       shell: bash
       run: |
         cd build

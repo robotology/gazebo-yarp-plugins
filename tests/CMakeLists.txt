@@ -34,3 +34,10 @@ target_compile_definitions(ControlBoardControlTest PRIVATE -DGAZEBO_YARP_PLUGINS
 add_test(NAME ControlBoardControlTest COMMAND ControlBoardControlTest)
 # Ensure that YARP devices can be found
 set_property(TEST ControlBoardControlTest PROPERTY ENVIRONMENT YARP_DATA_DIRS=${YARP_DATA_INSTALL_DIR_FULL})
+
+# Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/530
+if(NOT APPLE)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+  include(Fetchtiny-process-library)
+  add_subdirectory(clock)
+endif()

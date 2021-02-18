@@ -120,6 +120,24 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     {
         yError() << "GazeboYarpDepthCamera : error in connecting wrapper and device ";
     }
+    
+    //Register the device with the given name
+    if(!m_driverParameters.check("yarpDeviceName"))
+    {
+        yError()<<"GazeboYarpDepthCamera: cannot find yarpDeviceName parameter in ini file.";
+    }
+    else
+    {
+        std::string sensorName = _sensor->ScopedName();
+        std::string deviceId = m_driverParameters.find("yarpDeviceName").asString();
+        std::string scopedDeviceName = sensorName + "::" + deviceId; 
+                
+        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+        {
+            yError()<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+            return;
+        }
+    }
 }
 
 }

@@ -12,6 +12,8 @@
 #include <gazebo/physics/Entity.hh>
 #include <gazebo/sensors/sensors.hh>
 
+#include <unordered_map> 
+
 using namespace gazebo;
 
 namespace GazeboYarpPlugins {
@@ -170,10 +172,10 @@ void Handler::removeSensor(const std::string& sensorName)
     }
 }
 
-bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2add)
+bool Handler::setDevice(std::string deviceDatabaseKey, yarp::dev::PolyDriver* device2add)
 {
     bool ret = false;
-    DevicesMap::iterator device = m_devicesMap.find(deviceName);
+    DevicesMap::iterator device = m_devicesMap.find(deviceDatabaseKey);
     if (device != m_devicesMap.end()) {
         //device already exists. Increment reference counting
         if(device->second.object() == device2add)
@@ -190,7 +192,7 @@ bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2ad
     } else {
         //device does not exists. Add to map
         ReferenceCountingDevice countedDevice(device2add);
-        if (!m_devicesMap.insert(std::pair<std::string, ReferenceCountingDevice>(deviceName, countedDevice)).second) {
+        if (!m_devicesMap.insert(std::pair<std::string, ReferenceCountingDevice>(deviceDatabaseKey, countedDevice)).second) {
             yError() << " Error in GazeboYarpPlugins::Handler while inserting a new device pointer!";
             ret = false;
         } else {
@@ -200,11 +202,11 @@ bool Handler::setDevice(std::string deviceName, yarp::dev::PolyDriver* device2ad
     return ret;
 }
 
-yarp::dev::PolyDriver* Handler::getDevice(const std::string& deviceName) const
+yarp::dev::PolyDriver* Handler::getDevice(const std::string& deviceDatabaseKey) const
 {
     yarp::dev::PolyDriver* tmp = NULL;
 
-    DevicesMap::const_iterator device = m_devicesMap.find(deviceName);
+    DevicesMap::const_iterator device = m_devicesMap.find(deviceDatabaseKey);
     if (device != m_devicesMap.end()) {
         tmp = device->second.object();
     } else {
@@ -213,9 +215,9 @@ yarp::dev::PolyDriver* Handler::getDevice(const std::string& deviceName) const
     return tmp;
 }
 
-void Handler::removeDevice(const std::string& deviceName)
+void Handler::removeDevice(const std::string& deviceDatabaseKey)
 {
-    DevicesMap::iterator device = m_devicesMap.find(deviceName);
+    DevicesMap::iterator device = m_devicesMap.find(deviceDatabaseKey);
     if (device != m_devicesMap.end()) {
         device->second.decrementCount();
         if (!device->second.count()) {
@@ -223,9 +225,79 @@ void Handler::removeDevice(const std::string& deviceName)
             m_devicesMap.erase(device);
         }
     } else {
-        yError() << "Could not remove device " << deviceName << ". Device was not found";
+        yError() << "Could not remove device " << deviceDatabaseKey << ". Device was not found";
     }
     return;
 }
+
+inline bool startsWith(const std::string&completeString, 
+                       const std::string&candidatePrefix)
+{
+    // https://stackoverflow.com/a/40441240
+    return (completeString.rfind(candidatePrefix, 0) == 0);
+} 
+
+bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, std::vector<std::string>& deviceScopedNames)
+{
+    deviceScopedNames.resize(0);
+
+    list = yarp::dev::PolyDriverList();
+
+    // This map contains only the yarpDeviceName that we actually added
+    // to the returned yarp::dev::PolyDriverList
+    std::unordered_map<std::string, std::string> inserted_yarpDeviceName2deviceDatabaseKey;
+
+    for (auto&& devicesMapElem: m_devicesMap) {
+        std::string deviceDatabaseKey = devicesMapElem.first;
+
+        std::string yarpDeviceName;
+        
+        // If the deviceDatabaseKey starts with the modelScopedName, then it is eligible for insertion
+        // in the returned list
+        if (startsWith(deviceDatabaseKey, modelScopedName)) {
+            // Extract yarpDeviceName from deviceDatabaseKey
+            yarpDeviceName = deviceDatabaseKey.substr(deviceDatabaseKey.find_last_of(":")+1);
+
+            // Check if a device with the same yarpDeviceName was already inserted
+            auto got = inserted_yarpDeviceName2deviceDatabaseKey.find(yarpDeviceName);
+
+            // If not found, insert and continue
+            if (got == inserted_yarpDeviceName2deviceDatabaseKey.end()) {
+                // If no name collision is found, insert and continue
+                inserted_yarpDeviceName2deviceDatabaseKey.insert({yarpDeviceName, deviceDatabaseKey});
+                list.push(devicesMapElem.second.object(), yarpDeviceName.c_str());
+                deviceScopedNames.push_back(deviceDatabaseKey);
+                // Increase usage counter
+                setDevice(deviceDatabaseKey, devicesMapElem.second.object());
+            } else {
+                // If a name collision is found, print a clear error and return
+                yError() << "GazeboYARPPlugins robotinterface getDevicesAsPolyDriverList error: ";
+                yError() << "two YARP devices with yarpDeviceName " << yarpDeviceName 
+                         << " found in model " << modelScopedName;
+                yError() << "First instance: " << got->second;
+                yError() << "Second instance: " << deviceDatabaseKey;
+                yError() << "Please eliminate or rename one of the two instances. ";
+                list = yarp::dev::PolyDriverList();
+                releaseDevicesInList(deviceScopedNames);
+                deviceScopedNames.resize(0);
+                return false;
+            }
+
+        }
+
+    }
+
+    return true;
+}
+
+
+void Handler::releaseDevicesInList(const std::vector<std::string>& deviceScopedNames)
+{
+    for (auto&& deviceScopedName: deviceScopedNames) {
+        removeDevice(deviceScopedName);
+    }
+    return;
+}
+
 
 }

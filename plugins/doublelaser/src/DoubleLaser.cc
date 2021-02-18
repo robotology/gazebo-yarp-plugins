@@ -261,7 +261,26 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         //Insert the pointer in the singleton handler for retrieving it in the yarp driver
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
-
+        
+        // 9) Register the device with the given name
+        if(!m_parameters.check("yarpDeviceName"))
+        {
+           yError()<<"GazeboYarpDoubleLaser: cannot find yarpDeviceName parameter in ini file.";
+           //return;
+        }
+        else
+        {
+            std::string robotName = _parent->GetScopedName();
+            std::string deviceId = m_parameters.find("yarpDeviceName").asString();
+            std::string scopedDeviceName = robotName + "::" + deviceId; 
+             
+            if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_driver_doublelaser))
+            {
+               yError()<<"GazeboYarpDoubleLaser: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+               return;
+            }
+            //yDebug() << "GazeboYarpDoubleLaser: register device:" << scopedDeviceName;
+        }
      }
 
 }

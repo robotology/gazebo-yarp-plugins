@@ -2,6 +2,12 @@
 <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
 <robot name="robotinterface_additional_controlboard_nws" prefix="robotinterface_additional_controlboard_nws">
   <devices>
+    <!-- This file contains a list of YARP devices that are spawned by the gazebo_yarp_robotinterface plugin.
+         Diffently from most uses of this XML files with the yarprobotinterface tool, in this case 
+         the devices that are created by the yarprobotinterface can be "attached" also to device 
+         that have not been created by the gazebo_yarp_robotinterface plugin, but YARP devices that have been 
+         created by other plugins, in this specific case a controlboardwrapper2 devices is attached to a 
+         YARP device created by the gazebo_yarp_controlboard plugin. -->
     <device name="additional_controlboard_nws" type="controlboardwrapper2">
       <param name="period"> 10 </param>
       <param name="name"> /pendulumGazebo/openedByTheRobotInterface</param>
@@ -11,9 +17,8 @@
       <param name="joints"> 1                        </param>
       <action phase="startup" level="5" type="attach">
         <paramlist name="networks">
-          <!-- This should match the yarpDeviceName in the .ini file loaded in the Gazebo plugin. -->
-          <!-- The yarpDeviceName plays the same role of the name attribute of the device XML element 
-               for devices that are created via the robotinterface XML format. -->
+          <!-- This should match the YARP device instance name specifiedin the .ini file loaded in the Gazebo plugin.
+               Chech the gazebo_yarp_robotinterface documentation for more details. -->
           <elem name="FirstSetOfJoints">  pendulum_controlboard </elem>
         </paramlist>
       </action>

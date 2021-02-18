@@ -40,3 +40,7 @@ add_subdirectory(contactloadcellarray)
 add_subdirectory(modelposepublisher)
 add_subdirectory(basestate)
 add_subdirectory(configurationoverride)
+
+if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
+  add_subdirectory(robotinterface)
+endif()

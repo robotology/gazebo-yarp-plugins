@@ -14,6 +14,11 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
   configuration. This generator enables the trajectory to follow a trapezoidal speed profile in position control mode, limited
   by provided reference speed (saturation) and acceleration (both ramps) values. If already executing a trajectory in this manner,
   newly generated trajectories take into account previous joint velocities and update the motion accordingly.
+- Add `gazebo_yarp_robotinterface` plugin, the documentation for it can be found at [plugins/robotinterface/README.md](plugins/robotinterface/README.md) (https://github.com/robotology/gazebo-yarp-plugins/pull/532).  
+- The `gazebo_yarp_depthcamera` and `gazebo_yarp_doublesensor` now accept a `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/532).
+
+### Changed 
+- The `deviceId` parameter of the `gazebo_yarp_lasersensor` is now named `yarpDeviceName` )https://github.com/robotology/gazebo-yarp-plugins/pull/532).
   
 ### Fixed
 - Fix the support for running Gazebo itself with the `gazebo_yarp_clock` with YARP_CLOCK set, without Gazebo freezing at startup.  

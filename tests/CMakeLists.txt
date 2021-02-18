@@ -35,6 +35,10 @@ add_test(NAME ControlBoardControlTest COMMAND ControlBoardControlTest)
 # Ensure that YARP devices can be found
 set_property(TEST ControlBoardControlTest PROPERTY ENVIRONMENT YARP_DATA_DIRS=${YARP_DATA_INSTALL_DIR_FULL})
 
+if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
+  add_subdirectory(robotinterface)
+endif()
+
 # Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/530
 if(NOT APPLE)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})

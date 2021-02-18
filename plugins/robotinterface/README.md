@@ -59,7 +59,9 @@ The file specified in `yarpRobotInterfaceConfigurationFile` is a XML file specif
 
 ### How to specify existing YARP devices to which to attach
 
-The main use of the `gazebo_yarp_robotinterface` plugin is to spawn YARP devices that are **attached** to YARP devices that have been already spawned by other `gazebo-yarp-plugins`. For this reason, it is necessary to have a way to specify to which YARP devices a device spawned by `gazebo_yarp_robotinterface` is attached, i.e. the values of each element in the `<paramlist name="networks">` list under the `<action phase="startup" level="5" type="attach">` element. In this content, we call this "device instance identified" as **YARP device instance name**, as for devices spawned by the XML of robotinterface, this is specified by the `name` attribute of the `device` tag. It is important not to confuse this with the **YARP device type name**, that is instead the name that identifies the type of plugin that is spawned, i.e. the `type` attribute of the `device` tag.
+The main use of the `gazebo_yarp_robotinterface` plugin is to spawn YARP devices that are **attached** to other devices that have been already spawned by other Gazebp plugins. For this reason, we need a way to specify to which target devices the devices created by robotinterface needs  to be attached.
+This is achieved by setting the elements in the `<paramlist name="networks">` list under the `<action phase="startup" level="5" type="attach">` XML element. 
+In this context, we call this "device instance identified" as **YARP device instance name**, as for devices created by the robotinterface, this is specified by the `name` attribute of the `device` XML tag. It is important not to confuse this with the **YARP device type name**, i.e. the name that identifies the type of plugin that is spawned, i.e. the `type` attribute of the `device` tag.
 
 The `gazebo_yarp_robotinterface` can be attached to any YARP device created by any plugin inside the model, or in any plugin  contained in any nested sensor or model. 
 

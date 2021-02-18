@@ -17,9 +17,13 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - Add `gazebo_yarp_robotinterface` plugin, the documentation for it can be found at [plugins/robotinterface/README.md](plugins/robotinterface/README.md) (https://github.com/robotology/gazebo-yarp-plugins/pull/532).  
 - The `gazebo_yarp_depthcamera` and `gazebo_yarp_doublesensor` now accept a `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/532).
 
-
 ### Changed 
 - The `deviceId` parameter of the `gazebo_yarp_lasersensor` is now named `yarpDeviceName` )https://github.com/robotology/gazebo-yarp-plugins/pull/532).
+  
+### Fixed
+- Fix the support for running Gazebo itself with the `gazebo_yarp_clock` with YARP_CLOCK set, without Gazebo freezing at startup.  
+  In particular, setting YARP_CLOCK is suggested to ensure that all the threads of YARP Network Wrapper Servers are executed with 
+  the frequency correctly synchronized with the Gazebo simulation (https://github.com/robotology/gazebo-yarp-plugins/pull/537).
 
 ## [3.5.1] - 2020-10-05
 

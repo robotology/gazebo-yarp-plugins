@@ -38,3 +38,10 @@ set_property(TEST ControlBoardControlTest PROPERTY ENVIRONMENT YARP_DATA_DIRS=${
 if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
   add_subdirectory(robotinterface)
 endif()
+
+# Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/530
+if(NOT APPLE)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+  include(Fetchtiny-process-library)
+  add_subdirectory(clock)
+endif()

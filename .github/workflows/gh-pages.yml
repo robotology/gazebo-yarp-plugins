@@ -60,8 +60,8 @@ jobs:
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.0.0
       env:
-        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: deploy
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: deploy
         
         

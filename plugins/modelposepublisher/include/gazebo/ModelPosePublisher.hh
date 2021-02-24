@@ -107,7 +107,7 @@ namespace gazebo
     ///
     /// This plugin __does not__ support [Gazebo nested models](http://gazebosim.org/tutorials?tut=nested_model&cat=build_robot)
     /// since the method `gazebo::physics::WorldPose()` does not work properly
-    /// with nested models (see [issue](https://bitbucket.org/osrf/gazebo/issues/2410/wrong-gazebo-physics-model-worldpose-for")).
+    /// with nested models (see [issue](https://github.com/osrf/gazebo/issues/2410")).
     ///
     class GazeboYarpModelPosePublisher : public ModelPlugin
     {

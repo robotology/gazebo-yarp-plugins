@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
-## [Unreleased]
+## [3.6.0] - 2021-02-24
 
 ### Added
 - Add `refSpeed` and `refAcceleration` options to the `TRAJECTORY_GENERATION` group of the `gazebo_yarp_controlboard` plugin

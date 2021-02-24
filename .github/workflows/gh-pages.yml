@@ -46,6 +46,7 @@ jobs:
         cd build 
         cmake ..
         make dox
+        ls -R ./doc
         cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/master
         # conda-distributed YARP for now is not compatible with devel
         # git checkout devel
@@ -53,6 +54,7 @@ jobs:
         # make dox
         # cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/devel
         # 
+        cd ${GITHUB_WORKSPACE}
         ls ./deploy
 
     - name: Deploy

@@ -49,7 +49,7 @@ var NAVTREE =
       [ "Use the gazebo-yarp-plugins as a C++ library using CMake", "use_as_library.html#autotoc_md14", null ]
     ] ],
     [ "Changelog", "md_CHANGELOG.html", [
-      [ "[Unreleased]", "md_CHANGELOG.html#autotoc_md16", [
+      [ "[3.6.0] - 2021-02-24", "md_CHANGELOG.html#autotoc_md16", [
         [ "Added", "md_CHANGELOG.html#autotoc_md17", null ],
         [ "Changed", "md_CHANGELOG.html#autotoc_md18", null ],
         [ "Fixed", "md_CHANGELOG.html#autotoc_md19", null ]

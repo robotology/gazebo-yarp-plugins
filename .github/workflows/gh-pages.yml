@@ -5,48 +5,58 @@ on:
     branches:
     - 'master'
     - 'test-gh-pages'
+    - 'devel'
 
 jobs:
-  docs:
-    name: "Deploy"
-    runs-on: ubuntu-latest
-
+  build:
+    runs-on: ubuntu-20.04    
     steps:
-      - uses: actions/checkout@master
-      - uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_GH_PAGES }}
-      - name: Dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y xsltproc doxygen doxygen-doc texlive ghostscript graphviz
+    - uses: actions/checkout@v1
+    - name: Print GitHub context
+      env:
+        GITHUB_EVENT: ${{ github.event_name }}
+        GITHUB_REF: ${{ github.ref }}
+      run: |
+        echo $GITHUB_EVENT $GITHUB_REF
 
-      - name: Check remote
-        run: git ls-remote --heads --exit-code https://github.com/${{ github.repository }}.git gh-pages
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
 
-      - name: Configure Git
-        run: |
-          git config --global push.default upstream
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+    - name: Dependencies [Conda]
+      shell: bash -l {0}
+      run: |
+        # Compilation related dependencies 
+        conda install -c conda-forge cmake compilers make ninja pkg-config
+        # Actual dependencies
+        conda install -c conda-forge gazebo
+        # robotology dependencies
+        conda install -c conda-forge -c robotology-staging yarp    
+    
+    - name: Generate Doxygen Website
+      shell: bash -l {0}
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        mkdir deploy
+        sudo apt-get install build-essential doxygen graphviz
+        cd ${GITHUB_WORKSPACE}
+        git clone https://github.com/robotology/gazebo-yarp-plugins
+        cd gazebo-yarp-plugins
+        mkdir build
+        cd build 
+        cmake ..
+        make dox
+        cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/master
+        git checkout devel
+        cmake ..
+        make dox
+        cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/devel
 
-      - name: Clone and rebase
-        run: |
-          cd ${GITHUB_WORKSPACE}
-          git clone git@github.com:${{ github.repository }}.git gh-pages
-          cd gh-pages
-          git checkout gh-pages
-          git rebase master
-
-      - name: Build Doxygen
-        run: |
-          cd ${GITHUB_WORKSPACE}/gh-pages/doxygen
-          rm -rf ./doc
-          doxygen ./Doxyfile
-
-      - name: Commit and push
-        run: |
-          cd ${GITHUB_WORKSPACE}/gh-pages
-          git add .
-          git commit --amend --no-edit
-          git push --force-with-lease
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@master
+      env:
+        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: deploy
+        
+        

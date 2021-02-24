@@ -47,10 +47,11 @@ jobs:
         cmake ..
         make dox
         cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/master
-        git checkout devel
-        cmake ..
-        make dox
-        cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/devel
+        # conda-distributed YARP for now is not compatible with devel
+        # git checkout devel
+        # cmake ..
+        # make dox
+        # cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/devel
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@master

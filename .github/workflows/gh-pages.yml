@@ -1,0 +1,66 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+    - 'master'
+    - 'devel'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Print GitHub context
+      env:
+        GITHUB_EVENT: ${{ github.event_name }}
+        GITHUB_REF: ${{ github.ref }}
+      run: |
+        echo $GITHUB_EVENT $GITHUB_REF
+
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+
+    - name: Dependencies [Conda]
+      shell: bash -l {0}
+      run: |
+        # Compilation related dependencies 
+        conda install -c conda-forge cmake compilers make ninja pkg-config
+        # Actual dependencies
+        conda install -c conda-forge gazebo doxygen
+        # robotology dependencies
+        conda install -c conda-forge -c robotology-staging yarp    
+    
+    - name: Generate Doxygen Website
+      shell: bash -l {0}
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        mkdir deploy
+        sudo apt-get install build-essential doxygen graphviz
+        cd ${GITHUB_WORKSPACE}
+        git clone https://github.com/robotology/gazebo-yarp-plugins
+        cd gazebo-yarp-plugins
+        mkdir build
+        cd build 
+        cmake ..
+        make dox
+        ls -R ./doc
+        cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/master
+        # conda-distributed YARP for now is not compatible with devel
+        # git checkout devel
+        # cmake ..
+        # make dox
+        # cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/devel
+        # 
+        cd ${GITHUB_WORKSPACE}
+        ls ./deploy
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.0.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: deploy
+        
+        

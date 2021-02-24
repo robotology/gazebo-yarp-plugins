@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['couplingtype_1708',['CouplingType',['../namespaceyarp_1_1dev.html#af38dbcff8a590ac1cf5694b1aaeb498a',1,'yarp::dev']]]
+  ['couplingtype_1705',['CouplingType',['../namespaceyarp_1_1dev.html#af38dbcff8a590ac1cf5694b1aaeb498a',1,'yarp::dev']]]
 ];

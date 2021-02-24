@@ -96,15 +96,13 @@ $(document).ready(function(){initNavTree('install.html',''); initResizable(); })
 <div class="textblock"><p><a class="anchor" id="md_doc_install"></a></p>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Downloading and Installing gazebo-yarp-plugins</h1>
-<p>Please note that only Linux and macOS are currently supported by Gazebo, and hence by the <code>gazebo-yarp-plugins</code>.</p>
 <h3><a class="anchor" id="autotoc_md6"></a>
 Dependencies</h3>
 <p>For using YARP with Gazebo, you shall install:</p><ul>
 <li>Gazebo simulator and its header files (at least version 7), following the <a href="http://gazebosim.org/tutorials?cat=install">instructions on the official Gazebo website</a>. If you are on Debian or Ubuntu, remember to install the header files for Gazebo, that are contained in the <code>libgazebo*-dev</code> package.</li>
-<li>YARP (at least version 2.3.70, i.e. the version available in the master branch of the yarp repository) following the <a href="hhttp://www.yarp.it/install.html">instructions on the YARP documentation</a>.</li>
+<li>YARP following the <a href="hhttp://www.yarp.it/install.html">instructions on the YARP documentation</a>.</li>
 </ul>
 <p><b>Gazebo is under active development, so it is recommended to use the latest released version of Gazebo.</b></p>
-<p><b>If you are a user of the YARP <code>devel</code> branch, you should use the <code>devel</code> branch of <code>gazebo-yarp-plugins</code>.</b></p>
 <p><em>You could prefer to run an older version of Gazebo if you want to use it with ROS integration. Depending on your ROS version you have to stick to a given Gazebo version.</em> <em>YARP integration provided by gazebo-yarp-plugins is not affected by this kind of limitations.</em></p>
 <h3><a class="anchor" id="autotoc_md7"></a>
 Compilation</h3>
@@ -112,15 +110,15 @@ Compilation</h3>
 </div><!-- fragment --><p> This will create a gazebo-yarp-plugins directory with all the source code. You can enter this directory: </p><div class="fragment"><div class="line">cd gazebo-yarp-plugins</div>
 </div><!-- fragment --><p> You can then create a build directory inside it to hold all the compiled files: </p><div class="fragment"><div class="line">mkdir build</div>
 </div><!-- fragment --><p> You can use CMake to generate the necessary file for the compilation, and compile gazebo-yarp-plugins using make. The plugins should be install in the directory specified by <code>CMAKE_INSTALL_PREFIX</code> (by default <code>/usr/local</code>): </p><div class="fragment"><div class="line">cd build</div>
-<div class="line">cmake ../ -DCMAKE_INSTALL_PREFIX=/path/to/the/install/folder</div>
-<div class="line">make install</div>
+<div class="line">cmake -DCMAKE_BUILD_TYPE=&quot;Release &quot;../ -DCMAKE_INSTALL_PREFIX=/path/to/the/install/folder</div>
+<div class="line">cmake --config Release --build . --target install</div>
 </div><!-- fragment --><p>To notify Gazebo of the new plugins compiled, it is necessary to modify the GAZEBO_PLUGIN_PATH environment variable: </p><div class="fragment"><div class="line">export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:/path/to/the/install/folder/lib</div>
 </div><!-- fragment --><p> where <code>/path/to/the/install/folder/lib</code> is the directory containing the <code>libgazebo_yarp_controlboard.so</code>, <code>libgazebo_yarp_forcetorque.so</code>... files.</p>
 <p>To avoid having to modify this environment variable each time, you can place this command in the <code>.bashrc</code> file in your home directory.</p>
 <h3><a class="anchor" id="autotoc_md8"></a>
 Usage</h3>
 <p>To use the gazebo-yarp-plugins you can try to use a YARP-enabled Gazebo model of a robot. You can use a robot model already equipped for simulating its YARP-interfaces, such as:</p><ul>
-<li>The iCub model, available at <a href="https://github.com/robotology/icub-gazebo">https://github.com/robotology/icub-gazebo</a> .</li>
+<li>The iCub models, available at <a href="https://github.com/robotology/icub-models">https://github.com/robotology/icub-models</a> .</li>
 <li>The Coman model, available at <a href="https://github.com/ADVRHumanoids/iit-coman-ros-pkg">https://github.com/ADVRHumanoids/iit-coman-ros-pkg</a> .</li>
 <li>The Vizzy model, available at <a href="https://github.com/vislab-tecnico-lisboa/vizzy">https://github.com/vislab-tecnico-lisboa/vizzy</a> .</li>
 </ul>
@@ -131,7 +129,7 @@ Usage</h3>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Feb 24 2021 10:06:42 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Feb 24 2021 12:25:29 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

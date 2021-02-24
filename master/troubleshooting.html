@@ -94,25 +94,20 @@ $(document).ready(function(){initNavTree('troubleshooting.html',''); initResizab
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_doc_troubleshooting"></a></p>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="autotoc_md11"></a>
 Troubleshooting</h1>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md12"></a>
 General</h2>
 <ul>
-<li>If gazebo-yarp-plugins does not compile complaning about an -fPIC option missing, check that you compiled yarp with shared library option enabled.</li>
-<li>If Gazebo complains about not finding the libgazebo_yarp_*.so files, check if you properly defined the GAZEBO_PLUGIN_PATH enviroment variable.</li>
-<li>If Gazebo complains that a yarp server is not available, remember to launch a yarp server on your machine (i.e. open a new terminal a launch the yarpserver command).</li>
-<li>If the simulation run slowly, check that you are using the latest graphics driver available for your platform. If you a running a recent Ubuntu version (13.10 or 14.04) you can try (at your own risk) to use the drivers provided by the <a href="https://launchpad.net/~oibaf/+archive/graphics-drivers">oibaf PPA</a>.</li>
+<li>If gazebo-yarp-plugins does not compile complaning about an <code>-fPIC</code> option missing, check that you compiled yarp with shared library option enabled.</li>
+<li>If Gazebo complains about not finding the <code>libgazebo_yarp_*.so</code> files, check if you properly defined the <code>GAZEBO_PLUGIN_PATH</code> enviroment variable.</li>
+<li>If Gazebo complains that a yarp server is not available, remember to launch a <code>yarpserver</code> on your machine (i.e. open a new terminal a launch the <code>yarpserver</code> command).</li>
 <li>If Gazebo crashes without any error message while loading a model using gazebo-yarp-plugins, you have issue with shared library linking. Probably gazebo-yarp-plugins is linked against a manually installed library (for example boost), while the gazebo binary is linking against the system version of the same library. For more information read <a href="https://github.com/robotology/gazebo-yarp-plugins/issues/71">issue 71 discussion</a> or file <a href="https://github.com/robotology/gazebo-yarp-plugins/issues/new">a new issue</a> to get help from the developers.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md15"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 Old Gazebo Versions</h2>
 <ul>
-<li>All the plugins compile fine on the latest version of Gazebo, but for some plugins compilation is disabled for old versions of Gazebo, see <a href="plugins/CMakeLists.txt">plugins/CMakeLists.txt</a>.</li>
-<li>In versions of Gazebo prior to 7.2 there is a bug related to the use of Reset World with <code>gazebo-yarp-plugins</code> powered models. For more informations check <a href="https://github.com/robotology/gazebo-yarp-plugins/issues/92">issue 92</a> .</li>
-<li>In versions of Gazebo prior to 4.1 there is a bug affecting the use of <code>gazebo-yarp-plugins</code> powered model with <code>roslaunch</code> . For more informations check <a href="https://github.com/robotology/gazebo-yarp-plugins/issues/123">issue 123</a> .</li>
-<li>In versions of Gazebo prior to 3.1 there is a bug related to the coordinates frame of the six axis force torque sensor measure, so you have to handle with care the force torque measurement returned by the <code>gazebo_yarp_forcetorque</code> plugin. For more informations check <a href="https://github.com/robotology/gazebo-yarp-plugins/issues/73">issue 73</a>.</li>
-<li>In versions of Gazebo prior to 3.0 there is a bug related to the integral part of the low-level position controller. If you are using Gazebo 1.9 or 2.2 then the low level position control will excert no integral action on the model. If you want to get more informations on this bug, please check <a href="https://github.com/robotology/gazebo-yarp-plugins/issues/119">issue 119</a> and <a href="https://bitbucket.org/osrf/gazebo/issue/1082/jointcontroller-does-not-handle-correctly">Gazebo issue 1082</a>. </li>
+<li>All the plugins compile fine on the latest version of Gazebo, but for some plugins compilation is disabled for old versions of Gazebo, see <a href="plugins/CMakeLists.txt">plugins/CMakeLists.txt</a>. </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -120,7 +115,7 @@ Old Gazebo Versions</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Feb 24 2021 10:06:42 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Feb 24 2021 12:25:29 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

@@ -1,0 +1,4 @@
+<map id="gazebo::GazeboYarpLaserSensor" name="gazebo::GazeboYarpLaserSensor">
+<area shape="rect" id="node1" title="Gazebo Plugin emulating the yarp device exposing a 6 axis force&#45;torque sensor." alt="" coords="5,80,237,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="68,5,175,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="gazebo::GazeboYarpMaisSensor" name="gazebo::GazeboYarpMaisSensor">
+<area shape="rect" id="node1" title="Gazebo Plugin emulating the yarp mais sensor (IAnalogSensor) in Gazebo." alt="" coords="5,80,233,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="68,5,171,32"/>
+</map>

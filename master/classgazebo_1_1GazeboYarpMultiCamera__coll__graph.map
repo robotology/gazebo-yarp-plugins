@@ -1,0 +1,5 @@
+<map id="gazebo::GazeboYarpMultiCamera" name="gazebo::GazeboYarpMultiCamera">
+<area shape="rect" id="node1" title="Gazebo Plugin reading from the Gazebo MultiCamera plugin." alt="" coords="5,155,243,181"/>
+<area shape="rect" id="node2" href="$classgazebo_1_1MultiCameraPlugin.html" title=" " alt="" coords="23,80,225,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="71,5,177,32"/>
+</map>

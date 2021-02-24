@@ -1,6 +1,0 @@
-include/Pose.h
-src/Pose.cpp
-include/Color.h
-src/Color.cpp
-include/WorldInterfaceServer.h
-src/WorldInterfaceServer.cpp

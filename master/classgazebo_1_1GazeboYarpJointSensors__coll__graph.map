@@ -1,0 +1,4 @@
+<map id="gazebo::GazeboYarpJointSensors" name="gazebo::GazeboYarpJointSensors">
+<area shape="rect" id="node1" title="Gazebo plugin that creates a yarp streaming sensors (IAnalogSensor) for streaming joint sensor measur..." alt="" coords="5,80,239,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="71,5,173,32"/>
+</map>

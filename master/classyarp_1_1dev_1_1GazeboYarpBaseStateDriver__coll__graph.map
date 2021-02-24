@@ -1,0 +1,6 @@
+<map id="yarp::dev::GazeboYarpBaseStateDriver" name="yarp::dev::GazeboYarpBaseStateDriver">
+<area shape="rect" id="node1" title="YARP device driver to give the gazebo state information of a desired base link of the robot The state..." alt="" coords="200,80,399,121"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,188,32"/>
+<area shape="rect" id="node3" title=" " alt="" coords="212,5,387,32"/>
+<area shape="rect" id="node4" title=" " alt="" coords="411,5,606,32"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,107,112,133"/>
+<area shape="rect" id="node2" href="$classgazebo_1_1GazeboYarpForceTorque.html" title="Gazebo Plugin emulating the yarp device exposing a 6 axis force&#45;torque sensor." alt="" coords="161,5,391,32"/>
+<area shape="rect" id="node3" href="$classgazebo_1_1GazeboYarpIMU.html" title="Gazebo Plugin emulating the yarp imu device in Gazebo." alt="" coords="187,56,365,83"/>
+<area shape="rect" id="node4" href="$classgazebo_1_1GazeboYarpInertialMTB.html" title="Gazebo Plugin for the emulation of the yarp inertial MTB device in Gazebo." alt="" coords="162,107,390,133"/>
+<area shape="rect" id="node5" href="$classgazebo_1_1GazeboYarpLaserSensor.html" title="Gazebo Plugin emulating the yarp device exposing a 6 axis force&#45;torque sensor." alt="" coords="160,157,392,184"/>
+<area shape="rect" id="node6" href="$classgazebo_1_1MultiCameraPlugin.html" title=" " alt="" coords="175,208,377,235"/>
+<area shape="rect" id="node7" href="$classgazebo_1_1GazeboYarpMultiCamera.html" title="Gazebo Plugin reading from the Gazebo MultiCamera plugin." alt="" coords="440,208,677,235"/>
+</map>

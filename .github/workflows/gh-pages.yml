@@ -52,6 +52,8 @@ jobs:
         # cmake ..
         # make dox
         # cp -r ./doc/html ${GITHUB_WORKSPACE}/deploy/devel
+        # 
+        ls ./deploy
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@master

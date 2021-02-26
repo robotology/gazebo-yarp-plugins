@@ -7,15 +7,15 @@ is to provide the exact same interfaces that can be found in real world YARP-pow
 robot in the Gazebo simulation, to ensure that YARP-based software can run with no modifications
 both in simulation and on the real robots.
 
-For installing and using the plugins, check the [main page of the documentation](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/).
+For installing and using the plugins, check the [main page of the documentation](http://robotology.github.io/gazebo-yarp-plugins/master/).
 
 Quick start
 -----------
-* [Downloading and Installing gazebo-yarp-plugins](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/install.html)
-* [Use the gazebo-yarp-plugins in Gazebo Models](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/embed_plugins.html)
-* [Use the gazebo-yarp-plugins as a C++ library using CMake](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/use_as_library.html)
-* [Troubleshooting](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/troubleshooting.html)
-* [Contributing](http://robotology.gitlab.io/docs/gazebo-yarp-plugins/master/contributing.html)
+* [Downloading and Installing gazebo-yarp-plugins](http://robotology.github.io/gazebo-yarp-plugins/master/install.html)
+* [Use the gazebo-yarp-plugins in Gazebo Models](http://robotology.github.io/gazebo-yarp-plugins/master/embed_plugins.html)
+* [Use the gazebo-yarp-plugins as a C++ library using CMake](http://robotology.github.io/gazebo-yarp-plugins/master/use_as_library.html)
+* [Troubleshooting](http://robotology.github.io/gazebo-yarp-plugins/master/troubleshooting.html)
+* [Contributing](http://robotology.github.io/gazebo-yarp-plugins/contributing.html)
 
 Maintainers
 --------------

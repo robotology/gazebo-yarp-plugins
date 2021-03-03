@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a85df3c8ac8c17d8d573dd972542cc44c":[16,0,1,20,4],
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#aa7a1854b794a325af6942b18a503e0ba":[16,0,1,20,9],
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#aa9cc0a77970d7ac728ded8391f09b5bc":[16,0,1,20,5],
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#acd01484ed045076b1a8a61b9ca403064":[16,0,1,20,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "classTrapezoidalSpeedTrajectoryGenerator.html#a1b45517551295745d63c2e04d87ed798":[16,0,23,0],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a2b76016397d90b14ab8999deb06d2789":[16,0,23,2],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a2ef785325913b45cbcd25afe92b42c17":[16,0,23,14],
-"classTrapezoidalSpeedTrajectoryGenerator.html#a481ba208ebe1284bdae358bc21d59809":[16,0,23,19],
-"classTrapezoidalSpeedTrajectoryGenerator.html#a49b14cd83fbeefc76e70f7e58f2e4a50":[16,0,23,17]
+"classTrapezoidalSpeedTrajectoryGenerator.html#a481ba208ebe1284bdae358bc21d59809":[16,0,23,19]
 };

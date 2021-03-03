@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"classTrapezoidalSpeedTrajectoryGenerator.html#a49b14cd83fbeefc76e70f7e58f2e4a50":[16,0,23,17],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a584f48f9a5e2470ddbf4fd0ceafdd74c":[16,0,23,6],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a5b0dc625bc64c35304ce2bf613997d5e":[16,0,23,9],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a6d4b4a06a5d4b2f0b8df44b27a71bd8f":[16,0,23,12],
@@ -35,8 +36,8 @@ var NAVTREEINDEX4 =
 "classWorldInterfaceServerImpl.html#a8d480b6b5221b6b7d2de3db046eba07e":[16,0,25,5],
 "classWorldInterfaceServerImpl.html#aa022c38d17c01f8c0db23d4c938b5723":[16,0,25,11],
 "classWorldInterfaceServerImpl.html#ab503f5d255670459c7ac397681363f54":[16,0,25,20],
-"classWorldInterfaceServerImpl.html#ab6d5b31c3a45ed6e474650bfd686adbc":[16,0,25,23],
 "classWorldInterfaceServerImpl.html#ab6d5b31c3a45ed6e474650bfd686adbc":[16,0,25,22],
+"classWorldInterfaceServerImpl.html#ab6d5b31c3a45ed6e474650bfd686adbc":[16,0,25,23],
 "classWorldInterfaceServerImpl.html#ac3800d3f203890c80b3e6a9376fdad2e":[16,0,25,10],
 "classWorldInterfaceServerImpl.html#ac9211daba2d9eb4a795529b74bb22de3":[16,0,25,14],
 "classWorldInterfaceServerImpl.html#ad51f8f722fa521115e56c85195362137":[16,0,25,3],
@@ -70,8 +71,8 @@ var NAVTREEINDEX4 =
 "classWorldProxy.html#aa68707099594ae97ff074a0c02c8ca26":[16,0,26,25],
 "classWorldProxy.html#ab503f5d255670459c7ac397681363f54":[16,0,26,29],
 "classWorldProxy.html#ab6bec0f5d81eb78b5cf6488aed1aa421":[16,0,26,9],
-"classWorldProxy.html#ab6d5b31c3a45ed6e474650bfd686adbc":[16,0,26,31],
 "classWorldProxy.html#ab6d5b31c3a45ed6e474650bfd686adbc":[16,0,26,32],
+"classWorldProxy.html#ab6d5b31c3a45ed6e474650bfd686adbc":[16,0,26,31],
 "classWorldProxy.html#abc2151bd82e950c371bc430665382bfa":[16,0,26,27],
 "classWorldProxy.html#acca72ed5a01c7dc3012d45f82fdc6392":[16,0,26,26],
 "classWorldProxy.html#ad5c39b7916b56d774c085688f98fff5f":[16,0,26,22],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#aa7196ae19fbb8321440dd6c3c82f7faf":[16,0,2,0,1,6],
 "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#acd7cb1615462b210ea023b5b228f55fd":[16,0,2,0,1,0],
 "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ace750b440cf107817723eb5215828edc":[16,0,2,0,1,2],
-"classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ad7b7a6714afc0540a9b5c39c51a15bd1":[16,0,2,0,1,3],
-"classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ae017c821aa90c215b396be692746d25f":[16,0,2,0,1,8]
+"classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ad7b7a6714afc0540a9b5c39c51a15bd1":[16,0,2,0,1,3]
 };

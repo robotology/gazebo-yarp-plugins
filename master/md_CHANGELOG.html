@@ -96,8 +96,15 @@ $(document).ready(function(){initNavTree('md_CHANGELOG.html',''); initResizable(
 <div class="textblock"><p>All notable changes to this project will be documented in this file.</p>
 <p>The format of this document is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>.</p>
 <h1><a class="anchor" id="autotoc_md16"></a>
-[3.6.0] - 2021-02-24</h1>
+[Unreleased]</h1>
 <h2><a class="anchor" id="autotoc_md17"></a>
+Fixed</h2>
+<ul>
+<li>Fixed use of libYARP_robotinterface with YARP devices spawned by sensor plugins (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/544">https://github.com/robotology/gazebo-yarp-plugins/pull/544</a>).</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md18"></a>
+[3.6.0] - 2021-02-24</h1>
+<h2><a class="anchor" id="autotoc_md19"></a>
 Added</h2>
 <ul>
 <li>Add <code>refSpeed</code> and <code>refAcceleration</code> options to the <code>TRAJECTORY_GENERATION</code> group of the <code>gazebo_yarp_controlboard</code> plugin configuration. They are expected to hold exactly n_joints values (an error is reported otherwise) describing reference speeds and accelerations, respectively, for use by the selected trajectory generator (if necessary).</li>
@@ -106,33 +113,33 @@ Added</h2>
 </li>
 <li>The <code>gazebo_yarp_depthcamera</code> and <code>gazebo_yarp_doublesensor</code> now accept a <code>yarpDeviceName</code> parameter (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/532">https://github.com/robotology/gazebo-yarp-plugins/pull/532</a>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md20"></a>
 Changed</h2>
 <ul>
 <li>The <code>deviceId</code> parameter of the <code>gazebo_yarp_lasersensor</code> is now named <code>yarpDeviceName</code> )<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/532">https://github.com/robotology/gazebo-yarp-plugins/pull/532</a>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md19"></a>
+<h2><a class="anchor" id="autotoc_md21"></a>
 Fixed</h2>
 <ul>
 <li>Fix the support for running Gazebo itself with the <code>gazebo_yarp_clock</code> with YARP_CLOCK set, without Gazebo freezing at startup. <br  />
  In particular, setting YARP_CLOCK is suggested to ensure that all the threads of YARP Network Wrapper Servers are executed with the frequency correctly synchronized with the Gazebo simulation (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/537">https://github.com/robotology/gazebo-yarp-plugins/pull/537</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md22"></a>
 [3.5.1] - 2020-10-05</h1>
-<h2><a class="anchor" id="autotoc_md21"></a>
+<h2><a class="anchor" id="autotoc_md23"></a>
 Added</h2>
 <ul>
 <li>Add <code>velocityControlImplementationType</code> option to the <code>VELOCITY_CONTROL</code> group of the <code>gazebo_yarp_controlboard</code> plugin configuration. This option permits to switch between <code>direct_velocity_pid</code>, that is using a velocity PID for the Velocity Control Mode (what has been implemented until now) and <code>integrator_and_position_pid</code> that uses an integrator that integrates the velocity reference and then uses the position low level PID, similarly to what is implement on real YARP-powered robot such as iCub or R1. The setting is now optional and if not present will default to <code>direct_velocity_pid</code>, but it will be compulsory in gazebo-yarp-plugins 4.x (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/514">https://github.com/robotology/gazebo-yarp-plugins/pull/514</a>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md22"></a>
+<h2><a class="anchor" id="autotoc_md24"></a>
 Fixed</h2>
 <ul>
 <li>Fixed use of the <code>VOCAB_CM_MIXED</code> control mode when the physics timestep is different from 1 millisecond (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/514">https://github.com/robotology/gazebo-yarp-plugins/pull/514</a>).</li>
 <li>Fixed missing initialization of a pointer in <code>gazebo_yarp_controlboard</code> . In some cases this was causing crashes when a model that contained a <code>gazebo_yarp_controlboard</code> plugin was removed from the simulation (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/514">https://github.com/robotology/gazebo-yarp-plugins/pull/514</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md23"></a>
+<h1><a class="anchor" id="autotoc_md25"></a>
 [3.5.0] - 2020-08-26</h1>
-<h2><a class="anchor" id="autotoc_md24"></a>
+<h2><a class="anchor" id="autotoc_md26"></a>
 Added</h2>
 <ul>
 <li>Add the implementation to import models in the gazebo world in two configuration. First, load it directly with the pose in the sdf-file or second, load it with a given pose. (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/467">https://github.com/robotology/gazebo-yarp-plugins/pull/467</a>)</li>
@@ -140,7 +147,7 @@ Added</h2>
 <li>Add the possibility to define initial configuration for <code>linkattacher</code> plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/497">https://github.com/robotology/gazebo-yarp-plugins/pull/497</a>)</li>
 <li>Add the possibility to specify limits for coupled joints for <code>gazebo_yarp_controlboard</code> plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/499">https://github.com/robotology/gazebo-yarp-plugins/pull/499</a>)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md25"></a>
+<h2><a class="anchor" id="autotoc_md27"></a>
 Fixed</h2>
 <ul>
 <li>Fixed empty string return for creation of the cylinder object. (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/467">https://github.com/robotology/gazebo-yarp-plugins/pull/467</a>)</li>
@@ -149,65 +156,65 @@ Fixed</h2>
 <li>Fixed mismatched behavior, with respect to the real robot, of coupling handler <a class="el" href="classFingersAbductionCouplingHandler.html">FingersAbductionCouplingHandler</a> in 'gazebo_yarp_controlboard' plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/499">https://github.com/robotology/gazebo-yarp-plugins/pull/499</a>)</li>
 <li>Fixed mismatched behavior, with respect to the real robot, of mais analog sensors in 'gazebo_yarp_maissensor' plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/500">https://github.com/robotology/gazebo-yarp-plugins/pull/500</a>)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md26"></a>
+<h1><a class="anchor" id="autotoc_md28"></a>
 [3.4.2] - 2020-08-25</h1>
-<h2><a class="anchor" id="autotoc_md27"></a>
+<h2><a class="anchor" id="autotoc_md29"></a>
 Fixed</h2>
 <ul>
 <li>Removed Windows end of lines (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/507">https://github.com/robotology/gazebo-yarp-plugins/pull/507</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 [3.4.1] - 2020-08-24</h1>
-<h2><a class="anchor" id="autotoc_md29"></a>
+<h2><a class="anchor" id="autotoc_md31"></a>
 Fixed</h2>
 <ul>
 <li>Fixed compilation with Boost 1.73 (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/505">https://github.com/robotology/gazebo-yarp-plugins/pull/505</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md30"></a>
+<h1><a class="anchor" id="autotoc_md32"></a>
 [3.4.0] - 2020-05-19</h1>
-<h2><a class="anchor" id="autotoc_md31"></a>
+<h2><a class="anchor" id="autotoc_md33"></a>
 Added</h2>
 <ul>
 <li>Add the possibility to create different types of joints with the <code>linkattacher</code> plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/461">https://github.com/robotology/gazebo-yarp-plugins/pull/461</a>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md32"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 Fixed</h2>
 <ul>
 <li>Fixed initialization of the local simulation time from Gazebo simTime on first call of onUpdate (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/478">https://github.com/robotology/gazebo-yarp-plugins/pull/478</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md33"></a>
+<h1><a class="anchor" id="autotoc_md35"></a>
 [3.3.2] - 2020-05-08</h1>
 <ul>
 <li>Fix linking on MSVC when not using the vcpkg's CMAKE_TOOLCHAIN_FILE (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/483">https://github.com/robotology/gazebo-yarp-plugins/pull/483</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md34"></a>
+<h1><a class="anchor" id="autotoc_md36"></a>
 [3.3.1] - 2020-03-05</h1>
-<h2><a class="anchor" id="autotoc_md35"></a>
+<h2><a class="anchor" id="autotoc_md37"></a>
 Fixed</h2>
 <ul>
 <li>Solve the problem of setting the interaction mode when the mode of actuator has been already set on the same requested interaction mode (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/464">https://github.com/robotology/gazebo-yarp-plugins/pull/464</a>).</li>
 <li>Fix implementation of <code>yarp::dev::IPositionControl::relativeMove</code> in <code>gazebo_yarp_controlboard</code> (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/466">https://github.com/robotology/gazebo-yarp-plugins/pull/466</a>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md36"></a>
+<h1><a class="anchor" id="autotoc_md38"></a>
 [3.3.0] - 2019-12-13</h1>
-<h2><a class="anchor" id="autotoc_md37"></a>
+<h2><a class="anchor" id="autotoc_md39"></a>
 Added</h2>
 <ul>
 <li>Add the usage of <code>MultipleAnalogInterfaces</code>(<a href="https://www.yarp.it/group__dev__iface__multiple__analog.html">https://www.yarp.it/group__dev__iface__multiple__analog.html</a>) in the <code>gazebo_yarp_imu</code>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="autotoc_md40"></a>
 Fixed</h2>
 <ul>
 <li>Fixed compilation on Gazebo 7 by disabling compilation of <code>externalwrench</code> plugin if the project is configured with Gazebo 7 (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/434">https://github.com/robotology/gazebo-yarp-plugins/pull/434</a>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="autotoc_md41"></a>
 Removed</h2>
 <ul>
 <li>Support for YARP &lt;= 3.2 was removed. This release requires the use of YARP 3.3 .</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md40"></a>
+<h1><a class="anchor" id="autotoc_md42"></a>
 [3.2.0] - 2019-07-01</h1>
-<h2><a class="anchor" id="autotoc_md41"></a>
+<h2><a class="anchor" id="autotoc_md43"></a>
 Added</h2>
 <ul>
 <li>Add <code>resetSimulation</code> method to reset simulation state and time time, in the <code>gazebo_yarp_clock</code> RPC interface (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/345">https://github.com/robotology/gazebo-yarp-plugins/pull/345</a>).</li>
@@ -218,7 +225,7 @@ Added</h2>
 <li>Add the <code>yarpConfigurationString</code> to configure the YARP plugins with a single <code>yarpConfigurationString</code> embedded in the SDF code of the plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/396">https://github.com/robotology/gazebo-yarp-plugins/pull/396</a>).</li>
 <li>Add a ChangeLog document based on the format defined in <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md42"></a>
+<h2><a class="anchor" id="autotoc_md44"></a>
 Fixed</h2>
 <ul>
 <li>Fix invalid camera parameters in <code>gazebo_depthCamera</code> plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/408">https://github.com/robotology/gazebo-yarp-plugins/pull/408</a>). </li>
@@ -229,7 +236,7 @@ Fixed</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Feb 26 2021 17:02:53 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Mar 3 2021 18:50:21 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

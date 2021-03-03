@@ -12,6 +12,7 @@ var classGazeboYarpPlugins_1_1Handler =
     [ "setDevice", "classGazeboYarpPlugins_1_1Handler.html#ae7cd9fd26f5786e9379edb8f369adf2e", null ],
     [ "getDevice", "classGazeboYarpPlugins_1_1Handler.html#a96b94049a9f7d0172c7cd30bfabfb527", null ],
     [ "removeDevice", "classGazeboYarpPlugins_1_1Handler.html#a05d86dda2f17b7fa2ca62866c8e004db", null ],
+    [ "getDevicesAsPolyDriverList", "classGazeboYarpPlugins_1_1Handler.html#ae9970e9d99832def1a283f9c3a5c2ee7", null ],
     [ "getDevicesAsPolyDriverList", "classGazeboYarpPlugins_1_1Handler.html#a04788d977a2b364dd25843085266e9df", null ],
     [ "releaseDevicesInList", "classGazeboYarpPlugins_1_1Handler.html#a25da9ddcfbb6a7c7b65a5c05d124615f", null ]
 ];

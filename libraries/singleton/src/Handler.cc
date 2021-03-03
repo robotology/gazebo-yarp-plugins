@@ -236,8 +236,15 @@ inline bool startsWith(const std::string&completeString,
     // https://stackoverflow.com/a/40441240
     return (completeString.rfind(candidatePrefix, 0) == 0);
 } 
+    
+bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, 
+                                         std::vector<std::string>& deviceScopedNames)
+{
+    return getDevicesAsPolyDriverList(modelScopedName, list, deviceScopedNames, "default");
+}
 
-bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, std::vector<std::string>& deviceScopedNames)
+bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, 
+                                         std::vector<std::string>& deviceScopedNames, const std::string& worldName)
 {
     deviceScopedNames.resize(0);
 
@@ -252,9 +259,10 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
 
         std::string yarpDeviceName;
         
-        // If the deviceDatabaseKey starts with the modelScopedName, then it is eligible for insertion
+        // If the deviceDatabaseKey starts with the modelScopedName (device spawned by model plugins), 
+        // or by  worldName + "::" + modelScopedName (device spawned by sensor plugins) then it is eligible for insertion
         // in the returned list
-        if (startsWith(deviceDatabaseKey, modelScopedName)) {
+        if (startsWith(deviceDatabaseKey, modelScopedName) || startsWith(deviceDatabaseKey, worldName + "::" + modelScopedName)) {
             // Extract yarpDeviceName from deviceDatabaseKey
             yarpDeviceName = deviceDatabaseKey.substr(deviceDatabaseKey.find_last_of(":")+1);
 

@@ -9,6 +9,7 @@
 #include <GazeboYarpPlugins/common.h>
 
 #include <gazebo/physics/Model.hh>
+#include <gazebo/physics/World.hh>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
@@ -86,7 +87,8 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
 
     // Extract externalDriverList of  devices from the one that have been already opened in the Gazebo model by other gazebo_yarp plugins 
     yarp::dev::PolyDriverList externalDriverList;
-    GazeboYarpPlugins::Handler::getHandler()->getDevicesAsPolyDriverList(_parentModel->GetScopedName(), externalDriverList, m_deviceScopedNames);
+    GazeboYarpPlugins::Handler::getHandler()->getDevicesAsPolyDriverList(_parentModel->GetScopedName(), externalDriverList, 
+                                                                         m_deviceScopedNames, _parentModel->GetWorld()->Name());
 
     // Set external devices from the one that have been already opened in the Gazebo model by other gazebo_yarp plugins 
     bool ok = m_xmlRobotInterfaceResult.robot.setExternalDevices(externalDriverList);

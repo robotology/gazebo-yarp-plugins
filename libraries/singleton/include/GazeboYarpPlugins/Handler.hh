@@ -145,7 +145,11 @@ public:
      * If after removing the scope two devices have the same yarpDeviceName, the getModelDevicesAsPolyDriverList
      * prints an error and returns false, while true is returned if everything works as expected.
      */
+    bool getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, std::vector<std::string>& deviceScopedNames, const std::string& worldName);
+    
+    // Deprecated variant of getDevicesAsPolyDriverList
     bool getDevicesAsPolyDriverList(const std::string& modelScopedName, yarp::dev::PolyDriverList& list, std::vector<std::string>& deviceScopedNames);
+
     
     /** 
      * \brief Decrease the usage count for the devices that are acquired with the getDevicesAsPolyDriverList

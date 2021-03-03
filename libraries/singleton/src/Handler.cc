@@ -252,9 +252,10 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
 
         std::string yarpDeviceName;
         
-        // If the deviceDatabaseKey starts with the modelScopedName, then it is eligible for insertion
+        // If the deviceDatabaseKey starts with the modelScopedName (device spawned by model plugins), 
+        // or by  "default::" + modelScopedName (device spawned by sensor plugins) then it is eligible for insertion
         // in the returned list
-        if (startsWith(deviceDatabaseKey, modelScopedName)) {
+        if (startsWith(deviceDatabaseKey, modelScopedName) || startsWith(deviceDatabaseKey, "default::" + modelScopedName)) {
             // Extract yarpDeviceName from deviceDatabaseKey
             yarpDeviceName = deviceDatabaseKey.substr(deviceDatabaseKey.find_last_of(":")+1);
 

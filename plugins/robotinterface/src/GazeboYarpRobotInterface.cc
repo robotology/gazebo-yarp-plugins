@@ -9,6 +9,7 @@
 #include <GazeboYarpPlugins/common.h>
 
 #include <gazebo/physics/Model.hh>
+#include <gazebo/physics/World.hh>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>

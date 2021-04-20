@@ -1208,8 +1208,6 @@ bool WorldProxy::loadModelFromFile(const std::string& filename)
     yError() << "Pose does not contain 6 values!";
     return false;
   }
-
-  std::cout << pose_tmp << std::endl;
 }
 
 std::string WorldProxy::loadModelFromFileWithPose(const std::string &filename, const GazeboYarpPlugins::Pose& pose, const std::string& object_name, const double timeout)

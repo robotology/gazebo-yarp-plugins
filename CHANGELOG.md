@@ -5,6 +5,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [3.6.1] - 2021-05-19
+
 ### Fixed 
 - Fixed use of libYARP_robotinterface with YARP devices spawned by sensor plugins (https://github.com/robotology/gazebo-yarp-plugins/pull/544).
 - Fixed compilation against YARP 3.5 by removing spurious print in WorldInterface plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/548).

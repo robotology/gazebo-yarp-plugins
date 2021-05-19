@@ -94,9 +94,9 @@ $(document).ready(function(){initNavTree('md_plugins_robotinterface_README.html'
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>The <code>gazebo_yarp_robotinterface</code> plugin permits to load several <a href="http://www.yarp.it/git-master/note_devices.html">YARP devices</a> that can be attached to YARP devices already opened by other Gazebo-YARP plugins using the same XML format used by the <a href="http://www.yarp.it/git-master/yarprobotinterface.html"><code>yarprobotinterface</code></a> tool and the <a href="https://github.com/robotology/yarp/tree/master/src/libYARP_robotinterface"><code>libYARP_robotinterface</code> C++ library</a>.</p>
-<h1><a class="anchor" id="autotoc_md60"></a>
+<h1><a class="anchor" id="autotoc_md61"></a>
 Usage</h1>
-<h2><a class="anchor" id="autotoc_md61"></a>
+<h2><a class="anchor" id="autotoc_md62"></a>
 Add the plugin in the SDF model</h2>
 <p>The <code>gazebo_yarp_robotinterface</code> plugin can be used by including in any SDF model: </p><div class="fragment"><div class="line">&lt;<span class="keywordtype">model</span> <span class="keyword">name</span>=<span class="stringliteral">&quot;model_name&quot;</span>&gt;</div>
 <div class="line">  <span class="comment">&lt;!-- Insert models, links, joints --&gt;</span></div>
@@ -112,7 +112,7 @@ Add the plugin in the SDF model</h2>
 <div class="line">  &lt;/<span class="keywordtype">plugin</span>&gt;</div>
 <div class="line">&lt;/<span class="keywordtype">model</span>&gt;</div>
 </div><!-- fragment --><p><b>Warning: the <code>gazebo_yarp_robotinterface</code> plugin is only able to be attached to YARP devices that have been already created once the <code>gazebo_yarp_robotinterface</code> plugin has been spawned, so it is a good practice to always include it as last tag in a model.</b></p>
-<h2><a class="anchor" id="autotoc_md62"></a>
+<h2><a class="anchor" id="autotoc_md63"></a>
 Example of the robotinterface XML file</h2>
 <p>The file specified in <code>yarpRobotInterfaceConfigurationFile</code> is a XML file specified according to the <code>yarprobotinterface</code> format, for example: </p><div class="fragment"><div class="line">&lt;?<span class="keyword">xml</span> <span class="keyword">version</span>=<span class="stringliteral">&quot;1.0&quot;</span> <span class="keyword">encoding</span>=<span class="stringliteral">&quot;UTF-8&quot;</span> ?&gt;</div>
 <div class="line">&lt;!<span class="keyword">DOCTYPE</span> <span class="keyword">robot</span> <span class="keyword">PUBLIC</span> <span class="stringliteral">&quot;-//YARP//DTD yarprobotinterface 3.0//EN&quot;</span> <span class="stringliteral">&quot;http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd&quot;</span>&gt;</div>
@@ -128,7 +128,7 @@ Example of the robotinterface XML file</h2>
 <div class="line">      &lt;<span class="keywordtype">action</span> <span class="keyword">phase</span>=<span class="stringliteral">&quot;startup&quot;</span> <span class="keyword">level</span>=<span class="stringliteral">&quot;5&quot;</span> <span class="keyword">type</span>=<span class="stringliteral">&quot;attach&quot;</span>&gt;</div>
 <div class="line">        &lt;<span class="keywordtype">paramlist</span> <span class="keyword">name</span>=<span class="stringliteral">&quot;networks&quot;</span>&gt;</div>
 <div class="line">          <span class="comment">&lt;!-- This should match the yarpDeviceName in the .ini file loaded in the Gazebo plugin. --&gt;</span></div>
-<div class="line">          <span class="comment"> ¯ÉGiU</span></div>
+<div class="line">          <span class="comment">àn¡–?V</span></div>
 <div class="line"><span class="comment">               for devices that are created via the robotinterface XML format. --&gt;</span></div>
 <div class="line">          &lt;<span class="keywordtype">elem</span> <span class="keyword">name</span>=<span class="stringliteral">&quot;list_key_example&quot;</span>&gt; <span class="keyword">yarp_device_name_of_device_to_which_to_attach</span> &lt;/<span class="keywordtype">elem</span>&gt;</div>
 <div class="line">        &lt;/<span class="keywordtype">paramlist</span>&gt;</div>
@@ -138,7 +138,7 @@ Example of the robotinterface XML file</h2>
 <div class="line">    &lt;/<span class="keywordtype">device</span>&gt;</div>
 <div class="line">  &lt;/<span class="keywordtype">devices</span>&gt;</div>
 <div class="line">&lt;/<span class="keywordtype">robot</span>&gt;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md63"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md64"></a>
 How to specify existing YARP devices to which to attach</h2>
 <p>The main use of the <code>gazebo_yarp_robotinterface</code> plugin is to spawn YARP devices that are <b>attached</b> to other devices that have been already spawned by other Gazebp plugins. For this reason, we need a way to specify to which target devices the devices created by robotinterface needs to be attached. This is achieved by setting the elements in the <code>&lt;paramlist name="networks"&gt;</code> list under the <code>&lt;action phase="startup" level="5" type="attach"&gt;</code> XML element. In this context, we call this "device instance identified" as <b>YARP device instance name</b>, as for devices created by the robotinterface, this is specified by the <code>name</code> attribute of the <code>device</code> XML tag. It is important not to confuse this with the <b>YARP device type name</b>, i.e. the name that identifies the type of plugin that is spawned, i.e. the <code>type</code> attribute of the <code>device</code> tag.</p>
 <p>The <code>gazebo_yarp_robotinterface</code> can be attached to any YARP device created by any plugin inside the model, or in any plugin contained in any nested sensor or model.</p>
@@ -163,7 +163,7 @@ How to specify existing YARP devices to which to attach</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Apr 20 2021 08:25:34 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 19 2021 13:39:58 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

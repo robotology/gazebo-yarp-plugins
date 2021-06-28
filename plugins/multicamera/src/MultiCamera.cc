@@ -84,23 +84,22 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
 
     //Register the device with the given name
+    std::string scopedDeviceName;
     if(!m_parameters.check("yarpDeviceName"))
     {
-        yError()<<"GazeboYarpMultiCamera: cannot find yarpDeviceName parameter in ini file.";
+        scopedDeviceName = m_sensorName + "::" "multicamera";
     }
     else
     {
-        std::string sensorName = _sensor->ScopedName();
-        std::string deviceId = m_parameters.find("yarpDeviceName").asString();
-        std::string scopedDeviceName = sensorName + "::" + deviceId;
-
-        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
-        {
-            yError()<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
-            return;
-        }
-        yInfo() << "GazeboYarpMultiCamera: Register YARP device with instance name:" << scopedDeviceName;
+        scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
     }
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    {
+        yError()<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "GazeboYarpMultiCamera: Register YARP device with instance name:" << scopedDeviceName;
 }
 
 } // namespace gazebo

@@ -249,6 +249,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         yarp::dev::PolyDriverList listofdoubellaser; //it will contain only double laser
         yarp::dev::PolyDriverDescriptor doublelaser_desc;
         doublelaser_desc.poly = &m_driver_doublelaser;
+        doublelaser_desc.key = "doublelaser";
 
         listofdoubellaser.push(doublelaser_desc);
 
@@ -263,24 +264,22 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
         
         // 9) Register the device with the given name
+        std::string robotName = _parent->GetScopedName();
+        std::string scopedDeviceName;
         if(!m_parameters.check("yarpDeviceName"))
         {
-           yError()<<"GazeboYarpDoubleLaser: cannot find yarpDeviceName parameter in ini file.";
-           //return;
+            scopedDeviceName = robotName + "::" + doublelaser_desc.key;
         }
         else
         {
-            std::string robotName = _parent->GetScopedName();
-            std::string deviceId = m_parameters.find("yarpDeviceName").asString();
-            std::string scopedDeviceName = robotName + "::" + deviceId; 
-             
-            if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_driver_doublelaser))
-            {
-               yError()<<"GazeboYarpDoubleLaser: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
-               return;
-            }
-            yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
+            scopedDeviceName = robotName + "::" + m_parameters.find("yarpDeviceName").asString();
         }
-     }
 
-}
+        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_driver_doublelaser))
+        {
+            yError()<<"GazeboYarpDoubleLaser: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+            return;
+        }
+        yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
+    }
+} // namespace gazebo

@@ -159,7 +159,15 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 virt_group.append(yarp::os::Bottle(net));                    
             }
             
-            std::string scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+            std::string scopedDeviceName;
+            if(!m_parameters.check("yarpDeviceName"))
+            {
+                scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+            }
+            else
+            {
+                scopedDeviceName = m_robotName + "::" + m_parameters.find("yarpDeviceName").asString();
+            }
             newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
             if( newPoly.poly != NULL)
             {
@@ -200,23 +208,13 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             }
 
             //Register the device with the given name
-            if(!m_parameters.check("yarpDeviceName"))
+            if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
             {
-                yError()<<"GazeboYarpControlBoard: cannot find yarpDeviceName parameter in ini file.";
+                yError() << "GazeboYarpControlBoard: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+                return;
             }
-            else
-            {
-                std::string robotName = _parent->GetScopedName();
-                std::string deviceId = m_parameters.find("yarpDeviceName").asString();
-                std::string scopedDeviceName = robotName + "::" + deviceId;
+            yInfo() << "GazeboYarpControlBoard: Registered YARP device with instance name:" << scopedDeviceName;
 
-                if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
-                {
-                    yError()<<"GazeboYarpControlBoard: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
-                    return;
-                }
-                yInfo() << "GazeboYarpControlBoard: Registered YARP device with instance name:" << scopedDeviceName;
-            }
             m_controlBoards.push(newPoly);
         }
         
@@ -259,4 +257,4 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
     }
-}
+} // namespace gazebo

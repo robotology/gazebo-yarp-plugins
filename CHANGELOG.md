@@ -5,6 +5,13 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Added
+- The multicamera plugin now implements the `yarp::dev::IRgbVisualParams` interface.
+
+### Fixed
+- Fixed the getRgbIntrinsicParam method in the depthCamera plugin when the distortion is not set.
+- The property returned by `getRgbIntrinsicParam()`, now contains `rectificationMatrix` instead of `rectificationMatrix` (See also https://github.com/robotology/yarp/pull/2593).
+
 ## [3.6.1] - 2021-05-19
 
 ### Fixed 

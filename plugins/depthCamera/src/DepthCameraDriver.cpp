@@ -320,7 +320,7 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
 
     Distortion*  distModel;
     DepthCamera* camPtr;
-    Value        retM;
+    Value        rectM;
 
     intrinsic.put("physFocalLength", 0.0);
     camPtr = m_depthCameraSensorPtr->DepthCamera().get();
@@ -361,7 +361,7 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
         }
 
     }
-    intrinsic.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
+    intrinsic.put("rectificationMatrix", rectM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
     intrinsic.put("distortionModel", "plumb_bob");
     intrinsic.put("stamp", m_colorTimestamp.getTime());
     return true;

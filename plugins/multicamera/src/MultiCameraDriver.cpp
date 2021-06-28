@@ -356,8 +356,8 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::getRgbIntrinsicParam(yarp::os::Prop
             intrinsic.put("principalPointY", m_height[0]/2.0);
         }
     }
-    yarp::os::Value retM;
-    intrinsic.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
+    yarp::os::Value rectM;
+    intrinsic.put("rectificationMatrix", rectM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
     intrinsic.put("distortionModel", "plumb_bob");
     intrinsic.put("stamp", m_lastTimestamp[0].getTime());
     return true;

@@ -322,16 +322,15 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
     DepthCamera* camPtr;
     Value        retM;
 
+    intrinsic.put("physFocalLength", 0.0);
     camPtr = m_depthCameraSensorPtr->DepthCamera().get();
-
     if(camPtr)
     {
+        intrinsic.put("focalLengthX",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
+        intrinsic.put("focalLengthY",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
         distModel = camPtr->LensDistortion().get();
         if(distModel)
         {
-            intrinsic.put("physFocalLength", 0.0);
-            intrinsic.put("focalLengthX",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
-            intrinsic.put("focalLengthY",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
 #if GAZEBO_MAJOR_VERSION >= 8
             intrinsic.put("k1",              distModel->K1());
             intrinsic.put("k2",              distModel->K2());
@@ -350,6 +349,17 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
             intrinsic.put("principalPointY", distModel->GetCenter().y);
 #endif
         }
+        else
+        {
+            intrinsic.put("k1",              0.0);
+            intrinsic.put("k2",              0.0);
+            intrinsic.put("k3",              0.0);
+            intrinsic.put("t1",              0.0);
+            intrinsic.put("t2",              0.0);
+            intrinsic.put("principalPointX", m_width/2.0);
+            intrinsic.put("principalPointY", m_height/2.0);
+        }
+
     }
     intrinsic.put("retificationMatrix", retM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
     intrinsic.put("distortionModel", "plumb_bob");

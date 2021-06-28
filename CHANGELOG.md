@@ -7,6 +7,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Added
 - The multicamera plugin now implements the `yarp::dev::IRgbVisualParams` interface.
+- The controlboard and multicamera plugins now handle the `yarpDeviceName` parameter.
 
 ### Fixed
 - Fixed the getRgbIntrinsicParam method in the depthCamera plugin when the distortion is not set.

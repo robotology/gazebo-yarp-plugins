@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [Release, Debug]
-        os: [ubuntu-18.04, ubuntu-20.04, macOS-latest]
+        os: [ubuntu-18.04, ubuntu-20.04]
         yarp_version: [master]
         # Dummy value to specify additional combination in the include matrix, see
         # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-new-combinations
@@ -33,8 +33,6 @@ jobs:
             build_type: Release
           - os: ubuntu-20.04
             gazebo_version: gazebo11
-          - os: macOS-latest
-            gazebo_version: gazebo11
     steps:
     - uses: actions/checkout@v2
         
@@ -46,21 +44,6 @@ jobs:
     # ============
     # DEPENDENCIES
     # ============
-            
-    - name: Dependencies [macOS]
-      if: matrix.os == 'macOS-latest'
-      shell: bash
-      run: |
-        # https://github.com/actions/virtual-environments/issues/2322
-        rm -f /usr/local/bin/2to3
-        # https://github.com/actions/virtual-environments/issues/2391
-        brew unlink gcc@8
-        brew unlink gcc@9
-        brew update
-        brew upgrade
-        brew install --cask xquartz
-        brew install ace eigen opencv@3 osrf/simulation/${{ matrix.gazebo_version }}
-    
     - name: Dependencies [Ubuntu]
       if: contains(matrix.os, 'ubuntu')
       shell: bash
@@ -71,8 +54,8 @@ jobs:
         sudo apt-get install git build-essential cmake libace-dev libeigen3-dev libopencv-dev 
         sudo apt-get install lib${{ matrix.gazebo_version }}-dev
         
-    - name: Source-based Dependencies [Ubuntu/macOS] 
-      if: contains(matrix.os, 'ubuntu') || matrix.os == 'macOS-latest'
+    - name: Source-based Dependencies [Ubuntu] 
+      if: contains(matrix.os, 'ubuntu')
       shell: bash
       run: |
         # YCM
@@ -97,8 +80,8 @@ jobs:
     # CMAKE-BASED PROJECT
     # ===================
    
-    - name: Configure [Ubuntu/macOS]
-      if: contains(matrix.os, 'ubuntu') || matrix.os == 'macOS-latest'
+    - name: Configure [Ubuntu]
+      if: contains(matrix.os, 'ubuntu')
       shell: bash
       run: |
         mkdir -p build
@@ -121,8 +104,8 @@ jobs:
         # Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/536
         ctest --output-on-failure -C ${{ matrix.build_type }} -E "ControlBoardControlTest" . 
 
-    - name: Install [Ubuntu/macOS]
-      if: contains(matrix.os, 'ubuntu') || matrix.os == 'macOS-latest'
+    - name: Install [Ubuntu]
+      if: contains(matrix.os, 'ubuntu')
       shell: bash
       run: |
         cd build

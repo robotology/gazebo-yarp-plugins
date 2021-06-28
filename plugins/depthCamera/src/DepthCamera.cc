@@ -137,6 +137,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
             yError()<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
             return;
         }
+        yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
     }
 }
 

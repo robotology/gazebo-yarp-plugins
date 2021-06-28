@@ -132,7 +132,7 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
            yError()<<"GazeboYarpLaserSensor: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
            return;
         }
-        //yDebug() << "GazeboYarpLaserSensor: registered device:" << scopedDeviceName;
+        yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
     }
 //#endif
 

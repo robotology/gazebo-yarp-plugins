@@ -279,7 +279,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
                yError()<<"GazeboYarpDoubleLaser: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
                return;
             }
-            //yDebug() << "GazeboYarpDoubleLaser: register device:" << scopedDeviceName;
+            yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
         }
      }
 

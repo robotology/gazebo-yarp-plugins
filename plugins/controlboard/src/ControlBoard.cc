@@ -186,7 +186,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     //yDebug()<<configuration_s;
                 }
 
-                 newPoly.poly = new yarp::dev::PolyDriver;
+                newPoly.poly = new yarp::dev::PolyDriver;
                 if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
                 {
                     yError() << "GazeboYarpControlBoard : controlBoard <" << newPoly.key << "> did not open.";
@@ -198,7 +198,25 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     return;
                 }
             }
-            GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly);
+
+            //Register the device with the given name
+            if(!m_parameters.check("yarpDeviceName"))
+            {
+                yError()<<"GazeboYarpControlBoard: cannot find yarpDeviceName parameter in ini file.";
+            }
+            else
+            {
+                std::string robotName = _parent->GetScopedName();
+                std::string deviceId = m_parameters.find("yarpDeviceName").asString();
+                std::string scopedDeviceName = robotName + "::" + deviceId;
+
+                if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
+                {
+                    yError()<<"GazeboYarpControlBoard: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+                    return;
+                }
+                yInfo() << "GazeboYarpControlBoard: Registered YARP device with instance name:" << scopedDeviceName;
+            }
             m_controlBoards.push(newPoly);
         }
         
@@ -241,5 +259,4 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
     }
-
 }

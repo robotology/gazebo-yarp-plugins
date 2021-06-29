@@ -9,6 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IRgbVisualParams.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Time.h>
@@ -44,6 +45,7 @@ extern const std::string YarpScopedName;
 class yarp::dev::GazeboYarpMultiCameraDriver:
     virtual public yarp::dev::DeviceDriver,
     virtual public yarp::dev::IFrameGrabberImage,
+    virtual public yarp::dev::IRgbVisualParams,
     virtual public yarp::dev::IPreciselyTimed
 {
 public:
@@ -66,6 +68,18 @@ public:
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
     virtual int height() const;
     virtual int width() const;
+
+    // yarp::dev::IRgbVisualParams
+    virtual int getRgbHeight();
+    virtual int getRgbWidth();
+    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations);
+    virtual bool getRgbResolution(int& width, int& height);
+    virtual bool setRgbResolution(int width, int height);
+    virtual bool getRgbFOV(double& horizontalFov, double& verticalFov);
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov);
+    virtual bool getRgbIntrinsicParam(yarp::os::Property& intrinsic);
+    virtual bool getRgbMirroring(bool& mirror);
+    virtual bool setRgbMirroring(bool mirror);
 
 
     /*

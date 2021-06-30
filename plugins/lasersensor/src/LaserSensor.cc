@@ -98,44 +98,6 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
-    //Register the device with the given name
-//#if 0
-    //this block will be soon deprecated
-    if(!driver_properties.check("deviceId"))
-    {
-        yError()<<"GazeboYarpLaserSensor Plugin failed: cannot find deviceId parameter in ini file.";
-    }
-    else
-    {
-        yError() << "GazeboYarpLaserSensor: deviceId parameter has been deprecated. Please use yarpDeviceName instead";
-        std::string deviceId = driver_properties.find("deviceId").asString();
-        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(deviceId, &m_laserDriver))
-        {
-           yError()<<"GazeboYarpLaserSensor: failed setting deviceId(=" << deviceId << ")";
-           return;
-        }
-   }
-//#else
-    if(!driver_properties.check("yarpDeviceName"))
-    {
-       yError()<<"GazeboYarpLaserSensor: cannot find yarpDeviceName parameter in ini file.";
-       //return;
-    }
-    else
-    {
-        std::string sensorName = _sensor->ScopedName();
-        std::string deviceId = driver_properties.find("yarpDeviceName").asString();
-        std::string scopedDeviceName = sensorName + "::" + deviceId; 
-
-        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_laserDriver))
-        {
-           yError()<<"GazeboYarpLaserSensor: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
-           return;
-        }
-        //yDebug() << "GazeboYarpLaserSensor: registered device:" << scopedDeviceName;
-    }
-//#endif
-
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
 
@@ -145,7 +107,7 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
-    driver_list.push(&m_laserDriver,"dummy");
+    driver_list.push(&m_laserDriver, "lasersensor");
 
     if( m_iWrap->attachAll(driver_list) ) {
     } else
@@ -153,7 +115,30 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yError() << "GazeboYarpLaserSensor : error in connecting wrapper and device " ;
     }
 
+    //Register the device with the given name
+    std::string sensorName = _sensor->ScopedName();
+    std::string scopedDeviceName;
+    if(driver_properties.check("deviceId"))
+    {
+        yWarning() << "GazeboYarpLaserSensor: deviceId parameter has been deprecated. Please use yarpDeviceName instead";
+        scopedDeviceName = sensorName + "::" + driver_properties.find("deviceId").asString();
+    }
+    else if(!driver_properties.check("yarpDeviceName"))
+    {
+        scopedDeviceName = sensorName + "::" + driver_list[0]->key;
+    }
+    else
+    {
+        scopedDeviceName = sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+    }
+
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_laserDriver))
+    {
+        yError()<<"GazeboYarpLaserSensor: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
 }
 
-}
-
+} // namespace gazebo

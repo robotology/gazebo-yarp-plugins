@@ -114,7 +114,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
-    driver_list.push(&m_cameraDriver,"dummy");
+    driver_list.push(&m_cameraDriver, "depthcamera");
 
     if(!m_iWrap->attachAll(driver_list) )
     {
@@ -122,22 +122,22 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
     
     //Register the device with the given name
+    std::string scopedDeviceName;
     if(!m_driverParameters.check("yarpDeviceName"))
     {
-        yError()<<"GazeboYarpDepthCamera: cannot find yarpDeviceName parameter in ini file.";
+        scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
     }
     else
     {
-        std::string sensorName = _sensor->ScopedName();
-        std::string deviceId = m_driverParameters.find("yarpDeviceName").asString();
-        std::string scopedDeviceName = sensorName + "::" + deviceId; 
-                
-        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
-        {
-            yError()<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
-            return;
-        }
+        scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
     }
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    {
+        yError()<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
 }
 
-}
+} // namespace gazebo

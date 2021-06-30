@@ -159,7 +159,15 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 virt_group.append(yarp::os::Bottle(net));                    
             }
             
-            std::string scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+            std::string scopedDeviceName;
+            if(!m_parameters.check("yarpDeviceName"))
+            {
+                scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+            }
+            else
+            {
+                scopedDeviceName = m_robotName + "::" + m_parameters.find("yarpDeviceName").asString();
+            }
             newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
             if( newPoly.poly != NULL)
             {
@@ -186,7 +194,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     //yDebug()<<configuration_s;
                 }
 
-                 newPoly.poly = new yarp::dev::PolyDriver;
+                newPoly.poly = new yarp::dev::PolyDriver;
                 if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
                 {
                     yError() << "GazeboYarpControlBoard : controlBoard <" << newPoly.key << "> did not open.";
@@ -198,7 +206,15 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     return;
                 }
             }
-            GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly);
+
+            //Register the device with the given name
+            if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
+            {
+                yError() << "GazeboYarpControlBoard: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+                return;
+            }
+            yInfo() << "GazeboYarpControlBoard: Registered YARP device with instance name:" << scopedDeviceName;
+
             m_controlBoards.push(newPoly);
         }
         
@@ -241,5 +257,4 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
     }
-
-}
+} // namespace gazebo

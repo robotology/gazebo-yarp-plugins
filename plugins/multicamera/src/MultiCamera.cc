@@ -81,6 +81,25 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yError() << "Unable to get the iFrameGrabberImage interface from the device";
         return;
     }
+
+
+    //Register the device with the given name
+    std::string scopedDeviceName;
+    if(!m_parameters.check("yarpDeviceName"))
+    {
+        scopedDeviceName = m_sensorName + "::" "multicamera";
+    }
+    else
+    {
+        scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+    }
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    {
+        yError()<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "GazeboYarpMultiCamera: Register YARP device with instance name:" << scopedDeviceName;
 }
 
 } // namespace gazebo

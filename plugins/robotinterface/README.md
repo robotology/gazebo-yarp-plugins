@@ -74,7 +74,7 @@ For historic reason, not all the `gazebo-yarp-plugins` support specifying the **
 
 The plugins that spawn YARP devices in a way that they can be then attached to the yarprobotinterface as specified in the following table.
 For all the following plugins, the **YARP device instance name** can be specified by the `yarpDeviceName` parameter in the plugin configuration.
-If the device is supposed to attach to multiple devices, the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration.
+For the `gazebo_yarp_controlboard`, if the `yarpDeviceName` parameter is not specified, for legacy reason the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration.
 
 | Plugin                     | Details                                              |
 |:--------------------------:|:----------------------------------------------------:|

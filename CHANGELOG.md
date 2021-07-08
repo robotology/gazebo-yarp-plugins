@@ -9,6 +9,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - The multicamera plugin now implements the `yarp::dev::IRgbVisualParams` interface (https://github.com/robotology/gazebo-yarp-plugins/pull/558).
 - The controlboard and multicamera plugins now handle the `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/559).
 
+### Changed
+- `gazebo-yarp-plugins` now requires YARP 3.5 (https://github.com/robotology/gazebo-yarp-plugins/pull/562).
+
 ### Fixed
 - Fixed the getRgbIntrinsicParam method in the depthCamera plugin when the distortion is not set (https://github.com/robotology/gazebo-yarp-plugins/pull/558).
 - The property returned by `getRgbIntrinsicParam()`, now contains `rectificationMatrix` instead of `rectificationMatrix` (https://github.com/robotology/gazebo-yarp-plugins/pull/558, see also https://github.com/robotology/yarp/pull/2593).

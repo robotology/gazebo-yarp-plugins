@@ -24,11 +24,11 @@ GazeboYarpRobotInterface::GazeboYarpRobotInterface()
 GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
 {
     // Close robotinterface 
-    bool ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
+    bool ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible to run phase ActionPhaseInterrupt1 robotinterface";
     }
-    ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
+    ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible  to run phase ActionPhaseShutdown in robotinterface";
     }
@@ -98,11 +98,11 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
     }
 
     // Start robotinterface 
-    ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup);
+    ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface : impossible to start robotinterface";
-        m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
-        m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
+        m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
         return;
     }
 }

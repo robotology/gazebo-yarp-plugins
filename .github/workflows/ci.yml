@@ -60,7 +60,7 @@ jobs:
         # YCM
         git clone https://github.com/robotology/ycm
         cd ycm
-        git checkout ycm-0.12
+        git checkout ycm-0.13
         mkdir -p build
         cd build
         cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install ..

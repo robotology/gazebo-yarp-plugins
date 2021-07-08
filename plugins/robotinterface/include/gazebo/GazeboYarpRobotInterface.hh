@@ -9,7 +9,7 @@
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/common/Time.hh>
 
-#include <yarp/robotinterface/experimental/XMLReader.h>
+#include <yarp/robotinterface/XMLReader.h>
 
 namespace gazebo
 {
@@ -29,8 +29,8 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
-    yarp::robotinterface::experimental::XMLReader m_xmlRobotInterfaceReader;
-    yarp::robotinterface::experimental::XMLReaderResult m_xmlRobotInterfaceResult;
+    yarp::robotinterface::XMLReader m_xmlRobotInterfaceReader;
+    yarp::robotinterface::XMLReaderResult m_xmlRobotInterfaceResult;
     std::vector<std::string> m_deviceScopedNames;
 };
 

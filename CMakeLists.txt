@@ -45,7 +45,7 @@ if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
     list(APPEND YARP_ADDITIONAL_COMPONENTS_REQUIRED "robotinterface")
 endif()
 
-find_package(YARP 3.4.101 REQUIRED COMPONENTS os sig dev math idl_tools ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
+find_package(YARP 3.4.102 REQUIRED COMPONENTS os sig dev math idl_tools ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 7.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})

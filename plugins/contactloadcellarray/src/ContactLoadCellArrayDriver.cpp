@@ -328,9 +328,9 @@ bool GazeboYarpContactLoadCellArrayDriver::configure(yarp::os::Property& pluginP
     {
         yarp::sig::Vector loadCellLoc(3);
         loadCellLoc.clear();
-        loadCellLoc.push_back(loadCellX->get(i).asDouble());
-        loadCellLoc.push_back(loadCellY->get(i).asDouble());
-        loadCellLoc.push_back(loadCellZ->get(i).asDouble());
+        loadCellLoc.push_back(loadCellX->get(i).asFloat64());
+        loadCellLoc.push_back(loadCellY->get(i).asFloat64());
+        loadCellLoc.push_back(loadCellZ->get(i).asFloat64());
         this->m_loadCellLocations.push_back(loadCellLoc);
      }
 

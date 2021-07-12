@@ -146,7 +146,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_jointPointers[i]->SetDamping(0,value);
         }
         return true;
@@ -155,7 +155,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_jointPointers[i]->SetParam("friction",0,value);
         }
         return true;
@@ -164,7 +164,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_jointPointers[i]->SetEffortLimit(0,value);
         }
         return true;
@@ -173,7 +173,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_jointPointers[i]->SetVelocityLimit(0,value);
         }
         return true;
@@ -182,7 +182,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_jointPointers[i]->SetUpperLimit(0,convertUserToGazebo(i,value));
         }
         return true;
@@ -191,7 +191,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_jointPointers[i]->SetLowerLimit(0,convertUserToGazebo(i,value));
         }
         return true;
@@ -200,7 +200,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             setVelLimits(i,0,value);
         }
         return true;
@@ -209,7 +209,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             double t_max=0, t_min=0;
             getLimits(i,&t_min,&t_max);
             setLimits(i,t_min,value);
@@ -220,7 +220,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             double t_max=0, t_min=0;
             getLimits(i,&t_min,&t_max);
             setLimits(i,value,t_max);
@@ -231,7 +231,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_kPWM[i]=value;
         }
         return true;
@@ -242,7 +242,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
         {
             yarp::dev::Pid tmp_pid;
             getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);
-            tmp_pid.kp = bval->get(i).asDouble();
+            tmp_pid.kp = bval->get(i).asFloat64();
             setPid(VOCAB_PIDTYPE_POSITION, i,tmp_pid);
         }
         return true;
@@ -253,7 +253,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
         {
             yarp::dev::Pid tmp_pid;
             getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);
-            tmp_pid.kd = bval->get(i).asDouble();
+            tmp_pid.kd = bval->get(i).asFloat64();
             setPid(VOCAB_PIDTYPE_POSITION, i,tmp_pid);
         }
         return true;
@@ -264,7 +264,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
         {
             yarp::dev::Pid tmp_pid;
             getPid(VOCAB_PIDTYPE_POSITION, i,&tmp_pid);
-            tmp_pid.ki = bval->get(i).asDouble();
+            tmp_pid.ki = bval->get(i).asFloat64();
             setPid(VOCAB_PIDTYPE_POSITION, i,tmp_pid);
         }
         return true;
@@ -273,7 +273,7 @@ bool GazeboYarpControlBoardDriver::setRemoteVariable(std::string key, const yarp
     {
         for (size_t i = 0; i < m_numberOfJoints; i++)
         {
-            double value = bval->get(i).asDouble();
+            double value = bval->get(i).asFloat64();
             m_velocity_watchdog[i]->modifyDuration(value);
         }
         return true;

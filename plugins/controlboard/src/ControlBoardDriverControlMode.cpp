@@ -66,7 +66,7 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
           || mode == VOCAB_CM_IDLE
           || mode == VOCAB_CM_FORCE_IDLE)) {
         yWarning() << "request control mode "
-        << yarp::os::Vocab::decode(mode) << " that is not supported by "
+        << yarp::os::Vocab32::decode(mode) << " that is not supported by "
         << " gazebo_yarp_controlboard plugin.";
         return false;
     }

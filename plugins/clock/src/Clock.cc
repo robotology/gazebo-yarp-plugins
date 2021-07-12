@@ -167,8 +167,8 @@ namespace gazebo
 #endif
             yarp::os::Bottle& b = m_clockPort->prepare();
             b.clear();
-            b.addInt(currentTime.sec);
-            b.addInt(currentTime.nsec);
+            b.addInt32(currentTime.sec);
+            b.addInt32(currentTime.nsec);
             m_clockPort->write();
         }
 

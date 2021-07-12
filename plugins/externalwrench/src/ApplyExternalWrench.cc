@@ -152,7 +152,7 @@ void RPCServerThread::run()
         yarp::os::Bottle command;
         m_rpcPort.read ( command,true );
         if ( command.get ( 0 ).asString() == "help" ) {
-            this->m_reply.addVocab ( yarp::os::Vocab::encode ( "many" ) );
+            this->m_reply.addVocab32( "many" );
             this->m_reply.addString ( "The default operation mode is with single wrench without wrench smoothing" );
             this->m_reply.addString ( "Insert [single] or [multiple] to change the operation mode" );
             this->m_reply.addString ( "Insert [smoothing on] or [smoothing off] to set the wrench smoothing option" );
@@ -167,9 +167,9 @@ void RPCServerThread::run()
             this->m_rpcPort.reply ( this->m_reply );
         } else{
             if((command.size() == 8) && (command.get(0).isString() \
-                && ( command.get ( 1 ).isDouble() || command.get ( 1 ).isInt() )  && ( command.get ( 2 ).isDouble() || command.get ( 2 ).isInt() ) && ( command.get ( 3 ).isDouble() || command.get ( 3 ).isInt() ) \
-                && ( command.get ( 4 ).isDouble() || command.get ( 4 ).isInt() )  && ( command.get ( 5 ).isDouble() || command.get ( 5 ).isInt() ) && ( command.get ( 6 ).isDouble() || command.get ( 6 ).isInt() )  \
-                && ( command.get ( 7 ).isDouble() || command.get ( 7 ).isInt() )) ) {
+                && ( command.get ( 1 ).isFloat64() || command.get ( 1 ).isInt32() )  && ( command.get ( 2 ).isFloat64() || command.get ( 2 ).isInt32() ) && ( command.get ( 3 ).isFloat64() || command.get ( 3 ).isInt32() ) \
+                && ( command.get ( 4 ).isFloat64() || command.get ( 4 ).isInt32() )  && ( command.get ( 5 ).isFloat64() || command.get ( 5 ).isInt32() ) && ( command.get ( 6 ).isFloat64() || command.get ( 6 ).isInt32() )  \
+                && ( command.get ( 7 ).isFloat64() || command.get ( 7 ).isInt32() )) ) {
                 this->m_message = "[ACK] Correct command format";
                 m_lock.lock();
                 // new-command flag
@@ -197,9 +197,9 @@ void RPCServerThread::run()
                     this->m_lock.unlock();
                 }
 
-                if (command.get(7).asDouble() > 0 || command.get(7).asInt() > 0 ) {
+                if (command.get(7).asFloat64() > 0 || command.get(7).asInt32() > 0 ) {
 
-                    if (this->m_wrenchSmoothing == true && (command.get(7).asDouble() <= m_simulationUpdatePeriod)) {
+                    if (this->m_wrenchSmoothing == true && (command.get(7).asFloat64() <= m_simulationUpdatePeriod)) {
                         this->m_message = this->m_message + " but the entered duration is less than or equal to the simulation update period";
                         this->m_reply.addString ( m_message );
                         this->m_rpcPort.reply ( m_reply );

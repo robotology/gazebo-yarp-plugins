@@ -119,7 +119,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
     if(getLink())
     {
         // Get wrench duration
-        wrench.duration  = cmd.get(7).asDouble();
+        wrench.duration  = cmd.get(7).asFloat64();
 
         if (wrenchSmoothing) {
             wrenchSmoothingFlag = true;
@@ -144,13 +144,13 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
         }
         else {
 
-            wrench.force[0]  =  cmd.get(1).asDouble();
-            wrench.force[1]  =  cmd.get(2).asDouble();
-            wrench.force[2]  =  cmd.get(3).asDouble();
+            wrench.force[0]  =  cmd.get(1).asFloat64();
+            wrench.force[1]  =  cmd.get(2).asFloat64();
+            wrench.force[2]  =  cmd.get(3).asFloat64();
 
-            wrench.torque[0] = cmd.get(4).asDouble();
-            wrench.torque[1] = cmd.get(5).asDouble();
-            wrench.torque[2] = cmd.get(6).asDouble();
+            wrench.torque[0] = cmd.get(4).asFloat64();
+            wrench.torque[1] = cmd.get(5).asFloat64();
+            wrench.torque[2] = cmd.get(6).asFloat64();
 
             return true;
         }
@@ -164,7 +164,7 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     // Clear smoothed wrenches vector
     wrench.smoothedWrenchVec.clear();
 
-    double duration = cmd.get(7).asDouble();
+    double duration = cmd.get(7).asFloat64();
 
     // Compute time steps
     steps = duration/simulationUpdatePeriod;
@@ -173,12 +173,12 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     yarp::sig::Vector originalWrench;
     originalWrench.resize(6,0);
 
-    originalWrench[0]  =  cmd.get(1).asDouble();
-    originalWrench[1]  =  cmd.get(2).asDouble();
-    originalWrench[2]  =  cmd.get(3).asDouble();
-    originalWrench[3]  =  cmd.get(4).asDouble();
-    originalWrench[4]  =  cmd.get(5).asDouble();
-    originalWrench[5]  =  cmd.get(6).asDouble();
+    originalWrench[0]  =  cmd.get(1).asFloat64();
+    originalWrench[1]  =  cmd.get(2).asFloat64();
+    originalWrench[2]  =  cmd.get(3).asFloat64();
+    originalWrench[3]  =  cmd.get(4).asFloat64();
+    originalWrench[4]  =  cmd.get(5).asFloat64();
+    originalWrench[5]  =  cmd.get(6).asFloat64();
 
     double time = 0;
     std::vector<double> smoothingCoefficients;

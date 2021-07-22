@@ -18,6 +18,9 @@ using namespace boost::placeholders;
 using namespace yarp::dev;
 
 const std::string YarpLaserSensorScopedName = "sensorScopedName";
+namespace {
+    YARP_LOG_COMPONENT(GAZEBOLASER, "gazebo-yarp-plugins.plugins.GazeboYarpLaserSensor")
+}
 
 GazeboYarpLaserSensorDriver::GazeboYarpLaserSensorDriver() {}
 GazeboYarpLaserSensorDriver::~GazeboYarpLaserSensorDriver() {}
@@ -36,7 +39,7 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
     
     if (tmp.size() != m_laser_data.size())
     {
-        yError() << "size error";
+        yCError(GAZEBOLASER) << "size error";
     }
 
 #if 0
@@ -69,7 +72,7 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
     
     if (!m_parentSensor)
     {
-        yError() << "Error, sensor" <<  sensorScopedName << "was not found" ;
+        yCError(GAZEBOLASER) << "Error, sensor" <<  sensorScopedName << "was not found" ;
         return  false ;
     }
 
@@ -88,7 +91,7 @@ bool GazeboYarpLaserSensorDriver::open(yarp::os::Searchable& config)
      //parse all the parameters related to the linear/angular range of the sensor
     if (this->parseConfiguration(config) == false)
     {
-        yError() << "GazeboYarpLaserSensorDriver: error parsing parameters";
+        yCError(GAZEBOLASER) << "error parsing parameters";
         return false;
     }
 
@@ -118,21 +121,21 @@ yarp::os::Stamp GazeboYarpLaserSensorDriver::getLastInputStamp()
 bool GazeboYarpLaserSensorDriver::setDistanceRange (double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    yError() << "setDistanceRange() Not yet implemented";
+    yCError(GAZEBOLASER) << "setDistanceRange() Not yet implemented";
     return false;
 }
 
 bool GazeboYarpLaserSensorDriver::setScanLimits (double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    yError() << "setScanLimits() Not yet implemented";
+    yCError(GAZEBOLASER) << "setScanLimits() Not yet implemented";
     return false;
 }
 
 bool GazeboYarpLaserSensorDriver::setHorizontalResolution (double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    yError() << "setHorizontalResolution() Not yet implemented";
+    yCError(GAZEBOLASER) << "setHorizontalResolution() Not yet implemented";
     return false;
 }
 
@@ -141,7 +144,7 @@ bool GazeboYarpLaserSensorDriver::setScanRate (double rate)
     std::lock_guard<std::mutex> guard(m_mutex);
     if (rate<0)
     {
-      yError() << "Invalid setScanRate";
+      yCError(GAZEBOLASER) << "Invalid setScanRate";
       return false;
     }
     m_parentSensor->SetUpdateRate(rate);

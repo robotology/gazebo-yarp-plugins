@@ -49,11 +49,12 @@ public:
 private:
 
     bool readConfigurationFromFile(physics::ModelPtr _parent, sdf::ElementPtr _sdf); //Getting .ini configuration file from sdf
+    #ifndef USE_NEW_WRAPPERS
     yarp::dev::PolyDriver m_wrapper_rangeFinder;
     yarp::dev::IMultipleWrapper* m_iWrap_rangeFinder;
-
-     yarp::dev::PolyDriver m_driver_doublelaser;
-     yarp::dev::IMultipleWrapper* m_iWrap_doublelaser;
+    #endif
+    yarp::dev::PolyDriver m_driver_doublelaser;
+    yarp::dev::IMultipleWrapper* m_iWrap_doublelaser;
 
     yarp::dev::PolyDriverList m_lasers;  //contains pointers of front and back laser
 

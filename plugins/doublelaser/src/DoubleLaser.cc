@@ -16,6 +16,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/LogComponent.h>
 
 
 /**
@@ -24,6 +25,10 @@
  */
 
 using namespace std;
+
+namespace {
+    YARP_LOG_COMPONENT(GAZEBODOUBLELASER, "gazebo-yarp-plugins.plugins.GazeboYarpDoubleLaser")
+}
 
 namespace gazebo
 {
@@ -67,7 +72,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
     {
         if (!_sdf->HasElement("yarpConfigurationFile"))
         {
-            yError() << "GazeboYarpDoubleLaser: error: unable to load configuration";
+            yCError(GAZEBODOUBLELASER) << "error: unable to load configuration";
             return false;
         }
 
@@ -76,7 +81,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if (ini_file_path == "")
         {
-            yError() << "GazeboYarpDoubleLaser: ini file path is empty";
+            yCError(GAZEBODOUBLELASER) << "ini file path is empty";
             return false;
         }
 
@@ -85,7 +90,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         bool wipe = false; //in order to not clear m_parameters
         if (! m_parameters.fromConfigFile(ini_file_path.c_str(),wipe))
         {
-            yError()  << "GazeboYarpDoubleLaser: error reading parameters from config file= " << ini_file_name << "in" <<ini_file_path ;
+            yCError(GAZEBODOUBLELASER)  << "error reading parameters from config file= " << ini_file_name << "in" <<ini_file_path ;
             return false;
         }
 
@@ -104,7 +109,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         // 1) check params
         if (!_parent)
         {
-            gzerr << "GazeboYarpDoubleLaser plugin requires a parent.\n";
+            yCError(GAZEBODOUBLELASER) << "plugin requires a parent.\n";
             return;
         }
 
@@ -113,7 +118,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout))
         {
-            yError() << "GazeboYarpDoubleLaser : yarp network does not seem to be available, is the yarpserver running?";
+            yCError(GAZEBODOUBLELASER) << "yarp network does not seem to be available, is the yarpserver running?";
             return;
         }
 
@@ -131,7 +136,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         yarp::os::Property wrapper_parameters;
         if(!m_parameters.check("WRAPPER"))
         {
-            yError() << "GazeboYarpDoubleLaser: [WRAPPER] group is missing in configuration file";
+            yCError(GAZEBODOUBLELASER) << "[WRAPPER] group is missing in configuration file";
             return;
         }
 
@@ -142,18 +147,18 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         }
         else
         {
-            yInfo() << "GazeboYarpDoubleLaser: ROS group is missing in configuration file";
+            yCInfo(GAZEBODOUBLELASER) << "ROS group is missing in configuration file";
         }
 
         if(! m_wrapper_rangeFinder.open(wrapper_parameters))
         {
-            yError()<<"GazeboYarpDoubleLaser failed: error opening yarp driver wrapper Rangefinder2DWrapper";
+            yCError(GAZEBODOUBLELASER) << "error opening yarp driver wrapper Rangefinder2DWrapper";
             return;
         }
 
         if (!m_wrapper_rangeFinder.view(m_iWrap_rangeFinder)) 
         {
-            yError("GazeboYarpDoubleLaser : wrapper (Rangefinder2DWrapper) interface not found, load failed.");
+            yCError(GAZEBODOUBLELASER) << "wrapper (Rangefinder2DWrapper) interface not found, load failed.";
             return;
         }
 
@@ -161,7 +166,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         yarp::os::Property doublelaser_dev_parameters;
         if(!m_parameters.check("onSimulator"))
         {
-            yError() << "GazeboYarpDoubleLaser: onSimulator parameter is missing in configuration file";
+            yCError(GAZEBODOUBLELASER) << "onSimulator parameter is missing in configuration file";
             return;
         }
         doublelaser_dev_parameters.put("onSimulator", m_parameters.find("onSimulator").asBool());
@@ -170,14 +175,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if(!m_parameters.check("LASERFRONT-CFG"))
         {
-            yError() << "GazeboYarpDoubleLaser: LASERFRONT-CFG group is missing in configuration file";
+            yCError(GAZEBODOUBLELASER) << "LASERFRONT-CFG group is missing in configuration file";
             return;
         }
         doublelaser_dev_parameters.addGroup("LASERFRONT-CFG").fromString(m_parameters.findGroup("LASERFRONT-CFG").toString());
 
         if(!m_parameters.check("LASERBACK-CFG"))
         {
-            yError() << "GazeboYarpDoubleLaser: LASERBACK-CFG group is missing in configuration file";
+            yCError(GAZEBODOUBLELASER) << "LASERBACK-CFG group is missing in configuration file";
             return;
         }
         doublelaser_dev_parameters.addGroup("LASERBACK-CFG").fromString(m_parameters.findGroup("LASERBACK-CFG").toString());
@@ -187,7 +192,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
                 
         if(!m_driver_doublelaser.open(doublelaser_dev_parameters) )
         {
-            yError()<<"GazeboYarpDoubleLaser: error opening DoubleLaser yarp device ";
+            yCError(GAZEBODOUBLELASER)<<"error opening DoubleLaser yarp device ";
             return;
         }
 
@@ -195,13 +200,13 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         yarp::os::Bottle &front_name = m_parameters.findGroup("LASERFRONT-CFG").findGroup("sensorName");
         if(front_name.isNull())
         {
-            yError() << "GazeboYarpDoubleLaser: cannot find LASERFRONT-CFG.sensorName parameter";
+            yCError(GAZEBODOUBLELASER) << "cannot find LASERFRONT-CFG.sensorName parameter";
             return;
         }
          yarp::os::Bottle &back_name = m_parameters.findGroup("LASERBACK-CFG").findGroup("sensorName");
         if(back_name.isNull())
         {
-            yError() << "GazeboYarpDoubleLaser: cannot find LASERBACK-CFG.sensorName parameter";
+            yCError(GAZEBODOUBLELASER) << "cannot find LASERBACK-CFG.sensorName parameter";
             return;
         }
 
@@ -209,18 +214,17 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         std::string laserFront_name = front_name.find("sensorName").asString();
         std::string laserBack_name = back_name.find("sensorName").asString();
 
-
         m_driver_laserFront = GazeboYarpPlugins::Handler::getHandler()->getDevice(laserFront_name);
         if(m_driver_laserFront == nullptr)
         {
-            yError() << "GazeboYarpDoubleLaser: cannot find laserFront device";
+            yCError(GAZEBODOUBLELASER) << "cannot find laserFront device" << laserFront_name;
             return;
         }
 
         m_driver_laserBack = GazeboYarpPlugins::Handler::getHandler()->getDevice(laserBack_name);
         if(m_driver_laserBack == nullptr)
         {
-            yError() << "GazeboYarpDoubleLaser: cannot find laserBack device";
+            yCError(GAZEBODOUBLELASER) << "cannot find laserBack device" << laserBack_name;
             return;
         }
 
@@ -239,7 +243,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         m_driver_doublelaser.view(m_iWrap_doublelaser);
         if(!m_iWrap_doublelaser->attachAll(listoflasers))
         {
-            yError() << "GazeboYarpDoubleLaser: error attaching double laser to front and back laser devices";
+            yCError(GAZEBODOUBLELASER) << "error attaching double laser to front and back laser devices";
             m_driver_doublelaser.close();
             return;
         }
@@ -255,7 +259,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if(!m_iWrap_rangeFinder->attachAll(listofdoubellaser))
         {
-            yError() << "GazeboYarpDoubleLaser: error attaching wrapper to double laser device";
+            yCError(GAZEBODOUBLELASER) << "error attaching wrapper to double laser device";
             return;
         }
 
@@ -268,7 +272,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         std::string scopedDeviceName;
         if(!m_parameters.check("yarpDeviceName"))
         {
-            scopedDeviceName = robotName + "::" + doublelaser_desc.key;
+            yCError(GAZEBODOUBLELASER)<<"failed getting yarpDeviceName parameter value";
+            return;
         }
         else
         {
@@ -277,9 +282,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
         if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_driver_doublelaser))
         {
-            yError()<<"GazeboYarpDoubleLaser: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+            yCError(GAZEBODOUBLELASER)<<"failed setting scopedDeviceName(=" << scopedDeviceName << ")";
             return;
         }
-        yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
+        yCInfo(GAZEBODOUBLELASER) << "Registered YARP device with instance name:" << scopedDeviceName;
     }
 } // namespace gazebo

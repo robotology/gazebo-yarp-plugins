@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"classTrapezoidalSpeedTrajectoryGenerator.html#a481ba208ebe1284bdae358bc21d59809":[16,0,23,19],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a49b14cd83fbeefc76e70f7e58f2e4a50":[16,0,23,17],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a584f48f9a5e2470ddbf4fd0ceafdd74c":[16,0,23,6],
 "classTrapezoidalSpeedTrajectoryGenerator.html#a5b0dc625bc64c35304ce2bf613997d5e":[16,0,23,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#a75d593bfd09f431498d90f0c3238acf3":[16,0,2,0,1,1],
 "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#aa7196ae19fbb8321440dd6c3c82f7faf":[16,0,2,0,1,6],
 "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#acd7cb1615462b210ea023b5b228f55fd":[16,0,2,0,1,0],
-"classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ace750b440cf107817723eb5215828edc":[16,0,2,0,1,2],
-"classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ad7b7a6714afc0540a9b5c39c51a15bd1":[16,0,2,0,1,3]
+"classyarp_1_1dev_1_1GazeboYarpCameraDriver.html#ace750b440cf107817723eb5215828edc":[16,0,2,0,1,2]
 };

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['platform_5fid_1720',['PLATFORM_ID',['../CMakeCXXCompilerId_8cpp.html#adbc5372f40838899018fadbc89bd588b',1,'CMakeCXXCompilerId.cpp']]]
+  ['myerror_1721',['myError',['../DepthCameraDriver_8cpp.html#a6c54404ae0339d6a44364666685f0de3',1,'DepthCameraDriver.cpp']]]
 ];

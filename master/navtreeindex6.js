@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#a69709a1b50ba3933ed45e8515c62d0df":[16,0,2,0,6,77],
 "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#a6b169a33964c5b713411e6ad8b6d9993":[16,0,2,0,6,102],
 "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#a6ba647098c69e3f309eb64c04c8a6f20":[16,0,2,0,6,74],
 "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#a70be9443cc75828284f5595cf714044a":[16,0,2,0,6,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "functions_m.html":[16,3,0,10],
 "functions_o.html":[16,3,0,11],
 "functions_p.html":[16,3,0,12],
-"functions_r.html":[16,3,0,13],
-"functions_s.html":[16,3,0,14]
+"functions_r.html":[16,3,0,13]
 };

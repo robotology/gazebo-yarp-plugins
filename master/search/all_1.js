@@ -1,13 +1,17 @@
 var searchData=
 [
-  ['b_14',['b',['../classGazeboYarpPlugins_1_1Color.html#a6ae5d8dd912d98a1ba8eaabe9a4a84e0',1,'GazeboYarpPlugins::Color']]],
-  ['basecouplinghandler_15',['BaseCouplingHandler',['../classBaseCouplingHandler.html',1,'BaseCouplingHandler'],['../classBaseCouplingHandler.html#ac232d8f529a7243910d2d4db7c710735',1,'BaseCouplingHandler::BaseCouplingHandler()']]],
-  ['basestate_2ecc_16',['BaseState.cc',['../BaseState_8cc.html',1,'']]],
-  ['basestate_2ehh_17',['BaseState.hh',['../BaseState_8hh.html',1,'']]],
-  ['basestatedriver_2ecpp_18',['BaseStateDriver.cpp',['../BaseStateDriver_8cpp.html',1,'']]],
-  ['basestatedriver_2eh_19',['BaseStateDriver.h',['../BaseStateDriver_8h.html',1,'']]],
-  ['begin_20',['begin',['../classGazeboYarpPlugins_1_1Color_1_1Editor.html#a815addfff330c66e4fe644d8d68e43c5',1,'GazeboYarpPlugins::Color::Editor::begin()'],['../classGazeboYarpPlugins_1_1Color_1_1Editor.html#a815addfff330c66e4fe644d8d68e43c5',1,'GazeboYarpPlugins::Color::Editor::begin()'],['../classGazeboYarpPlugins_1_1Pose_1_1Editor.html#ae9b48d08796944b3a92ecc31c864d3b4',1,'GazeboYarpPlugins::Pose::Editor::begin()'],['../classGazeboYarpPlugins_1_1Pose_1_1Editor.html#ae9b48d08796944b3a92ecc31c864d3b4',1,'GazeboYarpPlugins::Pose::Editor::begin()']]],
-  ['bufferedport_21',['BufferedPort',['../classyarp_1_1os_1_1BufferedPort.html',1,'yarp::os']]],
-  ['bufferedport_3c_20imagetype_20_3e_22',['BufferedPort&lt; ImageType &gt;',['../classyarp_1_1os_1_1BufferedPort.html',1,'yarp::os']]],
-  ['bufferedport_3c_20yarp_3a_3aos_3a_3abottle_20_3e_23',['BufferedPort&lt; yarp::os::Bottle &gt;',['../classyarp_1_1os_1_1BufferedPort.html',1,'yarp::os']]]
+  ['aborttrajectory_1',['abortTrajectory',['../classTrajectoryGenerator.html#a69b53fcef6d40b7351a6019aa9dfc82f',1,'TrajectoryGenerator::abortTrajectory()'],['../classConstSpeedTrajectoryGenerator.html#a8286c25ae719d5676f599ff3dae2cfba',1,'ConstSpeedTrajectoryGenerator::abortTrajectory()'],['../classTrapezoidalSpeedTrajectoryGenerator.html#a81d3621cda9f6deda51d4fe85237803b',1,'TrapezoidalSpeedTrajectoryGenerator::abortTrajectory()'],['../classMinJerkTrajectoryGenerator.html#a84396277c296f05e726eb5c4c6ff11f1',1,'MinJerkTrajectoryGenerator::abortTrajectory()']]],
+  ['accelstartidx_2',['accelStartIdx',['../IMUDriver_8cpp.html#a8b6f29ad96127a61c8f5d3a49db47ae7',1,'IMUDriver.cpp']]],
+  ['addgazeboenviromentalvariablesmodel_3',['addGazeboEnviromentalVariablesModel',['../namespaceGazeboYarpPlugins.html#a71413a3b592c221ef71e30f4c07b114f',1,'GazeboYarpPlugins']]],
+  ['addgazeboenviromentalvariablessensor_4',['addGazeboEnviromentalVariablesSensor',['../namespaceGazeboYarpPlugins.html#af8779d6bf51fff7e68c3ff995b4d6015',1,'GazeboYarpPlugins']]],
+  ['applyexternalwrench_5',['ApplyExternalWrench',['../classgazebo_1_1ApplyExternalWrench.html#a76021aa79b075dc75d59f6e3de9d0679',1,'gazebo::ApplyExternalWrench::ApplyExternalWrench()'],['../classgazebo_1_1ApplyExternalWrench.html',1,'gazebo::ApplyExternalWrench']]],
+  ['applyexternalwrench_2ecc_6',['ApplyExternalWrench.cc',['../ApplyExternalWrench_8cc.html',1,'']]],
+  ['applyexternalwrench_2ehh_7',['ApplyExternalWrench.hh',['../ApplyExternalWrench_8hh.html',1,'']]],
+  ['applywrench_8',['applyWrench',['../classExternalWrench.html#ae30c52dd5e2b3de95970dffd3d5b29bb',1,'ExternalWrench']]],
+  ['architecture_5fid_9',['ARCHITECTURE_ID',['../CMakeCXXCompilerId_8cpp.html#aba35d0d200deaeb06aee95ca297acb28',1,'CMakeCXXCompilerId.cpp']]],
+  ['attach_10',['attach',['../classGazeboYarpPlugins_1_1WorldInterfaceServer.html#ab4128edf842429fafb3280a6bb71f8e1',1,'GazeboYarpPlugins::WorldInterfaceServer::attach(const std::string &amp;id, const std::string &amp;link_name)'],['../classGazeboYarpPlugins_1_1WorldInterfaceServer.html#add1bd0bdb4478f12c7fe5dfeace5604a',1,'GazeboYarpPlugins::WorldInterfaceServer::attach(const std::string &amp;id, const std::string &amp;link_name)'],['../classWorldProxy.html#a0517160a30fddc1c12fff645adb71e0d',1,'WorldProxy::attach()'],['../classWorldInterfaceServerImpl.html#af3c793a2ff10905a3919e4c9af881101',1,'WorldInterfaceServerImpl::attach()']]],
+  ['attachmodelpointer_11',['attachModelPointer',['../classLinkAttacherServerImpl.html#ae35533ab8bef307331fc038bde0455c2',1,'LinkAttacherServerImpl::attachModelPointer()'],['../classWorldProxy.html#ae448f41592721a3526920178786ebe2a',1,'WorldProxy::attachModelPointer()']]],
+  ['attachunscoped_12',['attachUnscoped',['../classLinkAttacherServerImpl.html#a6df5260840edfd44f7398a5ca4a4c5b0',1,'LinkAttacherServerImpl::attachUnscoped()'],['../classGazeboYarpPlugins_1_1LinkAttacherServer.html#ab139811093bdf5679b884ad445727576',1,'GazeboYarpPlugins::LinkAttacherServer::attachUnscoped(const std::string &amp;model_name, const std::string &amp;model_link_name, const std::string &amp;robot_name, const std::string &amp;robot_link_name)'],['../classGazeboYarpPlugins_1_1LinkAttacherServer.html#a788455d1909a32917ca1c8694a8f0f7d',1,'GazeboYarpPlugins::LinkAttacherServer::attachUnscoped(const std::string &amp;model_name, const std::string &amp;model_link_name, const std::string &amp;robot_name, const std::string &amp;robot_link_name)']]],
+  ['attachworldpointer_13',['attachWorldPointer',['../classLinkAttacherServerImpl.html#a497b3f7cf50e57422c5b987cbab75e57',1,'LinkAttacherServerImpl::attachWorldPointer()'],['../classWorldProxy.html#a6054519759b7e7ce45b2e335daad009a',1,'WorldProxy::attachWorldPointer()']]],
+  ['attachworldproxy_14',['attachWorldProxy',['../classWorldInterfaceServerImpl.html#af35f1ac2f368c3bdb0776d07f8c6b2b3',1,'WorldInterfaceServerImpl']]]
 ];

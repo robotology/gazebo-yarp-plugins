@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"classGazeboYarpPlugins_1_1LinkAttacherServer.html#ae0caa64c46dde22e05e1df701950ce5e":[16,0,1,12,9],
 "classGazeboYarpPlugins_1_1LinkAttacherServer__attachUnscoped__helper.html":[16,0,1,14],
 "classGazeboYarpPlugins_1_1LinkAttacherServer__attachUnscoped__helper.html#a01757f45d7a6d7c2960ac211c6e8f19c":[16,0,1,14,4],
 "classGazeboYarpPlugins_1_1LinkAttacherServer__attachUnscoped__helper.html#a15175867047d44210364dd6ab002498d":[16,0,1,14,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a22df18433ef7b282d876ac1f49b1ef21":[16,0,1,20,2],
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a25a8b967e26ceff38b2734a15472377c":[16,0,1,20,3],
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a542eacc8d918545fc0d1d2056fbfdb1b":[16,0,1,20,11],
-"classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a598ef4ed576147c13da300a252e585ee":[16,0,1,20,6],
-"classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a604c3f3c94afc2b9d11b2f22009ce58f":[16,0,1,20,12]
+"classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper.html#a598ef4ed576147c13da300a252e585ee":[16,0,1,20,6]
 };

@@ -268,8 +268,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 for (std::size_t i=0; i<b3->size(); i++)
                 {
                     Range range;
-                    range.min = b3->get(i).asDouble();
-                    range.max = b4->get(i).asDouble();
+                    range.min = b3->get(i).asFloat64();
+                    range.max = b4->get(i).asFloat64();
 
                     coupled_joint_limits.push_back(range);
                 }
@@ -741,7 +741,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
         {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
             {
-                m_jointPosLimits[i].max = pos_limit_max.get(i+1).asDouble();
+                m_jointPosLimits[i].max = pos_limit_max.get(i+1).asFloat64();
 
             }
         }
@@ -755,7 +755,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
         {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
             {
-                m_jointPosLimits[i].min = pos_limit_min.get(i+1).asDouble();
+                m_jointPosLimits[i].min = pos_limit_min.get(i+1).asFloat64();
             }
         }
         else
@@ -790,7 +790,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
         {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
             {
-                m_jointVelLimits[i].max = vel_limits.get(i+1).asDouble();
+                m_jointVelLimits[i].max = vel_limits.get(i+1).asFloat64();
                 m_jointVelLimits[i].min = 0;
             }
         }
@@ -837,7 +837,7 @@ bool GazeboYarpControlBoardDriver::setTrajectoryReferences()
             {
                 for (size_t j = 0; j < m_numberOfJoints; ++j)
                 {
-                    m_trajectoryGenerationReferenceSpeed[j] = refSpeeds.get(j + 1).asDouble();
+                    m_trajectoryGenerationReferenceSpeed[j] = refSpeeds.get(j + 1).asFloat64();
                 }
             }
             else
@@ -855,7 +855,7 @@ bool GazeboYarpControlBoardDriver::setTrajectoryReferences()
             {
                 for (size_t j = 0; j < m_numberOfJoints; ++j)
                 {
-                    m_trajectoryGenerationReferenceAcceleration[j] = refAccelerations.get(j + 1).asDouble();
+                    m_trajectoryGenerationReferenceAcceleration[j] = refAccelerations.get(j + 1).asFloat64();
                 }
             }
             else
@@ -939,16 +939,16 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup(std::string pidGroupName,
 
             gazebo::common::PID pidValue;
             if (pidTerms & PIDFeedbackTermProportionalTerm)
-                pidValue.SetPGain(pid.get(1).asDouble());
+                pidValue.SetPGain(pid.get(1).asFloat64());
             if (pidTerms & PIDFeedbackTermDerivativeTerm)
-                pidValue.SetDGain(pid.get(2).asDouble());
+                pidValue.SetDGain(pid.get(2).asFloat64());
             if (pidTerms & PIDFeedbackTermIntegrativeTerm)
-                pidValue.SetIGain(pid.get(3).asDouble());
+                pidValue.SetIGain(pid.get(3).asFloat64());
 
-            pidValue.SetIMax(pid.get(4).asDouble());
-            pidValue.SetIMin(-pid.get(4).asDouble());
-            pidValue.SetCmdMax(pid.get(5).asDouble());
-            pidValue.SetCmdMin(-pid.get(5).asDouble());
+            pidValue.SetIMax(pid.get(4).asFloat64());
+            pidValue.SetIMin(-pid.get(4).asFloat64());
+            pidValue.SetCmdMax(pid.get(5).asFloat64());
+            pidValue.SetCmdMin(-pid.get(5).asFloat64());
 
             pids.push_back(pidValue);
         }
@@ -1016,63 +1016,63 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
             error = true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].kp = xtmp.get(j+1).asDouble();
+                yarpPid[j].kp = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].kd = xtmp.get(j+1).asDouble();
+                yarpPid[j].kd = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].ki = xtmp.get(j+1).asDouble();
+                yarpPid[j].ki = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].max_int = xtmp.get(j+1).asDouble();
+                yarpPid[j].max_int = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].max_output = xtmp.get(j+1).asDouble();
+                yarpPid[j].max_output = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1)){
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].scale = xtmp.get(j+1).asDouble();
+                yarpPid[j].scale = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1)){
             error = true;
         } else {
             for (j = 0; j < m_numberOfJoints; ++j) {
-                yarpPid[j].offset = xtmp.get(j + 1).asDouble();
+                yarpPid[j].offset = xtmp.get(j + 1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "stictionUp", "Pid stictionUp", m_numberOfJoints+1)){
             error=true;
         } else {
             for (j = 0; j < m_numberOfJoints; j++) {
-                yarpPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
+                yarpPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
             }
         }
         if (!validate(pidGroup, xtmp, "stictionDwn", "Pid stictionDwn", m_numberOfJoints+1)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
+                yarpPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
             }
         }
 
@@ -1177,13 +1177,13 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
             size_t j=0;
 
             //control parameters
-            if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asDouble();}
-            if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asDouble();}
-            if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asDouble();}
-            if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asDouble();}
-            if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asDouble();}
-            if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asDouble();}
-            if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asDouble();}
+            if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asFloat64();}
+            if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asFloat64();}
+            if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asFloat64();}
+            if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asFloat64();}
+            if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asFloat64();}
+            if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asFloat64();}
+            if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asFloat64();}
 
             if (error)
             {
@@ -1269,8 +1269,8 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
         size_t j=0;
 
         //control parameters
-        if (!validate(pidGroup, xtmp, "stiffness", "stiffness", m_numberOfJoints+1))    {error=true;} else {for (j=0; j<m_numberOfJoints; j++) stiffness[j] = xtmp.get(j+1).asDouble();}
-        if (!validate(pidGroup, xtmp, "damping", "damping", m_numberOfJoints+1))        {error=true;} else {for (j=0; j<m_numberOfJoints; j++) damping[j] = xtmp.get(j+1).asDouble();}
+        if (!validate(pidGroup, xtmp, "stiffness", "stiffness", m_numberOfJoints+1))    {error=true;} else {for (j=0; j<m_numberOfJoints; j++) stiffness[j] = xtmp.get(j+1).asFloat64();}
+        if (!validate(pidGroup, xtmp, "damping", "damping", m_numberOfJoints+1))        {error=true;} else {for (j=0; j<m_numberOfJoints; j++) damping[j] = xtmp.get(j+1).asFloat64();}
 
         if (error)
         {
@@ -1347,13 +1347,13 @@ bool GazeboYarpControlBoardDriver::setPositionsToleranceLinear()
     }
 
     yarp::os::Value tmp=positionToleranceLinear_bot.get(1);
-    if (!tmp.isDouble())
+    if (!tmp.isFloat64())
     {
         yError()<<"Invalid param type:positionToleranceLinear";
         return false;
     }
 
-    m_robotPositionToleranceLinear=tmp.asDouble();
+    m_robotPositionToleranceLinear=tmp.asFloat64();
 
     yDebug()<<"positionToleranceLinear: [ "<<m_robotPositionToleranceLinear<<" ]";
 
@@ -1378,13 +1378,13 @@ bool GazeboYarpControlBoardDriver::setPositionsToleranceRevolute()
     }
 
     yarp::os::Value tmp=positionToleranceRevolute_bot.get(1);
-    if (!tmp.isDouble())
+    if (!tmp.isFloat64())
     {
         yError()<<"Invalid param type:positionToleranceRevolute";
         return false;
     }
 
-    m_robotPositionToleranceRevolute=tmp.asDouble();
+    m_robotPositionToleranceRevolute=tmp.asFloat64();
 
     yDebug()<<"positionToleranceRevolute: [ "<<m_robotPositionToleranceRevolute<<" ]";
     return true;
@@ -1401,7 +1401,7 @@ bool GazeboYarpControlBoardDriver::setMaxTorques()
         yarp::os::Bottle& max_torque_bot = kin_chain_bot.findGroup("max_torques");
         if(static_cast<size_t>(max_torque_bot.size()) - 1 == m_numberOfJoints) {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_maxTorques[i] = max_torque_bot.get(i+1).asDouble();
+                m_maxTorques[i] = max_torque_bot.get(i+1).asFloat64();
         } else
             yError()<<"Invalid number of params";
     } else
@@ -1423,7 +1423,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
         if(static_cast<size_t>(min_stiff_bot.size()) - 1 == m_numberOfJoints) {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_minStiffness[i] = min_stiff_bot.get(i+1).asDouble();
+                m_minStiffness[i] = min_stiff_bot.get(i+1).asFloat64();
         } else
             yError()<<"Invalid number of params";
     } else
@@ -1434,7 +1434,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
         if (static_cast<size_t>(max_stiff_bot.size())-1 == m_numberOfJoints) {
             for (size_t i = 0; i < m_numberOfJoints; ++i)
-                m_maxStiffness[i] = max_stiff_bot.get(i+1).asDouble();
+                m_maxStiffness[i] = max_stiff_bot.get(i+1).asFloat64();
         } else
             yError()<<"Invalid number of params";
     }
@@ -1446,7 +1446,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
         if(static_cast<size_t>(min_damping_bot.size())-1 == m_numberOfJoints) {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_minDamping[i] = min_damping_bot.get(i+1).asDouble();
+                m_minDamping[i] = min_damping_bot.get(i+1).asFloat64();
         } else
             yError()<<"Invalid number of params";
     } else
@@ -1457,7 +1457,7 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
         if (static_cast<size_t>(max_damping_bot.size()) - 1 == m_numberOfJoints) {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_maxDamping[i] = max_damping_bot.get(i+1).asDouble();
+                m_maxDamping[i] = max_damping_bot.get(i+1).asFloat64();
         } else
             yError()<<"Invalid number of params";
     } else
@@ -1549,7 +1549,7 @@ bool GazeboYarpControlBoardDriver::setPIDs()
             return false;
         } else {
             for (size_t j=0; j<m_numberOfJoints; j++) {
-                m_kPWM[j]=xtmp.get(j+1).asDouble();
+                m_kPWM[j]=xtmp.get(j+1).asFloat64();
             }
         }
     }

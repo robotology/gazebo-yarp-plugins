@@ -12,6 +12,8 @@
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/LogComponent.h>
+
 #include <gazebo/sensors/DepthCameraSensor.hh>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
@@ -19,7 +21,9 @@
 
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpDepthCamera)
-
+namespace {
+    YARP_LOG_COMPONENT(GAZEBODEPTH, "gazebo-yarp-plugins.plugins.GazeboYarpDepthCamera DepthCamera.cc")
+}
 
 namespace gazebo {
 
@@ -36,13 +40,13 @@ GazeboYarpDepthCamera::~GazeboYarpDepthCamera()
 void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
     if (!m_yarp.checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-        yError() << "GazeboYarpDepthCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
+        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
         return;
     }
 
 
     if (!_sensor) {
-        gzerr << "GazeboYarpDepthCamera plugin requires a DepthCameraSensor." << std::endl;
+        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera plugin requires a DepthCameraSensor.";
         return;
     }
 
@@ -60,7 +64,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if (!configuration_loaded)
     {
-        yError() << "error loading configuration from SDF";
+        yCError(GAZEBODEPTH) << "error loading configuration from SDF";
         return;
     }
 
@@ -69,7 +73,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     m_sensor = (gazebo::sensors::DepthCameraSensor*)_sensor.get();
     if(m_sensor == NULL)
     {
-        yDebug() << "m_sensor == NULL";
+        yCDebug(GAZEBODEPTH) << "m_sensor == NULL";
     }
 
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
@@ -83,25 +87,25 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     wrapper_properties.put("device","RGBDSensorWrapper");
     if(wrapper_properties.check("subdevice"))
     {
-        yError() << "RGBDSensorWrapper:  Do not use 'subdevice' keyword here since the only supported subdevice is <gazebo_depthCamera>. \
+        yCError(GAZEBODEPTH) << "RGBDSensorWrapper:  Do not use 'subdevice' keyword here since the only supported subdevice is <gazebo_depthCamera>. \
                      Please remove the line 'subdevice " << wrapper_properties.find("subdevice").asString().c_str() << "' from your config file before proceeding";
         return;
     }
 
     if(!m_cameraWrapper.open(wrapper_properties) )
     {
-        yError()<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp wrapper";
+        yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp wrapper";
         return;
     }
 
     //Open the driver
     //Force the device to be of type "gazebo_depthCamera" (it make sense? probably yes)
     m_driverParameters.put("device","gazebo_depthCamera");
-    yDebug() << "CC: m_driverParameters:\t" << m_driverParameters.toString();
+    yCDebug(GAZEBODEPTH) << "CC: m_driverParameters:\t" << m_driverParameters.toString();
 
     if(!m_cameraDriver.open(m_driverParameters) )
     {
-        yError()<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp driver";
+        yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp driver";
         return;
     }
 
@@ -110,7 +114,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if(!m_cameraWrapper.view(m_iWrap) )
     {
-        yError() << "GazeboYarpDepthCamera : error in loading wrapper";
+        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in loading wrapper";
         return;
     }
 
@@ -118,7 +122,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if(!m_iWrap->attachAll(driver_list) )
     {
-        yError() << "GazeboYarpDepthCamera : error in connecting wrapper and device ";
+        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in connecting wrapper and device ";
     }
     
     //Register the device with the given name
@@ -134,10 +138,10 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
     {
-        yError()<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
         return;
     }
-    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
+    yCInfo(GAZEBODEPTH) << "Registered YARP device with instance name:" << scopedDeviceName;
 }
 
 } // namespace gazebo

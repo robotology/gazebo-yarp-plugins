@@ -63,8 +63,10 @@ namespace gazebo
         std::string m_sensorName;
         sensors::DepthCameraSensor *m_sensor;
 
+        #ifndef USE_NEW_WRAPPERS
         yarp::dev::PolyDriver m_cameraWrapper;
         yarp::dev::IMultipleWrapper* m_iWrap;
+        #endif
 
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
     };

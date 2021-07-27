@@ -4,6 +4,10 @@
 
 cmake_minimum_required(VERSION 3.5)
 PROJECT(GazeboYARPPlugins)
+option(USE_NEW_WRAPPERS "use new nws and nwc instead of old ones" OFF)
+if(USE_NEW_WRAPPERS)
+    add_definitions(-DUSE_NEW_WRAPPERS)
+endif()
 
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)

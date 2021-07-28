@@ -52,7 +52,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     _sensor->SetActive(true);
 
     // Add my gazebo device driver to the factory.
-    #ifndef USE_NEW_WRAPPERS
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
                                         ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
     #else
@@ -63,7 +63,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Getting .ini configuration file from sdf
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,m_driverParameters);
 
-    #ifndef USE_NEW_WRAPPERS
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     // wrapper params are in the same file along the driver params
     ::yarp::os::Property wrapper_properties = m_driverParameters;
 
@@ -88,7 +88,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     // Add scoped name to list of params
     m_driverParameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
 
-    #ifndef USE_NEW_WRAPPERS
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ///////////////////////////
     //Open the wrapper, forcing it to be a "RGBDSensorWrapper"
     wrapper_properties.put("device","RGBDSensorWrapper");
@@ -117,7 +117,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
-    #ifndef USE_NEW_WRAPPERS
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
 

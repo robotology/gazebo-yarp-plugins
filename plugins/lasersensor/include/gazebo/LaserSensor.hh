@@ -60,7 +60,7 @@ namespace gazebo
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         yarp::dev::PolyDriver m_laserWrapper;
         yarp::dev::IMultipleWrapper* m_iWrap;
         #endif

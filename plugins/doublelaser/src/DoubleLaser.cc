@@ -33,7 +33,7 @@ namespace gazebo
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
 
     GazeboYarpDoubleLaser::GazeboYarpDoubleLaser() :
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         m_iWrap_rangeFinder(0),
         #endif
         m_iWrap_doublelaser(0)
@@ -44,12 +44,12 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         if (m_iWrap_doublelaser)
         {
             m_iWrap_doublelaser->detachAll();
-            #ifndef USE_NEW_WRAPPERS
+            #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
             m_iWrap_rangeFinder = 0;
             #endif
         }
 
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         if (m_iWrap_rangeFinder)
         {
             m_iWrap_rangeFinder->detachAll();
@@ -135,7 +135,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
         // 4) Insert the pointer in the singleton handler for retrieving it in the yarp driver
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
         //5) open wrapper Rangefinder2DWrapper
         yarp::os::Property wrapper_parameters;
@@ -255,7 +255,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpDoubleLaser)
             return;
         }
 
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
         // 8 )attach rangefinder wrapper to double laser
         yarp::dev::PolyDriverList listofdoubellaser; //it will contain only double laser

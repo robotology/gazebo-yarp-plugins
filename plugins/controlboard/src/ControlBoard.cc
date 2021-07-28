@@ -23,7 +23,7 @@ namespace gazebo
 
 GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
-    #ifndef USE_NEW_WRAPPERS
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     GazeboYarpControlBoard::GazeboYarpControlBoard() : m_iWrap(nullptr),
                                                        m_iVirtAnalogSensorWrap(nullptr)
     #else
@@ -33,7 +33,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
     GazeboYarpControlBoard::~GazeboYarpControlBoard()
     {
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         if (m_iWrap) {
             m_iWrap->detachAll();
             m_iWrap = nullptr;
@@ -87,7 +87,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 
         // Add the gazebo_controlboard device driver to the factory.
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>("gazebo_controlboard", "controlboardwrapper2", "GazeboYarpControlBoardDriver"));
         #else
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>("gazebo_controlboard", "", "GazeboYarpControlBoardDriver"));
@@ -100,7 +100,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             yCError(GAZEBOCONTROLBOARD) << "File .ini not found, load failed." ;
             return;
         }
-        #ifndef USE_NEW_WRAPPERS
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
         yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
         if(wrapper_group.isNull())

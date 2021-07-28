@@ -1310,7 +1310,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
 
 bool GazeboYarpControlBoardDriver::findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const
 {
-    #ifndef USE_NEW_WRAPPERS
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if (!m_pluginParameters.check("WRAPPER"))
     {
         yCError(GAZEBOCONTROLBOARD)<<"Missing WRAPPER group";

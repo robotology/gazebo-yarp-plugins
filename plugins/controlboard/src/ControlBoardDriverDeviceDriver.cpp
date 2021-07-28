@@ -21,7 +21,6 @@ bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
     m_deviceName = m_pluginParameters.find("name").asString().c_str();
 
     std::string robotName(m_pluginParameters.find("robotScopedName").asString().c_str());
-    yCDebug(GAZEBOCONTROLBOARD) << "roobotname is ========================================= " << robotName;
     m_robot = GazeboYarpPlugins::Handler::getHandler()->getRobot(robotName);
     if(!m_robot) {
         yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver error: robot was not found";

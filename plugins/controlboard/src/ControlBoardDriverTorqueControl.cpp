@@ -11,6 +11,7 @@
 
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t)
 {

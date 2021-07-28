@@ -5,6 +5,7 @@
  */
 
 #include "DoubleLaser.hh"
+#include "DoubleLaserLog.h"
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
@@ -25,10 +26,7 @@
  */
 
 using namespace std;
-
-namespace {
-    YARP_LOG_COMPONENT(GAZEBODOUBLELASER, "gazebo-yarp-plugins.plugins.GazeboYarpDoubleLaser")
-}
+using GazeboYarpPlugins::GAZEBODOUBLELASER;
 
 namespace gazebo
 {

@@ -7,6 +7,7 @@
 
 #include "LaserSensor.hh"
 #include "LaserSensorDriver.h"
+#include "LaserSensorLog.h"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
@@ -18,11 +19,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 
+using GazeboYarpPlugins::GAZEBOLASER;
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpLaserSensor)
-namespace {
-    YARP_LOG_COMPONENT(GAZEBOLASER, "gazebo-yarp-plugins.plugins.GazeboYarpLaserSensor")
-}
+
 namespace gazebo {
 
 GazeboYarpLaserSensor::GazeboYarpLaserSensor() : SensorPlugin(), m_iWrap(0)

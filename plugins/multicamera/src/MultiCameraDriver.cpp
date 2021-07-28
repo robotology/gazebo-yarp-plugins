@@ -6,6 +6,7 @@
 
 
 #include "yarp/dev/MultiCameraDriver.h"
+#include "gazebo/MultiCameraLog.h"
 
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
@@ -21,7 +22,7 @@
 const std::string YarpScopedName = "sensorScopedName";
 double yarp::dev::GazeboYarpMultiCameraDriver::start_time = 0;
 
-
+using GazeboYarpPlugins::GAZEBOMULTICAMERA;
 
 static void print(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
 {
@@ -88,7 +89,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
 
     m_parentSensor = (gazebo::sensors::MultiCameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     if (!m_parentSensor) {
-        yError() << "GazeboYarpMultiCameraDriver Error: camera sensor was not found";
+        yCError(GAZEBOMULTICAMERA) << "GazeboYarpMultiCameraDriver Error: camera sensor was not found";
         return false;
     }
 
@@ -104,7 +105,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
         m_camera.push_back(m_parentSensor->Camera(i));
 
         if(m_camera[i] == NULL) {
-            yError() << "GazeboYarpMultiCameraDriver: camera" << i <<  "pointer is not valid";
+            yCError(GAZEBOMULTICAMERA) << "GazeboYarpMultiCameraDriver: camera" << i <<  "pointer is not valid";
             return false;
        }
         m_width.push_back(m_camera[i]->ImageWidth());
@@ -378,7 +379,7 @@ yarp::os::Stamp yarp::dev::GazeboYarpMultiCameraDriver::getLastInputStamp()
     // FIXME Ensure that the images are syncronous
     for (unsigned int i = 1; i < m_camera_count; ++i) {
         if (m_lastTimestamp[i].getTime() != m_lastTimestamp[0].getTime()) {
-            yWarning() << "Timestamp is different!" <<  m_lastTimestamp[0].getTime() << m_lastTimestamp[i].getTime();
+            yCWarning(GAZEBOMULTICAMERA) << "Timestamp is different!" <<  m_lastTimestamp[0].getTime() << m_lastTimestamp[i].getTime();
         }
     }
     return m_lastTimestamp[0];

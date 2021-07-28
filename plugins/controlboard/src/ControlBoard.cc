@@ -17,7 +17,7 @@
 #include <yarp/os/Network.h>
 
 using namespace std;
-
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 namespace gazebo
 {
 

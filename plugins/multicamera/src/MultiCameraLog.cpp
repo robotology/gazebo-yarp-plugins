@@ -3,8 +3,9 @@
  * Authors: see AUTHORS file.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
-#include "ControlBoardLog.h"
-namespace GazeboYarpPlugins {
-    YARP_LOG_COMPONENT(GAZEBOCONTROLBOARD,
-    "gazebo-yarp-plugins.plugins.GazeboYarpControlBoard")
+
+#include "gazebo/MultiCameraLog.h"
+
+namespace GazeboYarpPlugins{
+    YARP_LOG_COMPONENT(GAZEBOMULTICAMERA, "gazebo-yarp-plugins.plugins.GazeboYarpMultiCamera MultiCamera.cc")
 }

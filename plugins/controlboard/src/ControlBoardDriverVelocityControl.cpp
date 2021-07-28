@@ -6,9 +6,6 @@
 
 
 #include "ControlBoardDriver.h"
-#include <yarp/os/LogStream.h>
-#include <yarp/os/LogComponent.h>
-
 
 using namespace yarp::dev;
 

@@ -6,6 +6,7 @@
 
 #include "ControlBoardDriver.h"
 #include "ControlBoardLog.h"
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 namespace yarp {
     namespace dev {

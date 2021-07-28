@@ -4,11 +4,11 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
-#ifndef GAZEBOYARP_CONTROLBOARDLOG_H
-#define GAZEBOYARP_CONTROLBOARDLOG_H
+#ifndef GAZEBOYARP_MULTICAMERALOG_H
+#define GAZEBOYARP_MULTICAMERALOG_H
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-namespace GazeboYarpPlugins {
-    YARP_DECLARE_LOG_COMPONENT(GAZEBOCONTROLBOARD)
+namespace GazeboYarpPlugins{
+    YARP_DECLARE_LOG_COMPONENT(GAZEBOMULTICAMERA)
 }
-#endif //GAZEBOYARP_CONTROLBOARDLOG_H
+#endif //GAZEBOYARP_MULTICAMERALOG_H

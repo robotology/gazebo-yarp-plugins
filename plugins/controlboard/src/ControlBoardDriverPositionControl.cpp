@@ -9,6 +9,7 @@
 
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 {

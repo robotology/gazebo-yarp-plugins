@@ -7,7 +7,7 @@
 
 #include "LaserSensorDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
-
+#include "LaserSensorLog.h"
 
 #include <boost/bind/bind.hpp>
 #include <gazebo/sensors/sensors.hh>
@@ -16,11 +16,9 @@
 using namespace boost::placeholders;
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOLASER;
 
 const std::string YarpLaserSensorScopedName = "sensorScopedName";
-namespace {
-    YARP_LOG_COMPONENT(GAZEBOLASER, "gazebo-yarp-plugins.plugins.GazeboYarpLaserSensor")
-}
 
 GazeboYarpLaserSensorDriver::GazeboYarpLaserSensorDriver() {}
 GazeboYarpLaserSensorDriver::~GazeboYarpLaserSensorDriver() {}

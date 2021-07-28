@@ -6,6 +6,7 @@
 
 
 #include "gazebo/MultiCamera.hh"
+#include "gazebo/MultiCameraLog.h"
 #include "yarp/dev/MultiCameraDriver.h"
 
 #include <GazeboYarpPlugins/Handler.hh>
@@ -23,9 +24,7 @@
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpMultiCamera)
 
-namespace {
-    YARP_LOG_COMPONENT(GAZEBOMULTICAMERA, "gazebo-yarp-plugins.plugins.GazeboYarpMultiCamera MultiCamera.cc")
-}
+using GazeboYarpPlugins::GAZEBOMULTICAMERA;
 
 namespace gazebo {
 

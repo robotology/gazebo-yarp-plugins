@@ -9,7 +9,6 @@
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
-#include <yarp/os/LogStream.h>
 
 
 using namespace yarp::dev;

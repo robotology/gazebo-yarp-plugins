@@ -8,6 +8,7 @@
 #include "ControlBoardLog.h"
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 bool GazeboYarpControlBoardDriver::getAxisName(int axis, std::string& name)
 {

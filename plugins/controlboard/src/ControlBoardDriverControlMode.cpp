@@ -15,6 +15,7 @@
 #include <yarp/os/Vocab.h>
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 void GazeboYarpControlBoardDriver::resetAllPidsForJointAtIndex(int j)
 {

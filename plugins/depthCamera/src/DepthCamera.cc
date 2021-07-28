@@ -7,6 +7,7 @@
 
 #include "DepthCamera.hh"
 #include "DepthCameraDriver.h"
+#include "DepthCameraLog.h"
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
@@ -18,12 +19,10 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
 
-
+using GazeboYarpPlugins::GAZEBODEPTH;
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpDepthCamera)
-namespace {
-    YARP_LOG_COMPONENT(GAZEBODEPTH, "gazebo-yarp-plugins.plugins.GazeboYarpDepthCamera DepthCamera.cc")
-}
+
 
 namespace gazebo {
 

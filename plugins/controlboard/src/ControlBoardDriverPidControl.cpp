@@ -11,6 +11,7 @@
 #include "ControlBoardLog.h"
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 namespace yarp {
     namespace dev {

@@ -12,6 +12,7 @@
 
 using namespace yarp::dev;
 using namespace gazebo;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 bool GazeboYarpControlBoardDriver::open(yarp::os::Searchable& config)
 {

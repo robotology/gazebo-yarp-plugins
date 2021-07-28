@@ -20,6 +20,7 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 void Watchdog::reset()
 {

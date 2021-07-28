@@ -3,8 +3,8 @@
  * Authors: see AUTHORS file.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
-#include "ControlBoardLog.h"
+#include "DoubleLaserLog.h"
+
 namespace GazeboYarpPlugins {
-    YARP_LOG_COMPONENT(GAZEBOCONTROLBOARD,
-    "gazebo-yarp-plugins.plugins.GazeboYarpControlBoard")
+    YARP_LOG_COMPONENT(GAZEBODOUBLELASER, "gazebo-yarp-plugins.plugins.GazeboYarpDoubleLaser")
 }

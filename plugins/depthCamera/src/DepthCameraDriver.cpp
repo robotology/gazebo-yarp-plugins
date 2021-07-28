@@ -6,6 +6,7 @@
 
 
 #include "DepthCameraDriver.h"
+#include "DepthCameraLog.h"
 #include <yarp/os/Value.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -18,13 +19,12 @@
 #include <gazebo/rendering/Distortion.hh>
 #include <ignition/math/Angle.hh>
 
-#define myError(s) yError() << "GazeboDepthCameraDriver:" << s; m_error = s
-
 using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace ignition::math;
+using GazeboYarpPlugins::GAZEBODEPTH;
 
 const string YarpScopedName = "sensorScopedName";
 
@@ -82,7 +82,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 
     if (!m_depthCameraSensorPtr)
     {
-        yError("camera sensor was not found (sensor's scoped name %s!)", sensorScopedName.c_str());
+        yCError(GAZEBODEPTH, "camera sensor was not found (sensor's scoped name %s!)", sensorScopedName.c_str());
         return false;
     }
 
@@ -168,7 +168,7 @@ void GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char* _image, U
 
     if(m_format2VocabPixel.find(_format) == m_format2VocabPixel.end())
     {
-        myError("format not supported");
+        yCError(GAZEBODEPTH) << "format not supported";
         return;
     }
 
@@ -203,7 +203,7 @@ void GazeboYarpDepthCameraDriver::OnNewDepthFrame(const float* image, UInt _widt
 
     if (_format != "FLOAT32")
     {
-        myError("image format not recognized!");
+        yCError(GAZEBODEPTH) << "image format not recognized!";
     }
 
     m_depthFormat = VOCAB_PIXEL_MONO_FLOAT;
@@ -254,7 +254,7 @@ bool GazeboYarpDepthCameraDriver::setRgbFOV(double horizontalFov, double vertica
     ignition::math::Angle hFov;
     hFov.Degree(horizontalFov);
     m_depthCameraSensorPtr->DepthCamera()->SetHFOV(hFov);
-    yWarning() << "GazeboDepthCameraDriver: only horizontal fov set!";
+    yCWarning(GAZEBODEPTH) << "GazeboDepthCameraDriver: only horizontal fov set!";
     return true;
 }
 bool GazeboYarpDepthCameraDriver::getRgbMirroring(bool& mirror)
@@ -264,7 +264,7 @@ bool GazeboYarpDepthCameraDriver::getRgbMirroring(bool& mirror)
 }
 bool GazeboYarpDepthCameraDriver::setRgbMirroring(bool mirror)
 {
-    myError("not implemented yet");
+    yCError(GAZEBODEPTH)  << "setRgbMirroring not implemented yet";
     return false;
 }
 bool GazeboYarpDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
@@ -275,7 +275,7 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
 {
     if(!timeStamp)
     {
-        myError("timestamp pointer invalid!");
+        yCError(GAZEBODEPTH) << "timestamp pointer invalid!";
         return false;
     }
 
@@ -283,7 +283,7 @@ bool GazeboYarpDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeSt
 
     if(m_width == 0 || m_height == 0)
     {
-        myError("gazebo returned an invalid image size");
+        yCError(GAZEBODEPTH)  << "gazebo returned an invalid image size";
         return false;
     }
     rgbImage.setPixelCode(m_imageFormat);
@@ -374,7 +374,7 @@ double GazeboYarpDepthCameraDriver::getDepthAccuracy()
 
 bool GazeboYarpDepthCameraDriver::setDepthAccuracy(double accuracy)
 {
-    myError("impossible to set accuracy");
+    yCError(GAZEBODEPTH)  << "impossible to set accuracy";
     return false;
 }
 
@@ -401,7 +401,7 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
 {
     if(!timeStamp)
     {
-        myError("gazeboDepthCameraDriver: timestamp pointer invalid!");
+        yCError(GAZEBODEPTH)  << "gazeboDepthCameraDriver: timestamp pointer invalid!";
         return false;
     }
 
@@ -409,7 +409,7 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
 
     if(m_width == 0 || m_height == 0)
     {
-        myError("gazebo returned an invalid image size");
+        yCError(GAZEBODEPTH)  << "gazebo returned an invalid image size";
         return false;
     }
 

@@ -10,6 +10,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - The controlboard and multicamera plugins now handle the `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/559).
 
 ### Changed
+- `MultiCamera`, `LaserSensor`, `DoubleLaser`, `ControlBoard` and `DepthCamera` logging now have a component and they're all yC...() style  
 - `gazebo-yarp-plugins` now requires YARP 3.5 (https://github.com/robotology/gazebo-yarp-plugins/pull/562).
 
 ### Fixed

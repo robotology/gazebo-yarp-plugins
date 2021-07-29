@@ -139,10 +139,19 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     std::string scopedDeviceName;
     if(!m_driverParameters.check("yarpDeviceName"))
     {
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+        scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
+    }
+    else
+    {
+        scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
+    }
+    #else
         yCError(GAZEBODEPTH) << "missing yarpDeviceName parameter";
         return;
     }
     scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
+    #endif
 
     if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
     {

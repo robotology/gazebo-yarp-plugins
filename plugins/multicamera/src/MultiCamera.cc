@@ -6,6 +6,7 @@
 
 
 #include "gazebo/MultiCamera.hh"
+#include "gazebo/MultiCameraLog.h"
 #include "yarp/dev/MultiCameraDriver.h"
 
 #include <GazeboYarpPlugins/Handler.hh>
@@ -23,6 +24,7 @@
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpMultiCamera)
 
+using GazeboYarpPlugins::GAZEBOMULTICAMERA;
 
 namespace gazebo {
 
@@ -40,7 +42,7 @@ GazeboYarpMultiCamera::~GazeboYarpMultiCamera()
 void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 {
     if (!yarp::os::NetworkBase::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-        yError() << "GazeboYarpMultiCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
+        yCError(GAZEBOMULTICAMERA) << "GazeboYarpMultiCamera::Load error: yarp network does not seem to be available, is the yarpserver running?";
         return;
     }
 
@@ -57,13 +59,13 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor, _sdf, m_parameters);
 
     if (!configuration_loaded) {
-        yWarning() << "MultiCameraPlugin could not load configuration";
+        yCWarning(GAZEBOMULTICAMERA) << "MultiCameraPlugin could not load configuration";
         return;
     }
 
     m_sensorName = _sensor->ScopedName();
 
-    yDebug() << "GazeboYarpMultiCamera Plugin: sensor scoped name is" << m_sensorName.c_str();
+    yCDebug(GAZEBOMULTICAMERA) << "GazeboYarpMultiCamera Plugin: sensor scoped name is" << m_sensorName.c_str();
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
@@ -71,14 +73,14 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     //Open the driver
     if (m_cameraDriver.open(m_parameters)) {
-        yInfo() << "Loaded GazeboYarpMultiCamera Plugin correctly";
+        yCInfo(GAZEBOMULTICAMERA) << "Loaded GazeboYarpMultiCamera Plugin correctly";
     } else {
-        yWarning() << "GazeboYarpMultiCamera Plugin Load failed: error in opening yarp driver";
+        yCWarning(GAZEBOMULTICAMERA) << "GazeboYarpMultiCamera Plugin Load failed: error in opening yarp driver";
     }
 
     m_cameraDriver.view(iFrameGrabberImage);
     if(iFrameGrabberImage == NULL) {
-        yError() << "Unable to get the iFrameGrabberImage interface from the device";
+        yCError(GAZEBOMULTICAMERA) << "Unable to get the iFrameGrabberImage interface from the device";
         return;
     }
 
@@ -96,10 +98,10 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
     {
-        yError()<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yCError(GAZEBOMULTICAMERA)<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
         return;
     }
-    yInfo() << "GazeboYarpMultiCamera: Register YARP device with instance name:" << scopedDeviceName;
+    yCInfo(GAZEBOMULTICAMERA) << "GazeboYarpMultiCamera: Register YARP device with instance name:" << scopedDeviceName;
 }
 
 } // namespace gazebo

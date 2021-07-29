@@ -5,14 +5,15 @@
  */
 
 #include "ControlBoardDriver.h"
-#include <yarp/os/LogStream.h>
+#include "ControlBoardLog.h"
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 namespace yarp {
     namespace dev {
 
         static inline bool NOT_YET_IMPLEMENTED(const char *txt)
         {
-            yError() << txt << " is not yet implemented for gazebo_yarp_controlboard";
+            yCError(GAZEBOCONTROLBOARD) << txt << " is not yet implemented for gazebo_yarp_controlboard";
             return true;
         }
 

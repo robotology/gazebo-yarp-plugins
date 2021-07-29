@@ -5,7 +5,8 @@
  */
 
 #include "ControlBoardDriver.h"
-#include <yarp/os/LogStream.h>
+#include "ControlBoardLog.h"
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 namespace yarp {
     namespace dev {
@@ -15,7 +16,7 @@ namespace yarp {
         {
             if (ch < 0 || ch >= this->getVirtualAnalogSensorChannels())
             {
-                yError() << "GazeboYarpControlBoardDriver: VirtualAnalogServer: getState failed: requested channel " << ch << 
+                yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver: VirtualAnalogServer: getState failed: requested channel " << ch <<
                             "while the client is configured with " << this->getVirtualAnalogSensorChannels() << "channels";
             
                 return VAS_status::VAS_ERROR;
@@ -35,7 +36,7 @@ namespace yarp {
             {
                 if (measure.size() != m_numberOfJoints)
                 {
-                    yError() << "GazeboYarpControlBoardDriver: VirtualAnalogServer: assert size error : Vector lengths do not match";
+                    yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver: VirtualAnalogServer: assert size error : Vector lengths do not match";
                     return false;
                 }
                 
@@ -54,7 +55,7 @@ namespace yarp {
             {
                 if (ch < 0 || ch >= this->getVirtualAnalogSensorChannels())
                 {
-                    yError() << "GazeboYarpControlBoardDriver: VirtualAnalogServer: index out of bounds";
+                    yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver: VirtualAnalogServer: index out of bounds";
                     return false;
                 }
                 

@@ -6,6 +6,7 @@
 
 #include "ControlBoard.hh"
 #include "ControlBoardDriver.h"
+#include "ControlBoardLog.h"
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
@@ -14,10 +15,9 @@
 #include <yarp/dev/IMultipleWrapper.h>
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Log.h>
-#include <yarp/os/LogStream.h>
 
 using namespace std;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 namespace gazebo
 {
 
@@ -66,12 +66,12 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         yarp::os::Network::init();
 
         if (!yarp::os::Network::checkNetwork(GazeboYarpPlugins::yarpNetworkInitializationTimeout)) {
-            yError() << "GazeboYarpControlBoard : yarp network does not seem to be available, is the yarpserver running?";
+            yCError(GAZEBOCONTROLBOARD) << "yarp network does not seem to be available, is the yarpserver running?";
             return;
         }
 
         if (!_parent) {
-            gzerr << "GazeboYarpControlBoard plugin requires a parent.\n";
+            yCError(GAZEBOCONTROLBOARD) << "the plugin requires a parent.";
             return;
         }
 
@@ -86,15 +86,14 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         if (!configuration_loaded)
         {
-            yError() << "GazeboYarpControlBoard : File .ini not found, load failed." ;
+            yCError(GAZEBOCONTROLBOARD) << "File .ini not found, load failed." ;
             return;
         }
 
         yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
         if(wrapper_group.isNull()) 
         {
-            yError("GazeboYarpControlBoard : [WRAPPER] group not found in config file\n");
-            return;
+            yCDebug(GAZEBOCONTROLBOARD) <<"[WRAPPER] group not found in config file";
         }
 
         if(m_parameters.check("ROS"))
@@ -107,20 +106,19 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         m_wrapper.open(wrapper_group);
 
         if (!m_wrapper.isValid()) {
-            yError("GazeboYarpControlBoard : wrapper did not open, load failed.");
+            yCError(GAZEBOCONTROLBOARD) <<"wrapper did not open, load failed.";
             m_wrapper.close();
             return;
         }
 
         if (!m_wrapper.view(m_iWrap)) {
-            yError("GazeboYarpControlBoard : wrapper interface not found, load failed.");
-            return;
+            yCError(GAZEBOCONTROLBOARD) <<"wrapper interface not found, load failed.";
         }
 
         yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
 
         if (netList->isNull()) {
-            yError("GazeboYarpControlBoard : net list to attach to was not found, load failed.");
+            yCError(GAZEBOCONTROLBOARD) <<"net list to attach to was not found, load failed.";
             m_wrapper.close();
             return;
         }
@@ -134,7 +132,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             virt_group = m_parameters.findGroup("VIRTUAL_ANALOG_SERVER");
             if (virt_group.isNull())
             {
-                yError("GazeboYarpControlBoard : [VIRTUAL_ANALOG_SERVER] group not found in config file\n");
+                yCError(GAZEBOCONTROLBOARD) <<"[VIRTUAL_ANALOG_SERVER] group not found in config file";
                 return;
             }                   
 
@@ -172,13 +170,13 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             if( newPoly.poly != NULL)
             {
                 // device already exists, use it, setting it againg to increment the usage counter.
-                yWarning("GazeboYarpControlBoard : controlBoard %s already opened.", newPoly.key.c_str());
+                yCWarning(GAZEBOCONTROLBOARD) << newPoly.key.c_str() << "already opened.";
             }
             else
             {
                 driver_group = m_parameters.findGroup(newPoly.key.c_str());
                 if (driver_group.isNull()) {
-                    yError("GazeboYarpControlBoard : [%s] group not found in config file. Closing wrapper.", newPoly.key.c_str());
+                    yCError(GAZEBOCONTROLBOARD) <<"group not found in config file. Closing wrapper." << newPoly.key.c_str();
                     m_wrapper.close();
                     return;
                 }
@@ -188,16 +186,16 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 m_parameters.put("robotScopedName", m_robotName);
 
                 if (_sdf->HasElement("initialConfiguration")) {
-                    //yDebug()<<"Found initial Configuration: ";
+                    //yCDebug(GAZEBOCONTROLBOARD)<<"Found initial Configuration: ";
                     std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
                     m_parameters.put("initialConfiguration", configuration_s.c_str());
-                    //yDebug()<<configuration_s;
+                    //yCDebug(GAZEBOCONTROLBOARD)<<configuration_s;
                 }
 
                 newPoly.poly = new yarp::dev::PolyDriver;
                 if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
                 {
-                    yError() << "GazeboYarpControlBoard : controlBoard <" << newPoly.key << "> did not open.";
+                    yCError(GAZEBOCONTROLBOARD) << newPoly.key << "> did not open.";
                     for(int idx=0; idx<m_controlBoards.size(); idx++)
                     {
                         m_controlBoards[idx]->poly->close();
@@ -210,10 +208,10 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             //Register the device with the given name
             if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
             {
-                yError() << "GazeboYarpControlBoard: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+                yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << scopedDeviceName << ")";
                 return;
             }
-            yInfo() << "GazeboYarpControlBoard: Registered YARP device with instance name:" << scopedDeviceName;
+            yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << scopedDeviceName;
 
             m_controlBoards.push(newPoly);
         }
@@ -224,27 +222,27 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
             if (!m_virtAnalogSensorWrapper.isValid()) 
             {
-                yError("GazeboYarpControlBoard : Virtual analog sensor wrapper did not open, load failed.");
+                yCError(GAZEBOCONTROLBOARD) << "Virtual analog sensor wrapper did not open, load failed.";
                 m_virtAnalogSensorWrapper.close();
                 return;
             }
 
             if (!m_virtAnalogSensorWrapper.view(m_iVirtAnalogSensorWrap)) 
             {
-                yError("GazeboYarpControlBoard : Could not view the IVirtualAnalogSensor interface");
+                yCError(GAZEBOCONTROLBOARD) << "Could not view the IVirtualAnalogSensor interface";
                 return;
             }
             
             if (!m_iVirtAnalogSensorWrap->attachAll(m_controlBoards))
             {
-                yError("GazeboYarpControlBoard : Could not attach VirtualAnalogSensor interface to controlboards");
+                yCError(GAZEBOCONTROLBOARD) << "Could not attach VirtualAnalogSensor interface to controlboards";
                 return;
             }
         }           
         
         if (!m_iWrap || !m_iWrap->attachAll(m_controlBoards))
         {
-            yError("GazeboYarpControlBoard : error while attaching wrapper to device.");
+            yCError(GAZEBOCONTROLBOARD) << "error while attaching wrapper to device.";
             m_wrapper.close();
             if (m_useVirtAnalogSensor)
             {

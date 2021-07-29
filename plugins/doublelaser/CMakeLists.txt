@@ -9,9 +9,9 @@ PROJECT(Plugin_DoubleLaser)
 
 include(AddGazeboYarpPluginTarget)
 
-set(doubleLaser_source      src/DoubleLaser.cc  )
+set(doubleLaser_source      src/DoubleLaser.cc  src/DoubleLaserLog.cpp)
 
-set(doubleLaser_headers     include/gazebo/DoubleLaser.hh )
+set(doubleLaser_headers     include/gazebo/DoubleLaser.hh include/gazebo/DoubleLaserLog.h)
 
 set(LIB_COMMON_NAME gazebo_yarp_lib_common)
 

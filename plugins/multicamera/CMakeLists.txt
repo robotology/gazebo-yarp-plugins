@@ -35,6 +35,8 @@ add_gazebo_yarp_plugin_target(LIBRARY_NAME multicamera
                                                ${GAZEBO_LIBRARIES}
                                                ${Boost_LIBRARIES}
                               HEADERS include/gazebo/MultiCamera.hh
+                                      include/gazebo/MultiCameraLog.h
                                       include/yarp/dev/MultiCameraDriver.h
                               SOURCES src/MultiCamera.cc
+                                      src/MultiCameraLog.cpp
                                       src/MultiCameraDriver.cpp)

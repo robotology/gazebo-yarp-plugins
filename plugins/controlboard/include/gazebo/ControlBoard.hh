@@ -36,6 +36,8 @@ namespace gazebo
 /// The device will receive the gazebo pointer, parse the model,
 /// and wait for yarp connections and the gazebo wait event.
 ///
+
+
 class GazeboYarpControlBoard : public ModelPlugin
 {
 public:

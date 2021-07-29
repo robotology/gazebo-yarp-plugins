@@ -121,7 +121,11 @@ jobs:
         cd build
         cmake --build . --config ${{ matrix.build_type }}
 
-    - name: Test
+    # Tests are working only on Linux
+    # https://github.com/robotology/gazebo-yarp-plugins/issues/530
+    # https://github.com/robotology/gazebo-yarp-plugins/issues/567
+    - name: Test [Linux]
+      if: contains(matrix.os, 'ubuntu')
       shell: bash -l {0}
       run: |
         cd build

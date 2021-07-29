@@ -7,5 +7,5 @@
 #include "gazebo/MultiCameraLog.h"
 
 namespace GazeboYarpPlugins{
-    YARP_LOG_COMPONENT(GAZEBOMULTICAMERA, "gazebo-yarp-plugins.plugins.GazeboYarpMultiCamera MultiCamera.cc")
+    YARP_LOG_COMPONENT(GAZEBOMULTICAMERA, "gazebo-yarp-plugins.plugins.GazeboYarpMultiCamera")
 }

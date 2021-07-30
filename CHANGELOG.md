@@ -11,6 +11,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Changed
 - `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_doublelaser`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` plugins now log messages using the ["Log Components" YARP logging feature](http://www.yarp.it/git-master/yarp_logging.html).
+- A cmake option (`GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS`) has been added, if this option is enabled then implicit wrappers present in`gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` are removed, the new way to have them is to attach the new nws to gazebo devices via yarprobotinterface.
 - `gazebo-yarp-plugins` now requires YARP 3.5 (https://github.com/robotology/gazebo-yarp-plugins/pull/562).
 
 ### Fixed

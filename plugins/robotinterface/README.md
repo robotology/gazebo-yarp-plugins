@@ -76,6 +76,8 @@ The plugins that spawn YARP devices in a way that they can be then attached to t
 For all the following plugins, the **YARP device instance name** can be specified by the `yarpDeviceName` parameter in the plugin configuration.
 For the `gazebo_yarp_controlboard`, if the `yarpDeviceName` parameter is not specified, for legacy reason the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration.
 
+A cmake option (`GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS`) has been added, if this option is enabled then implicit wrappers present in`gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` are removed, the new way to have them is to attach the new nws to gazebo devices via yarprobotinterface as above.
+
 | Plugin                     | Details                                              |
 |:--------------------------:|:----------------------------------------------------:|
 | `gazebo_yarp_controlboard` | This plugin can create multiple YARP devices that expose joint-level motor and control interfaces such as [`yarp::dev::IPositionControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IPositionControl.html), [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1ITorqueControl.html) and [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IEncoders.html). |

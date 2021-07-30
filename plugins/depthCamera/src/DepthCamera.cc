@@ -51,19 +51,23 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     _sensor->SetActive(true);
 
-    // Add my gazebo device driver to the factory.
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
-                                        ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
-    // wrapper params are in the same file along the driver params
-    ::yarp::os::Property wrapper_properties = m_driverParameters;
+                                                ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
     #else
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
-                                        ("gazebo_depthCamera", "", "GazeboYarpDepthCameraDriver"));
+                                                ("gazebo_depthCamera", "", "GazeboYarpDepthCameraDriver"));
     #endif
+
+
 
     //Getting .ini configuration file from sdf
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,m_driverParameters);
+
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+    // wrapper params are in the same file along the driver params
+    ::yarp::os::Property wrapper_properties = m_driverParameters;
+    #endif
 
     if (!configuration_loaded)
     {
@@ -134,9 +138,10 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     
     //Register the device with the given name
     std::string scopedDeviceName;
+
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if(!m_driverParameters.check("yarpDeviceName"))
     {
-    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
     }
     else
@@ -144,6 +149,8 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
     }
     #else
+    if(!m_driverParameters.check("yarpDeviceName"))
+    {
         yCError(GAZEBODEPTH) << "missing yarpDeviceName parameter";
         return;
     }

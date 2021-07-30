@@ -55,6 +55,8 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
                                         ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
+    // wrapper params are in the same file along the driver params
+    ::yarp::os::Property wrapper_properties = m_driverParameters;
     #else
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
                                         ("gazebo_depthCamera", "", "GazeboYarpDepthCameraDriver"));
@@ -63,16 +65,11 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Getting .ini configuration file from sdf
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,m_driverParameters);
 
-    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    // wrapper params are in the same file along the driver params
-    ::yarp::os::Property wrapper_properties = m_driverParameters;
-
     if (!configuration_loaded)
     {
         yCError(GAZEBODEPTH) << "error loading configuration from SDF";
         return;
     }
-    #endif
 
     m_sensorName = _sensor->ScopedName();
 

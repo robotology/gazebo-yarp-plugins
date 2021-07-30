@@ -1325,9 +1325,10 @@ bool GazeboYarpControlBoardDriver::findMotorControlGroup(yarp::os::Bottle& motor
     yarp::os::Bottle& name_bot = m_pluginParameters.findGroup("WRAPPER").findGroup("networks");
     std::string name = name_bot.get(1).toString();
 
-    #endif
+    motorControlGroup_bot = m_pluginParameters.findGroup(name);
+    #else
     motorControlGroup_bot.fromString(m_pluginParameters.toString());
-
+    #endif
     return true;
 }
 

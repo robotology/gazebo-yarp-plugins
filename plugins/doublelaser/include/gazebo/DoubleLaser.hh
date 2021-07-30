@@ -49,12 +49,11 @@ public:
 private:
 
     bool readConfigurationFromFile(physics::ModelPtr _parent, sdf::ElementPtr _sdf); //Getting .ini configuration file from sdf
-    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     yarp::dev::PolyDriver m_wrapper_rangeFinder;
     yarp::dev::IMultipleWrapper* m_iWrap_rangeFinder;
-    #endif
-    yarp::dev::PolyDriver m_driver_doublelaser;
-    yarp::dev::IMultipleWrapper* m_iWrap_doublelaser;
+
+     yarp::dev::PolyDriver m_driver_doublelaser;
+     yarp::dev::IMultipleWrapper* m_iWrap_doublelaser;
 
     yarp::dev::PolyDriverList m_lasers;  //contains pointers of front and back laser
 

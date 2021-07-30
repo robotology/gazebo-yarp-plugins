@@ -267,23 +267,6 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
         #else
-        yarp::os::Bottle driver_group;
-        yarp::os::Bottle virt_group;
-
-        m_useVirtAnalogSensor = m_parameters.check("useVirtualAnalogSensor", yarp::os::Value(false)).asBool();
-        if (m_useVirtAnalogSensor)
-        {
-            virt_group = m_parameters.findGroup("VIRTUAL_ANALOG_SERVER");
-            if (virt_group.isNull())
-            {
-                yCError(GAZEBOCONTROLBOARD) <<"[VIRTUAL_ANALOG_SERVER] group not found in config file";
-                return;
-            }
-
-            yarp::os::Bottle& robotName_config = virt_group.addList();
-            robotName_config.addString("robotName");
-            robotName_config.addString(m_robotName.c_str());
-        }
         if(!m_parameters.check("yarpDeviceName"))
         {
             yCError(GAZEBOCONTROLBOARD) << "missing parameter yarpDeviceName";
@@ -291,35 +274,25 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
         m_yarpDeviceName = m_parameters.find("yarpDeviceName").asString();
         m_scopedDeviceName = m_robotName + "::" + m_yarpDeviceName;
-        // initially deal with virtual analog stuff
-        if (m_useVirtAnalogSensor)
-        {
-            std::string net = std::string("(") + m_parameters.findGroup(m_yarpDeviceName.c_str()).toString() + std::string(")");
-            virt_group.append(yarp::os::Bottle(net));
-        }
-        else
-        {
-            yCDebug(GAZEBOCONTROLBOARD) << "driver group is:"<<driver_group.toString();
-            m_parameters.put("device","gazebo_controlboard");
-            m_parameters.put("name", m_scopedDeviceName);
-            m_parameters.put("robotScopedName", m_robotName);
-            yCDebug(GAZEBOCONTROLBOARD) << "m_parameters:"<<m_parameters.toString();
 
-            if (_sdf->HasElement("initialConfiguration")) {
-                //yCDebug(GAZEBOCONTROLBOARD)<<"Found initial Configuration: ";
-                std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
-                m_parameters.put("initialConfiguration", configuration_s.c_str());
-                //yCDebug(GAZEBOCONTROLBOARD)<<configuration_s;
-            }
+        m_parameters.put("device","gazebo_controlboard");
+        m_parameters.put("name", m_scopedDeviceName);
+        m_parameters.put("robotScopedName", m_robotName);
+        yCDebug(GAZEBOCONTROLBOARD) << "m_parameters:"<<m_parameters.toString();
 
-            if(! m_controlboardDriver.open(m_parameters) || ! m_controlboardDriver.isValid())
-            {
-                yCError(GAZEBOCONTROLBOARD) << m_yarpDeviceName.c_str() << "> did not open.";
-                m_controlboardDriver.close();
-                return;
-            }
+        if (_sdf->HasElement("initialConfiguration")) {
+            //yCDebug(GAZEBOCONTROLBOARD)<<"Found initial Configuration: ";
+            std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
+            m_parameters.put("initialConfiguration", configuration_s.c_str());
+            //yCDebug(GAZEBOCONTROLBOARD)<<configuration_s;
         }
 
+        if(! m_controlboardDriver.open(m_parameters) || ! m_controlboardDriver.isValid())
+        {
+            yCError(GAZEBOCONTROLBOARD) << m_yarpDeviceName.c_str() << "> did not open.";
+            m_controlboardDriver.close();
+            return;
+        }
         //Register the device with the given name
         if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_controlboardDriver))
         {

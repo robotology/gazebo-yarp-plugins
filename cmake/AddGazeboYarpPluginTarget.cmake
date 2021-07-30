@@ -71,7 +71,6 @@ if(MSVC)
     # to get Gazebo headers to compile without problems, for more details
     # see https://stackoverflow.com/questions/5971332/redefinition-errors-in-winsock2-h
     target_compile_definitions(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC NOMINMAX WIN32_LEAN_AND_MEAN _USE_MATH_DEFINES)
-
 endif()
 
 # Add install target

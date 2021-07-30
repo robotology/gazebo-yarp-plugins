@@ -5,6 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## Deprecated
+- The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been deprecated and will be removed in the next major version of `gazebo-yarp-plugins`.
+
 ## [3.6.1] - 2021-05-19
 
 ### Fixed 

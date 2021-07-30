@@ -77,7 +77,7 @@ For all the following plugins, the **YARP device instance name** can be specifie
 
 If the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `OFF` (default value), for the `gazebo_yarp_controlboard` if the `yarpDeviceName` parameter is not specified, for legacy reason the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration of `yarpDeviceName`. If instead the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON`, the `gazebo_yarp_controlboard` behaves like the rest of the plugins and requires to take the **YARP device instance name** from the `yarpDeviceName` parameter. The same behaviour applies to `gazebo_yarp_depthCamera`.
 
-Instead if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON` then the plugins `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` doesn't create the implicit wrapper device but is left to the user to attach it via the robotinterface.
+Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON` then the plugins `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` doesn't create the implicit wrapper device but is left to the user to attach it via the robotinterface.
 
 | Plugin                     | Details                                              |
 |:--------------------------:|:----------------------------------------------------:|

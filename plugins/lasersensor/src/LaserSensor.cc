@@ -146,11 +146,10 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
     else if(!driver_properties.check("yarpDeviceName"))
     {
-        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-        scopedDeviceName = sensorName + "::" + driver_list[0]->key;
-        #endif
         yCError(GAZEBOLASER)<<"failed getting yarpDeviceName parameter value";
         #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+        scopedDeviceName = sensorName + "::" + driver_list[0]->key;
+        #else
         return;
         #endif
     }

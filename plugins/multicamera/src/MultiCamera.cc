@@ -52,9 +52,13 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     yAssert(m_sensor != NULL);
 
     // Add my gazebo device driver to the factory.
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpMultiCameraDriver>
                                       ("gazebo_multicamera", "grabber", "GazeboYarpMultiCameraDriver"));
-
+    #else
+    yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpMultiCameraDriver>
+                                      ("gazebo_multicamera", "", "GazeboYarpMultiCameraDriver"));
+    #endif
     //Getting .ini configuration file from sdf
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor, _sdf, m_parameters);
 

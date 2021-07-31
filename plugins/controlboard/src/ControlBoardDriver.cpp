@@ -1310,6 +1310,7 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
 
 bool GazeboYarpControlBoardDriver::findMotorControlGroup(yarp::os::Bottle& motorControlGroup_bot) const
 {
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if (!m_pluginParameters.check("WRAPPER"))
     {
         yCError(GAZEBOCONTROLBOARD)<<"Missing WRAPPER group";
@@ -1321,11 +1322,13 @@ bool GazeboYarpControlBoardDriver::findMotorControlGroup(yarp::os::Bottle& motor
         yCError(GAZEBOCONTROLBOARD)<<"Missing networks group";
         return false;
     }
-
     yarp::os::Bottle& name_bot = m_pluginParameters.findGroup("WRAPPER").findGroup("networks");
     std::string name = name_bot.get(1).toString();
 
     motorControlGroup_bot = m_pluginParameters.findGroup(name);
+    #else
+    motorControlGroup_bot.fromString(m_pluginParameters.toString());
+    #endif
     return true;
 }
 

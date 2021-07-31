@@ -4,6 +4,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 PROJECT(GazeboYARPPlugins)
+option(GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS "if enabled removes default wrappers in doublelaser, lasersensor, controlboard, depthcamera and multicamera" OFF)
 
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)

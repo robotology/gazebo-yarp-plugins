@@ -25,14 +25,23 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpLaserSensor)
 
 namespace gazebo {
 
-GazeboYarpLaserSensor::GazeboYarpLaserSensor() : SensorPlugin(), m_iWrap(0)
+GazeboYarpLaserSensor::GazeboYarpLaserSensor() :
+#ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+SensorPlugin(),
+m_iWrap(0)
+#else
+SensorPlugin()
+#endif
 {
 }
 
 GazeboYarpLaserSensor::~GazeboYarpLaserSensor()
 {
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if(m_iWrap) { m_iWrap->detachAll(); m_iWrap = 0; }
     if( m_laserWrapper.isValid() ) m_laserWrapper.close();
+    #endif
+
     if( m_laserDriver.isValid() ) m_laserDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
     yarp::os::Network::fini();
@@ -56,11 +65,16 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     _sensor->SetActive(true);
 
     // Add my gazebo device driver to the factory.
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpLaserSensorDriver>
                                       ("gazebo_laserSensor", "Rangefinder2DWrapper", "GazeboYarpLaserSensorDriver"));
+    ::yarp::os::Property wrapper_properties;
+    #else
+    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpLaserSensorDriver>
+                                      ("gazebo_laserSensor", "", "GazeboYarpLaserSensorDriver"));
+    #endif
 
     //Getting .ini configuration file from sdf
-    ::yarp::os::Property wrapper_properties;
     ::yarp::os::Property driver_properties;
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,driver_properties);
 
@@ -70,9 +84,10 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     };
 
-
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver
     wrapper_properties = driver_properties;
+    #endif
 
     m_sensorName = _sensor->ScopedName();
 
@@ -80,7 +95,8 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
     driver_properties.put(YarpLaserSensorScopedName.c_str(), m_sensorName.c_str());
-        
+
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Open the wrapper
     wrapper_properties.put("device","Rangefinder2DWrapper");
     if( m_laserWrapper.open(wrapper_properties) ) {
@@ -89,9 +105,10 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yCError(GAZEBOLASER)<<"Plugin failed: error in opening yarp driver wrapper";
         return;
     }
+    #endif
 
     //Open the driver
-    //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
+    //Force the device to be of type "gazebo_laserSensor" (it make sense? probably yes)
     driver_properties.put("device","gazebo_laserSensor");
     if( m_laserDriver.open(driver_properties) ) {
     } else 
@@ -100,6 +117,7 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
 
@@ -116,6 +134,7 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     {
         yCError(GAZEBOLASER) << "GazeboYarpLaserSensor : error in connecting wrapper and device " ;
     }
+    #endif
 
     //Register the device with the given name
     std::string sensorName = _sensor->ScopedName();
@@ -127,8 +146,12 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
     else if(!driver_properties.check("yarpDeviceName"))
     {
-        scopedDeviceName = sensorName + "::" + driver_list[0]->key;
         yCError(GAZEBOLASER)<<"failed getting yarpDeviceName parameter value";
+        #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+        scopedDeviceName = sensorName + "::" + driver_list[0]->key;
+        #else
+        return;
+        #endif
     }
     else
     {

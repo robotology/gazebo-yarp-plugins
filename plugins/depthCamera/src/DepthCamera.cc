@@ -51,15 +51,23 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     _sensor->SetActive(true);
 
-    // Add my gazebo device driver to the factory.
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
-                                        ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
+                                                ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
+    #else
+    ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
+                                                ("gazebo_depthCamera", "", "GazeboYarpDepthCameraDriver"));
+    #endif
+
 
 
     //Getting .ini configuration file from sdf
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,m_driverParameters);
+
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     // wrapper params are in the same file along the driver params
     ::yarp::os::Property wrapper_properties = m_driverParameters;
+    #endif
 
     if (!configuration_loaded)
     {
@@ -81,6 +89,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     // Add scoped name to list of params
     m_driverParameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
 
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ///////////////////////////
     //Open the wrapper, forcing it to be a "RGBDSensorWrapper"
     wrapper_properties.put("device","RGBDSensorWrapper");
@@ -96,6 +105,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp wrapper";
         return;
     }
+    #endif
 
     //Open the driver
     //Force the device to be of type "gazebo_depthCamera" (it make sense? probably yes)
@@ -108,6 +118,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     }
 
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
 
@@ -123,9 +134,12 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     {
         yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in connecting wrapper and device ";
     }
+    #endif
     
     //Register the device with the given name
     std::string scopedDeviceName;
+
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if(!m_driverParameters.check("yarpDeviceName"))
     {
         scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
@@ -134,6 +148,14 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     {
         scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
     }
+    #else
+    if(!m_driverParameters.check("yarpDeviceName"))
+    {
+        yCError(GAZEBODEPTH) << "missing yarpDeviceName parameter";
+        return;
+    }
+    scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
+    #endif
 
     if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
     {

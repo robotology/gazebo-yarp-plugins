@@ -50,14 +50,19 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     yarp::dev::PolyDriver m_wrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
-    yarp::dev::PolyDriverList m_controlBoards;
-
-    bool m_useVirtAnalogSensor = false;
     yarp::dev::PolyDriver m_virtAnalogSensorWrapper;
     yarp::dev::IMultipleWrapper* m_iVirtAnalogSensorWrap;
-    
+    yarp::dev::PolyDriverList m_controlBoards;
+    bool m_useVirtAnalogSensor = false;
+    #else
+    yarp::dev::PolyDriver m_controlboardDriver;
+    std::string m_scopedDeviceName;
+    std::string m_yarpDeviceName;
+    #endif
+
     yarp::os::Property m_parameters;
 
     std::string m_robotName;

@@ -20,8 +20,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - The property returned by `getRgbIntrinsicParam()`, now contains `rectificationMatrix` instead of `rectificationMatrix` (https://github.com/robotology/gazebo-yarp-plugins/pull/558, see also https://github.com/robotology/yarp/pull/2593).
 
 ### Removed 
-- The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been removed. 
-- The support for Gazebo 9 and 10 has been removed. `gazebo-yarp-plugins` now requires Gazebo 11.
+- The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been removed (https://github.com/robotology/gazebo-yarp-plugins/pull/574). 
+- The support for Gazebo 9 and 10 has been removed. `gazebo-yarp-plugins` now requires Gazebo 11 (https://github.com/robotology/gazebo-yarp-plugins/pull/575).
+
 
 ## [3.6.2] - 2021-08-27
 

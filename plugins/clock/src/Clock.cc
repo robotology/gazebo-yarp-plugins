@@ -160,11 +160,7 @@ namespace gazebo
     void GazeboYarpClock::clockUpdate()
     {
         if (m_clockPort) {
-#if GAZEBO_MAJOR_VERSION >= 8
             gazebo::common::Time currentTime = m_world->SimTime();
-#else
-            gazebo::common::Time currentTime = m_world->GetSimTime();
-#endif
             yarp::os::Bottle& b = m_clockPort->prepare();
             b.clear();
             b.addInt32(currentTime.sec);
@@ -219,20 +215,12 @@ namespace gazebo
 
     common::Time GazeboYarpClock::getSimulationTime()
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         return m_world->SimTime();
-#else
-        return m_world->GetSimTime();
-#endif
     }
 
     double GazeboYarpClock::getStepSize()
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         physics::PhysicsEnginePtr physics = m_world->Physics();
-#else
-        physics::PhysicsEnginePtr physics = m_world->GetPhysicsEngine();
-#endif
         if (physics) {
             return physics->GetMaxStepSize();
         }

@@ -331,7 +331,6 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
         distModel = camPtr->LensDistortion().get();
         if(distModel)
         {
-#if GAZEBO_MAJOR_VERSION >= 8
             intrinsic.put("k1",              distModel->K1());
             intrinsic.put("k2",              distModel->K2());
             intrinsic.put("k3",              distModel->K3());
@@ -339,15 +338,6 @@ bool GazeboYarpDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
             intrinsic.put("t2",              distModel->P2());
             intrinsic.put("principalPointX", distModel->Center().X());
             intrinsic.put("principalPointY", distModel->Center().Y());
-#else
-            intrinsic.put("k1",              distModel->GetK1());
-            intrinsic.put("k2",              distModel->GetK2());
-            intrinsic.put("k3",              distModel->GetK3());
-            intrinsic.put("t1",              distModel->GetP1());
-            intrinsic.put("t2",              distModel->GetP2());
-            intrinsic.put("principalPointX", distModel->GetCenter().x);
-            intrinsic.put("principalPointY", distModel->GetCenter().y);
-#endif
         }
         else
         {

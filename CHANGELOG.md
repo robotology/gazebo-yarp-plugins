@@ -14,12 +14,15 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - A cmake option (`GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS`) has been added, if this option is enabled then implicit wrappers present in`gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` are removed, the new way to have them is to attach the new nws to gazebo devices via yarprobotinterface.
 - `gazebo-yarp-plugins` now requires YARP 3.5 (https://github.com/robotology/gazebo-yarp-plugins/pull/562).
 
+
 ### Fixed
 - Fixed the getRgbIntrinsicParam method in the depthCamera plugin when the distortion is not set (https://github.com/robotology/gazebo-yarp-plugins/pull/558).
 - The property returned by `getRgbIntrinsicParam()`, now contains `rectificationMatrix` instead of `rectificationMatrix` (https://github.com/robotology/gazebo-yarp-plugins/pull/558, see also https://github.com/robotology/yarp/pull/2593).
 
 ### Removed 
 - The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been removed (https://github.com/robotology/gazebo-yarp-plugins/pull/574). 
+- The support for Gazebo 9 and 10 has been removed. `gazebo-yarp-plugins` now requires Gazebo 11 (https://github.com/robotology/gazebo-yarp-plugins/pull/575).
+
 
 ## [3.6.2] - 2021-08-27
 

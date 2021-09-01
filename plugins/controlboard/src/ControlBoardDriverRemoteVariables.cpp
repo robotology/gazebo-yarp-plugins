@@ -54,11 +54,7 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(std::string key, yarp::os::
         yarp::os::Bottle& r = val.addList();
         for (size_t i = 0; i< m_numberOfJoints; i++)
         {
-#if GAZEBO_MAJOR_VERSION >= 8
             double upperLimit = m_jointPointers[i]->UpperLimit(0);
-#else
-            double upperLimit = m_jointPointers[i]->GetUpperLimit(0).Radian();
-#endif
             double tmp = convertGazeboToUser(i, upperLimit);
             r.addFloat64(tmp);
         }
@@ -68,11 +64,7 @@ bool GazeboYarpControlBoardDriver::getRemoteVariable(std::string key, yarp::os::
     {
         yarp::os::Bottle& r = val.addList();
         for (size_t i = 0; i< m_numberOfJoints; i++) {
-#if GAZEBO_MAJOR_VERSION >= 8
             double lowerLimit = m_jointPointers[i]->LowerLimit(0);
-#else
-            double lowerLimit = m_jointPointers[i]->GetLowerLimit(0).Radian();
-#endif
             double tmp = convertGazeboToUser(i, lowerLimit);
             r.addFloat64(tmp);
         }

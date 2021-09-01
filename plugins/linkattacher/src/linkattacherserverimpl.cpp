@@ -21,11 +21,7 @@ LinkAttacherServerImpl::~LinkAttacherServerImpl()
 
 bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, const string& parent_model_link_name, const string& child_model_name, const string& child_model_link_name)
 {
-    #if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::ModelPtr parent_model = _world->ModelByName(parent_model_name);
-    #else
-    gazebo::physics::ModelPtr parent_model = _world->GetModel(parent_model_name);
-    #endif
 
     if(!parent_model)
     {
@@ -58,11 +54,8 @@ bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, con
     	return false;
     }
 
-    #if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::ModelPtr child_model = _world->ModelByName(child_model_name);
-    #else
-    gazebo::physics::ModelPtr child_model = _world->GetModel(child_model_name);
-    #endif
+
 
     if(!child_model)
     {
@@ -97,11 +90,8 @@ bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, con
     //This is joint creation
     gazebo::physics::JointPtr joint;
 
-    #if GAZEBO_MAJOR_VERSION >= 8
     joint = _world->Physics()->CreateJoint(jointType,parent_model);
-    #else
-    joint = _world->GetPhysicsEngine()->CreateJoint(jointType,parent_model);
-    #endif
+
 
     if(!joint)
     {
@@ -115,12 +105,7 @@ bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, con
 
     joint->SetModel(parent_model);
 
-    #if GAZEBO_MAJOR_VERSION >= 8
     joint->Load(parent_model_link,child_model_link,ignition::math::Pose3d());
-    #else
-    joint->Load(parent_model_link,child_model_link,gazebo::math::Pose());
-    #endif
-
     //Attach(parent_link,child_link)
     joint->Attach(parent_model_link,child_model_link);
 
@@ -129,11 +114,7 @@ bool LinkAttacherServerImpl::attachUnscoped(const string& parent_model_name, con
 
 bool LinkAttacherServerImpl::detachUnscoped(const string& model_name, const string& model_link_name)
 {
-    #if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::ModelPtr model = _world->ModelByName(model_name);
-    #else
-    gazebo::physics::ModelPtr model = _world->GetModel(model_name);
-    #endif
 
     if(!model)
     {
@@ -193,11 +174,7 @@ bool LinkAttacherServerImpl::detachUnscoped(const string& model_name, const stri
 
 bool LinkAttacherServerImpl::enableGravity(const string& model_name, const bool enable)
 {
-  #if GAZEBO_MAJOR_VERSION >= 8
   gazebo::physics::ModelPtr model = _world->ModelByName(model_name);
-  #else
-  gazebo::physics::ModelPtr model = _world->GetModel(model_name);
-  #endif
 
   if(!model)
   {

@@ -448,11 +448,7 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
         yCDebug(GAZEBOCONTROLBOARD) << "Initializing Trajectory Generator with current values";
         yarp::sig::Vector initial_positions;
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-#if GAZEBO_MAJOR_VERSION >= 8
                 double gazeboPos = m_jointPointers[i]->Position(0);
-#else
-                double gazeboPos = m_jointPointers[i]->GetAngle(0).Radian();
-#endif
                 initial_positions.push_back(convertGazeboToUser(i, gazeboPos));
         }
 
@@ -537,11 +533,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     // measurements acquisition
     for (size_t jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         double gazeboPos = m_jointPointers[jnt_cnt]->Position(0);
-#else
-        double gazeboPos = m_jointPointers[jnt_cnt]->GetAngle(0).Radian();
-#endif
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, gazeboPos);
         m_velocities[jnt_cnt] = convertGazeboToUser(jnt_cnt, m_jointPointers[jnt_cnt]->GetVelocity(0));
         if (!m_useVirtualAnalogSensor)
@@ -723,13 +715,8 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
 {
     for (size_t i = 0; i < m_numberOfJoints; ++i)
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->UpperLimit(0));
         m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->LowerLimit(0));
-#else
-        m_jointPosLimits[i].max = convertGazeboToUser(i, m_jointPointers[i]->GetUpperLimit(0).Radian());
-        m_jointPosLimits[i].min = convertGazeboToUser(i, m_jointPointers[i]->GetLowerLimit(0).Radian());
-#endif
     }
 
     //...if the yarp plugin configuration file specifies a different velocity, override it...

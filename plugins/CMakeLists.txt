@@ -1,12 +1,7 @@
 add_subdirectory(camera)
 add_subdirectory(clock)
 add_subdirectory(controlboard)
-
-# Disable externalwrench plugin if Gazebo version is < 8.0
-if (NOT GAZEBO_VERSION VERSION_LESS 8.0)
-    add_subdirectory(externalwrench)
-endif()
-
+add_subdirectory(externalwrench)
 add_subdirectory(fakecontrolboard)
 add_subdirectory(forcetorque)
 add_subdirectory(imu)

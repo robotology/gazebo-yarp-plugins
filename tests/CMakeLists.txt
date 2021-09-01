@@ -1,14 +1,6 @@
 # Copyright (C) 2020 Istituto Italiano di Tecnologia
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# The Classic Gazebo server fixture requires a specific copy of the gtest code
-# that matches the one used when the Gazebo binary was compiled, we get one using FetchContent
-# We only support Gazebo11 for these tests
-if(GAZEBO_VERSION VERSION_LESS 11)
-  message(STATUS "Skipping tests as Gazebo ${GAZEBO_VERSION} was detected.")
-  return()
-endif()
-
 include(FetchContent)
 
 FetchContent_Declare(

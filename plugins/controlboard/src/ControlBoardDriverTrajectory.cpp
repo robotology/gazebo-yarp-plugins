@@ -204,11 +204,7 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed, double acceleration)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
-#else
-    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
-#endif
     m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0;
     double speedf = fabs(speed);
     double dx0 =0;
@@ -380,11 +376,7 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed, double acceleration)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
-#else
-    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
-#endif
     m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0;
     m_x0 = current_pos;
     m_xf = final_pos;
@@ -488,11 +480,7 @@ bool TrapezoidalSpeedTrajectoryGenerator::initTrajectory(double current_pos, dou
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = m_robot->GetWorld()->Physics();
-#else
-    gazebo::physics::PhysicsEnginePtr physics = m_robot->GetWorld()->GetPhysicsEngine();
-#endif
 
     if (speed <= 0.0 || acceleration <= 0.0)
     {

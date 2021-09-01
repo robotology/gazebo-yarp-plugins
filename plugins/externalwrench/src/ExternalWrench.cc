@@ -218,7 +218,6 @@ void ExternalWrench::applyWrench()
 {
     if((tock-tick) < wrench.duration)
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         ignition::math::Vector3d force;
         ignition::math::Vector3d torque;
 
@@ -258,32 +257,10 @@ void ExternalWrench::applyWrench()
         ignition::math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
         ignition::math::Quaterniond forceOrientation = rotation.Rotation();
         ignition::math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
-#else
-        math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
-        math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
 
-        link->AddForce(force);
-        link->AddTorque(torque);
-
-        math::Vector3d linkCoGPos = link->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
-        math::Vector3d newZ = force.Normalize(); // normalized force. I want the z axis of the cylinder's reference frame to coincide with my force vector
-        math::Vector3d newX = newZ.Cross (ignition::math::Vector3d::UnitZ);
-        math::Vector3d newY = newZ.Cross (newX);
-        math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
-        math::Quaterniond forceOrientation = rotation.Rotation();
-        math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
-#endif
-
-#if GAZEBO_MAJOR_VERSION == 7
-        msgs::Set(visualMsg.mutable_pose(), linkCoGPose.Ign());
-#else
         msgs::Set(visualMsg.mutable_pose(), linkCoGPose);
-#endif
-#if GAZEBO_MAJOR_VERSION >= 9
         msgs::Set(visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));
-#else
-        msgs::Set(visualMsg.mutable_material()->mutable_ambient(),common::Color(color[0],color[1],color[2],color[3]));
-#endif
+
         visualMsg.set_visible(1);
         visPub->Publish(visualMsg);
     }

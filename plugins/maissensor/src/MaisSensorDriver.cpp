@@ -82,11 +82,7 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);
 
-#if GAZEBO_MAJOR_VERSION >= 8
     m_gazeboNode->Init(this->m_robot->GetWorld()->Name());
-#else
-    m_gazeboNode->Init(this->m_robot->GetWorld()->GetName());
-#endif
 
     _T_controller = 1;
 
@@ -129,13 +125,8 @@ void GazeboYarpMaisSensorDriver::configureJointsLimits()
 {
     for (size_t i = 0; i < m_numberOfJoints; ++i)
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         m_jointPositionLimits[i].max = m_jointPointers[i]->UpperLimit(0);
         m_jointPositionLimits[i].min = m_jointPointers[i]->LowerLimit(0);
-#else
-        m_jointPositionLimits[i].max = m_jointPointers[i]->GetUpperLimit(0).Radian();
-        m_jointPositionLimits[i].min = m_jointPointers[i]->GetLowerLimit(0).Radian();
-#endif
     }
 }
 
@@ -147,11 +138,7 @@ void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _inf
     // measurements acquisition
     for (unsigned int jnt_cnt = 0; jnt_cnt < m_jointPointers.size(); jnt_cnt++)
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         double gazeboPos = m_jointPointers[jnt_cnt]->Position(0);
-#else
-        double gazeboPos = m_jointPointers[jnt_cnt]->GetAngle(0).Radian();
-#endif
         m_positions[jnt_cnt] = convertGazeboToUser(jnt_cnt, gazeboPos);
     }
 

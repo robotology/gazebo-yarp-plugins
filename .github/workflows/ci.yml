@@ -25,10 +25,7 @@ jobs:
         include:
           - os: ubuntu-18.04
             combination: 0
-            gazebo_version: gazebo9
-          - os: ubuntu-18.04
-            combination: 1
-            gazebo_version: gazebo10
+            gazebo_version: gazebo11
             build_type: Release
           - os: ubuntu-20.04
             gazebo_version: gazebo11

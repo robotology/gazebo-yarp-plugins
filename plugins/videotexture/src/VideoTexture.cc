@@ -107,11 +107,7 @@ namespace gazebo
 
     std::string sourcePortName;
     
-#if GAZEBO_MAJOR_VERSION >= 8
     m_texName      = m_model->Name();
-#else
-    m_texName      = m_model->GetName();
-#endif
 
     m_VideoPort.open("/"+m_texName);
     m_VideoPort.setReadOnly();

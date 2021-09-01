@@ -78,7 +78,6 @@ bool GazeboYarpBaseStateDriver::close()
 
 void GazeboYarpBaseStateDriver::onUpdate(const gazebo::common::UpdateInfo& _info)
 {
-#if GAZEBO_MAJOR_VERSION >= 8
     ignition::math::Vector3d worldBasePosition = m_baseLink->WorldPose().Pos();
     ignition::math::Quaterniond worldBaseOrientation = m_baseLink->WorldPose().Rot();
     
@@ -111,36 +110,7 @@ void GazeboYarpBaseStateDriver::onUpdate(const gazebo::common::UpdateInfo& _info
     m_baseState[15] = worldBaseAngAcc.X();
     m_baseState[16] = worldBaseAngAcc.Y();
     m_baseState[17] = worldBaseAngAcc.Z();
-#else  
-    gazebo::math::Vector3 _worldBasePosition = m_baseLink->GetWorldPose().pos;
-    gazebo::math::Quaternion _worldBaseOrientation = m_baseLink->GetWorldPose().rot;
-    gazebo::math::Vector3 _worldBaseLinVel = m_baseLink->GetWorldLinearVel();
-    gazebo::math::Vector3 _worldBaseAngVel = m_baseLink->GetWorldAngularVel();
-    gazebo::math::Vector3 _worldBaseLinAcc = m_baseLink->GetWorldLinearAccel();
-    gazebo::math::Vector3 _worldBaseAngAcc = m_baseLink->GetWorldAngularAccel();
 
-    // Serializing the state vector
-    m_baseState[0] = _worldBasePosition.x;
-    m_baseState[1] = _worldBasePosition.y;
-    m_baseState[2] = _worldBasePosition.z;
-    m_baseState[3] = _worldBaseOrientation.GetRoll();
-    m_baseState[4] = _worldBaseOrientation.GetPitch();
-    m_baseState[5] = _worldBaseOrientation.GetYaw();
-    
-    m_baseState[6] = _worldBaseLinVel.x;
-    m_baseState[7] = _worldBaseLinVel.y;
-    m_baseState[8] = _worldBaseLinVel.z;
-    m_baseState[9] = _worldBaseAngVel.x;
-    m_baseState[10] = _worldBaseAngVel.y;
-    m_baseState[11] = _worldBaseAngVel.z;
-    
-    m_baseState[12] = _worldBaseLinAcc.x;
-    m_baseState[13] = _worldBaseLinAcc.y;
-    m_baseState[14] = _worldBaseLinAcc.z;
-    m_baseState[15] = _worldBaseAngAcc.x;
-    m_baseState[16] = _worldBaseAngAcc.y;
-    m_baseState[17] = _worldBaseAngAcc.z;   
-#endif
     
     m_stamp.update(_info.simTime.Double());
     m_dataAvailable = true;

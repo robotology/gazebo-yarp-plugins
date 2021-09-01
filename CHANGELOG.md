@@ -18,6 +18,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - Fixed the getRgbIntrinsicParam method in the depthCamera plugin when the distortion is not set (https://github.com/robotology/gazebo-yarp-plugins/pull/558).
 - The property returned by `getRgbIntrinsicParam()`, now contains `rectificationMatrix` instead of `rectificationMatrix` (https://github.com/robotology/gazebo-yarp-plugins/pull/558, see also https://github.com/robotology/yarp/pull/2593).
 
+### Removed 
+- The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been removed (https://github.com/robotology/gazebo-yarp-plugins/pull/574). 
 
 ## [3.6.2] - 2021-08-27
 

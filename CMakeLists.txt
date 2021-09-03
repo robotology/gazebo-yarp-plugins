@@ -4,6 +4,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 PROJECT(GazeboYARPPlugins)
+option(GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS "if enabled removes default wrappers in doublelaser, lasersensor, controlboard, depthcamera and multicamera" OFF)
 
 # Project version
 set(${PROJECT_NAME}_MAJOR_VERSION 3)
@@ -45,11 +46,11 @@ if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
     list(APPEND YARP_ADDITIONAL_COMPONENTS_REQUIRED "robotinterface")
 endif()
 
-find_package(YARP 3.4 REQUIRED COMPONENTS os sig dev math robotinterface ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
+find_package(YARP 3.4.102 REQUIRED COMPONENTS os sig dev math idl_tools ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
 find_package(Gazebo REQUIRED)
-if (Gazebo_VERSION_MAJOR LESS 7.0)
+if (Gazebo_VERSION_MAJOR LESS 11.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})
-    message(FATAL_ERROR "Your Gazebo version is older than Gazebo 7.0. Gazebo Yarp plugins are supported with gazebo versions >= 7.0. Please update to a newer version")
+    message(FATAL_ERROR "Your Gazebo version is older than Gazebo 11.0. Gazebo Yarp plugins are supported with gazebo versions >= 11.0. Please update to a newer version")
 endif()
 
 # Custom workaround for chocolatey distributed Gazebo and OGRE

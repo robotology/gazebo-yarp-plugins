@@ -62,6 +62,10 @@ target_include_directories(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC
                          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
+if(GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS)
+    target_compile_definitions(${GAZEBO_PLUGIN_LIBRARY_NAME} PUBLIC GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS)
+endif()
+
 if(MSVC)
     # On Visual Studio, it is necessary to define this Windows-specific macros
     # to get Gazebo headers to compile without problems, for more details

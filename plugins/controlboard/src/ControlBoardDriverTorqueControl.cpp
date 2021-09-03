@@ -6,11 +6,12 @@
 
 
 #include "ControlBoardDriver.h"
-#include <yarp/os/Log.h>
-#include <yarp/os/LogStream.h>
+#include "ControlBoardLog.h"
+
 
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 bool GazeboYarpControlBoardDriver::setRefTorque(int j, double t)
 {
@@ -136,7 +137,7 @@ bool GazeboYarpControlBoardDriver::checkIfTorqueIsValid(double torque) const
 {
     if (std::isnan(torque) || std::isinf(torque))
     {
-        yError() << "GazeboYarpControlBoard : controlBoard  invalid torque value:" << torque;
+        yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoard : controlBoard  invalid torque value:" << torque;
         return false;
     }
     return true;

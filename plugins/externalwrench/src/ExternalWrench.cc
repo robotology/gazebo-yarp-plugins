@@ -119,7 +119,7 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
     if(getLink())
     {
         // Get wrench duration
-        wrench.duration  = cmd.get(7).asDouble();
+        wrench.duration  = cmd.get(7).asFloat64();
 
         if (wrenchSmoothing) {
             wrenchSmoothingFlag = true;
@@ -144,13 +144,13 @@ bool ExternalWrench::setWrench(physics::ModelPtr& _model,yarp::os::Bottle& cmd, 
         }
         else {
 
-            wrench.force[0]  =  cmd.get(1).asDouble();
-            wrench.force[1]  =  cmd.get(2).asDouble();
-            wrench.force[2]  =  cmd.get(3).asDouble();
+            wrench.force[0]  =  cmd.get(1).asFloat64();
+            wrench.force[1]  =  cmd.get(2).asFloat64();
+            wrench.force[2]  =  cmd.get(3).asFloat64();
 
-            wrench.torque[0] = cmd.get(4).asDouble();
-            wrench.torque[1] = cmd.get(5).asDouble();
-            wrench.torque[2] = cmd.get(6).asDouble();
+            wrench.torque[0] = cmd.get(4).asFloat64();
+            wrench.torque[1] = cmd.get(5).asFloat64();
+            wrench.torque[2] = cmd.get(6).asFloat64();
 
             return true;
         }
@@ -164,7 +164,7 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     // Clear smoothed wrenches vector
     wrench.smoothedWrenchVec.clear();
 
-    double duration = cmd.get(7).asDouble();
+    double duration = cmd.get(7).asFloat64();
 
     // Compute time steps
     steps = duration/simulationUpdatePeriod;
@@ -173,12 +173,12 @@ bool ExternalWrench::smoothWrench(const yarp::os::Bottle& cmd, const double& sim
     yarp::sig::Vector originalWrench;
     originalWrench.resize(6,0);
 
-    originalWrench[0]  =  cmd.get(1).asDouble();
-    originalWrench[1]  =  cmd.get(2).asDouble();
-    originalWrench[2]  =  cmd.get(3).asDouble();
-    originalWrench[3]  =  cmd.get(4).asDouble();
-    originalWrench[4]  =  cmd.get(5).asDouble();
-    originalWrench[5]  =  cmd.get(6).asDouble();
+    originalWrench[0]  =  cmd.get(1).asFloat64();
+    originalWrench[1]  =  cmd.get(2).asFloat64();
+    originalWrench[2]  =  cmd.get(3).asFloat64();
+    originalWrench[3]  =  cmd.get(4).asFloat64();
+    originalWrench[4]  =  cmd.get(5).asFloat64();
+    originalWrench[5]  =  cmd.get(6).asFloat64();
 
     double time = 0;
     std::vector<double> smoothingCoefficients;
@@ -218,7 +218,6 @@ void ExternalWrench::applyWrench()
 {
     if((tock-tick) < wrench.duration)
     {
-#if GAZEBO_MAJOR_VERSION >= 8
         ignition::math::Vector3d force;
         ignition::math::Vector3d torque;
 
@@ -258,32 +257,10 @@ void ExternalWrench::applyWrench()
         ignition::math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
         ignition::math::Quaterniond forceOrientation = rotation.Rotation();
         ignition::math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
-#else
-        math::Vector3d force (wrench.force[0], wrench.force[1], wrench.force[2]);
-        math::Vector3d torque (wrench.torque[0], wrench.torque[1], wrench.torque[2]);
 
-        link->AddForce(force);
-        link->AddTorque(torque);
-
-        math::Vector3d linkCoGPos = link->WorldCoGPose().Pos(); // Get link's COG position where wrench will be applied
-        math::Vector3d newZ = force.Normalize(); // normalized force. I want the z axis of the cylinder's reference frame to coincide with my force vector
-        math::Vector3d newX = newZ.Cross (ignition::math::Vector3d::UnitZ);
-        math::Vector3d newY = newZ.Cross (newX);
-        math::Matrix4d rotation = ignition::math::Matrix4d (newX[0],newY[0],newZ[0],0,newX[1],newY[1],newZ[1],0,newX[2],newY[2],newZ[2],0, 0, 0, 0, 1);
-        math::Quaterniond forceOrientation = rotation.Rotation();
-        math::Pose3d linkCoGPose (linkCoGPos - rotation*ignition::math::Vector3d ( 0,0,.15 ), forceOrientation);
-#endif
-
-#if GAZEBO_MAJOR_VERSION == 7
-        msgs::Set(visualMsg.mutable_pose(), linkCoGPose.Ign());
-#else
         msgs::Set(visualMsg.mutable_pose(), linkCoGPose);
-#endif
-#if GAZEBO_MAJOR_VERSION >= 9
         msgs::Set(visualMsg.mutable_material()->mutable_ambient(), ignition::math::Color(color[0],color[1],color[2],color[3]));
-#else
-        msgs::Set(visualMsg.mutable_material()->mutable_ambient(),common::Color(color[0],color[1],color[2],color[3]));
-#endif
+
         visualMsg.set_visible(1);
         visPub->Publish(visualMsg);
     }

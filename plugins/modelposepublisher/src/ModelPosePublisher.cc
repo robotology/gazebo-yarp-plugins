@@ -104,14 +104,7 @@ void GazeboYarpModelPosePublisher::Load(gazebo::physics::ModelPtr _parent, sdf::
 void GazeboYarpModelPosePublisher::PublishTransform()
 {
     // Get the current pose of the canonical link of the model    
-#if GAZEBO_MAJOR_VERSION >= 8
     ignition::math::Pose3d curPose = m_model->GetLink()->WorldPose();
-#else
-    gazebo::math::Pose curPoseGazebo = m_model->GetLink()->GetWorldPose();
-    // Convert to Ignition so that the same interface
-    // can be used in the rest of the function
-    ignition::math::Pose3d curPose = curPoseGazebo.Ign();
-#endif
 
     // Get the positional and rotational parts
     ignition::math::Vector3d pos = curPose.Pos();
@@ -139,11 +132,7 @@ void GazeboYarpModelPosePublisher::PublishTransform()
 void GazeboYarpModelPosePublisher::OnWorldUpdate()
 {    
     // Get current time
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::common::Time currentTime = m_model->GetWorld()->SimTime();
-#else
-    gazebo::common::Time currentTime = m_model->GetWorld()->GetSimTime();
-#endif
     
     // Check if an update period is elapsed
     if(currentTime - m_lastUpdateTime >= m_period) {

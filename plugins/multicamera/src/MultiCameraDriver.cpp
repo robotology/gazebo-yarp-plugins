@@ -6,11 +6,13 @@
 
 
 #include "yarp/dev/MultiCameraDriver.h"
+#include "gazebo/MultiCameraLog.h"
 
 #include <GazeboYarpPlugins/Handler.hh>
 #include <GazeboYarpPlugins/common.h>
 
 #include <gazebo/sensors/MultiCameraSensor.hh>
+#include <gazebo/rendering/Distortion.hh>
 
 #include <yarp/os/Value.h>
 #include <yarp/os/LogStream.h>
@@ -20,7 +22,7 @@
 const std::string YarpScopedName = "sensorScopedName";
 double yarp::dev::GazeboYarpMultiCameraDriver::start_time = 0;
 
-
+using GazeboYarpPlugins::GAZEBOMULTICAMERA;
 
 static void print(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
 {
@@ -87,7 +89,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
 
     m_parentSensor = (gazebo::sensors::MultiCameraSensor*)GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName);
     if (!m_parentSensor) {
-        yError() << "GazeboYarpMultiCameraDriver Error: camera sensor was not found";
+        yCError(GAZEBOMULTICAMERA) << "GazeboYarpMultiCameraDriver Error: camera sensor was not found";
         return false;
     }
 
@@ -103,7 +105,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
         m_camera.push_back(m_parentSensor->Camera(i));
 
         if(m_camera[i] == NULL) {
-            yError() << "GazeboYarpMultiCameraDriver: camera" << i <<  "pointer is not valid";
+            yCError(GAZEBOMULTICAMERA) << "GazeboYarpMultiCameraDriver: camera" << i <<  "pointer is not valid";
             return false;
        }
         m_width.push_back(m_camera[i]->ImageWidth());
@@ -269,13 +271,105 @@ int yarp::dev::GazeboYarpMultiCameraDriver::width() const
     return (m_vertical ? m_max_width * m_camera_count : m_max_width * m_camera_count);
 }
 
+int yarp::dev::GazeboYarpMultiCameraDriver::getRgbHeight()
+{
+    return height();
+}
+
+int yarp::dev::GazeboYarpMultiCameraDriver::getRgbWidth()
+{
+    return width();
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations)
+{
+    configurations.clear();
+    yarp::dev::CameraConfig config {width(), height(), m_parentSensor->Camera(0)->RenderRate(), VOCAB_PIXEL_RGB};
+    configurations.push_back(config);
+    return true;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::getRgbResolution(int& width, int& height)
+{
+    width = this->width();
+    height = this->height();
+    return true;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::setRgbResolution(int width, int height)
+{
+    return false;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::getRgbFOV(double& horizontalFov, double& verticalFov)
+{
+    using namespace gazebo::rendering;
+    Camera* camPtr = m_parentSensor->Camera(0).get();
+    horizontalFov = camPtr->HFOV().Degree();
+    verticalFov = camPtr->VFOV().Degree();
+    return true;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    return false;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
+{
+    using namespace gazebo::rendering;
+
+    intrinsic.put("physFocalLength", 0.0);
+    Camera* camPtr = m_parentSensor->Camera(0).get();
+    if(camPtr)
+    {
+        intrinsic.put("focalLengthY",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
+        intrinsic.put("focalLengthX",    1. / camPtr->OgreCamera()->getPixelDisplayRatio());
+        Distortion* distModel = camPtr->LensDistortion().get();
+        if(distModel)
+        {
+            intrinsic.put("k1",              distModel->K1());
+            intrinsic.put("k2",              distModel->K2());
+            intrinsic.put("k3",              distModel->K3());
+            intrinsic.put("t1",              distModel->P1());
+            intrinsic.put("t2",              distModel->P2());
+            intrinsic.put("principalPointX", distModel->Center().X());
+            intrinsic.put("principalPointY", distModel->Center().Y());
+        }
+        else
+        {
+            intrinsic.put("k1",              0.0);
+            intrinsic.put("k2",              0.0);
+            intrinsic.put("k3",              0.0);
+            intrinsic.put("t1",              0.0);
+            intrinsic.put("t2",              0.0);
+            intrinsic.put("principalPointX", m_width[0]/2.0);
+            intrinsic.put("principalPointY", m_height[0]/2.0);
+        }
+    }
+    yarp::os::Value rectM;
+    intrinsic.put("rectificationMatrix", rectM.makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0"));
+    intrinsic.put("distortionModel", "plumb_bob");
+    intrinsic.put("stamp", m_lastTimestamp[0].getTime());
+    return true;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::getRgbMirroring(bool& mirror)
+{
+    return false;
+}
+
+bool yarp::dev::GazeboYarpMultiCameraDriver::setRgbMirroring(bool mirror)
+{
+    return false;
+}
 
 yarp::os::Stamp yarp::dev::GazeboYarpMultiCameraDriver::getLastInputStamp()
 {
     // FIXME Ensure that the images are syncronous
     for (unsigned int i = 1; i < m_camera_count; ++i) {
         if (m_lastTimestamp[i].getTime() != m_lastTimestamp[0].getTime()) {
-            yWarning() << "Timestamp is different!" <<  m_lastTimestamp[0].getTime() << m_lastTimestamp[i].getTime();
+            yCWarning(GAZEBOMULTICAMERA) << "Timestamp is different!" <<  m_lastTimestamp[0].getTime() << m_lastTimestamp[i].getTime();
         }
     }
     return m_lastTimestamp[0];

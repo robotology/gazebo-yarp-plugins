@@ -328,9 +328,9 @@ bool GazeboYarpContactLoadCellArrayDriver::configure(yarp::os::Property& pluginP
     {
         yarp::sig::Vector loadCellLoc(3);
         loadCellLoc.clear();
-        loadCellLoc.push_back(loadCellX->get(i).asDouble());
-        loadCellLoc.push_back(loadCellY->get(i).asDouble());
-        loadCellLoc.push_back(loadCellZ->get(i).asDouble());
+        loadCellLoc.push_back(loadCellX->get(i).asFloat64());
+        loadCellLoc.push_back(loadCellY->get(i).asFloat64());
+        loadCellLoc.push_back(loadCellZ->get(i).asFloat64());
         this->m_loadCellLocations.push_back(loadCellLoc);
      }
 
@@ -398,14 +398,8 @@ bool GazeboYarpContactLoadCellArrayDriver::prepareLinkInformation()
     // \url https://bitbucket.org/osrf/gazebo/pull-requests/355/bullet-contact-sensor/diff
     // According to the above issue and PR, the force torque feedback values are acting at the
     // CG with respect to the link origin frame.
-
-#if GAZEBO_MAJOR_VERSION >= 8
     // Just get information about location of link CG with respect to the link origin frame
     this->m_linkOrigin_Pos_linkCG = m_sensorLink->GetInertial().get()->Pose().Pos();
-#else
-    gazebo::math::Pose tmp = m_sensorLink->GetInertial().get()->GetPose();
-    this->m_linkOrigin_Pos_linkCG = ignition::math::Vector3d(tmp.pos.x, tmp.pos.y, tmp.pos.z);
-#endif
 
 #if DEBUG
      std::cout << "L_o_C: \n [ " << m_linkOrigin_Pos_linkCG[0] << " " <<  m_linkOrigin_Pos_linkCG[1] << " " << m_linkOrigin_Pos_linkCG[2] << " ]"<< std::endl;

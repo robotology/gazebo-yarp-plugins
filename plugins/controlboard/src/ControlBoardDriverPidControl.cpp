@@ -8,9 +8,10 @@
 
 #include "ControlBoardDriver.h"
 #include <GazeboYarpPlugins/common.h>
-#include <yarp/os/LogStream.h>
+#include "ControlBoardLog.h"
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/transport/Publisher.hh>
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 namespace yarp {
     namespace dev {
@@ -19,12 +20,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -46,7 +47,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
@@ -61,12 +62,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
             // Not implemented yet
@@ -77,7 +78,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
             bool result = true;
@@ -91,12 +92,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
             // Not implemented yet
@@ -107,7 +108,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
             bool result = true;
@@ -121,12 +122,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -139,7 +140,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
             bool result = true;
@@ -154,12 +155,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -174,7 +175,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
@@ -189,12 +190,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
             if (!pid) return false;
@@ -217,7 +218,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
@@ -232,12 +233,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -271,12 +272,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -289,7 +290,7 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
@@ -304,12 +305,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -320,12 +321,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -336,12 +337,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -352,12 +353,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
 
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
 
@@ -368,12 +369,12 @@ namespace yarp {
         {
             PIDMap::iterator pidType = m_pids.find(pidtype);
             if (pidType == m_pids.end()) {
-                yWarning() << "Could not find PID for type " << pidtype;
+                yCWarning(GAZEBOCONTROLBOARD) << "Could not find PID for type " << pidtype;
                 return false;
             }
             
             if (j < 0 || static_cast<size_t>(j) >= pidType->second.size()) {
-                yWarning() << "Joint index must be between 0 and " << pidType->second.size();
+                yCWarning(GAZEBOCONTROLBOARD) << "Joint index must be between 0 and " << pidType->second.size();
                 return false;
             }
             

@@ -14,12 +14,13 @@
 #include <gazebo/physics/World.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
 
-#include <yarp/os/LogStream.h>
+#include "ControlBoardLog.h"
 #include <yarp/sig/Image.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 void Watchdog::reset()
 {
@@ -203,11 +204,7 @@ bool MinJerkTrajectoryGenerator::abortTrajectory (double limit)
 bool MinJerkTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed, double acceleration)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
-#else
-    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
-#endif
     m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0;
     double speedf = fabs(speed);
     double dx0 =0;
@@ -265,7 +262,7 @@ double MinJerkTrajectoryGenerator::p_computeTrajectoryStep()
         target = m_xf;
         delta_target = target - m_prev_a;
         m_prev_a = target;
-        //yDebug()<<"mdone" << target;
+        //yCDebug(GAZEBOCONTROLBOARD)<<"mdone" << target;
         return delta_target;
     }
 
@@ -277,7 +274,7 @@ double MinJerkTrajectoryGenerator::p_computeTrajectoryStep()
         target = m_x0;
         delta_target = target - m_prev_a;
         m_prev_a = target;
-        //yDebug()<<"first" ;
+        //yCDebug(GAZEBOCONTROLBOARD)<<"first" ;
         return delta_target;
     }
     else if (m_cur_t < 1.0 - m_step)
@@ -292,11 +289,11 @@ double MinJerkTrajectoryGenerator::p_computeTrajectoryStep()
 
         delta_target = target - m_prev_a;
         m_prev_a = target;
-        //yDebug()<< delta_target;
+        //yCDebug(GAZEBOCONTROLBOARD)<< delta_target;
         return delta_target;
     }
 
-    //yDebug()<<"last";
+    //yCDebug(GAZEBOCONTROLBOARD)<<"last";
     m_trajectory_complete = true;
     target =m_xf;
 
@@ -320,7 +317,7 @@ double MinJerkTrajectoryGenerator::p_computeTrajectory()
     {
         target = m_xf;
         m_prev_a = target;
-        //yDebug()<<"mdone" << target;
+        //yCDebug(GAZEBOCONTROLBOARD)<<"mdone" << target;
         return target;
     }
 
@@ -331,7 +328,7 @@ double MinJerkTrajectoryGenerator::p_computeTrajectory()
 
         target = m_x0;
         m_prev_a = target;
-        //yDebug()<<"first" ;
+        //yCDebug(GAZEBOCONTROLBOARD)<<"first" ;
         return target;
     }
     else if (m_cur_t < 1.0 - m_step)
@@ -345,11 +342,11 @@ double MinJerkTrajectoryGenerator::p_computeTrajectory()
         m_cur_step ++;
 
         m_prev_a = target;
-        //yDebug()<< target;
+        //yCDebug(GAZEBOCONTROLBOARD)<< target;
         return target;
     }
 
-    //yDebug()<<"last";
+    //yCDebug(GAZEBOCONTROLBOARD)<<"last";
     m_trajectory_complete = true;
     target =m_xf;
     return target;
@@ -379,11 +376,7 @@ ConstSpeedTrajectoryGenerator::~ConstSpeedTrajectoryGenerator() {}
 bool ConstSpeedTrajectoryGenerator::initTrajectory (double current_pos, double final_pos, double speed, double acceleration)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->Physics();
-#else
-    gazebo::physics::PhysicsEnginePtr physics = this->m_robot->GetWorld()->GetPhysicsEngine();
-#endif
     m_controllerPeriod = physics->GetUpdatePeriod() * 1000.0;
     m_x0 = current_pos;
     m_xf = final_pos;
@@ -427,7 +420,7 @@ double ConstSpeedTrajectoryGenerator::p_computeTrajectoryStep()
         step = (m_xf - m_computed_reference);
     }
 
-    //yDebug() << step;
+    //yCDebug(GAZEBOCONTROLBOARD) << step;
     return step;
 }
 
@@ -463,7 +456,7 @@ double ConstSpeedTrajectoryGenerator::p_computeTrajectory()
         }
     }
 
-    //yDebug() << m_computed_reference;
+    //yCDebug(GAZEBOCONTROLBOARD) << m_computed_reference;
     return m_computed_reference;
 }
 
@@ -487,11 +480,7 @@ bool TrapezoidalSpeedTrajectoryGenerator::initTrajectory(double current_pos, dou
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-#if GAZEBO_MAJOR_VERSION >= 8
     gazebo::physics::PhysicsEnginePtr physics = m_robot->GetWorld()->Physics();
-#else
-    gazebo::physics::PhysicsEnginePtr physics = m_robot->GetWorld()->GetPhysicsEngine();
-#endif
 
     if (speed <= 0.0 || acceleration <= 0.0)
     {

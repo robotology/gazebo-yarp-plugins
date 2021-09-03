@@ -162,9 +162,9 @@ int main(int argc, char **argv)
             yarp::os::Value val2 = speed->get(1);
             
             if (!val1.isNull())
-                dq1 = val1.asDouble();
+                dq1 = val1.asFloat64();
             if (!val2.isNull())
-                dq2= val2.asDouble();              
+                dq2= val2.asFloat64();
         }
         
         yarp::sig::Vector q(2);

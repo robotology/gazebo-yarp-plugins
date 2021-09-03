@@ -88,17 +88,8 @@ void GazeboYarpInertialMTBPartDriver::onUpdate(const gazebo::common::UpdateInfo 
          sensorIter++,
          bufferOffset+=sensorDataLength)
     {
-#if GAZEBO_MAJOR_VERSION >= 6
         ignition::math::Vector3d linear_acceleration = (*sensorIter)->LinearAcceleration();
-#else
-        gazebo::math::Vector3 linear_acceleration = (*sensorIter)->GetLinearAcceleration();
-#endif
-
-#if GAZEBO_MAJOR_VERSION >= 7
         double sensorLastTimestamp = (*sensorIter)->LastUpdateTime().Double();
-#else
-        double sensorLastTimestamp = (*sensorIter)->GetLastUpdateTime().Double();
-#endif
 
         //Fill the 3 channels measurement data, applying the m/s^2 to raw
         //fullscale gain

@@ -42,7 +42,6 @@ extern const std::string YarpLaserSensorScopedName;
 
 class yarp::dev::GazeboYarpLaserSensorDriver: 
     public yarp::dev::Lidar2DDeviceBase,
-    public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver
 {
 public:
@@ -68,7 +67,10 @@ public:
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp() override;
 
-
+public:
+    //Lidar2DDeviceBase
+    bool acquireDataFromHW() override final;
+    
 private:
     double m_gazebo_max_angle;
     double m_gazebo_min_angle;

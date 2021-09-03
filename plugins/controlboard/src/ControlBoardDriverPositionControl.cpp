@@ -5,10 +5,11 @@
  */
 
 #include "ControlBoardDriver.h"
-#include <yarp/os/LogStream.h>
+#include "ControlBoardLog.h"
 
 
 using namespace yarp::dev;
+using GazeboYarpPlugins::GAZEBOCONTROLBOARD;
 
 bool GazeboYarpControlBoardDriver::positionMove(int j, double ref) //WORKS
 {
@@ -332,7 +333,7 @@ bool GazeboYarpControlBoardDriver::setPosition(int j, double ref)
             return true;
         }
     } else {
-        yError() << "gazebo_yarp_controlboard: you tried to call setPosition " <<
+        yCError(GAZEBOCONTROLBOARD) << "gazebo_yarp_controlboard: you tried to call setPosition " <<
         "for a joint that is not in POSITION_DIRECT control mode.";
     }
     return false;

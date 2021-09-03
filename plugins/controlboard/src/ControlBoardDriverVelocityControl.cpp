@@ -7,7 +7,6 @@
 
 #include "ControlBoardDriver.h"
 
-
 using namespace yarp::dev;
 
 

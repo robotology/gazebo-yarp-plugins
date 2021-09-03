@@ -96,19 +96,11 @@ bool addGazeboEnviromentalVariablesSensor(gazebo::sensors::SensorPtr _sensor,
     // Prefill the property object with some gazebo-yarp-plugins "Enviromental Variables"
     // (not using the env variable in fromConfigFile(const ConstString& fname, Searchable& env, bool wipe)
     // method because we want the variable defined here to be overwritable by the user configuration file
-#if GAZEBO_MAJOR_VERSION >= 7
     std::string gazeboYarpPluginsSensorName = _sensor->Name();
-#else
-    std::string gazeboYarpPluginsSensorName = _sensor->GetName();
-#endif
     plugin_parameters.put("gazeboYarpPluginsSensorName",gazeboYarpPluginsSensorName.c_str());
 
     // Extract the robot name from the sensor scoped name
-#if GAZEBO_MAJOR_VERSION >= 7
     std::string scopedSensorName = _sensor->ScopedName();
-#else
-    std::string scopedSensorName = _sensor->GetScopedName();
-#endif
 
     std::vector<std::string> explodedScopedSensorName = splitString(scopedSensorName,":");
 
@@ -136,11 +128,8 @@ bool loadConfigSensorPlugin(sensors::SensorPtr _sensor,
     bool wipe = false;
     bool loaded_configuration = true;
 
-#if GAZEBO_MAJOR_VERSION >= 7
     std::string sensorName = _sensor->Name();
-#else
-    std::string sensorName = _sensor->GetName();
-#endif
+
 
     if (_sdf->HasElement("yarpConfigurationFile")) {
         std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");

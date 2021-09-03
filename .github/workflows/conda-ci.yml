@@ -1,0 +1,135 @@
+name: C++ CI Workflow with conda dependencies
+
+on:
+  push:
+  pull_request:
+  schedule:
+  # * is a special character in YAML so you have to quote this string
+  # Execute a "nightly" build at 2 AM UTC
+  - cron:  '0 2 * * *'
+
+jobs:
+  build:
+    name: '[${{ matrix.os }}@${{ matrix.build_type }}@conda]'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build_type: [Release]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        mamba-version: "*"
+        channels: conda-forge,robotology
+        channel-priority: true
+
+    - uses: rlespinasse/github-slug-action@v3.x
+
+    - name: Dependencies
+      shell: bash -l {0}
+      run: |
+        # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/186
+        conda config --remove channels defaults
+        # Compilation related dependencies
+        mamba install cmake compilers make ninja pkg-config
+        # Actual dependencies
+        mamba install -c conda-forge gazebo opencv
+
+    # Additional dependencies useful only on Linux
+    - name: Dependencies [Conda/Linux]
+      if: contains(matrix.os, 'ubuntu')
+      shell: bash -l {0}
+      run: |
+        # Additional dependencies only useful on Linux
+        # See https://github.com/robotology/robotology-superbuild/issues/477
+        mamba install expat-cos6-x86_64 libselinux-cos6-x86_64 libxau-cos6-x86_64 libxcb-cos6-x86_64 libxdamage-cos6-x86_64 libxext-cos6-x86_64 libxfixes-cos6-x86_64 libxxf86vm-cos6-x86_64 mesalib mesa-libgl-cos6-x86_64 mesa-libgl-devel-cos6-x86_64
+
+    - name: Dependencies (master)
+      if: |
+        (github.event_name == 'pull_request' && env.GITHUB_BASE_REF_SLUG == 'master') ||
+        env.GITHUB_REF_SLUG == 'master'
+      shell: bash -l {0}
+      run: |
+        # Actual dependencies
+        mamba install -c conda-forge -c robotology yarp
+
+    - name: Dependencies (devel) [Conda/Linux&macOS]
+      if: |
+        contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu') &&
+        ((github.event_name == 'pull_request' && env.GITHUB_BASE_REF_SLUG != 'master') ||
+         (github.event_name != 'pull_request' && env.GITHUB_REF_SLUG != 'master'))
+      shell: bash -l {0}
+      run: |
+
+        # YARP & iDynTree dependencies
+        mamba install -c conda-forge ace eigen ycm-cmake-modules
+
+        #YARP
+        cd ${GITHUB_WORKSPACE}
+        git clone https://github.com/robotology/yarp
+        cd yarp
+        mkdir build
+        cd build
+        cmake -GNinja -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        cmake --build . --config ${{ matrix.build_type }}
+        cmake --install . --config ${{ matrix.build_type }}
+
+    - name: Dependencies (devel) [Conda/Windows]
+      if: |
+        contains(matrix.os, 'windows') &&
+        ((github.event_name == 'pull_request' && env.GITHUB_BASE_REF_SLUG != 'master') ||
+         (github.event_name != 'pull_request' && env.GITHUB_REF_SLUG != 'master'))
+      shell: bash -l {0}
+      run: |
+
+        # YARP & iDynTree dependencies
+        mamba install -c conda-forge ace eigen ycm-cmake-modules
+
+        #YARP
+        cd ${GITHUB_WORKSPACE}
+        git clone https://github.com/robotology/yarp
+        cd yarp
+        mkdir build
+        cd build
+        cmake -G"Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/Library -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        cmake --build . --config ${{ matrix.build_type }}
+        cmake --install . --config ${{ matrix.build_type }}
+
+    - name: Configure [Linux&macOS]
+      if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
+      shell: bash -l {0}
+      run: |
+        mkdir -p build
+        cd build
+        cmake -GNinja -DBUILD_TESTING:BOOL=ON \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+
+    - name: Configure [Windows]
+      if: contains(matrix.os, 'windows')
+      shell: bash -l {0}
+      run: |
+        mkdir -p build
+        cd build
+        cmake -G"Visual Studio 16 2019" -DBUILD_TESTING:BOOL=ON \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+
+    - name: Build
+      shell: bash -l {0}
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.build_type }}
+
+    # Tests are working only on Linux
+    # https://github.com/robotology/gazebo-yarp-plugins/issues/530
+    # https://github.com/robotology/gazebo-yarp-plugins/issues/567
+    - name: Test [Linux]
+      if: contains(matrix.os, 'ubuntu')
+      shell: bash -l {0}
+      run: |
+        cd build
+        ctest --output-on-failure -C ${{ matrix.build_type }}
+

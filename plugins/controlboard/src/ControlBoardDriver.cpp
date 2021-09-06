@@ -1109,10 +1109,11 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
         Bottle pidGroup = m_pluginParameters.findGroup("VELOCITY_CONTROL");
 
         // Check velocityControlImplementationType value
-        // If not present, default to direct_velocity_pid for now
+        // If not present, raise an error
         if (pidGroup.find("velocityControlImplementationType").isNull()) {
-            yCWarning(GAZEBOCONTROLBOARD) << "VELOCITY_CONTROL: 'velocityControlImplementationType' param missing. ";
-            yCWarning(GAZEBOCONTROLBOARD) << " Using the default value of 'direct_velocity_pid', but the parameter will be compulsory gazebo-yarp-plugins 4.";
+            yCError(GAZEBOCONTROLBOARD) << "VELOCITY_CONTROL: 'velocityControlImplementationType' param missing. ";
+            yCError(GAZEBOCONTROLBOARD) << " To fix your model to have the same default behaviour  of gazebo-yarp-plugins < 4, just add 'velocityControlImplementationType direct_velocity_pid' in the '[VELOCITY_CONTROL]' group.";
+            return false;
         } else {
             std::string velocityControlImplementationType = pidGroup.find("velocityControlImplementationType").toString();
 

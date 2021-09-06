@@ -5,6 +5,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.0.0] - 2021-09-03
+
 ### Added
 - The multicamera plugin now implements the `yarp::dev::IRgbVisualParams` interface (https://github.com/robotology/gazebo-yarp-plugins/pull/558).
 - The controlboard and multicamera plugins now handle the `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/559).

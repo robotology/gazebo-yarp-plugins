@@ -7,9 +7,9 @@ PROJECT(GazeboYARPPlugins)
 option(GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS "if enabled removes default wrappers in doublelaser, lasersensor, controlboard, depthcamera and multicamera" OFF)
 
 # Project version
-set(${PROJECT_NAME}_MAJOR_VERSION 3)
-set(${PROJECT_NAME}_MINOR_VERSION 6)
-set(${PROJECT_NAME}_PATCH_VERSION 2)
+set(${PROJECT_NAME}_MAJOR_VERSION 4)
+set(${PROJECT_NAME}_MINOR_VERSION 0)
+set(${PROJECT_NAME}_PATCH_VERSION 0)
 
 set(${PROJECT_NAME}_VERSION
     ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_VERSION})

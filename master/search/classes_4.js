@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fingersabductioncouplinghandler_845',['FingersAbductionCouplingHandler',['../classFingersAbductionCouplingHandler.html',1,'']]]
+  ['fingersabductioncouplinghandler_843',['FingersAbductionCouplingHandler',['../classFingersAbductionCouplingHandler.html',1,'']]]
 ];

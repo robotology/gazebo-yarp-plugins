@@ -10,7 +10,6 @@ var namespaceyarp_1_1dev =
     [ "GazeboYarpForceTorqueDriver", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver" ],
     [ "GazeboYarpIMUDriver", "classyarp_1_1dev_1_1GazeboYarpIMUDriver.html", "classyarp_1_1dev_1_1GazeboYarpIMUDriver" ],
     [ "GazeboYarpInertialMTBPartDriver", "classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver.html", "classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver" ],
-    [ "GazeboYarpJointSensorsDriver", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver.html", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver" ],
     [ "GazeboYarpLaserSensorDriver", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver" ],
     [ "GazeboYarpMaisSensorDriver", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver" ],
     [ "GazeboYarpMultiCameraDriver", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver.html", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver" ],

@@ -96,16 +96,16 @@ var files_dup =
     [ "ControlBoardDriverTrajectory.h", "ControlBoardDriverTrajectory_8h.html", "ControlBoardDriverTrajectory_8h" ],
     [ "ControlBoardDriverVelocityControl.cpp", "ControlBoardDriverVelocityControl_8cpp.html", null ],
     [ "ControlBoardDriverVirtualAnalogSensor.cpp", "ControlBoardDriverVirtualAnalogSensor_8cpp.html", null ],
+    [ "ControlBoardLog.cpp", "ControlBoardLog_8cpp.html", null ],
+    [ "ControlBoardLog.h", "ControlBoardLog_8h.html", null ],
     [ "DepthCamera.cc", "DepthCamera_8cc.html", null ],
     [ "DepthCamera.hh", "DepthCamera_8hh.html", [
       [ "GazeboYarpDepthCamera", "classgazebo_1_1GazeboYarpDepthCamera.html", "classgazebo_1_1GazeboYarpDepthCamera" ]
     ] ],
     [ "DepthCameraDriver.cpp", "DepthCameraDriver_8cpp.html", "DepthCameraDriver_8cpp" ],
     [ "DepthCameraDriver.h", "DepthCameraDriver_8h.html", "DepthCameraDriver_8h" ],
-    [ "DoubleLaser.cc", "DoubleLaser_8cc.html", null ],
-    [ "DoubleLaser.hh", "DoubleLaser_8hh.html", [
-      [ "GazeboYarpDoubleLaser", "classgazebo_1_1GazeboYarpDoubleLaser.html", "classgazebo_1_1GazeboYarpDoubleLaser" ]
-    ] ],
+    [ "DepthCameraLog.cpp", "DepthCameraLog_8cpp.html", null ],
+    [ "DepthCameraLog.h", "DepthCameraLog_8h.html", null ],
     [ "example.cpp", "example_8cpp.html", "example_8cpp" ],
     [ "ExternalWrench.cc", "ExternalWrench_8cc.html", null ],
     [ "ExternalWrench.hh", "ExternalWrench_8hh.html", [
@@ -155,20 +155,14 @@ var files_dup =
     ] ],
     [ "inertialMTBPartDriver.cpp", "inertialMTBPartDriver_8cpp.html", "inertialMTBPartDriver_8cpp" ],
     [ "inertialMTBPartDriver.h", "inertialMTBPartDriver_8h.html", "inertialMTBPartDriver_8h" ],
-    [ "JointSensors.cc", "JointSensors_8cc.html", null ],
-    [ "JointSensors.hh", "JointSensors_8hh.html", [
-      [ "GazeboYarpJointSensors", "classgazebo_1_1GazeboYarpJointSensors.html", "classgazebo_1_1GazeboYarpJointSensors" ]
-    ] ],
-    [ "JointSensorsDriver.cpp", "JointSensorsDriver_8cpp.html", null ],
-    [ "JointSensorsDriver.h", "JointSensorsDriver_8h.html", [
-      [ "GazeboYarpJointSensorsDriver", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver.html", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver" ]
-    ] ],
     [ "LaserSensor.cc", "LaserSensor_8cc.html", null ],
     [ "LaserSensor.hh", "LaserSensor_8hh.html", [
       [ "GazeboYarpLaserSensor", "classgazebo_1_1GazeboYarpLaserSensor.html", "classgazebo_1_1GazeboYarpLaserSensor" ]
     ] ],
     [ "LaserSensorDriver.cpp", "LaserSensorDriver_8cpp.html", "LaserSensorDriver_8cpp" ],
     [ "LaserSensorDriver.h", "LaserSensorDriver_8h.html", "LaserSensorDriver_8h" ],
+    [ "LaserSensorLog.cpp", "LaserSensorLog_8cpp.html", null ],
+    [ "LaserSensorLog.h", "LaserSensorLog_8h.html", null ],
     [ "linkattacher.cc", "linkattacher_8cc.html", null ],
     [ "linkattacher.hh", "linkattacher_8hh.html", [
       [ "LinkAttacher", "classgazebo_1_1LinkAttacher.html", "classgazebo_1_1LinkAttacher" ]
@@ -206,6 +200,8 @@ var files_dup =
     ] ],
     [ "MultiCameraDriver.cpp", "MultiCameraDriver_8cpp.html", "MultiCameraDriver_8cpp" ],
     [ "MultiCameraDriver.h", "MultiCameraDriver_8h.html", "MultiCameraDriver_8h" ],
+    [ "MultiCameraLog.cpp", "MultiCameraLog_8cpp.html", null ],
+    [ "MultiCameraLog.h", "MultiCameraLog_8h.html", null ],
     [ "MultiCameraPlugin.cpp", "MultiCameraPlugin_8cpp.html", "MultiCameraPlugin_8cpp" ],
     [ "MultiCameraPlugin.hh", "MultiCameraPlugin_8hh.html", [
       [ "MultiCameraPlugin", "classgazebo_1_1MultiCameraPlugin.html", "classgazebo_1_1MultiCameraPlugin" ]

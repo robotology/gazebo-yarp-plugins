@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['yarpworldpose_1705',['YarpWorldPose',['../worldproxy_8cpp.html#ae12cd79c7d1686e4576067af9fa2bac4',1,'worldproxy.cpp']]]
+  ['yarpworldpose_1699',['YarpWorldPose',['../worldproxy_8cpp.html#a54810070f1f52ab7702ac86240b171b5',1,'worldproxy.cpp']]]
 ];

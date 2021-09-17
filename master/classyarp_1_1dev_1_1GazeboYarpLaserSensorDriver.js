@@ -9,5 +9,6 @@ var classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver =
     [ "setScanLimits", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#ae5ec262c3300e81ae83901ded520250b", null ],
     [ "setHorizontalResolution", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a8f32cb45d00fa9f6535f6905a410a0cd", null ],
     [ "setScanRate", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a75d95b7c418b83630575b87ef1ab7138", null ],
-    [ "getLastInputStamp", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a6e60abf7522d53236016fbb04ad1c2af", null ]
+    [ "getLastInputStamp", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a6e60abf7522d53236016fbb04ad1c2af", null ],
+    [ "acquireDataFromHW", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a90fd176cebb56bb05e9565d53c8f04ab", null ]
 ];

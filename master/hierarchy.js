@@ -29,7 +29,6 @@ var hierarchy =
       [ "yarp::dev::GazeboYarpForceTorqueDriver", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html", null ],
       [ "yarp::dev::GazeboYarpIMUDriver", "classyarp_1_1dev_1_1GazeboYarpIMUDriver.html", null ],
       [ "yarp::dev::GazeboYarpInertialMTBPartDriver", "classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver.html", null ],
-      [ "yarp::dev::GazeboYarpJointSensorsDriver", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver.html", null ],
       [ "yarp::dev::GazeboYarpLaserSensorDriver", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html", null ],
       [ "yarp::dev::GazeboYarpMaisSensorDriver", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html", null ],
       [ "yarp::dev::GazeboYarpMultiCameraDriver", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver.html", null ]
@@ -51,7 +50,6 @@ var hierarchy =
       [ "yarp::dev::GazeboYarpContactLoadCellArrayDriver", "classyarp_1_1dev_1_1GazeboYarpContactLoadCellArrayDriver.html", null ],
       [ "yarp::dev::GazeboYarpForceTorqueDriver", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html", null ],
       [ "yarp::dev::GazeboYarpInertialMTBPartDriver", "classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver.html", null ],
-      [ "yarp::dev::GazeboYarpJointSensorsDriver", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver.html", null ],
       [ "yarp::dev::GazeboYarpMaisSensorDriver", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html", null ]
     ] ],
     [ "IAxisInfo", null, [
@@ -115,8 +113,6 @@ var hierarchy =
       [ "yarp::dev::GazeboYarpForceTorqueDriver", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html", null ],
       [ "yarp::dev::GazeboYarpIMUDriver", "classyarp_1_1dev_1_1GazeboYarpIMUDriver.html", null ],
       [ "yarp::dev::GazeboYarpInertialMTBPartDriver", "classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver.html", null ],
-      [ "yarp::dev::GazeboYarpJointSensorsDriver", "classyarp_1_1dev_1_1GazeboYarpJointSensorsDriver.html", null ],
-      [ "yarp::dev::GazeboYarpLaserSensorDriver", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html", null ],
       [ "yarp::dev::GazeboYarpMultiCameraDriver", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver.html", null ]
     ] ],
     [ "IPWMControl", null, [
@@ -129,6 +125,9 @@ var hierarchy =
     ] ],
     [ "yarp::dev::IRGBDSensor", null, [
       [ "yarp::dev::GazeboYarpDepthCameraDriver", "classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html", null ]
+    ] ],
+    [ "yarp::dev::IRgbVisualParams", null, [
+      [ "yarp::dev::GazeboYarpMultiCameraDriver", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver.html", null ]
     ] ],
     [ "yarp::dev::IThreeAxisGyroscopes", null, [
       [ "yarp::dev::GazeboYarpIMUDriver", "classyarp_1_1dev_1_1GazeboYarpIMUDriver.html", null ]
@@ -165,10 +164,8 @@ var hierarchy =
       [ "gazebo::GazeboYarpBaseState", "classgazebo_1_1GazeboYarpBaseState.html", null ],
       [ "gazebo::GazeboYarpContactLoadCellArray", "classgazebo_1_1GazeboYarpContactLoadCellArray.html", null ],
       [ "gazebo::GazeboYarpControlBoard", "classgazebo_1_1GazeboYarpControlBoard.html", null ],
-      [ "gazebo::GazeboYarpDoubleLaser", "classgazebo_1_1GazeboYarpDoubleLaser.html", null ],
       [ "gazebo::GazeboYarpFakeControlBoard", "classgazebo_1_1GazeboYarpFakeControlBoard.html", null ],
       [ "gazebo::GazeboYarpInertialMTBPart", "classgazebo_1_1GazeboYarpInertialMTBPart.html", null ],
-      [ "gazebo::GazeboYarpJointSensors", "classgazebo_1_1GazeboYarpJointSensors.html", null ],
       [ "gazebo::GazeboYarpMaisSensor", "classgazebo_1_1GazeboYarpMaisSensor.html", null ],
       [ "gazebo::GazeboYarpModelPosePublisher", "classgazebo_1_1GazeboYarpModelPosePublisher.html", null ]
     ] ],

@@ -19,16 +19,7 @@ jobs:
         build_type: [Release, Debug]
         os: [ubuntu-18.04, ubuntu-20.04]
         yarp_version: [master]
-        # Dummy value to specify additional combination in the include matrix, see
-        # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-new-combinations
-        combination: [0]
-        include:
-          - os: ubuntu-18.04
-            combination: 0
-            gazebo_version: gazebo11
-            build_type: Release
-          - os: ubuntu-20.04
-            gazebo_version: gazebo11
+
     steps:
     - uses: actions/checkout@v2
         
@@ -48,7 +39,7 @@ jobs:
         wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
         sudo apt-get update
         sudo apt-get install git build-essential cmake libace-dev libeigen3-dev libopencv-dev 
-        sudo apt-get install lib${{ matrix.gazebo_version }}-dev
+        sudo apt-get install libgazebo11-dev
         
     - name: Source-based Dependencies [Ubuntu] 
       if: contains(matrix.os, 'ubuntu')

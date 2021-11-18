@@ -5,6 +5,10 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Added
+- The `gazebo_imu` plugin now handle the `yarpDeviceName` parameter.
+- The `gazebo_imu` plugin can be now opened without implicit/explicit wrapper.
+
 ## [4.0.0] - 2021-09-03
 
 ### Added
@@ -21,8 +25,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - Fixed the getRgbIntrinsicParam method in the depthCamera plugin when the distortion is not set (https://github.com/robotology/gazebo-yarp-plugins/pull/558).
 - The property returned by `getRgbIntrinsicParam()`, now contains `rectificationMatrix` instead of `rectificationMatrix` (https://github.com/robotology/gazebo-yarp-plugins/pull/558, see also https://github.com/robotology/yarp/pull/2593).
 
-### Removed 
-- The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been removed (https://github.com/robotology/gazebo-yarp-plugins/pull/574). 
+### Removed
+- The `gazebo_yarp_jointsensors` and the `gazebo_yarp_doublelaser` have been removed (https://github.com/robotology/gazebo-yarp-plugins/pull/574).
 - The support for Gazebo 9 and 10 has been removed. `gazebo-yarp-plugins` now requires Gazebo 11 (https://github.com/robotology/gazebo-yarp-plugins/pull/575).
 
 
@@ -33,7 +37,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [3.6.1] - 2021-05-19
 
-### Fixed 
+### Fixed
 - Fixed use of libYARP_robotinterface with YARP devices spawned by sensor plugins (https://github.com/robotology/gazebo-yarp-plugins/pull/544).
 - Fixed compilation against YARP 3.5 by removing spurious print in WorldInterface plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/548).
 
@@ -47,15 +51,15 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
   configuration. This generator enables the trajectory to follow a trapezoidal speed profile in position control mode, limited
   by provided reference speed (saturation) and acceleration (both ramps) values. If already executing a trajectory in this manner,
   newly generated trajectories take into account previous joint velocities and update the motion accordingly.
-- Add `gazebo_yarp_robotinterface` plugin, the documentation for it can be found at [plugins/robotinterface/README.md](plugins/robotinterface/README.md) (https://github.com/robotology/gazebo-yarp-plugins/pull/532).  
+- Add `gazebo_yarp_robotinterface` plugin, the documentation for it can be found at [plugins/robotinterface/README.md](plugins/robotinterface/README.md) (https://github.com/robotology/gazebo-yarp-plugins/pull/532).
 - The `gazebo_yarp_depthcamera` and `gazebo_yarp_doublesensor` now accept a `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/532).
 
-### Changed 
+### Changed
 - The `deviceId` parameter of the `gazebo_yarp_lasersensor` is now named `yarpDeviceName` )https://github.com/robotology/gazebo-yarp-plugins/pull/532).
-  
+
 ### Fixed
-- Fix the support for running Gazebo itself with the `gazebo_yarp_clock` with YARP_CLOCK set, without Gazebo freezing at startup.  
-  In particular, setting YARP_CLOCK is suggested to ensure that all the threads of YARP Network Wrapper Servers are executed with 
+- Fix the support for running Gazebo itself with the `gazebo_yarp_clock` with YARP_CLOCK set, without Gazebo freezing at startup.
+  In particular, setting YARP_CLOCK is suggested to ensure that all the threads of YARP Network Wrapper Servers are executed with
   the frequency correctly synchronized with the Gazebo simulation (https://github.com/robotology/gazebo-yarp-plugins/pull/537).
 
 ## [3.5.1] - 2020-10-05

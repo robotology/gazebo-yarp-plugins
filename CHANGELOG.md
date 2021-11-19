@@ -6,6 +6,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ## [Unreleased]
 
 ### Added
+- The `gazebo_yarp_forcetorque` plugin now handle the `yarpDeviceName` parameter.
+- The `gazebo_yarp_forcetorque` plugin can be now opened without implicit/explicit wrapper.
 - The `gazebo_imu` plugin now handle the `yarpDeviceName` parameter.
 - The `gazebo_imu` plugin can be now opened without implicit/explicit wrapper.
 

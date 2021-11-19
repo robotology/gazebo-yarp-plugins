@@ -52,12 +52,16 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     _sensor->SetActive(true);
 
+    std::string netWrapper {""};
+
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+    netWrapper = "analogServer";
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+
     // Add my gazebo device driver to the factory.
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpForceTorqueDriver>
-                                      ("gazebo_forcetorque", "analogServer", "GazeboYarpForceTorqueDriver"));
-
-    //Getting .ini configuration file from sdf
-    ::yarp::os::Property wrapper_properties;
+                                      ("gazebo_forcetorque", netWrapper.c_str(), "GazeboYarpForceTorqueDriver"));
+    
     ::yarp::os::Property driver_properties;
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,driver_properties);
 
@@ -65,14 +69,11 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         return;
     };
 
-
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver
-    wrapper_properties = driver_properties;
-
-    if( !configuration_loaded )
-    {
-        return;
-    }
+    ::yarp::os::Property wrapper_properties = driver_properties;
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+    
     m_sensorName = _sensor->ScopedName();
 
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
@@ -80,24 +81,26 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     driver_properties.put(YarpForceTorqueScopedName.c_str(), m_sensorName.c_str());
 
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Open the wrapper
     //Force the wrapper to be of type "analogServer" (it make sense? probably no)
     wrapper_properties.put("device","analogServer");
-    if( m_forcetorqueWrapper.open(wrapper_properties) ) {
-    } else {
+    if( !m_forcetorqueWrapper.open(wrapper_properties) ) {
         yError()<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper";
         return;
     }
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
     //Open the driver
     //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
     driver_properties.put("device","gazebo_forcetorque");
-    if( m_forceTorqueDriver.open(driver_properties) ) {
-    } else {
+    if( !m_forceTorqueDriver.open(driver_properties) ) {
         yError()<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver";
         return;
     }
-
+    
+    std::string scopedDeviceName;
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
 
@@ -108,11 +111,33 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     driver_list.push(&m_forceTorqueDriver,"dummy");
 
-    if( m_iWrap->attachAll(driver_list) ) {
-    } else {
+    if( !m_iWrap->attachAll(driver_list) ) {
         yError() << "GazeboYarpForceTorque : error in connecting wrapper and device ";
     }
 
+    if(!driver_properties.check("yarpDeviceName"))
+    {
+        scopedDeviceName = m_sensorName + "::" + driverList[0]->key;
+    }
+    else
+    {
+        scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+    }
+    #else
+    if(!driver_properties.check("yarpDeviceName"))
+    {
+        yError() << "GazeboYarpForceTorque : missing yarpDeviceName parameter for device" << m_sensorName;
+        return;
+    }
+    scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_forceTorqueDriver))
+    {
+        yError()<<"GazeboYarpForceTorque: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
 }
 
 }

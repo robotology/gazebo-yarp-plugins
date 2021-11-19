@@ -77,12 +77,13 @@ For all the following plugins, the **YARP device instance name** can be specifie
 
 If the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `OFF` (default value), for the `gazebo_yarp_controlboard` if the `yarpDeviceName` parameter is not specified, for legacy reason the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration of `yarpDeviceName`. If instead the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON`, the `gazebo_yarp_controlboard` behaves like the rest of the plugins and requires to take the **YARP device instance name** from the `yarpDeviceName` parameter. The same behaviour applies to the plugins listed in the table below.
 
-Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON` then the plugins `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard`, `gazebo_yarp_depthCamera` and `gazebo_yarp_imu` doesn't create the implicit wrapper device but is left to the user to attach it via the robotinterface.
+Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON` then the plugins `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard`, `gazebo_yarp_depthCamera`, `gazebo_yarp_forcetorque` and `gazebo_yarp_imu` doesn't create the implicit wrapper device but is left to the user to attach it via the robotinterface.
 
 | Plugin                     | Details                                              |
 |:--------------------------:|:----------------------------------------------------:|
 | `gazebo_yarp_controlboard` | This plugin can create multiple YARP devices that expose joint-level motor and control interfaces such as [`yarp::dev::IPositionControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IPositionControl.html), [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1ITorqueControl.html) and [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IEncoders.html). |
-| `gazebo_yarp_depthcamera`  | This plugin can create a YARP device that expose a depth-camera interface. |
-| `gazebo_yarp_lasersensor`  | This plugin can create a YARP device that expose a laser-seensor interface. |
-| `gazebo_yarp_multicamera`  | This plugin can create a YARP device that expose a multicamera interface. |
-| `gazebo_yarp_imu`  | This plugin can create a YARP device that expose a imu interface. |
+| `gazebo_yarp_depthcamera`  | This plugin can create a YARP device that exposes a depth-camera interface. |
+| `gazebo_yarp_lasersensor`  | This plugin can create a YARP device that exposes a laser-seensor interface. |
+| `gazebo_yarp_multicamera`  | This plugin can create a YARP device that exposes a multicamera interface. |
+| `gazebo_yarp_imu`  | This plugin can create a YARP device that exposes a imu interface. |
+| `gazebo_yarp_forcetorque`  | This plugin can create a YARP device that exposes a force-torque interface. |

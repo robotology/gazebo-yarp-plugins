@@ -90,19 +90,28 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     m_driverParameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    ///////////////////////////
-    //Open the wrapper, forcing it to be a "RGBDSensorWrapper"
-    wrapper_properties.put("device","RGBDSensorWrapper");
-    if(wrapper_properties.check("subdevice"))
+    bool disable_wrapper = m_driverParameters.check("disableImplicitNetworkWrapper");
+    if (!disable_wrapper)
     {
-        yCError(GAZEBODEPTH) << "RGBDSensorWrapper:  Do not use 'subdevice' keyword here since the only supported subdevice is <gazebo_depthCamera>. \
+        ///////////////////////////
+        //Open the wrapper, forcing it to be a "RGBDSensorWrapper"
+        wrapper_properties.put("device","RGBDSensorWrapper");
+        if(wrapper_properties.check("subdevice"))
+        {
+            yCError(GAZEBODEPTH) << "RGBDSensorWrapper:  Do not use 'subdevice' keyword here since the only supported subdevice is <gazebo_depthCamera>. \
                      Please remove the line 'subdevice " << wrapper_properties.find("subdevice").asString().c_str() << "' from your config file before proceeding";
-        return;
-    }
+            return;
+        }
 
-    if(!m_cameraWrapper.open(wrapper_properties) )
+        if(!m_cameraWrapper.open(wrapper_properties) )
+        {
+            yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp wrapper";
+            return;
+        }    
+    }
+    if (disable_wrapper && !m_driverParameters.check("yarpDeviceName"))
     {
-        yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera Plugin failed: error in opening yarp wrapper";
+        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : missing yarpDeviceName parameter for device" << m_sensorName;
         return;
     }
     #endif
@@ -119,20 +128,23 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
-
-    if(!m_cameraWrapper.view(m_iWrap) )
+    if (!disable_wrapper) 
     {
-        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in loading wrapper";
-        return;
-    }
+        //Attach the driver to the wrapper
 
-    driver_list.push(&m_cameraDriver, "depthcamera");
+        if(!m_cameraWrapper.view(m_iWrap) )
+        {
+            yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in loading wrapper";
+            return;
+        }
 
-    if(!m_iWrap->attachAll(driver_list) )
-    {
-        yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in connecting wrapper and device ";
+        driver_list.push(&m_cameraDriver, "depthcamera");
+
+        if(!m_iWrap->attachAll(driver_list) )
+        {
+            yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera : error in connecting wrapper and device ";
+        }
     }
     #endif
     

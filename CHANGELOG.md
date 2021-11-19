@@ -5,6 +5,12 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.2.0] - 2022-02-25
+
+### Added
+- Added `disableImplicitNetworkWrapper` option to `gazebo_yarp_forcetorque`, `gazebo_yarp_depthcamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_imu` and `gazebo_yarp_controlboard` plugins. If present, this option
+disable any network wrapper server that the plugin created, by just creating the device itself. This option is meant to be used in conjuction with the `gazebo_yarp_robotinterface` plugin, that can be used to launch and attach any networ wrapper server. This option is equivalent to the behavior that can be obtained by setting the CMake option `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` to `OFF` (https://github.com/robotology/gazebo-yarp-plugins/pull/586).
+
 ### Fixed
 - Removed `getLastInputStamp` method from `LaserSensorDriver` class in `gazebo_yarp_lasersensor`. Furthermore, fix bug in `gazebo_yarp_lasersensor`, by adding the update to the variable `m_timestamp` inherited from `yarp::dev::Lidar2DDeviceBase` (https://github.com/robotology/gazebo-yarp-plugins/pull/604).
 

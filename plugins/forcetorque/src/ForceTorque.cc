@@ -117,7 +117,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     if(!driver_properties.check("yarpDeviceName"))
     {
-        scopedDeviceName = m_sensorName + "::" + driverList[0]->key;
+        scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
     }
     else
     {

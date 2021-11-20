@@ -30,7 +30,7 @@ jobs:
         # Actual dependencies
         conda install -c conda-forge gazebo doxygen
         # robotology dependencies
-        conda install -c conda-forge -c robotology-staging yarp    
+        conda install -c conda-forge -c robotology yarp    
     
     - name: Generate Doxygen Website
       shell: bash -l {0}

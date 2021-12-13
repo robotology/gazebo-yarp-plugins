@@ -5,8 +5,6 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
-## [4.1.0] - 2021-12-06
-
 ### Changed
 - The `gazebo_yarp_forcetorque` plugin now handle the `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/584).
 - The `gazebo_yarp_forcetorque` plugin can be now opened without implicit wrapper, by using the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` CMake option (https://github.com/robotology/gazebo-yarp-plugins/pull/584).

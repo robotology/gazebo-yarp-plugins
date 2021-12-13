@@ -37,7 +37,7 @@ jobs:
         # Compilation related dependencies
         mamba install cmake compilers make ninja pkg-config
         # Actual dependencies
-        mamba install -c conda-forge -c robotology gazebo opencv yarp>=3.5
+        mamba install -c conda-forge -c robotology gazebo opencv yarp
 
     # Additional dependencies useful only on Linux
     - name: Dependencies [Conda/Linux]

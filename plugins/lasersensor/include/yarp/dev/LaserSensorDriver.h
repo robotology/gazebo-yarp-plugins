@@ -64,9 +64,6 @@ public:
     virtual bool setHorizontalResolution (double step) override;
     virtual bool setScanRate (double rate) override;
 
-    //PRECISELY TIMED
-    virtual yarp::os::Stamp getLastInputStamp() override;
-
 public:
     //Lidar2DDeviceBase
     bool acquireDataFromHW() override final;

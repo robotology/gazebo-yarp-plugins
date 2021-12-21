@@ -11,6 +11,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - The `gazebo_imu` plugin now handle the `yarpDeviceName` parameter (https://github.com/robotology/gazebo-yarp-plugins/pull/583).
 - The `gazebo_imu` plugin can be now opened without implicit wrapper, by using the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` CMake option (https://github.com/robotology/gazebo-yarp-plugins/pull/583).
 
+### Fixed
+- Fixed compilation with YARP 3.6 (https://github.com/robotology/gazebo-yarp-plugins/pull/599).
+
 ## [4.0.0] - 2021-09-03
 
 ### Added

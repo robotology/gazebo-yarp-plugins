@@ -65,7 +65,9 @@ public:
     virtual bool setScanRate (double rate) override;
 
     //PRECISELY TIMED
-    virtual yarp::os::Stamp getLastInputStamp() override;
+    // TODO(traversaro): Remove once we require YARP 3.6
+    // See https://github.com/robotology/gazebo-yarp-plugins/issues/598
+    virtual yarp::os::Stamp getLastInputStamp();
 
 public:
     //Lidar2DDeviceBase

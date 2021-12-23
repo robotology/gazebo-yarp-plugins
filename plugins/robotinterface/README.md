@@ -1,10 +1,10 @@
 gazebo_yarp_robotinterface
 ==========================
 
-The `gazebo_yarp_robotinterface` plugin permits to load several [YARP devices](http://www.yarp.it/git-master/note_devices.html) that can be attached to YARP devices 
+The `gazebo_yarp_robotinterface` plugin permits to load several [YARP devices](http://www.yarp.it/git-master/note_devices.html) that can be attached to YARP devices
 already opened by other Gazebo-YARP plugins using the same XML format used by the [`yarprobotinterface`](http://www.yarp.it/git-master/yarprobotinterface.html) tool and the [`libYARP_robotinterface` C++ library](https://github.com/robotology/yarp/tree/master/src/libYARP_robotinterface).
 
-## Usage 
+## Usage
 
 ### Add the plugin in the SDF model
 The `gazebo_yarp_robotinterface` plugin can be used by including in any SDF model:
@@ -15,7 +15,7 @@ The `gazebo_yarp_robotinterface` plugin can be used by including in any SDF mode
 
   <!-- Insert other plugins -->
   <!-- ... -->
-  
+
   <!-- Insert gazebo_yarp_robotinterface -->
   <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
     <!-- This file can be specified with the model:// URI already used in Gazebo, see http://gazebosim.org/tutorials?tut=components&cat=get_started -->
@@ -66,22 +66,24 @@ The main use of the `gazebo_yarp_robotinterface` plugin is to spawn YARP devices
 This is achieved by setting the elements in the `<param name="device">` or in the `<paramlist name="networks">` list under the `<action phase="startup" level="5" type="attach">` XML element.
 In this context, we call this "device instance identified" as **YARP device instance name**, as for devices created by the robotinterface, this is specified by the `name` attribute of the `device` XML tag. It is important not to confuse this with the **YARP device type name**, i.e. the name that identifies the type of plugin that is spawned, i.e. the `type` attribute of the `device` tag.
 
-The `gazebo_yarp_robotinterface` can be attached to any YARP device created by any plugin inside the model, or in any plugin  contained in any nested sensor or model. 
+The `gazebo_yarp_robotinterface` can be attached to any YARP device created by any plugin inside the model, or in any plugin  contained in any nested sensor or model.
 
-For historic reason, not all the `gazebo-yarp-plugins` support specifying the **YARP device instance name** for the device that they spawn to permit to use them with the `gazebo_yarp_robotinterface` plugin. If you need to have this functionality in a specific plugin, feel free to open an issue. 
+For historic reason, not all the `gazebo-yarp-plugins` support specifying the **YARP device instance name** for the device that they spawn to permit to use them with the `gazebo_yarp_robotinterface` plugin. If you need to have this functionality in a specific plugin, feel free to open an issue.
 
 **Warning: as the YARP device instance name is specified without any specific Gazebo model or sensor namespace, it is important to observe, while using the `gazebo_yarp_robotinterface` plugin, that all the YARP devices contained in the model have a unique YARP device instance name. If this is not the case, the plugin will print a clear error and exit without starting.**
 
 The plugins that spawn YARP devices in a way that they can be then attached to the yarprobotinterface as specified in the following table.
 For all the following plugins, the **YARP device instance name** can be specified by the `yarpDeviceName` parameter in the plugin configuration.
 
-If the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `OFF` (default value), for the `gazebo_yarp_controlboard` if the `yarpDeviceName` parameter is not specified, for legacy reason the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration of `yarpDeviceName`. If instead the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON`, the `gazebo_yarp_controlboard` behaves like the rest of the plugins and requires to take the **YARP device instance name** from the `yarpDeviceName` parameter. The same behaviour applies to `gazebo_yarp_depthCamera`.
+If the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `OFF` (default value), for the `gazebo_yarp_controlboard` if the `yarpDeviceName` parameter is not specified, for legacy reason the **YARP device instance name** for each created device can also be specified with the `networks` parameter list in the plugin configuration of `yarpDeviceName`. If instead the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON`, the `gazebo_yarp_controlboard` behaves like the rest of the plugins and requires to take the **YARP device instance name** from the `yarpDeviceName` parameter. The same behaviour applies to the plugins listed in the table below.
 
-Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON` then the plugins `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard` and `gazebo_yarp_depthCamera` doesn't create the implicit wrapper device but is left to the user to attach it via the robotinterface.
+Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` option is set to `ON` then the plugins `gazebo_yarp_multicamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_controlboard`, `gazebo_yarp_depthCamera`, `gazebo_yarp_forcetorque` and `gazebo_yarp_imu` doesn't create the implicit wrapper device but is left to the user to attach it via the robotinterface.
 
 | Plugin                     | Details                                              |
 |:--------------------------:|:----------------------------------------------------:|
 | `gazebo_yarp_controlboard` | This plugin can create multiple YARP devices that expose joint-level motor and control interfaces such as [`yarp::dev::IPositionControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IPositionControl.html), [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1ITorqueControl.html) and [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IEncoders.html). |
-| `gazebo_yarp_depthcamera`  | This plugin can create a YARP device that expose a depth-camera interface. |
-| `gazebo_yarp_lasersensor`  | This plugin can create a YARP device that expose a laser-seensor interface. |
-| `gazebo_yarp_multicamera`  | This plugin can create a YARP device that expose a multicamera interface. |
+| `gazebo_yarp_depthcamera`  | This plugin can create a YARP device that exposes a depth-camera interface. |
+| `gazebo_yarp_lasersensor`  | This plugin can create a YARP device that exposes a laser-seensor interface. |
+| `gazebo_yarp_multicamera`  | This plugin can create a YARP device that exposes a multicamera interface. |
+| `gazebo_yarp_imu`  | This plugin can create a YARP device that exposes a imu interface. |
+| `gazebo_yarp_forcetorque`  | This plugin can create a YARP device that exposes a force-torque interface. |

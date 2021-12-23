@@ -67,9 +67,12 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     _sensor->SetActive(true);
 
     // Add my gazebo device driver to the factory.
+    std::string netWrapper{""};
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+    netWrapper = "inertial";
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpIMUDriver>
-                                        ("gazebo_imu", "inertial", "GazeboYarpIMUDriver"));
-
+                                        ("gazebo_imu", netWrapper.c_str(), "GazeboYarpIMUDriver"));
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,m_parameters);
 
     if (!configuration_loaded) {
@@ -80,6 +83,7 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     /*
     * Open the driver wrapper
     */
@@ -124,32 +128,27 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
         yError() << "GazeboYarpIMU Plugin Load failed: error in opening the yarp wrapper";
     }
 
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
     /*
      * Open the imu driver
      */
     //Retrieve part driver properties
-    ::yarp::os::Bottle imu_properties = m_parameters.findGroup("IMU_DRIVER");
-    if(imu_properties.isNull())
-    {
-        yError("GazeboYarpIMU : [IMU_DRIVER] group not found in config file\n");
-        return;
-    }
-
     //Add the model scoped name for later retrieval of the child sensors from the Handler
-    yarp::os::Bottle& robotNameProp = imu_properties.addList();
-    robotNameProp.addString(YarpIMUScopedName);
-    robotNameProp.addString(m_scopedSensorName);
+    ::yarp::os::Property imu_properties { {"device", ::yarp::os::Value{"gazebo_imu"}},
+                                          {YarpIMUScopedName, ::yarp::os::Value{m_scopedSensorName}},
+                                          {"sensor_name", ::yarp::os::Value{_sensor->Name()}}
+                                        };
 
-    imu_properties.addString("sensor_name");
-    imu_properties.addString(_sensor->Name());
 
     //Open the driver
-    if (m_imuDriver.open(imu_properties)) {
-    } else {
+    if (!m_imuDriver.open(imu_properties)) {
         yError() << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver";
     }
 
+    //Register the device with the given name
+    std::string scopedDeviceName;
+    #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     //Attach the part driver to the wrapper
     if(!m_MASWrapper.view(m_iWrap) || (!m_AdditionalWrapper.view(m_iWrapAdditional))){
         yError()<< "GazeboYarpIMU Plugin Load failed: unable to view iMultipleWrapper interfaces";
@@ -161,6 +160,31 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     {
         yError() << "GazeboYarpIMU: error in connecting wrapper and device ";
     }
+
+    if(!m_parameters.check("yarpDeviceName"))
+    {
+        scopedDeviceName = m_scopedSensorName + "::" + driverList[0]->key;
+    }
+    else
+    {
+        scopedDeviceName = m_scopedSensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+    }
+    #else
+    if(!m_parameters.check("yarpDeviceName"))
+    {
+        yError() << "GazeboYarpIMU : missing yarpDeviceName parameter for device" << m_scopedSensorName;
+        return;
+    }
+    scopedDeviceName = m_scopedSensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+    #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
+
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_imuDriver))
+    {
+        yError()<<"GazeboYarpIMU: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
 }
 
 }

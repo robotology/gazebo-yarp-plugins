@@ -83,7 +83,6 @@ private:
     double m_gazebo_scan_rate;
     bool   m_first_run;
     
-    yarp::os::Stamp m_lastTimestamp; //buffer for last timestamp data
     gazebo::sensors::RaySensor* m_parentSensor;
     gazebo::event::ConnectionPtr m_updateConnection;
 

@@ -64,6 +64,7 @@ bool GazeboYarpBaseStateDriver::open(yarp::os::Searchable& config)
     
     m_baseState.resize(m_stateDimensions);
     
+    using namespace boost::placeholders;
     m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpBaseStateDriver::onUpdate, this, _1));
     
     return true;

@@ -107,6 +107,7 @@ bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
     }
 
     //Connect the driver to the gazebo simulation
+    using namespace boost::placeholders;
     auto imageConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewImageFrame, this, _1, _2, _3, _4, _5);
     auto depthConnectionBind = boost::bind(&GazeboYarpDepthCameraDriver::OnNewDepthFrame, this, _1, _2, _3, _4, _5);
 

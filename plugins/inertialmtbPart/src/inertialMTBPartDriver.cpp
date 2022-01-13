@@ -118,6 +118,7 @@ bool GazeboYarpInertialMTBPartDriver::open(yarp::os::Searchable& config)
     buildOutBufferFixedData(robotPart,enabledSensors);
 
     //Connect the driver to the gazebo simulation
+    using namespace boost::placeholders;
     m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpInertialMTBPartDriver::onUpdate, this, _1));
 
     return true;

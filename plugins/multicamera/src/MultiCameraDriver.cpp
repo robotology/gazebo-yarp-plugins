@@ -126,6 +126,7 @@ bool yarp::dev::GazeboYarpMultiCameraDriver::open(yarp::os::Searchable& config)
     }
 
     // Connect all the cameras only when everything is set up
+    using namespace boost::placeholders;
     for (unsigned int i = 0; i < m_camera_count; ++i) {
         this->m_updateConnection.push_back(this->m_camera[i]->ConnectNewImageFrame(boost::bind(&yarp::dev::GazeboYarpMultiCameraDriver::captureImage, this, i, _1, _2, _3, _4, _5)));
     }

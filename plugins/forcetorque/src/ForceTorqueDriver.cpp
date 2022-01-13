@@ -72,6 +72,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     }
 
     //Connect the driver to the gazebo simulation
+    using namespace boost::placeholders;
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpForceTorqueDriver::onUpdate, this, _1));
 
     return true;

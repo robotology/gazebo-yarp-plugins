@@ -130,6 +130,7 @@ namespace gazebo
 
         // Listen to the update event. This event is broadcast every
         // simulation iteration.
+        
         this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ShowModelCoM::UpdateChild, this ) );
     }
 }

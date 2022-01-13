@@ -87,6 +87,7 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
+  using namespace boost::placeholders;
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
       boost::bind(&WorldInterface::OnUpdate, this, _1));
 

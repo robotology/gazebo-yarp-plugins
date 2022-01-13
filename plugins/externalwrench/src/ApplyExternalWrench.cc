@@ -66,6 +66,7 @@ void ApplyExternalWrench::Load ( physics::ModelPtr _model, sdf::ElementPtr _sdf 
 
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
+    using namespace boost::placeholders;
     this->m_updateConnection = event::Events::ConnectWorldUpdateBegin ( boost::bind ( &ApplyExternalWrench::onUpdate, this, _1 ) );
 
     // Listen to gazebo world reset event

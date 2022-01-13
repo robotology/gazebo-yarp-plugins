@@ -131,6 +131,7 @@ bool GazeboYarpCameraDriver::open(yarp::os::Searchable& config)
     }
 
     //Connect the driver to the gazebo simulation
+    using namespace boost::placeholders;
     this->m_updateConnection = m_camera->ConnectNewImageFrame(boost::bind(&GazeboYarpCameraDriver::captureImage, this, _1, _2, _3, _4, _5));
     return true;
 }

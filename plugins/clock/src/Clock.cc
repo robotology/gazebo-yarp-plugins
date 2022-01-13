@@ -104,6 +104,7 @@ namespace gazebo
         yInfo() << "GazeboYarpClock loaded. Clock port will be " << m_portName;
 
         //The proper loading is done when the world is created
+        using namespace boost::placeholders;
         m_worldCreatedEvent = gazebo::event::Events::ConnectWorldCreated(boost::bind(&GazeboYarpClock::gazeboYarpClockLoad,this,_1));
     }
 
@@ -153,7 +154,7 @@ namespace gazebo
 
         //Getting world pointer
         m_world = gazebo::physics::get_world(world_name);
-
+        using namespace boost::placeholders;
         m_timeUpdateEvent = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpClock::clockUpdate,this));
     }
 

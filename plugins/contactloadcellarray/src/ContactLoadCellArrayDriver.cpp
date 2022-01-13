@@ -201,7 +201,7 @@ bool GazeboYarpContactLoadCellArrayDriver::open(yarp::os::Searchable& config)
     }
 
     std::lock_guard<std::mutex> guard(m_dataMutex);
-
+    using namespace boost::placeholders;
     this->m_updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpContactLoadCellArrayDriver::onUpdate, this, _1));
     this->m_sensor->SetActive(true);
 

@@ -78,6 +78,7 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
 
     configureJointsLimits();
 
+    using namespace boost::placeholders;
     this->m_updateConnection =  gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpMaisSensorDriver::onUpdate,  this, _1));
 
     m_gazeboNode = gazebo::transport::NodePtr(new gazebo::transport::Node);

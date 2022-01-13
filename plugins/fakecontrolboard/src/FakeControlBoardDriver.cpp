@@ -58,6 +58,7 @@ bool GazeboYarpFakeControlBoardDriver::open(yarp::os::Searchable& config)
     m_controlMode.resize(m_numberOfJoints,VOCAB_CM_NOT_CONFIGURED);
     m_interactionMode.resize(m_numberOfJoints,VOCAB_IM_STIFF);
     
+    using namespace boost::placeholders;
     m_updateConnection =
     gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpFakeControlBoardDriver::onUpdate,
                                                                      this, _1));

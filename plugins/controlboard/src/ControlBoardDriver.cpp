@@ -387,6 +387,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     }
 
     // Connect the onUpdate method to the WorldUpdateBegin event callback
+    using namespace boost::placeholders;
     this->m_updateConnection =
     gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboYarpControlBoardDriver::onUpdate,
                                                                this, _1));

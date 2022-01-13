@@ -114,5 +114,3 @@ endif()
 
 # add a dox target to generate doxygen documentation
 add_subdirectory(doc)
-
-

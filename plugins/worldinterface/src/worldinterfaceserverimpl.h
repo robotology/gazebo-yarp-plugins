@@ -9,7 +9,7 @@
 #ifndef YARPGAZEBO_WORLD_INTERFACESERVERIMPL
 #define YARPGAZEBO_WORLD_INTERFACESERVERIMPL
 
-#include <WorldInterfaceServer.h>
+#include <GazeboYarpPlugins/WorldInterfaceServer.h>
 #include "worldproxy.h"
 
 class WorldInterfaceServerImpl: public GazeboYarpPlugins::WorldInterfaceServer

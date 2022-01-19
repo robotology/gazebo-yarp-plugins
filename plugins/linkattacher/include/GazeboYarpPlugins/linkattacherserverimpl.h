@@ -23,7 +23,7 @@
 #include <GazeboYarpPlugins/common.h>
 #include <GazeboYarpPlugins/ConfHelpers.hh>
 
-#include <LinkAttacherServer.h>
+#include <GazeboYarpPlugins/LinkAttacherServer.h>
 
 const std::string LogPrefix = "LinkAttacher:";
 // available joint types in SDF (http://sdformat.org/spec?ver=1.6&elem=joint#joint_type)

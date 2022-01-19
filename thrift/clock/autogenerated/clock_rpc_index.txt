@@ -1,2 +1,0 @@
-include/GazeboYarpPlugins/ClockServer.h
-src/ClockServer.cpp

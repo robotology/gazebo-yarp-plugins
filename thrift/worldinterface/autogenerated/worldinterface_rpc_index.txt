@@ -1,6 +1,0 @@
-include/GazeboYarpPlugins/Pose.h
-src/Pose.cpp
-include/GazeboYarpPlugins/Color.h
-src/Color.cpp
-include/GazeboYarpPlugins/WorldInterfaceServer.h
-src/WorldInterfaceServer.cpp

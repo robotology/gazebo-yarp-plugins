@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or any later version, see LGPL.TXT or LGPL3.TXT
  */
 
-#include <ClockServer.h>
+#include <GazeboYarpPlugins/ClockServer.h>
 
 namespace GazeboYarpPlugins {
     class ClockServerImpl;

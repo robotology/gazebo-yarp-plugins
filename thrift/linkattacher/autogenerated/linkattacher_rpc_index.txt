@@ -1,2 +1,0 @@
-include/GazeboYarpPlugins/LinkAttacherServer.h
-src/LinkAttacherServer.cpp

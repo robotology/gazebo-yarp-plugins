@@ -17,7 +17,7 @@
 
 #include <yarp/os/Semaphore.h>
 
-#include "WorldInterfaceServer.h"
+#include <GazeboYarpPlugins/WorldInterfaceServer.h>
 
 #include <map>
 #include <mutex>

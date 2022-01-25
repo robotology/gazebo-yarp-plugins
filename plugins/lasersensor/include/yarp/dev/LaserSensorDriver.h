@@ -12,7 +12,6 @@
 #include <yarp/dev/LaserMeasurementData.h>
 #include <yarp/dev/Lidar2DDeviceBase.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <boost/shared_ptr.hpp>
 
 #include <gazebo/common/Plugin.hh>
@@ -63,11 +62,6 @@ public:
     virtual bool setScanLimits (double min, double max) override;
     virtual bool setHorizontalResolution (double step) override;
     virtual bool setScanRate (double rate) override;
-
-    //PRECISELY TIMED
-    // TODO(traversaro): Remove once we require YARP 3.6
-    // See https://github.com/robotology/gazebo-yarp-plugins/issues/598
-    virtual yarp::os::Stamp getLastInputStamp();
 
 public:
     //Lidar2DDeviceBase

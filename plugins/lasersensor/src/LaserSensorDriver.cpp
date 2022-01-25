@@ -112,12 +112,6 @@ bool GazeboYarpLaserSensorDriver::acquireDataFromHW()
     return true;
 }
 
-//PRECISELY TIMED
-yarp::os::Stamp GazeboYarpLaserSensorDriver::getLastInputStamp()
-{
-    return m_timestamp;
-}
-
 bool GazeboYarpLaserSensorDriver::setDistanceRange (double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);

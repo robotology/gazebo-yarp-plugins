@@ -52,7 +52,8 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
 #endif
     
     this->applyLimitsOnLaserData();
-    m_lastTimestamp.update(_info.simTime.Double());
+    m_timestamp.update(_info.simTime.Double());
+
     m_first_run = false;
     return;
 }
@@ -109,12 +110,6 @@ bool GazeboYarpLaserSensorDriver::acquireDataFromHW()
     //Not used.
     //GazeboYarpLaserSensorDriver::onUpdate manages the all the logic
     return true;
-}
-
-//PRECISELY TIMED
-yarp::os::Stamp GazeboYarpLaserSensorDriver::getLastInputStamp()
-{
-    return m_lastTimestamp;
 }
 
 bool GazeboYarpLaserSensorDriver::setDistanceRange (double min, double max)

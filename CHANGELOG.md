@@ -5,6 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Fixed
+- Removed `getLastInputStamp` method from `LaserSensorDriver` class in `gazebo_yarp_lasersensor`. Furthermore, fix bug in `gazebo_yarp_lasersensor`, by adding the update to the variable `m_timestamp` inherited from `yarp::dev::Lidar2DDeviceBase` (https://github.com/robotology/gazebo-yarp-plugins/pull/604).
+
 ## [4.1.2] - 2022-01-19
 
 ### Fixed 

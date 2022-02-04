@@ -5,6 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Changed
+- The possibility to limit the decimal places of the pixels values has been added to the DepthCameraDriver class. The data modification is performed in the `GazeboYarpDepthCameraDriver::getDepthImage` function.
+
 ### Fixed
 - Removed `getLastInputStamp` method from `LaserSensorDriver` class in `gazebo_yarp_lasersensor`. Furthermore, fix bug in `gazebo_yarp_lasersensor`, by adding the update to the variable `m_timestamp` inherited from `yarp::dev::Lidar2DDeviceBase` (https://github.com/robotology/gazebo-yarp-plugins/pull/604).
 

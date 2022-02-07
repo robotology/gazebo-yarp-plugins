@@ -28,6 +28,7 @@ using GazeboYarpPlugins::GAZEBODEPTH;
 
 const string YarpScopedName = "sensorScopedName";
 
+
 GazeboYarpDepthCameraDriver::GazeboYarpDepthCameraDriver()
 {
     m_imageFormat                    = VOCAB_PIXEL_RGB;
@@ -75,6 +76,16 @@ GazeboYarpDepthCameraDriver::~GazeboYarpDepthCameraDriver()
 bool GazeboYarpDepthCameraDriver::open(yarp::os::Searchable &config)
 {
     string sensorScopedName((config.find(YarpScopedName.c_str()).asString().c_str()));
+
+    //Manage depth quantization parameter
+    if(config.check("QUANT_PARAM")) {
+        yarp::os::Property quantCfg;
+        quantCfg.fromString(config.findGroup("QUANT_PARAM").toString());
+        m_depthQuantizationEnabled = true;
+        if (quantCfg.check("depth_quant")) {
+            m_depthDecimalNum = quantCfg.find("depth_quant").asInt32();
+        }
+    }
 
     //Get gazebo pointers
     m_conf.fromString(config.toString());
@@ -159,7 +170,7 @@ void GazeboYarpDepthCameraDriver::OnNewImageFrame(const unsigned char* _image, U
 {
     //possible image format (hardcoded (sigh..) in osrf/gazebo/source/gazebo/rendering/Camera.cc )
     /* data type is string. why they didn't use a enum? mystery...
-     * 
+     *
      * L8 = INT8 = 1
      * R8G8B8 = RGB_INT8 = BGR_INT8 = B8G8R8 = 3
      * BAYER_RGGB8 = BAYER_BGGR8 = BAYER_GBRG8 = BAYER_GRBG8 = 1
@@ -406,7 +417,30 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
 
     depthImage.resize(m_width, m_height);
     //depthImage.setPixelCode(m_depthFormat);
-    memcpy(depthImage.getRawImage(), m_depthFrame_Buffer, m_width * m_height * sizeof(float));
+    if(!m_depthQuantizationEnabled) {
+        memcpy(depthImage.getRawImage(), m_depthFrame_Buffer, m_width * m_height * sizeof(float));
+    }
+    else {
+        double nearPlane = m_depthCameraSensorPtr->DepthCamera()->NearClip();
+        double farPlane = m_depthCameraSensorPtr->DepthCamera()->FarClip();
+
+        int intTemp;
+        float value;
+
+        auto pxPtr = reinterpret_cast<float*>(depthImage.getRawImage());
+        for(int i=0; i<m_height*m_width; i++){
+            value = m_depthFrame_Buffer[i];
+
+            intTemp = (int) (value * pow(10.0, (float) m_depthDecimalNum));
+            value = (float) intTemp / pow(10.0, (float) m_depthDecimalNum);
+
+            if (value < nearPlane) { value = nearPlane; }
+            if (value > farPlane) { value = farPlane; }
+
+            *pxPtr = value;
+            pxPtr++;
+        }
+    }
 
     timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
 
@@ -432,7 +466,7 @@ std::string GazeboYarpDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
     if(timeStamp)
     {
-	timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
+        timeStamp->update(this->m_depthCameraSensorPtr->LastUpdateTime().Double());
 
     }
     return m_error;

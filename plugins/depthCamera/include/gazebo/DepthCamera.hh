@@ -45,6 +45,7 @@ namespace gazebo
     ///  <TABLE>
     ///  <TR><TD> name </TD><TD> Port name to assign to the wrapper to this device. </TD></TR>
     ///  <TR><TD> period </TD><TD> Update period (in s) of yarp port that publish the measure. </TD></TR>
+    ///  <TR><TD> QUANT_PARAM::depth_quant </TD><TD> The number of decimals for the values of the depth image pixels </TD></TR>
     ///  </TABLE>
     /// If the required parameters are not specified, their value will be the
     /// default one assigned by the yarp::dev::ServerFrameGrabbers wrapper.

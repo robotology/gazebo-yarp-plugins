@@ -5,7 +5,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
-## [4.2.0] - 2022-02-25
+## [4.2.0] - 2022-02-28
 
 ### Added
 - Added `disableImplicitNetworkWrapper` option to `gazebo_yarp_forcetorque`, `gazebo_yarp_depthcamera`, `gazebo_yarp_lasersensor`, `gazebo_yarp_imu` and `gazebo_yarp_controlboard` plugins. If present, this option

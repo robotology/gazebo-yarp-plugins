@@ -97,12 +97,20 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     driver_properties.put(YarpLaserSensorScopedName.c_str(), m_sensorName.c_str());
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    //Open the wrapper
-    wrapper_properties.put("device","Rangefinder2DWrapper");
-    if( m_laserWrapper.open(wrapper_properties) ) {
-    } else
+    bool disable_wrapper = driver_properties.check("disableImplicitNetworkWrapper");
+    if (!disable_wrapper) {
+        //Open the wrapper
+        wrapper_properties.put("device","Rangefinder2DWrapper");
+        if( m_laserWrapper.open(wrapper_properties) ) {
+        } else
+        {
+            yCError(GAZEBOLASER)<<"Plugin failed: error in opening yarp driver wrapper";
+            return;
+        }
+    }
+    if (disable_wrapper && !driver_properties.check("yarpDeviceName"))
     {
-        yCError(GAZEBOLASER)<<"Plugin failed: error in opening yarp driver wrapper";
+        yCError(GAZEBOLASER) << "GazeboYarpLaserSensor : missing yarpDeviceName parameter for device" << m_sensorName;
         return;
     }
     #endif
@@ -118,21 +126,24 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     }
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    //Attach the driver to the wrapper
     ::yarp::dev::PolyDriverList driver_list;
-
-    if( !m_laserWrapper.view(m_iWrap) )
+    if (!disable_wrapper) 
     {
-        yCError(GAZEBOLASER) << "GazeboYarpLaserSensor : error in loading wrapper" ;
-        return;
-    }
+        //Attach the driver to the wrapper
 
-    driver_list.push(&m_laserDriver, "lasersensor");
+        if( !m_laserWrapper.view(m_iWrap) )
+        {
+            yCError(GAZEBOLASER) << "GazeboYarpLaserSensor : error in loading wrapper" ;
+            return;
+        }
 
-    if( m_iWrap->attachAll(driver_list) ) {
-    } else
-    {
-        yCError(GAZEBOLASER) << "GazeboYarpLaserSensor : error in connecting wrapper and device " ;
+        driver_list.push(&m_laserDriver, "lasersensor");
+
+        if( m_iWrap->attachAll(driver_list) ) {
+        } else
+        {
+            yCError(GAZEBOLASER) << "GazeboYarpLaserSensor : error in connecting wrapper and device " ;
+        }
     }
     #endif
 

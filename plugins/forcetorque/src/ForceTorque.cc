@@ -82,11 +82,19 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     driver_properties.put(YarpForceTorqueScopedName.c_str(), m_sensorName.c_str());
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    //Open the wrapper
-    //Force the wrapper to be of type "analogServer" (it make sense? probably no)
-    wrapper_properties.put("device","analogServer");
-    if( !m_forcetorqueWrapper.open(wrapper_properties) ) {
-        yError()<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper";
+    bool disable_wrapper = driver_properties.check("disableImplicitNetworkWrapper");
+    if (!disable_wrapper) {
+        //Open the wrapper
+        //Force the wrapper to be of type "analogServer" (it make sense? probably no)
+        wrapper_properties.put("device","analogServer");
+        if( !m_forcetorqueWrapper.open(wrapper_properties) ) {
+            yError()<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver wrapper";
+            return;
+        }
+    }
+    if (disable_wrapper && !driver_properties.check("yarpDeviceName"))
+    {
+        yError() << "GazeboYarpForceTorque : missing yarpDeviceName parameter for device" << m_sensorName;
         return;
     }
     #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
@@ -101,28 +109,34 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     
     std::string scopedDeviceName;
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    //Attach the driver to the wrapper
-    ::yarp::dev::PolyDriverList driver_list;
+    if (!disable_wrapper) {
+        //Attach the driver to the wrapper
+        ::yarp::dev::PolyDriverList driver_list;
 
-    if( !m_forcetorqueWrapper.view(m_iWrap) ) {
-        yError() << "GazeboYarpForceTorque : error in loading wrapper";
-        return;
-    }
+        if( !m_forcetorqueWrapper.view(m_iWrap) ) {
+            yError() << "GazeboYarpForceTorque : error in loading wrapper";
+            return;
+        }
 
-    driver_list.push(&m_forceTorqueDriver,"dummy");
+        driver_list.push(&m_forceTorqueDriver,"dummy");
 
-    if( !m_iWrap->attachAll(driver_list) ) {
-        yError() << "GazeboYarpForceTorque : error in connecting wrapper and device ";
-    }
-
-    if(!driver_properties.check("yarpDeviceName"))
-    {
-        scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
-    }
-    else
-    {
+        if( !m_iWrap->attachAll(driver_list) ) {
+            yError() << "GazeboYarpForceTorque : error in connecting wrapper and device ";
+        }
+        
+        if(!driver_properties.check("yarpDeviceName"))
+        {
+            scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
+        }
+        else
+        {
+            scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+        }
+    } else {
         scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
     }
+
+
     #else
     if(!driver_properties.check("yarpDeviceName"))
     {

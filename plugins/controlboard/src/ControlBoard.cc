@@ -101,170 +101,221 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             return;
         }
         #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-
-        yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
-        if(wrapper_group.isNull())
+        bool disable_wrapper = m_parameters.check("disableImplicitNetworkWrapper");
+        
+        if (disable_wrapper && !m_parameters.check("yarpDeviceName"))
         {
-            yCDebug(GAZEBOCONTROLBOARD) <<"[WRAPPER] group not found in config file";
-        }
-
-        if(m_parameters.check("ROS"))
-        {
-            std::string ROS;
-            ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
-            wrapper_group.append(yarp::os::Bottle(ROS));
-        }
-
-        m_wrapper.open(wrapper_group);
-
-        if (!m_wrapper.isValid()) {
-            yCError(GAZEBOCONTROLBOARD) <<"wrapper did not open, load failed.";
-            m_wrapper.close();
+            yError() << "GazeboYarpControlBoard : missing yarpDeviceName parameter for one device in robot " << m_robotName;
             return;
         }
-
-        if (!m_wrapper.view(m_iWrap)) {
-            yCError(GAZEBOCONTROLBOARD) <<"wrapper interface not found, load failed.";
-        }
-
-        yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
-
-        if (netList->isNull()) {
-            yCError(GAZEBOCONTROLBOARD) <<"net list to attach to was not found, load failed.";
-            m_wrapper.close();
-            return;
-        }
-
-        yarp::os::Bottle driver_group;
-        yarp::os::Bottle virt_group;
-
-        m_useVirtAnalogSensor = m_parameters.check("useVirtualAnalogSensor", yarp::os::Value(false)).asBool();
-        if (m_useVirtAnalogSensor)
+        
+        
+        if (!disable_wrapper) 
         {
-            virt_group = m_parameters.findGroup("VIRTUAL_ANALOG_SERVER");
-            if (virt_group.isNull())
+            yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
+            if(wrapper_group.isNull())
             {
-                yCError(GAZEBOCONTROLBOARD) <<"[VIRTUAL_ANALOG_SERVER] group not found in config file";
+                yCDebug(GAZEBOCONTROLBOARD) <<"[WRAPPER] group not found in config file";
+            }
+
+            if(m_parameters.check("ROS"))
+            {
+                std::string ROS;
+                ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
+                wrapper_group.append(yarp::os::Bottle(ROS));
+            }
+
+            m_wrapper.open(wrapper_group);
+
+            if (!m_wrapper.isValid()) {
+                yCError(GAZEBOCONTROLBOARD) <<"wrapper did not open, load failed.";
+                m_wrapper.close();
                 return;
             }
 
-            yarp::os::Bottle& robotName_config = virt_group.addList();
-            robotName_config.addString("robotName");
-            robotName_config.addString(m_robotName.c_str());
-
-            std::string networks = std::string("(") + wrapper_group.findGroup("networks").toString() + std::string(")");
-            virt_group.append(yarp::os::Bottle(networks));
-        }
-
-        for (int n = 0; n < netList->size(); n++)
-        {
-            yarp::dev::PolyDriverDescriptor newPoly;
-
-            newPoly.key = netList->get(n).asString();
-
-            // initially deal with virtual analog stuff
-            if (m_useVirtAnalogSensor)
-            {
-                std::string net = std::string("(") + wrapper_group.findGroup(newPoly.key.c_str()).toString() + std::string(")");
-                virt_group.append(yarp::os::Bottle(net));
+            if (!m_wrapper.view(m_iWrap)) {
+                yCError(GAZEBOCONTROLBOARD) <<"wrapper interface not found, load failed.";
             }
 
-            std::string scopedDeviceName;
+            yarp::os::Bottle driver_group;
+            yarp::os::Bottle virt_group;
+
+            m_useVirtAnalogSensor = m_parameters.check("useVirtualAnalogSensor", yarp::os::Value(false)).asBool();
+            if (m_useVirtAnalogSensor)
+            {
+                virt_group = m_parameters.findGroup("VIRTUAL_ANALOG_SERVER");
+                if (virt_group.isNull())
+                {
+                    yCError(GAZEBOCONTROLBOARD) <<"[VIRTUAL_ANALOG_SERVER] group not found in config file";
+                    return;
+                }
+
+                yarp::os::Bottle& robotName_config = virt_group.addList();
+                robotName_config.addString("robotName");
+                robotName_config.addString(m_robotName.c_str());
+
+                std::string networks = std::string("(") + wrapper_group.findGroup("networks").toString() + std::string(")");
+                virt_group.append(yarp::os::Bottle(networks));
+            }
+
+       
+        
+            yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
+
+            if (netList->isNull()) {
+                yCError(GAZEBOCONTROLBOARD) <<"net list to attach to was not found, load failed.";
+                m_wrapper.close();
+                return;
+            }
+        
+
+            
+            for (int n = 0; n < netList->size(); n++)
+            {
+                yarp::dev::PolyDriverDescriptor newPoly;
+
+                newPoly.key = netList->get(n).asString();
+
+                // initially deal with virtual analog stuff
+                if (m_useVirtAnalogSensor)
+                {
+                    std::string net = std::string("(") + wrapper_group.findGroup(newPoly.key.c_str()).toString() + std::string(")");
+                    virt_group.append(yarp::os::Bottle(net));
+                }
+
+                std::string scopedDeviceName;
+                if(!m_parameters.check("yarpDeviceName"))
+                {
+                    scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+                }
+                    else
+                {
+                    scopedDeviceName = m_robotName + "::" + m_parameters.find("yarpDeviceName").asString();
+                }
+            
+                newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
+            
+                if( newPoly.poly != NULL)
+                {
+                    // device already exists, use it, setting it againg to increment the usage counter.
+                    yCWarning(GAZEBOCONTROLBOARD) << newPoly.key.c_str() << "already opened.";
+                }
+                else
+                {
+                    driver_group = m_parameters.findGroup(newPoly.key.c_str());
+                    if (driver_group.isNull()) {
+                        yCError(GAZEBOCONTROLBOARD) <<"group not found in config file. Closing wrapper." << newPoly.key.c_str();
+                        m_wrapper.close();
+                        return;
+                    }
+
+                    m_parameters.put("name", newPoly.key.c_str());
+                    m_parameters.fromString(driver_group.toString(), false);
+                    m_parameters.put("robotScopedName", m_robotName);
+
+                    if (_sdf->HasElement("initialConfiguration")) {
+                        //yCDebug(GAZEBOCONTROLBOARD)<<"Found initial Configuration: ";
+                        std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
+                        m_parameters.put("initialConfiguration", configuration_s.c_str());
+                        //yCDebug(GAZEBOCONTROLBOARD)<<configuration_s;
+                    }
+
+                    newPoly.poly = new yarp::dev::PolyDriver;
+                    if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
+                    {
+                        yCError(GAZEBOCONTROLBOARD) << newPoly.key << "> did not open.";
+                        for(int idx=0; idx<m_controlBoards.size(); idx++)
+                        {
+                            m_controlBoards[idx]->poly->close();
+                        }
+                        m_wrapper.close();
+                        return;
+                    }
+                }
+
+                //Register the device with the given name
+                if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
+                {
+                    yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+                    return;
+                }
+                yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << scopedDeviceName;
+
+                m_controlBoards.push(newPoly);
+            }
+
+            if (m_useVirtAnalogSensor)
+            {
+                m_virtAnalogSensorWrapper.open(virt_group);
+
+                if (!m_virtAnalogSensorWrapper.isValid())
+                {
+                    yCError(GAZEBOCONTROLBOARD) << "Virtual analog sensor wrapper did not open, load failed.";
+                    m_virtAnalogSensorWrapper.close();
+                    return;
+                }
+
+                if (!m_virtAnalogSensorWrapper.view(m_iVirtAnalogSensorWrap))
+                {
+                    yCError(GAZEBOCONTROLBOARD) << "Could not view the IVirtualAnalogSensor interface";
+                    return;
+                }
+
+                if (!m_iVirtAnalogSensorWrap->attachAll(m_controlBoards))
+                {
+                    yCError(GAZEBOCONTROLBOARD) << "Could not attach VirtualAnalogSensor interface to controlboards";
+                    return;
+                }
+            }
+        
+            if (!m_iWrap || !m_iWrap->attachAll(m_controlBoards))
+            {
+                yCError(GAZEBOCONTROLBOARD) << "error while attaching wrapper to device.";
+                m_wrapper.close();
+                if (m_useVirtAnalogSensor)
+                {
+                    m_virtAnalogSensorWrapper.close();
+                }
+                for (int n = 0; n < netList->size(); n++) {
+                    std::string scopedDeviceName = m_robotName + "::" + m_controlBoards[n]->key.c_str();
+                    GazeboYarpPlugins::Handler::getHandler()->removeDevice(scopedDeviceName);
+                }
+                return;
+            }
+        } else {
             if(!m_parameters.check("yarpDeviceName"))
             {
-                scopedDeviceName = m_robotName + "::" + newPoly.key.c_str();
+                yCError(GAZEBOCONTROLBOARD) << "missing parameter yarpDeviceName";
+                return;
             }
-            else
+            m_yarpDeviceName = m_parameters.find("yarpDeviceName").asString();
+            m_scopedDeviceName = m_robotName + "::" + m_yarpDeviceName;
+
+            m_parameters.put("device","gazebo_controlboard");
+            m_parameters.put("name", m_scopedDeviceName);
+            m_parameters.put("robotScopedName", m_robotName);
+            yCDebug(GAZEBOCONTROLBOARD) << "m_parameters:"<<m_parameters.toString();
+
+            if (_sdf->HasElement("initialConfiguration")) {
+                //yCDebug(GAZEBOCONTROLBOARD)<<"Found initial Configuration: ";
+                std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
+                m_parameters.put("initialConfiguration", configuration_s.c_str());
+                //yCDebug(GAZEBOCONTROLBOARD)<<configuration_s;
+            }
+
+            if(! m_controlboardDriver.open(m_parameters) || ! m_controlboardDriver.isValid())
             {
-                scopedDeviceName = m_robotName + "::" + m_parameters.find("yarpDeviceName").asString();
+                yCError(GAZEBOCONTROLBOARD) << m_yarpDeviceName.c_str() << "> did not open.";
+                m_controlboardDriver.close();
+                return;
             }
-            newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
-            if( newPoly.poly != NULL)
-            {
-                // device already exists, use it, setting it againg to increment the usage counter.
-                yCWarning(GAZEBOCONTROLBOARD) << newPoly.key.c_str() << "already opened.";
-            }
-            else
-            {
-                driver_group = m_parameters.findGroup(newPoly.key.c_str());
-                if (driver_group.isNull()) {
-                    yCError(GAZEBOCONTROLBOARD) <<"group not found in config file. Closing wrapper." << newPoly.key.c_str();
-                    m_wrapper.close();
-                    return;
-                }
-
-                m_parameters.put("name", newPoly.key.c_str());
-                m_parameters.fromString(driver_group.toString(), false);
-                m_parameters.put("robotScopedName", m_robotName);
-
-                if (_sdf->HasElement("initialConfiguration")) {
-                    //yCDebug(GAZEBOCONTROLBOARD)<<"Found initial Configuration: ";
-                    std::string configuration_s = _sdf->Get<std::string>("initialConfiguration");
-                    m_parameters.put("initialConfiguration", configuration_s.c_str());
-                    //yCDebug(GAZEBOCONTROLBOARD)<<configuration_s;
-                }
-
-                newPoly.poly = new yarp::dev::PolyDriver;
-                if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
-                {
-                    yCError(GAZEBOCONTROLBOARD) << newPoly.key << "> did not open.";
-                    for(int idx=0; idx<m_controlBoards.size(); idx++)
-                    {
-                        m_controlBoards[idx]->poly->close();
-                    }
-                    m_wrapper.close();
-                    return;
-                }
-            }
-
             //Register the device with the given name
-            if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, newPoly.poly))
+            if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_controlboardDriver))
             {
-                yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+                yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
                 return;
             }
-            yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << scopedDeviceName;
-
-            m_controlBoards.push(newPoly);
-        }
-
-        if (m_useVirtAnalogSensor)
-        {
-            m_virtAnalogSensorWrapper.open(virt_group);
-
-            if (!m_virtAnalogSensorWrapper.isValid())
-            {
-                yCError(GAZEBOCONTROLBOARD) << "Virtual analog sensor wrapper did not open, load failed.";
-                m_virtAnalogSensorWrapper.close();
-                return;
-            }
-
-            if (!m_virtAnalogSensorWrapper.view(m_iVirtAnalogSensorWrap))
-            {
-                yCError(GAZEBOCONTROLBOARD) << "Could not view the IVirtualAnalogSensor interface";
-                return;
-            }
-
-            if (!m_iVirtAnalogSensorWrap->attachAll(m_controlBoards))
-            {
-                yCError(GAZEBOCONTROLBOARD) << "Could not attach VirtualAnalogSensor interface to controlboards";
-                return;
-            }
-        }
-
-        if (!m_iWrap || !m_iWrap->attachAll(m_controlBoards))
-        {
-            yCError(GAZEBOCONTROLBOARD) << "error while attaching wrapper to device.";
-            m_wrapper.close();
-            if (m_useVirtAnalogSensor)
-            {
-                m_virtAnalogSensorWrapper.close();
-            }
-            for (int n = 0; n < netList->size(); n++) {
-                std::string scopedDeviceName = m_robotName + "::" + m_controlBoards[n]->key.c_str();
-                GazeboYarpPlugins::Handler::getHandler()->removeDevice(scopedDeviceName);
-            }
-            return;
+            yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << m_scopedDeviceName;
         }
         #else
         if(!m_parameters.check("yarpDeviceName"))

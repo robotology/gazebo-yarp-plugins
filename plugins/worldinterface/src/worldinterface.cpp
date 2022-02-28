@@ -12,6 +12,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <GazeboYarpPlugins/common.h>
+#include <GazeboYarpPlugins/ConfHelpers.hh>
 
 using namespace gazebo;
 using namespace std;
@@ -54,18 +55,7 @@ void WorldInterface::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   //pass reference to server
   m_wi_server.attachWorldProxy(&m_proxy);
 
-  //Getting .ini configuration file from sdf
-  bool configuration_loaded = false;
-
-  if (_sdf->HasElement("yarpConfigurationFile")) {
-        std::string ini_file_name = _sdf->Get<std::string>("yarpConfigurationFile");
-        std::string ini_file_path = gazebo::common::SystemPaths::Instance()->FindFileURI(ini_file_name);
-
-        if (ini_file_path != "" && m_parameters.fromConfigFile(ini_file_path.c_str())) {
-            yInfo() << "Found yarpConfigurationFile: loading from " << ini_file_path ;
-            configuration_loaded = true;
-        }
-  }
+  bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_model, _sdf, m_parameters);
 
   if (!configuration_loaded) {
     yError() << "WorldInterface::Load error could not load configuration file";

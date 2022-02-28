@@ -17,6 +17,7 @@
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/rendering/DepthCamera.hh>
 #include <gazebo/sensors/DepthCameraSensor.hh>
+#include <cmath>
 
 #include <mutex>
 
@@ -130,6 +131,10 @@ private:
     gazebo::event::ConnectionPtr              m_updateDepthFrame_Connection;
     gazebo::event::ConnectionPtr              m_updateRGBPointCloud_Connection;
     gazebo::event::ConnectionPtr              m_updateImageFrame_Connection;
+
+    // Data quantization related parameters
+    bool                             m_depthQuantizationEnabled{false};
+    int                              m_depthDecimalNum{0};
 };
 
 #endif // GAZEBOYARP_DEPTHCAMERADRIVER_H

@@ -57,11 +57,10 @@ private:
     yarp::dev::IMultipleWrapper* m_iVirtAnalogSensorWrap;
     yarp::dev::PolyDriverList m_controlBoards;
     bool m_useVirtAnalogSensor = false;
-    #else
+    #endif
     yarp::dev::PolyDriver m_controlboardDriver;
     std::string m_scopedDeviceName;
     std::string m_yarpDeviceName;
-    #endif
 
     yarp::os::Property m_parameters;
 

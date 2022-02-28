@@ -84,50 +84,58 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     GazeboYarpPlugins::Handler::getHandler()->setSensor(_sensor.get());
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    /*
-    * Open the driver wrapper
-    */
-    //Retrieve wrapper properties
-    ::yarp::os::Bottle MASwrapperProp = m_parameters.findGroup("WRAPPER");
-    if(MASwrapperProp.isNull())
+    bool disable_wrapper = m_parameters.check("disableImplicitNetworkWrapper");
+    if (!disable_wrapper)
     {
-        yWarning("GazeboYarpIMU : [WRAPPER] group not found in config file, maybe you are using the old version of the ini file, please update icub-gazebo\n");
-        yWarning("GazeboYarpIMU : trying to open it with the legacy behaviour device-subdevice");
-        legacy_behaviour = true;
-    }
-
-    if (legacy_behaviour) {
-        m_parameters.put(YarpIMUScopedName.c_str(), m_scopedSensorName.c_str());
-        m_parameters.put("sensor_name",_sensor->Name());
-        if (!m_imuDriver.open(m_parameters)) {
-            yError() << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver";
+        /*
+        * Open the driver wrapper
+        */
+        //Retrieve wrapper properties
+        ::yarp::os::Bottle MASwrapperProp = m_parameters.findGroup("WRAPPER");
+        if(MASwrapperProp.isNull())
+        {
+            yWarning("GazeboYarpIMU : [WRAPPER] group not found in config file, maybe you are using the old version of the ini file, please update icub-gazebo\n");
+            yWarning("GazeboYarpIMU : trying to open it with the legacy behaviour device-subdevice");
+            legacy_behaviour = true;
         }
+
+        if (legacy_behaviour) {
+            m_parameters.put(YarpIMUScopedName.c_str(), m_scopedSensorName.c_str());
+            m_parameters.put("sensor_name",_sensor->Name());
+            if (!m_imuDriver.open(m_parameters)) {
+                yError() << "GazeboYarpIMU Plugin Load failed: error in opening yarp driver";
+            }
+            return;
+        }
+
+        //Open the driver wrapper
+        if (!m_MASWrapper.open(MASwrapperProp))
+        {
+            yError() << "GazeboYarpIMU Plugin Load failed: error in opening the yarp wrapper";
+        }
+
+        /*
+        * Open the old wrapper
+        */
+        //Retrieve wrapper properties
+        ::yarp::os::Bottle AdditionalWrapperProp = m_parameters.findGroup("ADDITIONAL_WRAPPER");
+        if(AdditionalWrapperProp.isNull())
+        {
+            yError("GazeboYarpIMU : [ADDITIONAL_WRAPPER] group not found in config file\n");
+            return;
+        }
+
+        //Open the driver wrapper
+        if (!m_AdditionalWrapper.open(AdditionalWrapperProp))
+        {
+            yError() << "GazeboYarpIMU Plugin Load failed: error in opening the yarp wrapper";
+        }
+    }
+    if (disable_wrapper && !m_parameters.check("yarpDeviceName"))
+    {
+        yError() << "GazeboYarpIMU : missing yarpDeviceName parameter for device" << m_scopedSensorName;
         return;
     }
-
-    //Open the driver wrapper
-    if (!m_MASWrapper.open(MASwrapperProp))
-    {
-        yError() << "GazeboYarpIMU Plugin Load failed: error in opening the yarp wrapper";
-    }
-
-    /*
-    * Open the old wrapper
-    */
-    //Retrieve wrapper properties
-    ::yarp::os::Bottle AdditionalWrapperProp = m_parameters.findGroup("ADDITIONAL_WRAPPER");
-    if(AdditionalWrapperProp.isNull())
-    {
-        yError("GazeboYarpIMU : [ADDITIONAL_WRAPPER] group not found in config file\n");
-        return;
-    }
-
-    //Open the driver wrapper
-    if (!m_AdditionalWrapper.open(AdditionalWrapperProp))
-    {
-        yError() << "GazeboYarpIMU Plugin Load failed: error in opening the yarp wrapper";
-    }
-
     #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
     /*
@@ -149,16 +157,19 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     //Register the device with the given name
     std::string scopedDeviceName;
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    //Attach the part driver to the wrapper
-    if(!m_MASWrapper.view(m_iWrap) || (!m_AdditionalWrapper.view(m_iWrapAdditional))){
-        yError()<< "GazeboYarpIMU Plugin Load failed: unable to view iMultipleWrapper interfaces";
-        return;
-    }
     ::yarp::dev::PolyDriverList driverList;
-    driverList.push(&m_imuDriver,"dummy");
-    if(!m_iWrap->attachAll(driverList) || ! m_iWrapAdditional->attachAll(driverList))
+    if (!disable_wrapper) 
     {
-        yError() << "GazeboYarpIMU: error in connecting wrapper and device ";
+        //Attach the part driver to the wrapper
+        if(!m_MASWrapper.view(m_iWrap) || (!m_AdditionalWrapper.view(m_iWrapAdditional))){
+            yError()<< "GazeboYarpIMU Plugin Load failed: unable to view iMultipleWrapper interfaces";
+            return;
+        }
+        driverList.push(&m_imuDriver,"dummy");
+        if(!m_iWrap->attachAll(driverList) || ! m_iWrapAdditional->attachAll(driverList))
+        {
+            yError() << "GazeboYarpIMU: error in connecting wrapper and device ";
+        }
     }
 
     if(!m_parameters.check("yarpDeviceName"))

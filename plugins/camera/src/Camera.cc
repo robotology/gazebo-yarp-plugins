@@ -90,7 +90,7 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
         return;
     }
     
-    /Register the device with the given name
+    // Register the device with the given name
     std::string scopedDeviceName;
     if(!m_parameters.check("yarpDeviceName"))
     {

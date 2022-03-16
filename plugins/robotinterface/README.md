@@ -84,6 +84,7 @@ Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` optio
 | `gazebo_yarp_controlboard` | This plugin can create multiple YARP devices that expose joint-level motor and control interfaces such as [`yarp::dev::IPositionControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IPositionControl.html), [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1ITorqueControl.html) and [`yarp::dev::ITorqueControl`](https://www.yarp.it/git-master/classyarp_1_1dev_1_1IEncoders.html). |
 | `gazebo_yarp_depthcamera`  | This plugin can create a YARP device that exposes a depth-camera interface. |
 | `gazebo_yarp_lasersensor`  | This plugin can create a YARP device that exposes a laser-seensor interface. |
+| `gazebo_yarp_camera` | This plugin can create a YARP device that exposes a camera interface. |
 | `gazebo_yarp_multicamera`  | This plugin can create a YARP device that exposes a multicamera interface. |
 | `gazebo_yarp_imu`  | This plugin can create a YARP device that exposes a imu interface. |
 | `gazebo_yarp_forcetorque`  | This plugin can create a YARP device that exposes a force-torque interface. |

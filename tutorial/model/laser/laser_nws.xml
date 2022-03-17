@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="laser" portprefix="laser" build="0" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <device name="laser_nws_yarp" type="rangefinder2D_nws_yarp">
+            <!-- See https://www.yarp.it/latest//classRangefinder2D__nws__yarp.html#details for parameter documentation -->
+            <param name="name"> /laser </param>
+            <param name="period"> 0.033333 </param>
+            <action phase="startup" level="5" type="attach">
+                <!-- This is the same name that we passed with the yarpDeviceName to the laser plugin -->
+                <param name="device"> laser_plugin_device </param>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+    </devices>
+</robot>

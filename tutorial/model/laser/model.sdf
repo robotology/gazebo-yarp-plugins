@@ -14,6 +14,7 @@
       </visual>
       <sensor name ='laser_sensor' type='ray'>
         <ray>
+          <!-- IMPORTANT: Make sure that this values matches specified in laser.ini -->
           <scan>
             <horizontal>
               <samples>360</samples>
@@ -36,10 +37,15 @@
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>true</visualize>
-        <plugin name='laser_plugin' filename='libgazebo_yarp_lasersensor.so'>
-           <yarpConfigurationFile>model://laser/laser.ini</yarpConfigurationFile>
+        <!-- Create an instance the gazebo_laser YARP device called "laser_plugin_device"-->
+        <plugin name="laser_plugin" filename="libgazebo_yarp_lasersensor.so">
+          <yarpConfigurationFile>model://laser/laser.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </link>
+    <!-- Launch the other YARP devices, in this case a Rangefinder2D_nws_yarp to expose the images on a YARP port -->
+    <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
+        <yarpRobotInterfaceConfigurationFile>model://laser/laser_nws.xml</yarpRobotInterfaceConfigurationFile>
+    </plugin>
   </model>
 </sdf>

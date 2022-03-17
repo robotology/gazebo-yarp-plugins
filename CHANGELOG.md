@@ -8,6 +8,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Added
 - In `gazebo_yarp_camera` parse the `yarpDeviceName` option to enable its use with `gazebo_yarp_robotinterface` (https://github.com/robotology/gazebo-yarp-plugins/pull/614).
 
+### Changed
+- Migrate the example models under the tutorial directory to avoid the use of implicit network wrapper servers, and use the `gazebo_yarp_robotinterface` plugin to spawn their network wrapper servers (https://github.com/robotology/gazebo-yarp-plugins/pull/615). 
+
 ## [4.2.0] - 2022-02-28
 
 ### Added

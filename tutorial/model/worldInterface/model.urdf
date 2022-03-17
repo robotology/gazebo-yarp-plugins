@@ -33,7 +33,7 @@
   <!-- Use the following lines in your model -->  
   <gazebo>
     <plugin name="world_interface" filename="libgazebo_yarp_worldinterface.so">
-    <yarpConfigurationFile>model://worldInterface/conf/worldInterface.ini</yarpConfigurationFile>
+      <yarpConfigurationString>(name /world_input_port) (synchro 0)</yarpConfigurationString>
     </plugin>
   </gazebo>
   <!-- -->

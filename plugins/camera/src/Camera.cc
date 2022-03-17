@@ -89,6 +89,24 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
         yError() << "Unable to get the iFrameGrabberImage interface from the device";
         return;
     }
+    
+    // Register the device with the given name
+    std::string scopedDeviceName;
+    if(!m_parameters.check("yarpDeviceName"))
+    {
+        scopedDeviceName = m_sensorName + "::" "camera";
+    }
+    else
+    {
+        scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+    }
+
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    {
+        yError()<<"GazeboYarpCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        return;
+    }
+    yInfo() << "GazeboYarpCamera: Register YARP device with instance name:" << scopedDeviceName;
 
 }
 

@@ -37,7 +37,8 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
     
     if (tmp.size() != m_laser_data.size())
     {
-        yCError(GAZEBOLASER) << "size error";
+        yCError(GAZEBOLASER) << "Size error, expected: " << m_laser_data.size() 
+                             << ", got: " << tmp.size();
     }
 
 #if 0

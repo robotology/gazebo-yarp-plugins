@@ -39,10 +39,15 @@
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>true</visualize>
+        <!-- Create an instance the gazebo_multicamera YARP device called "multicamera_plugin_device"-->
         <plugin name="multicamera_plugin" filename="libgazebo_yarp_multicamera.so">
-          <yarpConfigurationFile>model://multicamera/multicamera.ini</yarpConfigurationFile>
+          <yarpConfigurationString>(yarpDeviceName multicamera_plugin_device) (disableImplicitNetworkWrapper)</yarpConfigurationString>
         </plugin>
       </sensor>
     </link>
+    <!-- Launch the other YARP devices, in this case a frameGrabber_nws_yarp to expose the images on a YARP port -->
+    <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
+        <yarpRobotInterfaceConfigurationFile>model://multicamera/multicamera_nws.xml</yarpRobotInterfaceConfigurationFile>
+    </plugin>
   </model>
 </sdf>

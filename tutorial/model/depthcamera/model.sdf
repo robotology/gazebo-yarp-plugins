@@ -23,13 +23,18 @@
             <far>100</far>
           </clip>
         </camera>
-        <plugin name='depthcamera_plugin' filename='libgazebo_yarp_depthCamera.so'>
-          <yarpConfigurationFile>model://depthcamera/depthcamera.ini</yarpConfigurationFile>
+        <!-- Create an instance the gazebo_depthcamera YARP device called "depthcamera_plugin_device"-->
+        <plugin name="depthcamera_plugin" filename="libgazebo_yarp_depthCamera.so">
+          <yarpConfigurationString>(yarpDeviceName depthcamera_plugin_device) (disableImplicitNetworkWrapper)</yarpConfigurationString>
         </plugin>
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>true</visualize>
       </sensor>
     </link>
+    <!-- Launch the other YARP devices, in this case a rgbdSensor_nws_yarp to expose the images on a YARP port -->
+    <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
+        <yarpRobotInterfaceConfigurationFile>model://depthcamera/depthcamera_nws.xml</yarpRobotInterfaceConfigurationFile>
+    </plugin>
   </model>
 </sdf>

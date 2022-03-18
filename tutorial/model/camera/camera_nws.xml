@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="camera" portprefix="camera" build="0"  xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <device name="camera_nws_yarp" type="frameGrabber_nws_yarp">
+            <!-- See https://www.yarp.it/latest/classFrameGrabber__nws__yarp.html#details for parameter documentation -->
+            <param name="name"> /camera </param>
+            <param name="period"> 0.033333 </param>
+            <param name="capabilities"> COLOR </param>
+            <action phase="startup" level="5" type="attach">
+                <!-- This is the same name that we passed with the yarpDeviceName to the camera plugin -->
+                <param name="device"> camera_plugin_device </param>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+    </devices>
+</robot>

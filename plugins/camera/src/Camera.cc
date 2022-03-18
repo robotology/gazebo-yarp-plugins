@@ -76,6 +76,11 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 
     m_parameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
 
+    // If the device is not specified in the configuration passed, specify it to gazebo_camera
+    if (!m_parameters.check("device")) {
+        m_parameters.put("device", "gazebo_camera");
+    }
+
     //Open the driver
     if (m_cameraDriver.open(m_parameters)) {
         yInfo() << "Loaded GazeboYarpCamera Plugin correctly";

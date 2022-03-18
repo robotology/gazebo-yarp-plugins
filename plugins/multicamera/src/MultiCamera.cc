@@ -75,6 +75,11 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     m_parameters.put(YarpScopedName.c_str(), m_sensorName.c_str());
 
+    // If the device is not specified in the configuration passed, specify it to gazebo_multicamera
+    if (!m_parameters.check("device")) {
+        m_parameters.put("device", "gazebo_multicamera");
+    }
+
     //Open the driver
     if (m_cameraDriver.open(m_parameters)) {
         yCInfo(GAZEBOMULTICAMERA) << "Loaded GazeboYarpMultiCamera Plugin correctly";

@@ -421,18 +421,19 @@ bool GazeboYarpDepthCameraDriver::getDepthImage(depthImageType& depthImage, Stam
         memcpy(depthImage.getRawImage(), m_depthFrame_Buffer, m_width * m_height * sizeof(float));
     }
     else {
-        double nearPlane = m_depthCameraSensorPtr->DepthCamera()->NearClip();
-        double farPlane = m_depthCameraSensorPtr->DepthCamera()->FarClip();
+        float nearPlane = (float) m_depthCameraSensorPtr->DepthCamera()->NearClip();
+        float farPlane = (float) m_depthCameraSensorPtr->DepthCamera()->FarClip();
 
         int intTemp;
         float value;
+        float powCoeff = pow(10.0f, (float) m_depthDecimalNum);
 
         auto pxPtr = reinterpret_cast<float*>(depthImage.getRawImage());
         for(int i=0; i<m_height*m_width; i++){
             value = m_depthFrame_Buffer[i];
 
-            intTemp = (int) (value * pow(10.0, (float) m_depthDecimalNum));
-            value = (float) intTemp / pow(10.0, (float) m_depthDecimalNum);
+            intTemp = (int) (value * powCoeff);
+            value = ((float) intTemp) / powCoeff;
 
             if (value < nearPlane) { value = nearPlane; }
             if (value > farPlane) { value = farPlane; }

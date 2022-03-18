@@ -18,6 +18,10 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 - It is now possible to remove and add again to the simulation models that use `gazebo_yarp_robotinterface` without any crash (https://github.com/robotology/gazebo-yarp-plugins/pull/618, https://github.com/robotology/gazebo-yarp-plugins/pull/619).
 - Fixed value returned by getDeviceStatus method in `gazebo_yarp_laser` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/617).
 
+### Fixed
+- Removed implicit conversions from the depth data quantization in `GazeboYarpDepthCameraDriver::getDepthImage` which in at least one occasion caused an unexpected crash of the `rgbdSensor_nws_yarp`. Also, the calculation of the scalar coefficient (involving `math::pow`), used to cut the decimal figures from the depth data, has been moved outside the for loop that cycles through the whole image.
+
+
 ## [4.2.0] - 2022-02-28
 
 ### Added

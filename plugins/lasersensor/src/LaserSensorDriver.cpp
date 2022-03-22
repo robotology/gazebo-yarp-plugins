@@ -56,6 +56,7 @@ void GazeboYarpLaserSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _in
     m_timestamp.update(_info.simTime.Double());
 
     m_first_run = false;
+    m_device_status = yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE;
     return;
 }
 

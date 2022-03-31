@@ -23,12 +23,16 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpForceTorque)
 
 namespace gazebo {
 
-GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), m_iWrap(0)
+GazeboYarpForceTorque::GazeboYarpForceTorque() : SensorPlugin(), m_iWrap(0), m_deviceRegistered(false)
 {
 }
 
 GazeboYarpForceTorque::~GazeboYarpForceTorque()
 {
+    if (m_deviceRegistered) {
+        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        m_deviceRegistered = false;
+    }
     if(m_iWrap) { m_iWrap->detachAll(); m_iWrap = 0; }
     if( m_forcetorqueWrapper.isValid() ) m_forcetorqueWrapper.close();
     if( m_forceTorqueDriver.isValid() ) m_forceTorqueDriver.close();
@@ -61,7 +65,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     // Add my gazebo device driver to the factory.
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpForceTorqueDriver>
                                       ("gazebo_forcetorque", netWrapper.c_str(), "GazeboYarpForceTorqueDriver"));
-    
+
     ::yarp::os::Property driver_properties;
     bool configuration_loaded = GazeboYarpPlugins::loadConfigSensorPlugin(_sensor,_sdf,driver_properties);
 
@@ -73,7 +77,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     ///< \todo TODO handle in a better way the parameters that are for the wrapper and the one that are for driver
     ::yarp::os::Property wrapper_properties = driver_properties;
     #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-    
+
     m_sensorName = _sensor->ScopedName();
 
     //Insert the pointer in the singleton handler for retriving it in the yarp driver
@@ -106,8 +110,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yError()<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver";
         return;
     }
-    
-    std::string scopedDeviceName;
+
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if (!disable_wrapper) {
         //Attach the driver to the wrapper
@@ -123,17 +126,17 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         if( !m_iWrap->attachAll(driver_list) ) {
             yError() << "GazeboYarpForceTorque : error in connecting wrapper and device ";
         }
-        
+
         if(!driver_properties.check("yarpDeviceName"))
         {
-            scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
+            m_scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
         }
         else
         {
-            scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+            m_scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
         }
     } else {
-        scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+        m_scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
     }
 
 
@@ -143,15 +146,16 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yError() << "GazeboYarpForceTorque : missing yarpDeviceName parameter for device" << m_sensorName;
         return;
     }
-    scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+    m_scopedDeviceName = m_sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
     #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
-    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_forceTorqueDriver))
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_forceTorqueDriver))
     {
-        yError()<<"GazeboYarpForceTorque: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yError()<<"GazeboYarpForceTorque: failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
         return;
     }
-    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
+    m_deviceRegistered = true;
+    yInfo() << "Registered YARP device with instance name:" << m_scopedDeviceName;
 }
 
 }

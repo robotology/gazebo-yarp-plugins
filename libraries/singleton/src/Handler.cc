@@ -271,8 +271,6 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
                 inserted_yarpDeviceName2deviceDatabaseKey.insert({yarpDeviceName, deviceDatabaseKey});
                 list.push(devicesMapElem.second.object(), yarpDeviceName.c_str());
                 deviceScopedNames.push_back(deviceDatabaseKey);
-                // Increase usage counter
-                setDevice(deviceDatabaseKey, devicesMapElem.second.object());
             } else {
                 // If a name collision is found, print a clear error and return
                 yError() << "GazeboYARPPlugins robotinterface getDevicesAsPolyDriverList error: ";
@@ -282,7 +280,6 @@ bool Handler::getDevicesAsPolyDriverList(const std::string& modelScopedName, yar
                 yError() << "Second instance: " << deviceDatabaseKey;
                 yError() << "Please eliminate or rename one of the two instances. ";
                 list = yarp::dev::PolyDriverList();
-                releaseDevicesInList(deviceScopedNames);
                 deviceScopedNames.resize(0);
                 return false;
             }

@@ -23,7 +23,7 @@ GazeboYarpRobotInterface::GazeboYarpRobotInterface()
 
 GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
 {
-    // Close robotinterface 
+    // Close robotinterface
     bool ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible to run phase ActionPhaseInterrupt1 robotinterface";
@@ -32,8 +32,6 @@ GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible  to run phase ActionPhaseShutdown in robotinterface";
     }
-
-    GazeboYarpPlugins::Handler::getHandler()->releaseDevicesInList(m_deviceScopedNames);
 
     yarp::os::Network::fini();
 }

@@ -67,6 +67,8 @@ namespace gazebo
         yarp::dev::PolyDriver m_laserDriver;
         
         std::string m_sensorName;
+        bool m_deviceRegistered;
+        std::string m_scopedDeviceName;
     };
 }
 

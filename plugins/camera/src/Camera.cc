@@ -21,12 +21,16 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpCamera)
 
 namespace gazebo {
 
-GazeboYarpCamera::GazeboYarpCamera() : CameraPlugin(), m_yarp()
+GazeboYarpCamera::GazeboYarpCamera() : CameraPlugin(), m_yarp(), m_deviceRegistered(false)
 {
 }
 
 GazeboYarpCamera::~GazeboYarpCamera()
 {
+    if (m_deviceRegistered) {
+        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        m_deviceRegistered = false;
+    }
     m_cameraDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
 }
@@ -96,22 +100,22 @@ void GazeboYarpCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     }
     
     // Register the device with the given name
-    std::string scopedDeviceName;
     if(!m_parameters.check("yarpDeviceName"))
     {
-        scopedDeviceName = m_sensorName + "::" "camera";
+        m_scopedDeviceName = m_sensorName + "::" "camera";
     }
     else
     {
-        scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+        m_scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
     }
 
-    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_cameraDriver))
     {
-        yError()<<"GazeboYarpCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yError()<<"GazeboYarpCamera: failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
         return;
     }
-    yInfo() << "GazeboYarpCamera: Register YARP device with instance name:" << scopedDeviceName;
+    m_deviceRegistered = true;
+    yInfo() << "GazeboYarpCamera: Register YARP device with instance name:" << m_scopedDeviceName;
 
 }
 

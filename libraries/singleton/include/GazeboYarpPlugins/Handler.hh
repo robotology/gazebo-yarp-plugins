@@ -40,6 +40,8 @@ namespace gazebo
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 
+#include <gazebo/common/Events.hh>
+
 namespace GazeboYarpPlugins {
 
 /** \class Handler
@@ -162,6 +164,15 @@ public:
      */
     void releaseDevicesInList(const std::vector<std::string>& deviceScopedNames);
 
+    /**
+     * Add a callback when a device is completly removed, i.e. removeDevice is called and the usage counter goes to 0.
+     */
+    template<typename T>
+    gazebo::event::ConnectionPtr ConnectDeviceCompletlyRemoved(T _subscriber)
+    {
+      return m_deviceCompletlyRemoved.Connect(_subscriber);
+    }
+
     /** Destructor
      */
     ~Handler();
@@ -202,6 +213,8 @@ private:
     DevicesMap m_devicesMap;    // map of known yarp devices
 
     bool findRobotName(sdf::ElementPtr sdf, std::string* robotName);
+
+    gazebo::event::EventT<void (std::string)> m_deviceCompletlyRemoved;
 
 };
 

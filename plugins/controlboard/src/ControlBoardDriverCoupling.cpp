@@ -611,7 +611,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
     const double RAD2DEG = 180.0/atan2(0.0,-1.0);
     const double DEG2RAD = 1.0/RAD2DEG;
     
-    m_couplingSize = 11;
+    m_couplingSize = 13;
     
     thumb_lut.resize(LUTSIZE);
     index_lut.resize(LUTSIZE);
@@ -675,8 +675,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             }
         }
     }
-    
-    
+        
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
@@ -713,12 +712,12 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             while (q2 <    0.0) q2 += 360.0;
             while (q2 >= 360.0) q2 -= 360.0;
             
+            // get decimal part of q2 to find out how to weigh index and index+1
             double dindex = q2*10.0;
-            
             int iindex = int(dindex);
-            
             double w = dindex - double(iindex);
             
+            // Construct LUT
             index_lut[iindex] += (1.0 - w)*q1;
             num[iindex] += (1.0 - w);
             
@@ -726,6 +725,7 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             num[iindex + 1] += w;
         }
         
+        // divide each value in the LUT by the weight if it is greater than 0 to extract q1
         for (int n = 0; n < LUTSIZE; ++n)
         {
             if (num[n] > 0.0)
@@ -777,9 +777,12 @@ bool HandMk3CouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
 
 double HandMk3CouplingHandler::decouple (double q2, std::vector<double>& lut)
 {
+
     double dindex = q2*10.0;
     int iindex = int(dindex);
+    // get decimal part of q2 to find out how to weigh index and index+1
     double w = dindex - double(iindex);
+    // interpolate between index and the next with a convex combination weighting
     return lut[iindex]*(1.0 - w) + lut[iindex + 1]*w;
 }
 
@@ -796,6 +799,8 @@ yarp::sig::Vector HandMk3CouplingHandler::decoupleRefPos (yarp::sig::Vector& pos
     out[m_coupledJoints[8]]  = pos_ref[m_coupledJoints[5]] - out[m_coupledJoints[7]];
     out[m_coupledJoints[9]]  = decouple(pos_ref[m_coupledJoints[6]], index_lut);
     out[m_coupledJoints[10]] = pos_ref[m_coupledJoints[6]] - out[m_coupledJoints[9]];
+    out[m_coupledJoints[11]] = decouple(pos_ref[m_coupledJoints[6]], index_lut);;
+    out[m_coupledJoints[12]] = pos_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }
 
@@ -812,6 +817,8 @@ yarp::sig::Vector HandMk3CouplingHandler::decoupleRefVel (yarp::sig::Vector& vel
     out[m_coupledJoints[8]]  = vel_ref[m_coupledJoints[5]] - out[m_coupledJoints[7]];
     out[m_coupledJoints[9]]  = decouple(vel_ref[m_coupledJoints[6]], index_lut);
     out[m_coupledJoints[10]] = vel_ref[m_coupledJoints[6]] - out[m_coupledJoints[9]];
+    out[m_coupledJoints[11]] = decouple(vel_ref[m_coupledJoints[6]], index_lut);;
+    out[m_coupledJoints[12]] = vel_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }
 
@@ -828,5 +835,7 @@ yarp::sig::Vector HandMk3CouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq
     out[m_coupledJoints[8]]  = trq_ref[m_coupledJoints[5]] - out[m_coupledJoints[7]];
     out[m_coupledJoints[9]]  = decouple(trq_ref[m_coupledJoints[6]], index_lut);
     out[m_coupledJoints[10]] = trq_ref[m_coupledJoints[6]] - out[m_coupledJoints[9]];
+    out[m_coupledJoints[11]] = decouple(trq_ref[m_coupledJoints[6]], index_lut);;
+    out[m_coupledJoints[12]] = trq_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }

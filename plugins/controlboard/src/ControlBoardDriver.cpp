@@ -175,7 +175,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_velocity_watchdog[j] = new Watchdog(0.200); //watchdog set to 200ms
     }
 
-    yCDebug(GAZEBOCONTROLBOARD) << "done";
+    yCDebug(GAZEBOCONTROLBOARD) << "Trajectory successfully generated.";
+
     for (size_t j = 0; j < m_numberOfJoints; ++j)
     {
         m_controlMode[j] = VOCAB_CM_POSITION;

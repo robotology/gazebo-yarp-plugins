@@ -50,8 +50,6 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
         return;
     }
 
-    GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parentModel));
-
     // Getting .xml and loading configuration file from sdf
     bool loaded_configuration = false;
     if (_sdf->HasElement("yarpRobotInterfaceConfigurationFile"))

@@ -57,15 +57,17 @@ namespace gazebo
     public:
         GazeboYarpForceTorque();
         virtual ~GazeboYarpForceTorque();
-        
+
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
         yarp::dev::PolyDriver m_forcetorqueWrapper;
         yarp::dev::IMultipleWrapper* m_iWrap;
         yarp::dev::PolyDriver m_forceTorqueDriver;
-        
+
         std::string m_sensorName;
+        bool m_deviceRegistered;
+        std::string m_scopedDeviceName;
     };
 }
 

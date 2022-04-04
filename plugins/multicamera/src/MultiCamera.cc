@@ -29,12 +29,16 @@ using GazeboYarpPlugins::GAZEBOMULTICAMERA;
 namespace gazebo {
 
 GazeboYarpMultiCamera::GazeboYarpMultiCamera() :
-        MultiCameraPlugin()
+        MultiCameraPlugin(), m_deviceRegistered(false)
 {
 }
 
 GazeboYarpMultiCamera::~GazeboYarpMultiCamera()
 {
+    if (m_deviceRegistered) {
+        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        m_deviceRegistered = false;
+    }
     this->m_cameraDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(this->m_sensorName);
 }
@@ -95,22 +99,23 @@ void GazeboYarpMultiCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
 
     //Register the device with the given name
-    std::string scopedDeviceName;
+    std::string m_scopedDeviceName;
     if(!m_parameters.check("yarpDeviceName"))
     {
-        scopedDeviceName = m_sensorName + "::" "multicamera";
+        m_scopedDeviceName = m_sensorName + "::" "multicamera";
     }
     else
     {
-        scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+        m_scopedDeviceName = m_sensorName + "::" + m_parameters.find("yarpDeviceName").asString();
     }
 
-    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_cameraDriver))
     {
-        yCError(GAZEBOMULTICAMERA)<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yCError(GAZEBOMULTICAMERA)<<"GazeboYarpMultiCamera: failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
         return;
     }
-    yCInfo(GAZEBOMULTICAMERA) << "GazeboYarpMultiCamera: Register YARP device with instance name:" << scopedDeviceName;
+    m_deviceRegistered = true;
+    yCInfo(GAZEBOMULTICAMERA) << "GazeboYarpMultiCamera: Register YARP device with instance name:" << m_scopedDeviceName;
 }
 
 } // namespace gazebo

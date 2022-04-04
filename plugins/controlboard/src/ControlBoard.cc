@@ -54,12 +54,20 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             m_virtAnalogSensorWrapper.close();
         }
 
-        for (int n = 0; n < m_controlBoards.size(); n++) {
-            std::string scopedDeviceName = m_robotName + "::" + m_controlBoards[n]->key.c_str();
-            GazeboYarpPlugins::Handler::getHandler()->removeDevice(scopedDeviceName);
+        if (m_deviceRegistered) {
+            if (m_parameters.check("disableImplicitNetworkWrapper")) {
+                GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+            } else {
+                for (int n = 0; n < m_controlBoards.size(); n++) {
+                    std::string scopedDeviceName = m_robotName + "::" + m_controlBoards[n]->key.c_str();
+                    GazeboYarpPlugins::Handler::getHandler()->removeDevice(scopedDeviceName);
+                }
+            }
         }
         #else
-        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        if (m_deviceRegistered) {
+            GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        }
         #endif
 
         GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
@@ -191,6 +199,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     else
                 {
                     scopedDeviceName = m_robotName + "::" + m_parameters.find("yarpDeviceName").asString();
+                    m_scopedDeviceName = scopedDeviceName;
                 }
             
                 newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
@@ -239,8 +248,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << scopedDeviceName << ")";
                     return;
                 }
+                m_deviceRegistered = true;
                 yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << scopedDeviceName;
-
                 m_controlBoards.push(newPoly);
             }
 
@@ -315,6 +324,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
                 return;
             }
+            m_deviceRegistered = true;
             yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << m_scopedDeviceName;
         }
         #else
@@ -350,6 +360,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             yCError(GAZEBOCONTROLBOARD) << "failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
             return;
         }
+        m_deviceRegistered = true;
         yCInfo(GAZEBOCONTROLBOARD) << "Registered YARP device with instance name:" << m_scopedDeviceName;
         #endif
     }

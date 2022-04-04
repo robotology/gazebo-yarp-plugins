@@ -26,12 +26,16 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpDepthCamera)
 
 namespace gazebo {
 
-GazeboYarpDepthCamera::GazeboYarpDepthCamera() : DepthCameraPlugin(), m_yarp()
+GazeboYarpDepthCamera::GazeboYarpDepthCamera() : DepthCameraPlugin(), m_yarp(), m_deviceRegistered(false)
 {
 }
 
 GazeboYarpDepthCamera::~GazeboYarpDepthCamera()
 {
+    if (m_deviceRegistered) {
+        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        m_deviceRegistered = false;
+    }
     m_cameraDriver.close();
     GazeboYarpPlugins::Handler::getHandler()->removeSensor(m_sensorName);
 }
@@ -149,16 +153,14 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     #endif
     
     //Register the device with the given name
-    std::string scopedDeviceName;
-
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if(!m_driverParameters.check("yarpDeviceName"))
     {
-        scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
+        m_scopedDeviceName = m_sensorName + "::" + driver_list[0]->key;
     }
     else
     {
-        scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
+        m_scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
     }
     #else
     if(!m_driverParameters.check("yarpDeviceName"))
@@ -166,15 +168,16 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
         yCError(GAZEBODEPTH) << "missing yarpDeviceName parameter";
         return;
     }
-    scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
+    m_scopedDeviceName = m_sensorName + "::" + m_driverParameters.find("yarpDeviceName").asString();
     #endif
 
-    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_cameraDriver))
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_cameraDriver))
     {
-        yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yCError(GAZEBODEPTH)<<"GazeboYarpDepthCamera: failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
         return;
     }
-    yCInfo(GAZEBODEPTH) << "Registered YARP device with instance name:" << scopedDeviceName;
+    m_deviceRegistered = true;
+    yCInfo(GAZEBODEPTH) << "Registered YARP device with instance name:" << m_scopedDeviceName;
 }
 
 } // namespace gazebo

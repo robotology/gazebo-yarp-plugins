@@ -23,7 +23,7 @@ GazeboYarpRobotInterface::GazeboYarpRobotInterface()
 
 GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
 {
-    // Close robotinterface 
+    // Close robotinterface
     bool ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible to run phase ActionPhaseInterrupt1 robotinterface";
@@ -32,8 +32,6 @@ GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
     if (!ok) {
         yError() << "GazeboYarpRobotInterface: impossible  to run phase ActionPhaseShutdown in robotinterface";
     }
-
-    GazeboYarpPlugins::Handler::getHandler()->releaseDevicesInList(m_deviceScopedNames);
 
     yarp::os::Network::fini();
 }
@@ -51,8 +49,6 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
         gzerr << "GazeboYarpRobotInterface plugin requires a parent.\n";
         return;
     }
-
-    GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parentModel));
 
     // Getting .xml and loading configuration file from sdf
     bool loaded_configuration = false;

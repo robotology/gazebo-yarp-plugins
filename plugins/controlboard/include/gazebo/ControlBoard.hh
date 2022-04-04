@@ -59,6 +59,7 @@ private:
     bool m_useVirtAnalogSensor = false;
     #endif
     yarp::dev::PolyDriver m_controlboardDriver;
+    bool m_deviceRegistered;
     std::string m_scopedDeviceName;
     std::string m_yarpDeviceName;
 

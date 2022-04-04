@@ -50,6 +50,8 @@ namespace gazebo
         sensors::MultiCameraSensor *m_sensor;
 
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
+        bool m_deviceRegistered;
+        std::string m_scopedDeviceName;
     };
 }
 

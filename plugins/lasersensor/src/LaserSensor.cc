@@ -37,6 +37,10 @@ SensorPlugin()
 
 GazeboYarpLaserSensor::~GazeboYarpLaserSensor()
 {
+    if (m_deviceRegistered) {
+        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        m_deviceRegistered = false;
+    }
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     if(m_iWrap) { m_iWrap->detachAll(); m_iWrap = 0; }
     if( m_laserWrapper.isValid() ) m_laserWrapper.close();
@@ -149,33 +153,33 @@ void GazeboYarpLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     //Register the device with the given name
     std::string sensorName = _sensor->ScopedName();
-    std::string scopedDeviceName;
     if(driver_properties.check("deviceId"))
     {
         yCWarning(GAZEBOLASER) << "deviceId parameter has been deprecated. Please use yarpDeviceName instead";
-        scopedDeviceName = sensorName + "::" + driver_properties.find("deviceId").asString();
+        m_scopedDeviceName = sensorName + "::" + driver_properties.find("deviceId").asString();
     }
     else if(!driver_properties.check("yarpDeviceName"))
     {
         yCError(GAZEBOLASER)<<"failed getting yarpDeviceName parameter value";
         #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-        scopedDeviceName = sensorName + "::" + driver_list[0]->key;
+        m_scopedDeviceName = sensorName + "::" + driver_list[0]->key;
         #else
         return;
         #endif
     }
     else
     {
-        scopedDeviceName = sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
+        m_scopedDeviceName = sensorName + "::" + driver_properties.find("yarpDeviceName").asString();
     }
 
 
-    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_laserDriver))
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_laserDriver))
     {
-        yCError(GAZEBOLASER)<<"failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yCError(GAZEBOLASER)<<"failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
         return;
     }
-    yCInfo(GAZEBOLASER) << "Registered YARP device with instance name:" << scopedDeviceName;
+    m_deviceRegistered = true;
+    yCInfo(GAZEBOLASER) << "Registered YARP device with instance name:" << m_scopedDeviceName;
 }
 
 } // namespace gazebo

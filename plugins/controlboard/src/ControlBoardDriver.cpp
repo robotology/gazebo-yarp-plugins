@@ -175,7 +175,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         m_velocity_watchdog[j] = new Watchdog(0.200); //watchdog set to 200ms
     }
 
-    yCDebug(GAZEBOCONTROLBOARD) << "done";
+    yCDebug(GAZEBOCONTROLBOARD) << "Trajectory successfully generated.";
+
     for (size_t j = 0; j < m_numberOfJoints; ++j)
     {
         m_controlMode[j] = VOCAB_CM_POSITION;
@@ -329,6 +330,12 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 BaseCouplingHandler* cpl = new HandMk3CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
                 m_coupling_handler.push_back(cpl);
                 yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk3";
+            }
+            else if (coupling_bottle->get(0).asString()=="icub_left_hand_mk4")
+            {
+                BaseCouplingHandler* cpl = new HandMk4CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+                m_coupling_handler.push_back(cpl);
+                yCInfo(GAZEBOCONTROLBOARD) << "using icub_left_hand_mk4";
             }
             else if (coupling_bottle->get(0).asString()=="none")
             {

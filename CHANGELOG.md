@@ -5,6 +5,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.3.0] - 2022-04-04
+
 ### Added
 - In `gazebo_yarp_camera` parse the `yarpDeviceName` option to enable its use with `gazebo_yarp_robotinterface` (https://github.com/robotology/gazebo-yarp-plugins/pull/614).
 - In `gazebo_yarp_controlboard` add the `icub_left_hand_mk4` coupling that models the iCub mk4 left hand (https://github.com/robotology/gazebo-yarp-plugins/pull/620). 

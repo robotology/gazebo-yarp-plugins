@@ -27,11 +27,15 @@ public:
     virtual ~GazeboYarpRobotInterface();
     
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
+    void CloseRobotInterface();
+    void OnDeviceCompletlyRemoved(std::string scopedDeviceName);
 
 private:
     yarp::robotinterface::XMLReader m_xmlRobotInterfaceReader;
     yarp::robotinterface::XMLReaderResult m_xmlRobotInterfaceResult;
     std::vector<std::string> m_deviceScopedNames;
+    gazebo::event::ConnectionPtr m_connection;
+    bool m_robotInterfaceCorrectlyStarted;
 };
 
 

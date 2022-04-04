@@ -217,6 +217,7 @@ void Handler::removeDevice(const std::string& deviceDatabaseKey)
     if (device != m_devicesMap.end()) {
         device->second.decrementCount();
         if (!device->second.count()) {
+            m_deviceCompletlyRemoved(deviceDatabaseKey);
             device->second.object()->close();
             m_devicesMap.erase(device);
         }

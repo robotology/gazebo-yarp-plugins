@@ -12,6 +12,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Changed
 - Migrate the example models under the tutorial directory to avoid the use of implicit network wrapper servers, and use the `gazebo_yarp_robotinterface` plugin to spawn their network wrapper servers (https://github.com/robotology/gazebo-yarp-plugins/pull/615 and https://github.com/robotology/gazebo-yarp-plugins/pull/616). 
 
+### Fixed 
+- It is now possible to remove and add again to the simulation models that use `gazebo_yarp_robotinterface` without any crash (https://github.com/robotology/gazebo-yarp-plugins/pull/618, https://github.com/robotology/gazebo-yarp-plugins/pull/619).
+
 ### Fixed
 - Fixed value returned by getDeviceStatus method in `gazebo_yarp_laser` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/617).
 

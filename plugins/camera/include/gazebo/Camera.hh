@@ -55,6 +55,8 @@ namespace gazebo
         yarp::dev::PolyDriver m_cameraDriver;
         std::string m_sensorName;
         sensors::CameraSensor *m_sensor;
+        bool m_deviceRegistered;
+        std::string m_scopedDeviceName;
 
         yarp::dev::IFrameGrabberImage*      iFrameGrabberImage;
     };

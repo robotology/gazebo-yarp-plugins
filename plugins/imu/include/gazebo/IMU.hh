@@ -67,13 +67,16 @@ namespace gazebo
         void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf) override;
 
     private:
-        yarp::os::Property m_parameters; 
+        yarp::os::Property m_parameters;
         yarp::dev::PolyDriver m_imuDriver;
         yarp::dev::PolyDriver m_MASWrapper;
         yarp::dev::PolyDriver m_AdditionalWrapper; // for the legacy wrapper ServerInertial
         yarp::dev::IMultipleWrapper* m_iWrap{nullptr};
         yarp::dev::IMultipleWrapper* m_iWrapAdditional{nullptr};
         std::string m_scopedSensorName;
+        bool m_deviceRegistered;
+        std::string m_scopedDeviceName;
+
     };
 }
 

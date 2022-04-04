@@ -22,12 +22,16 @@ GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboYarpIMU)
 
 namespace gazebo {
 
-GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin()
+GazeboYarpIMU::GazeboYarpIMU() : SensorPlugin(), m_deviceRegistered(false)
 {
 }
 
 GazeboYarpIMU::~GazeboYarpIMU()
 {
+    if (m_deviceRegistered) {
+        GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        m_deviceRegistered = false;
+    }
     if(m_iWrap) {
         m_iWrap->detachAll();
         m_iWrap = nullptr;
@@ -155,7 +159,6 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
     }
 
     //Register the device with the given name
-    std::string scopedDeviceName;
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::PolyDriverList driverList;
     if (!disable_wrapper) 
@@ -174,11 +177,11 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
 
     if(!m_parameters.check("yarpDeviceName"))
     {
-        scopedDeviceName = m_scopedSensorName + "::" + driverList[0]->key;
+        m_scopedDeviceName = m_scopedSensorName + "::" + driverList[0]->key;
     }
     else
     {
-        scopedDeviceName = m_scopedSensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+        m_scopedDeviceName = m_scopedSensorName + "::" + m_parameters.find("yarpDeviceName").asString();
     }
     #else
     if(!m_parameters.check("yarpDeviceName"))
@@ -186,16 +189,17 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
         yError() << "GazeboYarpIMU : missing yarpDeviceName parameter for device" << m_scopedSensorName;
         return;
     }
-    scopedDeviceName = m_scopedSensorName + "::" + m_parameters.find("yarpDeviceName").asString();
+    m_scopedDeviceName = m_scopedSensorName + "::" + m_parameters.find("yarpDeviceName").asString();
     #endif // GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
 
 
-    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(scopedDeviceName, &m_imuDriver))
+    if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_imuDriver))
     {
-        yError()<<"GazeboYarpIMU: failed setting scopedDeviceName(=" << scopedDeviceName << ")";
+        yError()<<"GazeboYarpIMU: failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
         return;
     }
-    yInfo() << "Registered YARP device with instance name:" << scopedDeviceName;
+    m_deviceRegistered = true;
+    yInfo() << "Registered YARP device with instance name:" << m_scopedDeviceName;
 }
 
 }

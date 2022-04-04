@@ -17,23 +17,43 @@
 namespace gazebo
 {
 
-GazeboYarpRobotInterface::GazeboYarpRobotInterface()
+GazeboYarpRobotInterface::GazeboYarpRobotInterface(): m_robotInterfaceCorrectlyStarted(false)
 {
+
+}
+
+void GazeboYarpRobotInterface::CloseRobotInterface()
+{
+    if(m_robotInterfaceCorrectlyStarted) {
+        // Close robotinterface
+        bool ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        if (!ok) {
+            yError() << "GazeboYarpRobotInterface: impossible to run phase ActionPhaseInterrupt1 robotinterface";
+        }
+        ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+        if (!ok) {
+            yError() << "GazeboYarpRobotInterface: impossible  to run phase ActionPhaseShutdown in robotinterface";
+        }
+        m_connection.reset();
+        m_robotInterfaceCorrectlyStarted = false;
+    }
+}
+
+void GazeboYarpRobotInterface::OnDeviceCompletlyRemoved(std::string deletedDeviceScopedName)
+{
+    // Check if scopedDeviceName is among the one passed to this instance of gazebo_yarp_robotinterface
+    // If yes, close the robotinterface to avoid crashes due to access to a device that is being deleted
+    for (auto&& usedDeviceScopedName: m_deviceScopedNames) {
+        if (deletedDeviceScopedName == usedDeviceScopedName) {
+            CloseRobotInterface();
+        }
+    }
+    return;
 }
 
 GazeboYarpRobotInterface::~GazeboYarpRobotInterface()
 {
-    // Close robotinterface 
-    bool ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
-    if (!ok) {
-        yError() << "GazeboYarpRobotInterface: impossible to run phase ActionPhaseInterrupt1 robotinterface";
-    }
-    ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
-    if (!ok) {
-        yError() << "GazeboYarpRobotInterface: impossible  to run phase ActionPhaseShutdown in robotinterface";
-    }
-
-    GazeboYarpPlugins::Handler::getHandler()->releaseDevicesInList(m_deviceScopedNames);
+    CloseRobotInterface();
 
     yarp::os::Network::fini();
 }
@@ -51,8 +71,6 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
         gzerr << "GazeboYarpRobotInterface plugin requires a parent.\n";
         return;
     }
-
-    GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parentModel));
 
     // Getting .xml and loading configuration file from sdf
     bool loaded_configuration = false;
@@ -75,7 +93,7 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
                 yError() << "GazeboYarpRobotInterface error: failure in parsing robotinterface configuration for model" << _parentModel->GetName() << "\n"
                       << "GazeboYarpRobotInterface error: yarpRobotInterfaceConfigurationFile : " << robotinterface_file_name << "\n"
                       << "GazeboYarpRobotInterface error: yarpRobotInterfaceConfigurationFile absolute path : " << robotinterface_file_path;
-                loaded_configuration = false; 
+                loaded_configuration = false;
             }
         }
     }
@@ -97,7 +115,7 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
         return;
     }
 
-    // Start robotinterface 
+    // Start robotinterface
     ok = m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
     if (!ok) {
         yError() << "GazeboYarpRobotInterface : impossible to start robotinterface";
@@ -105,6 +123,13 @@ void GazeboYarpRobotInterface::Load(physics::ModelPtr _parentModel, sdf::Element
         m_xmlRobotInterfaceResult.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
         return;
     }
+
+    m_robotInterfaceCorrectlyStarted = true;
+    // If the robotinterface started correctly, add a callback to ensure that it is closed as
+    // soon that an external device passed to it is deleted
+    m_connection =
+      GazeboYarpPlugins::Handler::getHandler()->ConnectDeviceCompletlyRemoved(
+        boost::bind(&GazeboYarpRobotInterface::OnDeviceCompletlyRemoved, this, boost::placeholders::_1));
 }
 
 

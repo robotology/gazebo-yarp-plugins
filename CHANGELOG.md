@@ -7,6 +7,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Added
 - In `gazebo_yarp_camera` parse the `yarpDeviceName` option to enable its use with `gazebo_yarp_robotinterface` (https://github.com/robotology/gazebo-yarp-plugins/pull/614).
+- In `gazebo_yarp_controlboard` add the `icub_left_hand_mk4` coupling that models the iCub mk4 left hand (https://github.com/robotology/gazebo-yarp-plugins/pull/620). 
 
 ### Changed
 - Migrate the example models under the tutorial directory to avoid the use of implicit network wrapper servers, and use the `gazebo_yarp_robotinterface` plugin to spawn their network wrapper servers (https://github.com/robotology/gazebo-yarp-plugins/pull/615 and https://github.com/robotology/gazebo-yarp-plugins/pull/616). 

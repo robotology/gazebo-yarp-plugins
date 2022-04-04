@@ -615,6 +615,7 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
     
     thumb_lut.resize(LUTSIZE);
     index_lut.resize(LUTSIZE);
+    pinkie_lut.resize(LUTSIZE);
     
     std::vector<double> num(LUTSIZE);
     
@@ -734,6 +735,59 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
             }
         }
     }
+
+    // pinkie
+    {    
+        double P1x =  0.0300, P1y = 0.0015;
+        double L0x = -0.0050, L0y = 0.0040;
+        double L1x =  0.0240, L1y = 0.0008;
+        
+        double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
+        double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
+        
+        double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
+        
+        for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
+        {
+            double cq1 = cos(DEG2RAD*q1);
+            double sq1 = sin(DEG2RAD*q1);
+            
+            double P1xr = cq1*P1x-sq1*P1y;
+            double P1yr = sq1*P1x+cq1*P1y;
+            
+            double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
+            
+            double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
+            
+            double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
+            
+            double q2 = alfa + beta - offset;
+            
+            while (q2 <    0.0) q2 += 360.0;
+            while (q2 >= 360.0) q2 -= 360.0;
+            
+            // get decimal part of q2 to find out how to weigh index and index+1
+            double dindex = q2*10.0;
+            int iindex = int(dindex);
+            double w = dindex - double(iindex);
+            
+            // Construct LUT
+            pinkie_lut[iindex] += (1.0 - w)*q1;
+            num[iindex] += (1.0 - w);
+            
+            pinkie_lut[iindex + 1] += w*q1;
+            num[iindex + 1] += w;
+        }
+        
+        // divide each value in the LUT by the weight if it is greater than 0 to extract q1
+        for (int n = 0; n < LUTSIZE; ++n)
+        {
+            if (num[n] > 0.0)
+            {
+                pinkie_lut[n] /= num[n];
+            }
+        }
+    }
 }
 
 bool HandMk4CouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
@@ -799,7 +853,7 @@ yarp::sig::Vector HandMk4CouplingHandler::decoupleRefPos (yarp::sig::Vector& pos
     out[m_coupledJoints[8]]  = pos_ref[m_coupledJoints[5]] - out[m_coupledJoints[7]];
     out[m_coupledJoints[9]]  = decouple(pos_ref[m_coupledJoints[6]], index_lut);
     out[m_coupledJoints[10]] = pos_ref[m_coupledJoints[6]] - out[m_coupledJoints[9]];
-    out[m_coupledJoints[11]] = decouple(pos_ref[m_coupledJoints[6]], index_lut);;
+    out[m_coupledJoints[11]] = decouple(pos_ref[m_coupledJoints[6]], pinkie_lut);;
     out[m_coupledJoints[12]] = pos_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }
@@ -817,7 +871,7 @@ yarp::sig::Vector HandMk4CouplingHandler::decoupleRefVel (yarp::sig::Vector& vel
     out[m_coupledJoints[8]]  = vel_ref[m_coupledJoints[5]] - out[m_coupledJoints[7]];
     out[m_coupledJoints[9]]  = decouple(vel_ref[m_coupledJoints[6]], index_lut);
     out[m_coupledJoints[10]] = vel_ref[m_coupledJoints[6]] - out[m_coupledJoints[9]];
-    out[m_coupledJoints[11]] = decouple(vel_ref[m_coupledJoints[6]], index_lut);;
+    out[m_coupledJoints[11]] = decouple(vel_ref[m_coupledJoints[6]], pinkie_lut);;
     out[m_coupledJoints[12]] = vel_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }
@@ -835,7 +889,7 @@ yarp::sig::Vector HandMk4CouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq
     out[m_coupledJoints[8]]  = trq_ref[m_coupledJoints[5]] - out[m_coupledJoints[7]];
     out[m_coupledJoints[9]]  = decouple(trq_ref[m_coupledJoints[6]], index_lut);
     out[m_coupledJoints[10]] = trq_ref[m_coupledJoints[6]] - out[m_coupledJoints[9]];
-    out[m_coupledJoints[11]] = decouple(trq_ref[m_coupledJoints[6]], index_lut);;
+    out[m_coupledJoints[11]] = decouple(trq_ref[m_coupledJoints[6]], pinkie_lut);;
     out[m_coupledJoints[12]] = trq_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }

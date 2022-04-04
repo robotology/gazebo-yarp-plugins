@@ -195,6 +195,7 @@ protected:
 
     std::vector<double> thumb_lut;
     std::vector<double> index_lut;
+    std::vector<double> pinkie_lut;
 };
 
 #endif //GAZEBOYARP_COUPLING_H

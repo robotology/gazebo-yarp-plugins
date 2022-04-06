@@ -6,7 +6,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ## [Unreleased]
 
 ### Fixed
-- Removed implicit conversions from the depth data quantization in `GazeboYarpDepthCameraDriver::getDepthImage` which in at least one occasion caused an unexpected crash of the `rgbdSensor_nws_yarp`. Also, the calculation of the scalar coefficient (involving `math::pow`), used to cut the decimal figures from the depth data, has been moved outside the for loop that cycles through the whole image.
+- Removed implicit conversions from the depth data quantization in `GazeboYarpDepthCameraDriver::getDepthImage` which in at least one occasion caused an unexpected crash of the `rgbdSensor_nws_yarp`. Also, the calculation of the scalar coefficient (involving `math::pow`), used to cut the decimal figures from the depth data, has been moved outside the for loop that cycles through the whole image (https://github.com/robotology/gazebo-yarp-plugins/pull/623).
 
 ## [4.3.0] - 2022-04-04
 

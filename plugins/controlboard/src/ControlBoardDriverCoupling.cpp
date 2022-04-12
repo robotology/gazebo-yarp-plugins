@@ -866,7 +866,7 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
         
-        double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
+        double offset = 180;
         
         for (double q1 = 0.0; q1 <= 85.5; q1 += 0.01)
         {
@@ -923,7 +923,6 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
         
-        //double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
         double offset = 173.35;
 
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
@@ -982,7 +981,6 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
         
-        //double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
         double offset = 170.54;
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
         {

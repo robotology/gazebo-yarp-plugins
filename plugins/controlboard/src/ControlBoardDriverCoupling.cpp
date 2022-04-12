@@ -852,17 +852,16 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
     
     std::vector<double> num(LUTSIZE);
     
+    // thumb
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         thumb_lut[n] = 0.0;
     }
-
-    // thumb
     {        
-        double L0x = -0.00555,          L0y = 0.00195+0.0009;
-        double P1x =  0.020,            P1y = 0.0015;
-        double L1x =  P1x-0.0055-0.003, L1y = P1y-0.002+0.0019;
+        double L0x = -0.00555,    L0y = 0.00285;
+        double P1x =  0.02,       P1y = 0.0015;
+        double L1x =  0.0115,     L1y = 0.0015;
         
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);

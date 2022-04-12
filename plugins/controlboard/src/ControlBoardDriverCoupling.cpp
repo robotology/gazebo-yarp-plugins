@@ -909,14 +909,13 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
             }
         }
     }
-        
+
+    // index, middle, ring   
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         index_lut[n] = 0.0;
     }
-    
-    // finger
     {    
         double P1x =  0.0300, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;
@@ -971,6 +970,11 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
     }
 
     // pinkie
+    for (int n = 0; n < LUTSIZE; ++n)
+    {
+        num[n] = 0.0;
+        pinkie_lut[n] = 0.0;
+    }
     {    
         double P1x =  0.0250, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;

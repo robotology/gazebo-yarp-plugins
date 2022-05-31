@@ -852,22 +852,21 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
     
     std::vector<double> num(LUTSIZE);
     
+    // thumb
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         thumb_lut[n] = 0.0;
     }
-
-    // thumb
     {        
-        double L0x = -0.00555,          L0y = 0.00195+0.0009;
-        double P1x =  0.020,            P1y = 0.0015;
-        double L1x =  P1x-0.0055-0.003, L1y = P1y-0.002+0.0019;
+        double L0x = -0.00555,    L0y = 0.00285;
+        double P1x =  0.02,       P1y = 0.0015;
+        double L1x =  0.0115,     L1y = 0.0015;
         
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
         
-        double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
+        double offset = 180;
         
         for (double q1 = 0.0; q1 <= 85.5; q1 += 0.01)
         {
@@ -909,14 +908,13 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
             }
         }
     }
-        
+
+    // index, middle, ring   
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         index_lut[n] = 0.0;
     }
-    
-    // finger
     {    
         double P1x =  0.0300, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;
@@ -925,8 +923,8 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
         
-        double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
-        
+        double offset = 173.35;
+
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);
@@ -970,16 +968,20 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
     }
 
     // pinkie
+    for (int n = 0; n < LUTSIZE; ++n)
+    {
+        num[n] = 0.0;
+        pinkie_lut[n] = 0.0;
+    }
     {    
-        double P1x =  0.0300, P1y = 0.0015;
+        double P1x =  0.0250, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;
-        double L1x =  0.0240, L1y = 0.0008;
+        double L1x =  0.0190, L1y = 0.0005;
         
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
         
-        double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
-        
+        double offset = 170.54;
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);

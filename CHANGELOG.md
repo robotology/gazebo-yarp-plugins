@@ -5,6 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.4.0] - 2022-05-31
+
+
 ### Fixed
 - Removed implicit conversions from the depth data quantization in `GazeboYarpDepthCameraDriver::getDepthImage` which in at least one occasion caused an unexpected crash of the `rgbdSensor_nws_yarp`. Also, the calculation of the scalar coefficient (involving `math::pow`), used to cut the decimal figures from the depth data, has been moved outside the for loop that cycles through the whole image (https://github.com/robotology/gazebo-yarp-plugins/pull/623).
 - In `gazebo_yarp_controlboard` update the parameters in `icub_left_hand_mk4` regarding pinkie and thumb which are used to generate the look-up table to approximate the coupling laws. (https://github.com/robotology/gazebo-yarp-plugins/pull/624)

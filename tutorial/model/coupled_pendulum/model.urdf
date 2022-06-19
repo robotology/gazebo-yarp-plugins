@@ -86,7 +86,7 @@
         <yarpConfigurationFile>model://coupled_pendulum/conf/gazebo_controlboard.ini</yarpConfigurationFile>
         <initialConfiguration>0.0 0.0</initialConfiguration>
     </plugin>
-    <!-- Launch the other YARP devices, in this case a controlboardwrapper2 to expose the controlboard functionalities via YARP ports -->
+    <!-- Launch the other YARP devices, in this case a controlboard_nws_yarp to expose the controlboard functionalities via YARP ports -->
     <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
         <yarpRobotInterfaceConfigurationFile>model://coupled_pendulum/conf/coupled_pendulum_nws.xml</yarpRobotInterfaceConfigurationFile>
     </plugin>

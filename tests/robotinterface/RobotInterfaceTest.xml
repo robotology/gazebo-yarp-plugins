@@ -6,9 +6,9 @@
          Diffently from most uses of this XML files with the yarprobotinterface tool, in this case 
          the devices that are created by the yarprobotinterface can be "attached" also to device 
          that have not been created by the gazebo_yarp_robotinterface plugin, but YARP devices that have been 
-         created by other plugins, in this specific case a controlboardwrapper2 devices is attached to a 
+         created by other plugins, in this specific case a controlboard_nws_yarp devices is attached to a 
          YARP device created by the gazebo_yarp_controlboard plugin. -->
-    <device name="additional_controlboard_nws" type="controlboardwrapper2">
+    <device name="additional_controlboard_nws" type="controlboard_nws_yarp">
       <param name="period"> 10 </param>
       <param name="name"> /pendulumGazebo/openedByTheRobotInterface</param>
       <paramlist name="networks">

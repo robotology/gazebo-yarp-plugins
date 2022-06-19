@@ -96,7 +96,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
 
         // Add the gazebo_controlboard device driver to the factory.
         #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
-        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>("gazebo_controlboard", "controlboardwrapper2", "GazeboYarpControlBoardDriver"));
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>("gazebo_controlboard", "controlboard_nws_yarp", "GazeboYarpControlBoardDriver"));
         #else
         yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpControlBoardDriver>("gazebo_controlboard", "", "GazeboYarpControlBoardDriver"));
         #endif

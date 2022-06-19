@@ -67,7 +67,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpFakeControlBoard)
         GazeboYarpPlugins::Handler::getHandler()->setRobot(get_pointer(_parent));
 
         // Add the gazebo_controlboard device driver to the factory.
-        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpFakeControlBoardDriver>("gazebo_fakecontrolboard", "controlboardwrapper2", "GazeboYarpFakeControlBoardDriver"));
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::GazeboYarpFakeControlBoardDriver>("gazebo_fakecontrolboard", "controlboard_nws_yarp", "GazeboYarpFakeControlBoardDriver"));
 
         // Getting .ini configuration file parameters from sdf
         bool configuration_loaded = GazeboYarpPlugins::loadConfigModelPlugin(_parent, _sdf, m_pluginParameters);

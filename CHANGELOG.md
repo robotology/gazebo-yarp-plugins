@@ -6,7 +6,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ## [Unreleased]
 
 ### Added
-- The `gazebo_yarp_forcetorque` plugin now exposes also the `yarp::dev::ISixAxisForceTorqueSensors` interface, so it can be used with ` multipleanalogsensorsserver`, `multipleanalogsensorsremapper` and `multipleanalogsensorsclient` devices (https://github.com/robotology/gazebo-yarp-plugins/issues/384).
+- The `gazebo_yarp_forcetorque` plugin now exposes also the `yarp::dev::ISixAxisForceTorqueSensors` interface, so it can be used with ` multipleanalogsensorsserver`, `multipleanalogsensorsremapper` and `multipleanalogsensorsclient` devices (https://github.com/robotology/gazebo-yarp-plugins/issues/384, https://github.com/robotology/gazebo-yarp-plugins/pull/628).
 
 ## [4.4.0] - 2022-05-31
 

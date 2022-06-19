@@ -150,7 +150,7 @@ size_t GazeboYarpForceTorqueDriver::getNrOfSixAxisForceTorqueSensors() const
 
 yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorStatus(size_t sens_index) const
 {
-    if (sens_index > 1)
+    if (sens_index >= 1)
     {
         return MAS_UNKNOWN;
     }
@@ -160,7 +160,7 @@ yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorSt
 
 bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const
 {
-    if (sens_index > 1)
+    if (sens_index >= 1)
     {
         return false;
     }
@@ -171,7 +171,7 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName(size_t sens_in
 
 bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const
 {
-    if (sens_index > 1)
+    if (sens_index >= 1)
     {
         return false;
     }
@@ -182,7 +182,7 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName(size_t se
 
 bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
-    if (sens_index > 1)
+    if (sens_index >= 1)
     {
         return false;
     }

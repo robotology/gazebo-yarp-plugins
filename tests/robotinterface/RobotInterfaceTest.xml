@@ -9,7 +9,7 @@
          created by other plugins, in this specific case a controlBoard_nws_yarp devices is attached to a 
          YARP device created by the gazebo_yarp_controlboard plugin. -->
     <device name="additional_controlboard_nws" type="controlBoard_nws_yarp">
-      <param name="period"> 10 </param>
+      <param name="period"> 0.01 </param>
       <param name="name"> /pendulumGazebo/openedByTheRobotInterface</param>
       <paramlist name="networks">
         <elem name="FirstSetOfJoints">(  0  0  0  0 )</elem>

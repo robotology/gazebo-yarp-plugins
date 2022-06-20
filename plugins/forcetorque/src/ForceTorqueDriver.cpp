@@ -63,6 +63,9 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
 
+    m_sensorName = config.find("sensor_name").asString();
+    m_frameName = m_sensorName;
+
     m_parentSensor = dynamic_cast<gazebo::sensors::ForceTorqueSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
 
     if (!m_parentSensor)
@@ -138,6 +141,67 @@ int GazeboYarpForceTorqueDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
     return AS_OK;
 }
+
+// SIX AXIS FORCE TORQUE SENSORS
+size_t GazeboYarpForceTorqueDriver::getNrOfSixAxisForceTorqueSensors() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorStatus(size_t sens_index) const
+{
+    if (sens_index >= 1)
+    {
+        return MAS_UNKNOWN;
+    }
+
+    return MAS_OK;
+}
+
+bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    name = m_sensorName;
+    return true;
+}
+
+bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    frameName = m_frameName;
+    return true;
+}
+
+bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+   if (m_forceTorqueData.size() != YarpForceTorqueChannelsNumber) {
+        return false;
+   }
+
+   if (out.size() != YarpForceTorqueChannelsNumber) {
+       out.resize(YarpForceTorqueChannelsNumber);
+   }
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+    out = m_forceTorqueData;
+    timestamp = m_lastTimestamp.getTime();
+
+    return true;
+}
+
 
 //PRECISELY TIMED
 yarp::os::Stamp GazeboYarpForceTorqueDriver::getLastInputStamp()

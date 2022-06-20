@@ -106,6 +106,7 @@ void GazeboYarpForceTorque::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     //Open the driver
     //Force the device to be of type "gazebo_forcetorque" (it make sense? probably yes)
     driver_properties.put("device","gazebo_forcetorque");
+    driver_properties.put("sensor_name", _sensor->Name());
     if( !m_forceTorqueDriver.open(driver_properties) ) {
         yError()<<"GazeboYarpForceTorque Plugin failed: error in opening yarp driver";
         return;

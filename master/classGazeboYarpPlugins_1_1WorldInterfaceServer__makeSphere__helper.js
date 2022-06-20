@@ -1,14 +1,25 @@
 var classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper =
 [
+    [ "Command", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Command.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Command" ],
+    [ "Reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Reply.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Reply" ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#af7f39ea430d29d31af85f8c41b7948b0", null ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#af7f39ea430d29d31af85f8c41b7948b0", null ],
+    [ "WorldInterfaceServer_makeSphere_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ad4a33d2460640fdc524ae09468a2f6d7", null ],
+    [ "WorldInterfaceServer_makeSphere_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ad81ba59c2602b1db20b096beeae30b14", null ],
+    [ "WorldInterfaceServer_makeSphere_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ad4a33d2460640fdc524ae09468a2f6d7", null ],
     [ "WorldInterfaceServer_makeSphere_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ad81ba59c2602b1db20b096beeae30b14", null ],
     [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a468b637fc0568508bbc4d81fc2ffb9ec", null ],
     [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a87c6fca090be8ddd468c846ab0e7222e", null ],
-    [ "m_radius", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a1bf50eb0ca3b6bd01f837dcd186561f4", null ],
-    [ "m_pose", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a11e5c526a074f490eca6a847585ee74e", null ],
-    [ "m_color", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a6ff82ab97143823caf89e91b9e386da4", null ],
-    [ "m_frame_name", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a3e412e2581a22c3c7e347190b53f4ca5", null ],
-    [ "m_object_name", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a9b3b5869f6d2b09ff063110930475a6d", null ],
-    [ "m_gravity_enable", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ae065bf7c651de0464309eeecda68b701", null ],
-    [ "m_collision_enable", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#aa62f1f680b3c5044feeec4ab57bcb870", null ],
-    [ "s_return_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ae2695cb831c9fb5dc3d87f1c131458c9", null ]
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a6405eb0b30f04d2c0ff89927113d7ec6", null ],
+    [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a468b637fc0568508bbc4d81fc2ffb9ec", null ],
+    [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a87c6fca090be8ddd468c846ab0e7222e", null ],
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a6405eb0b30f04d2c0ff89927113d7ec6", null ],
+    [ "cmd", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a72224daa3c9f83757f5b225bc7cc1c28", null ],
+    [ "reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#abc866c37496f5f4b27969a7a06ec89eb", null ],
+    [ "s_tag", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a12886399df236e9c476693e8b9c3f4ea", null ],
+    [ "s_tag_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a9627c008ec37c2e01113302f49bb1f7e", null ],
+    [ "s_cmd_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#ac29e67f42f5ad4365a6e82e89c0ab6dc", null ],
+    [ "s_reply_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a657807c5b5f42d765d16429e81164844", null ],
+    [ "s_prototype", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#aa28e17c0c2ac2be681eaf4a223d922b3", null ],
+    [ "s_help", "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper.html#a7c6848e68cc5e1461c4650a5cdc2d7b3", null ]
 ];

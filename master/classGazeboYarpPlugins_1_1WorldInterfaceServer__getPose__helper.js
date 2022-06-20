@@ -1,9 +1,25 @@
 var classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper =
 [
+    [ "Command", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper_1_1Command.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper_1_1Command" ],
+    [ "Reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper_1_1Reply.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper_1_1Reply" ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#aa0909ffd7fa72d2e0ebba556422c591d", null ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#aa0909ffd7fa72d2e0ebba556422c591d", null ],
+    [ "WorldInterfaceServer_getPose_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#afd417385310fe91746bdf064c238df87", null ],
+    [ "WorldInterfaceServer_getPose_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a10635aea5ec7fd10d6507e7091190157", null ],
+    [ "WorldInterfaceServer_getPose_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#afd417385310fe91746bdf064c238df87", null ],
     [ "WorldInterfaceServer_getPose_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a10635aea5ec7fd10d6507e7091190157", null ],
     [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#aaee4b21affccafcee0dcb100e9968948", null ],
     [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#aa7e09ac0af684b9eddd68f24424db516", null ],
-    [ "m_id", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#ad75da093c89b7f6f549b49bee3a406d7", null ],
-    [ "m_frame_name", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a84233e47334d0f2f9b0ff083918dead2", null ],
-    [ "s_return_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a68568ea6e0772203367d3c96487445ce", null ]
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a1c41de28daffb1cca5b1b869bde1d74b", null ],
+    [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#aaee4b21affccafcee0dcb100e9968948", null ],
+    [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#aa7e09ac0af684b9eddd68f24424db516", null ],
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a1c41de28daffb1cca5b1b869bde1d74b", null ],
+    [ "cmd", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#af9de35971bf28a5c5e6a63bad1dec403", null ],
+    [ "reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a4c5b5707f96b933efd702d5ed3071a60", null ],
+    [ "s_tag", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#ae09e1e5caf303404ad7b8b3a685cb457", null ],
+    [ "s_tag_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#af28d0f050dabf1b4735e5244a87306cd", null ],
+    [ "s_cmd_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#ab942026480ed5909c555c93276ece39c", null ],
+    [ "s_reply_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a7dcb41595cff0a77d8b27bb020b4a33d", null ],
+    [ "s_prototype", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#ae2c4217c6e649ab0b7305d8da837ea9d", null ],
+    [ "s_help", "classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper.html#a873b06f3ed139f1565dc80f09583d271", null ]
 ];

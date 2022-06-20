@@ -10,6 +10,6 @@ var classGazeboYarpPlugins_1_1LinkAttacherServer =
     [ "enableGravity", "classGazeboYarpPlugins_1_1LinkAttacherServer.html#a30dcef4a8621df9f147d87ec9e33595b", null ],
     [ "attachUnscoped", "classGazeboYarpPlugins_1_1LinkAttacherServer.html#a788455d1909a32917ca1c8694a8f0f7d", null ],
     [ "detachUnscoped", "classGazeboYarpPlugins_1_1LinkAttacherServer.html#ae0caa64c46dde22e05e1df701950ce5e", null ],
-    [ "help", "classGazeboYarpPlugins_1_1LinkAttacherServer.html#a6689bcc77ab72ec6f87febaf8b2622bd", null ],
+    [ "help", "classGazeboYarpPlugins_1_1LinkAttacherServer.html#aeb53b7eb1ef5fb67f5299d85bd90527f", null ],
     [ "read", "classGazeboYarpPlugins_1_1LinkAttacherServer.html#a3aba8f0c732eca75ff4b065afb363286", null ]
 ];

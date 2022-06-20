@@ -1,4 +1,7 @@
 <map id="GazeboYarpPlugins::WorldInterfaceServer_rename_helper" name="GazeboYarpPlugins::WorldInterfaceServer_rename_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,164,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="17,5,153,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="533,21,692,77"/>
+<area shape="rect" id="node2" title=" " alt="" coords="279,5,415,32"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Command.html" title=" " alt="" coords="245,56,448,112"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
+<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Reply.html" title=" " alt="" coords="261,136,433,192"/>
 </map>

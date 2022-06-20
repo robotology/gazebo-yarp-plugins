@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['yarpworldpose_1699',['YarpWorldPose',['../worldproxy_8cpp.html#a54810070f1f52ab7702ac86240b171b5',1,'worldproxy.cpp']]]
+  ['unwrapped_0',['unwrapped',['../classGazeboYarpPlugins_1_1Color.html#a412e984832adfaa5f25ba63e4b1d8d81',1,'GazeboYarpPlugins::Color::unwrapped()'],['../classGazeboYarpPlugins_1_1Pose.html#a36bb538ce1a81a7fb9e8fb7de3183614',1,'GazeboYarpPlugins::Pose::unwrapped()'],['../classGazeboYarpPlugins_1_1Color.html#a412e984832adfaa5f25ba63e4b1d8d81',1,'GazeboYarpPlugins::Color::unwrapped()'],['../classGazeboYarpPlugins_1_1Pose.html#a36bb538ce1a81a7fb9e8fb7de3183614',1,'GazeboYarpPlugins::Pose::unwrapped()']]]
 ];

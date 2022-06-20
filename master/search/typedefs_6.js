@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['publisherptr_1697',['PublisherPtr',['../namespacegazebo_1_1transport.html#af91919d46ce9d0aabd672bcb6e025d83',1,'gazebo::transport']]]
+  ['nodeptr_0',['NodePtr',['../namespacegazebo_1_1transport.html#a1e99cf97e60f77b2b6b69c432da354d0',1,'gazebo::transport']]]
 ];

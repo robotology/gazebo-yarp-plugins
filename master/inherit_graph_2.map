@@ -1,12 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,231,108,257"/>
-<area shape="rect" id="node2" href="$classgazebo_1_1ApplyExternalWrench.html" title=" " alt="" coords="162,5,379,32"/>
-<area shape="rect" id="node3" href="$classgazebo_1_1ConfigurationOverride.html" title=" " alt="" coords="161,56,381,83"/>
-<area shape="rect" id="node4" href="$classgazebo_1_1GazeboYarpBaseState.html" title=" " alt="" coords="161,107,380,133"/>
-<area shape="rect" id="node5" href="$classgazebo_1_1GazeboYarpContactLoadCellArray.html" title=" " alt="" coords="169,158,372,199"/>
-<area shape="rect" id="node6" href="$classgazebo_1_1GazeboYarpControlBoard.html" title="Gazebo Plugin emulating the yarp controlBoard device in Gazebo." alt="" coords="171,223,371,265"/>
-<area shape="rect" id="node7" href="$classgazebo_1_1GazeboYarpFakeControlBoard.html" title="Gazebo Plugin emulating a fake yarp controlboard in Gazebo." alt="" coords="156,289,385,330"/>
-<area shape="rect" id="node8" href="$classgazebo_1_1GazeboYarpInertialMTBPart.html" title="Gazebo Plugin emulating the yarp inertial MTB sensors device in Gazebo." alt="" coords="171,354,370,395"/>
-<area shape="rect" id="node9" href="$classgazebo_1_1GazeboYarpMaisSensor.html" title="Gazebo Plugin emulating the yarp mais sensor (IAnalogSensor) in Gazebo." alt="" coords="157,420,385,447"/>
-<area shape="rect" id="node10" href="$classgazebo_1_1GazeboYarpModelPosePublisher.html" title="Gazebo Plugin that publishes the pose of the root link of a model with respect to the Gazebo world fr..." alt="" coords="159,471,383,513"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,157,32"/>
+<area shape="rect" id="node2" href="$classgazebo_1_1GazeboYarpDepthCamera.html" title="Gazebo Plugin reading from the Gazebo DepthCamera plugin, simulating the robot´s eyes view." alt="" coords="205,5,448,32"/>
 </map>

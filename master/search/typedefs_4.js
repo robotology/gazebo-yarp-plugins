@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['modelptr_1695',['ModelPtr',['../namespacegazebo_1_1Physics.html#abdca423d7f22a5c0a41e4b75f18e9b79',1,'gazebo::Physics']]]
+  ['jointptr_0',['JointPtr',['../namespacegazebo_1_1physics.html#a1500a58c600d34ecf9a209cd97b2cba8',1,'gazebo::physics']]]
 ];

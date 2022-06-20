@@ -22,6 +22,6 @@ var classGazeboYarpPlugins_1_1ClockServer =
     [ "getStepSize", "classGazeboYarpPlugins_1_1ClockServer.html#a505000e2a4b7b1f846cfc7df9df11fbf", null ],
     [ "resetSimulation", "classGazeboYarpPlugins_1_1ClockServer.html#aed3a94a4da0ebb8bc82000a43453320a", null ],
     [ "resetSimulationState", "classGazeboYarpPlugins_1_1ClockServer.html#a39856960ef0468c343845631e6bdb2e9", null ],
-    [ "help", "classGazeboYarpPlugins_1_1ClockServer.html#a0b335b4cabcb0f463eba9032f964e39a", null ],
+    [ "help", "classGazeboYarpPlugins_1_1ClockServer.html#a7525fd3dd41a1fd4dc701b726031439e", null ],
     [ "read", "classGazeboYarpPlugins_1_1ClockServer.html#a363dde0d67d29bb2a4213f134944984c", null ]
 ];

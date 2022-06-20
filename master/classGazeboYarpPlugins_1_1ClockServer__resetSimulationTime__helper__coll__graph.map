@@ -1,4 +1,7 @@
 <map id="GazeboYarpPlugins::ClockServer_resetSimulationTime_helper" name="GazeboYarpPlugins::ClockServer_resetSimulationTime_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,216,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="43,5,179,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="541,21,752,77"/>
+<area shape="rect" id="node2" title=" " alt="" coords="283,5,419,32"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulationTime__helper_1_1Command.html" title=" " alt="" coords="245,56,456,112"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
+<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulationTime__helper_1_1Reply.html" title=" " alt="" coords="245,136,456,192"/>
 </map>

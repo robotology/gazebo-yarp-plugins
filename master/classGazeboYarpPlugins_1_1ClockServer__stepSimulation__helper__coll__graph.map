@@ -1,4 +1,7 @@
 <map id="GazeboYarpPlugins::ClockServer_stepSimulation_helper" name="GazeboYarpPlugins::ClockServer_stepSimulation_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,211,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="40,5,176,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="536,21,741,77"/>
+<area shape="rect" id="node2" title=" " alt="" coords="280,5,416,32"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1ClockServer__stepSimulation__helper_1_1Command.html" title=" " alt="" coords="245,56,451,112"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
+<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1ClockServer__stepSimulation__helper_1_1Reply.html" title=" " alt="" coords="245,136,451,192"/>
 </map>

@@ -1,9 +1,25 @@
 var classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper =
 [
+    [ "Command", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Command.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Command" ],
+    [ "Reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Reply.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Reply" ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a1fd930c85edf3e03d08bb74639431641", null ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a1fd930c85edf3e03d08bb74639431641", null ],
+    [ "WorldInterfaceServer_changeColor_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#ab2d132211b19762ecf218db743dc2264", null ],
+    [ "WorldInterfaceServer_changeColor_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#aebadc90850c981f55f0b8372453e2d31", null ],
+    [ "WorldInterfaceServer_changeColor_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#ab2d132211b19762ecf218db743dc2264", null ],
     [ "WorldInterfaceServer_changeColor_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#aebadc90850c981f55f0b8372453e2d31", null ],
     [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a7c12de2db654bb9c5d1f404d3dba4491", null ],
     [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a39d3a2963f5efb19983c0c68e120124f", null ],
-    [ "m_id", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a66469f0b9979939b212665156a019e21", null ],
-    [ "m_color", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a7212678c84936364df10c46d7709ae36", null ],
-    [ "s_return_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a4388b3e75de84246534496fcbdf341f4", null ]
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#acf4536608f571aa03d869221921b79f3", null ],
+    [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a7c12de2db654bb9c5d1f404d3dba4491", null ],
+    [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a39d3a2963f5efb19983c0c68e120124f", null ],
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#acf4536608f571aa03d869221921b79f3", null ],
+    [ "cmd", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a1ad112557d5c690f019ffe4ff2dc114e", null ],
+    [ "reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a625ff27cd75135936ae248348ebbf033", null ],
+    [ "s_tag", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a16ee20af89de04e7ceebb0ebe4c4206e", null ],
+    [ "s_tag_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#a149f2d3f16e30c9ed460306cdf01836b", null ],
+    [ "s_cmd_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#aad66e337471629a07ee4c28d102648fe", null ],
+    [ "s_reply_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#ac4bd0ef73c48d487d5b667f31faa4e2c", null ],
+    [ "s_prototype", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#ade07bd76160c44ed251506a936a62d23", null ],
+    [ "s_help", "classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper.html#adff2b5e12c2e099b975ba2681b361118", null ]
 ];

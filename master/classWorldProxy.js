@@ -30,7 +30,7 @@ var classWorldProxy =
     [ "HELPER_getLink", "classWorldProxy.html#abc2151bd82e950c371bc430665382bfa", null ],
     [ "HELPER_hasEnding", "classWorldProxy.html#aa590fc905f4cc3010695514b8af3d5c5", null ],
     [ "help", "classWorldProxy.html#ab503f5d255670459c7ac397681363f54", null ],
-    [ "help", "classWorldProxy.html#a6ec171b682955853d5957c966858ad6d", null ],
+    [ "help", "classWorldProxy.html#a71a35e35ea3bca1e7141f7028b7ecddc", null ],
     [ "read", "classWorldProxy.html#ab6d5b31c3a45ed6e474650bfd686adbc", null ],
     [ "read", "classWorldProxy.html#ab6d5b31c3a45ed6e474650bfd686adbc", null ]
 ];

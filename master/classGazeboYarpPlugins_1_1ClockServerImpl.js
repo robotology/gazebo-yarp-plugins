@@ -13,7 +13,7 @@ var classGazeboYarpPlugins_1_1ClockServerImpl =
     [ "stepSimulation", "classGazeboYarpPlugins_1_1ClockServerImpl.html#ae73961f8a30c5a8c57e1b3c213c2b360", null ],
     [ "stepSimulationAndWait", "classGazeboYarpPlugins_1_1ClockServerImpl.html#a20dd88a6d7bbcb8fbb413642d6c5e8fa", null ],
     [ "help", "classGazeboYarpPlugins_1_1ClockServerImpl.html#a7d9a6032d82c36cff0effe3481980742", null ],
-    [ "help", "classGazeboYarpPlugins_1_1ClockServerImpl.html#a0b335b4cabcb0f463eba9032f964e39a", null ],
+    [ "help", "classGazeboYarpPlugins_1_1ClockServerImpl.html#a7525fd3dd41a1fd4dc701b726031439e", null ],
     [ "read", "classGazeboYarpPlugins_1_1ClockServerImpl.html#a363dde0d67d29bb2a4213f134944984c", null ],
     [ "read", "classGazeboYarpPlugins_1_1ClockServerImpl.html#a363dde0d67d29bb2a4213f134944984c", null ]
 ];

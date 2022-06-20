@@ -1,0 +1,6 @@
+<map id="GazeboYarpPlugins::WorldInterfaceServer_makeFrame_helper::Command" name="GazeboYarpPlugins::WorldInterfaceServer_makeFrame_helper::Command">
+<area shape="rect" id="node1" title=" " alt="" coords="5,185,235,241"/>
+<area shape="rect" id="node2" title=" " alt="" coords="138,5,329,32"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1Pose.html" title=" " alt="" coords="141,89,325,115"/>
+<area shape="rect" id="node4" href="$classGazeboYarpPlugins_1_1Color.html" title=" " alt="" coords="350,81,503,123"/>
+</map>

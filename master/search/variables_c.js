@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['r_1669',['r',['../classGazeboYarpPlugins_1_1Color.html#af94af1ce056ff506ac8bbcf8343de5f3',1,'GazeboYarpPlugins::Color']]],
-  ['robotname_1670',['robotName',['../classgazebo_1_1ApplyExternalWrench.html#af76896d647641d91d537922287b258af',1,'gazebo::ApplyExternalWrench']]],
-  ['robotpositiontolerance_1671',['RobotPositionTolerance',['../ControlBoardDriver_8h.html#a1b05590730395db6236617126d6175f2',1,'RobotPositionTolerance():&#160;ControlBoardDriver.h'],['../FakeControlBoardDriver_8h.html#a1b05590730395db6236617126d6175f2',1,'RobotPositionTolerance():&#160;FakeControlBoardDriver.h']]],
-  ['roll_1672',['roll',['../classGazeboYarpPlugins_1_1Pose.html#a50cf3c3423e7c01e37fe620f4181712c',1,'GazeboYarpPlugins::Pose']]],
-  ['rpystartidx_1673',['rpyStartIdx',['../IMUDriver_8cpp.html#af94baf57ccd74d063f4c485072ba3b9a',1,'IMUDriver.cpp']]]
+  ['new_5fname_0',['new_name',['../classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Command.html#a6fd7ee0ed238a307ac61640a39ea68a2',1,'GazeboYarpPlugins::WorldInterfaceServer_rename_helper::Command']]],
+  ['numberofsteps_1',['numberOfSteps',['../classGazeboYarpPlugins_1_1ClockServer__stepSimulation__helper_1_1Command.html#aa504d9d8c7e3a954f6dff738f144cfcd',1,'GazeboYarpPlugins::ClockServer_stepSimulation_helper::Command::numberOfSteps()'],['../classGazeboYarpPlugins_1_1ClockServer__stepSimulationAndWait__helper_1_1Command.html#a9861dcd6e98f63fc25643581e414c2bd',1,'GazeboYarpPlugins::ClockServer_stepSimulationAndWait_helper::Command::numberOfSteps()']]]
 ];

@@ -3,7 +3,6 @@ var namespaceyarp_1_1dev =
     [ "GazeboYarpBaseStateDriver", "classyarp_1_1dev_1_1GazeboYarpBaseStateDriver.html", "classyarp_1_1dev_1_1GazeboYarpBaseStateDriver" ],
     [ "GazeboYarpCameraDriver", "classyarp_1_1dev_1_1GazeboYarpCameraDriver.html", "classyarp_1_1dev_1_1GazeboYarpCameraDriver" ],
     [ "GazeboYarpContactLoadCellArrayDriver", "classyarp_1_1dev_1_1GazeboYarpContactLoadCellArrayDriver.html", "classyarp_1_1dev_1_1GazeboYarpContactLoadCellArrayDriver" ],
-    [ "PidControlTypeEnumHashFunction", "structyarp_1_1dev_1_1PidControlTypeEnumHashFunction.html", "structyarp_1_1dev_1_1PidControlTypeEnumHashFunction" ],
     [ "GazeboYarpControlBoardDriver", "classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html", "classyarp_1_1dev_1_1GazeboYarpControlBoardDriver" ],
     [ "GazeboYarpDepthCameraDriver", "classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html", "classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver" ],
     [ "GazeboYarpFakeControlBoardDriver", "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html", "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver" ],
@@ -13,6 +12,7 @@ var namespaceyarp_1_1dev =
     [ "GazeboYarpLaserSensorDriver", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html", "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver" ],
     [ "GazeboYarpMaisSensorDriver", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver" ],
     [ "GazeboYarpMultiCameraDriver", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver.html", "classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver" ],
+    [ "PidControlTypeEnumHashFunction", "structyarp_1_1dev_1_1PidControlTypeEnumHashFunction.html", "structyarp_1_1dev_1_1PidControlTypeEnumHashFunction" ],
     [ "CouplingType", "namespaceyarp_1_1dev.html#af38dbcff8a590ac1cf5694b1aaeb498a", [
       [ "COUPLING_NONE", "namespaceyarp_1_1dev.html#af38dbcff8a590ac1cf5694b1aaeb498aa37c1ae15c41b0fdc609be19579fb8d62", null ]
     ] ],

@@ -1,6 +1,8 @@
 <map id="GazeboYarpPlugins::WorldInterfaceServer_setPose_helper" name="GazeboYarpPlugins::WorldInterfaceServer_setPose_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="50,171,209,227"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,81,141,108"/>
-<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1Pose.html" title=" " alt="" coords="165,81,349,108"/>
-<area shape="rect" id="node4" title=" " alt="" coords="162,5,353,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="797,21,956,77"/>
+<area shape="rect" id="node2" title=" " alt="" coords="547,5,683,32"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Command.html" title=" " alt="" coords="513,56,716,112"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
+<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1Pose.html" title=" " alt="" coords="245,112,429,139"/>
+<area shape="rect" id="node6" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Reply.html" title=" " alt="" coords="251,163,424,219"/>
 </map>

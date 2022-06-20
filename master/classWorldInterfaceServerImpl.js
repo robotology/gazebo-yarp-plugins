@@ -21,7 +21,7 @@ var classWorldInterfaceServerImpl =
     [ "rename", "classWorldInterfaceServerImpl.html#a845480cced97d43b5640e25cbdfb8e50", null ],
     [ "attachWorldProxy", "classWorldInterfaceServerImpl.html#af35f1ac2f368c3bdb0776d07f8c6b2b3", null ],
     [ "help", "classWorldInterfaceServerImpl.html#ab503f5d255670459c7ac397681363f54", null ],
-    [ "help", "classWorldInterfaceServerImpl.html#a6ec171b682955853d5957c966858ad6d", null ],
+    [ "help", "classWorldInterfaceServerImpl.html#a71a35e35ea3bca1e7141f7028b7ecddc", null ],
     [ "read", "classWorldInterfaceServerImpl.html#ab6d5b31c3a45ed6e474650bfd686adbc", null ],
     [ "read", "classWorldInterfaceServerImpl.html#ab6d5b31c3a45ed6e474650bfd686adbc", null ]
 ];

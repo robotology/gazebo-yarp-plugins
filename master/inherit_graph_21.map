@@ -1,44 +1,63 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="49,291,224,318"/>
-<area shape="rect" id="node2" href="$classyarp_1_1dev_1_1GazeboYarpBaseStateDriver.html" title="YARP device driver to give the gazebo state information of a desired base link of the robot The state..." alt="" coords="333,332,531,373"/>
-<area shape="rect" id="node3" href="$classyarp_1_1dev_1_1GazeboYarpCameraDriver.html" title=" " alt="" coords="323,71,541,112"/>
-<area shape="rect" id="node4" href="$classyarp_1_1dev_1_1GazeboYarpContactLoadCellArrayDriver.html" title="YARP Device Driver for an array of contact load cells giving 1&#45;axis force at different locations." alt="" coords="324,136,540,177"/>
-<area shape="rect" id="node5" href="$classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html" title=" " alt="" coords="325,1096,539,1137"/>
-<area shape="rect" id="node6" href="$classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html" title=" " alt="" coords="329,543,535,584"/>
-<area shape="rect" id="node7" href="$classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html" title=" " alt="" coords="335,1161,529,1203"/>
-<area shape="rect" id="node8" href="$classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html" title="YARP Force Torque Driver for Gazebo." alt="" coords="331,201,533,243"/>
-<area shape="rect" id="node9" href="$classyarp_1_1dev_1_1GazeboYarpIMUDriver.html" title=" " alt="" coords="316,463,548,490"/>
-<area shape="rect" id="node10" href="$classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver.html" title=" " alt="" coords="326,267,538,308"/>
-<area shape="rect" id="node11" href="$classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html" title=" " alt="" coords="331,640,533,681"/>
-<area shape="rect" id="node12" href="$classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html" title=" " alt="" coords="333,397,531,439"/>
-<area shape="rect" id="node13" href="$classyarp_1_1dev_1_1GazeboYarpMultiCameraDriver.html" title=" " alt="" coords="333,5,531,47"/>
-<area shape="rect" id="node14" title=" " alt="" coords="69,713,205,739"/>
-<area shape="rect" id="node15" title=" " alt="" coords="71,814,203,841"/>
-<area shape="rect" id="node16" title=" " alt="" coords="45,241,228,267"/>
-<area shape="rect" id="node17" title=" " alt="" coords="97,865,176,891"/>
-<area shape="rect" id="node18" title=" " alt="" coords="61,915,213,942"/>
-<area shape="rect" id="node19" title=" " alt="" coords="80,966,193,993"/>
-<area shape="rect" id="node20" title=" " alt="" coords="82,1017,191,1043"/>
-<area shape="rect" id="node21" title=" " alt="" coords="76,1067,197,1094"/>
-<area shape="rect" id="node22" title=" " alt="" coords="73,1118,200,1145"/>
-<area shape="rect" id="node23" title=" " alt="" coords="43,67,230,108"/>
-<area shape="rect" id="node24" title=" " alt="" coords="43,342,231,369"/>
-<area shape="rect" id="node25" title=" " alt="" coords="64,1169,209,1195"/>
-<area shape="rect" id="node26" title=" " alt="" coords="71,1219,203,1246"/>
-<area shape="rect" id="node27" title=" " alt="" coords="27,393,246,419"/>
-<area shape="rect" id="node28" title=" " alt="" coords="90,1270,183,1297"/>
-<area shape="rect" id="node29" title=" " alt="" coords="74,1321,199,1347"/>
-<area shape="rect" id="node30" title=" " alt="" coords="78,1371,195,1398"/>
-<area shape="rect" id="node31" title=" " alt="" coords="39,190,234,217"/>
-<area shape="rect" id="node32" title=" " alt="" coords="83,1422,190,1449"/>
-<area shape="rect" id="node33" title=" " alt="" coords="68,1473,205,1499"/>
-<area shape="rect" id="node34" title=" " alt="" coords="49,611,225,638"/>
-<area shape="rect" id="node35" title=" " alt="" coords="33,13,240,39"/>
-<area shape="rect" id="node36" title=" " alt="" coords="19,443,254,470"/>
-<area shape="rect" id="node37" title=" " alt="" coords="37,495,236,536"/>
-<area shape="rect" id="node38" title=" " alt="" coords="5,561,268,587"/>
-<area shape="rect" id="node39" title=" " alt="" coords="79,1523,195,1550"/>
-<area shape="rect" id="node40" title=" " alt="" coords="74,1574,199,1601"/>
-<area shape="rect" id="node41" title=" " alt="" coords="57,763,216,790"/>
-<area shape="rect" id="node42" title=" " alt="" coords="28,662,245,689"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,2353,196,2380"/>
+<area shape="rect" id="node2" href="$classGazeboYarpPlugins_1_1ClockServer__continueSimulation__helper_1_1Command.html" title=" " alt="" coords="258,5,491,61"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1ClockServer__continueSimulation__helper_1_1Reply.html" title=" " alt="" coords="258,85,491,141"/>
+<area shape="rect" id="node4" href="$classGazeboYarpPlugins_1_1ClockServer__getSimulationTime__helper_1_1Command.html" title=" " alt="" coords="259,165,490,221"/>
+<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1ClockServer__getSimulationTime__helper_1_1Reply.html" title=" " alt="" coords="259,245,490,301"/>
+<area shape="rect" id="node6" href="$classGazeboYarpPlugins_1_1ClockServer__getStepSize__helper_1_1Command.html" title=" " alt="" coords="283,325,467,381"/>
+<area shape="rect" id="node7" href="$classGazeboYarpPlugins_1_1ClockServer__getStepSize__helper_1_1Reply.html" title=" " alt="" coords="283,405,467,461"/>
+<area shape="rect" id="node8" href="$classGazeboYarpPlugins_1_1ClockServer__pauseSimulation__helper_1_1Command.html" title=" " alt="" coords="267,485,483,541"/>
+<area shape="rect" id="node9" href="$classGazeboYarpPlugins_1_1ClockServer__pauseSimulation__helper_1_1Reply.html" title=" " alt="" coords="267,565,483,621"/>
+<area shape="rect" id="node10" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulationState__helper_1_1Command.html" title=" " alt="" coords="269,645,480,701"/>
+<area shape="rect" id="node11" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulationState__helper_1_1Reply.html" title=" " alt="" coords="269,725,480,781"/>
+<area shape="rect" id="node12" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulationTime__helper_1_1Command.html" title=" " alt="" coords="269,805,480,861"/>
+<area shape="rect" id="node13" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulationTime__helper_1_1Reply.html" title=" " alt="" coords="269,885,480,941"/>
+<area shape="rect" id="node14" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulation__helper_1_1Command.html" title=" " alt="" coords="269,965,480,1021"/>
+<area shape="rect" id="node15" href="$classGazeboYarpPlugins_1_1ClockServer__resetSimulation__helper_1_1Reply.html" title=" " alt="" coords="269,1045,480,1101"/>
+<area shape="rect" id="node16" href="$classGazeboYarpPlugins_1_1ClockServer__stepSimulationAndWait__helper_1_1Command.html" title=" " alt="" coords="272,1125,477,1181"/>
+<area shape="rect" id="node17" href="$classGazeboYarpPlugins_1_1ClockServer__stepSimulationAndWait__helper_1_1Reply.html" title=" " alt="" coords="272,1205,477,1261"/>
+<area shape="rect" id="node18" href="$classGazeboYarpPlugins_1_1ClockServer__stepSimulation__helper_1_1Command.html" title=" " alt="" coords="272,1285,477,1341"/>
+<area shape="rect" id="node19" href="$classGazeboYarpPlugins_1_1ClockServer__stepSimulation__helper_1_1Reply.html" title=" " alt="" coords="272,1365,477,1421"/>
+<area shape="rect" id="node20" href="$classGazeboYarpPlugins_1_1Color.html" title=" " alt="" coords="298,1446,451,1487"/>
+<area shape="rect" id="node21" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__attachUnscoped__helper_1_1Command.html" title=" " alt="" coords="245,1512,504,1568"/>
+<area shape="rect" id="node22" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__attachUnscoped__helper_1_1Reply.html" title=" " alt="" coords="245,1592,504,1648"/>
+<area shape="rect" id="node23" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__detachUnscoped__helper_1_1Command.html" title=" " alt="" coords="244,1672,505,1728"/>
+<area shape="rect" id="node24" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__detachUnscoped__helper_1_1Reply.html" title=" " alt="" coords="244,1752,505,1808"/>
+<area shape="rect" id="node25" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__enableGravity__helper_1_1Command.html" title=" " alt="" coords="252,1832,497,1888"/>
+<area shape="rect" id="node26" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__enableGravity__helper_1_1Reply.html" title=" " alt="" coords="252,1912,497,1968"/>
+<area shape="rect" id="node27" href="$classGazeboYarpPlugins_1_1Pose.html" title=" " alt="" coords="283,1992,467,2019"/>
+<area shape="rect" id="node28" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__attach__helper_1_1Command.html" title=" " alt="" coords="278,2043,471,2099"/>
+<area shape="rect" id="node29" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__attach__helper_1_1Reply.html" title=" " alt="" coords="293,2123,456,2179"/>
+<area shape="rect" id="node30" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Command.html" title=" " alt="" coords="291,2203,458,2274"/>
+<area shape="rect" id="node31" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Reply.html" title=" " alt="" coords="273,2299,476,2355"/>
+<area shape="rect" id="node32" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__deleteAll__helper_1_1Command.html" title=" " alt="" coords="269,2379,480,2435"/>
+<area shape="rect" id="node33" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__deleteAll__helper_1_1Reply.html" title=" " alt="" coords="285,2459,465,2515"/>
+<area shape="rect" id="node34" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__deleteObject__helper_1_1Command.html" title=" " alt="" coords="295,2539,455,2610"/>
+<area shape="rect" id="node35" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__deleteObject__helper_1_1Reply.html" title=" " alt="" coords="295,2634,455,2705"/>
+<area shape="rect" id="node36" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__detach__helper_1_1Command.html" title=" " alt="" coords="277,2729,473,2785"/>
+<area shape="rect" id="node37" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__detach__helper_1_1Reply.html" title=" " alt="" coords="291,2809,458,2865"/>
+<area shape="rect" id="node38" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__enableCollision__helper_1_1Command.html" title=" " alt="" coords="286,2890,463,2961"/>
+<area shape="rect" id="node39" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__enableCollision__helper_1_1Reply.html" title=" " alt="" coords="286,2985,463,3055"/>
+<area shape="rect" id="node40" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__enableGravity__helper_1_1Command.html" title=" " alt="" coords="290,3079,459,3150"/>
+<area shape="rect" id="node41" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__enableGravity__helper_1_1Reply.html" title=" " alt="" coords="290,3174,459,3245"/>
+<area shape="rect" id="node42" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__getList__helper_1_1Command.html" title=" " alt="" coords="277,3269,473,3325"/>
+<area shape="rect" id="node43" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__getList__helper_1_1Reply.html" title=" " alt="" coords="291,3349,458,3405"/>
+<area shape="rect" id="node44" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper_1_1Command.html" title=" " alt="" coords="273,3429,477,3485"/>
+<area shape="rect" id="node45" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__getPose__helper_1_1Reply.html" title=" " alt="" coords="287,3509,462,3565"/>
+<area shape="rect" id="node46" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__loadModelFromFileWithPose__helper_1_1Command.html" title=" " alt="" coords="267,3590,482,3661"/>
+<area shape="rect" id="node47" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__loadModelFromFileWithPose__helper_1_1Reply.html" title=" " alt="" coords="267,3685,482,3755"/>
+<area shape="rect" id="node48" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__loadModelFromFile__helper_1_1Command.html" title=" " alt="" coords="274,3779,475,3850"/>
+<area shape="rect" id="node49" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__loadModelFromFile__helper_1_1Reply.html" title=" " alt="" coords="274,3874,475,3945"/>
+<area shape="rect" id="node50" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper_1_1Command.html" title=" " alt="" coords="268,3969,481,4025"/>
+<area shape="rect" id="node51" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeBox__helper_1_1Reply.html" title=" " alt="" coords="283,4049,466,4105"/>
+<area shape="rect" id="node52" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeCylinder__helper_1_1Command.html" title=" " alt="" coords="291,4130,458,4201"/>
+<area shape="rect" id="node53" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeCylinder__helper_1_1Reply.html" title=" " alt="" coords="291,4225,458,4295"/>
+<area shape="rect" id="node54" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeFrame__helper_1_1Command.html" title=" " alt="" coords="260,4320,489,4376"/>
+<area shape="rect" id="node55" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeFrame__helper_1_1Reply.html" title=" " alt="" coords="275,4400,474,4456"/>
+<area shape="rect" id="node56" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Command.html" title=" " alt="" coords="258,4480,491,4536"/>
+<area shape="rect" id="node57" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Reply.html" title=" " alt="" coords="273,4560,476,4616"/>
+<area shape="rect" id="node58" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Command.html" title=" " alt="" coords="273,4640,476,4696"/>
+<area shape="rect" id="node59" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Reply.html" title=" " alt="" coords="289,4720,461,4776"/>
+<area shape="rect" id="node60" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Command.html" title=" " alt="" coords="273,4800,476,4856"/>
+<area shape="rect" id="node61" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Reply.html" title=" " alt="" coords="288,4880,461,4936"/>
 </map>

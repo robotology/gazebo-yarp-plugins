@@ -1,4 +1,7 @@
 <map id="GazeboYarpPlugins::ClockServer_getStepSize_helper" name="GazeboYarpPlugins::ClockServer_getStepSize_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,189,136"/>
-<area shape="rect" id="node2" title=" " alt="" coords="29,5,165,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="515,21,699,77"/>
+<area shape="rect" id="node2" title=" " alt="" coords="269,5,405,32"/>
+<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1ClockServer__getStepSize__helper_1_1Command.html" title=" " alt="" coords="245,56,429,112"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
+<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1ClockServer__getStepSize__helper_1_1Reply.html" title=" " alt="" coords="245,136,429,192"/>
 </map>

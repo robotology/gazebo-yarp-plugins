@@ -1,11 +1,10 @@
 var classGazeboYarpPlugins_1_1Pose =
 [
-    [ "Editor", "classGazeboYarpPlugins_1_1Pose_1_1Editor.html", "classGazeboYarpPlugins_1_1Pose_1_1Editor" ],
     [ "unwrapped", "classGazeboYarpPlugins_1_1Pose.html#a36bb538ce1a81a7fb9e8fb7de3183614", null ],
     [ "unwrapped", "classGazeboYarpPlugins_1_1Pose.html#a36bb538ce1a81a7fb9e8fb7de3183614", null ],
-    [ "Pose", "classGazeboYarpPlugins_1_1Pose.html#a1839114aa388097c6fd2ea8c37c77872", null ],
+    [ "Pose", "classGazeboYarpPlugins_1_1Pose.html#a5b7d22670b2c3f9e2b00cd1451421a52", null ],
     [ "Pose", "classGazeboYarpPlugins_1_1Pose.html#abf36a7fcd4b1129fe525cf97d8077a4b", null ],
-    [ "Pose", "classGazeboYarpPlugins_1_1Pose.html#a1839114aa388097c6fd2ea8c37c77872", null ],
+    [ "Pose", "classGazeboYarpPlugins_1_1Pose.html#a5b7d22670b2c3f9e2b00cd1451421a52", null ],
     [ "Pose", "classGazeboYarpPlugins_1_1Pose.html#abf36a7fcd4b1129fe525cf97d8077a4b", null ],
     [ "read", "classGazeboYarpPlugins_1_1Pose.html#a4cf9e78b03e2d7bc1d089cabbbcb806f", null ],
     [ "read", "classGazeboYarpPlugins_1_1Pose.html#ad2bc145bd7748e4b2c742e1d3ea13efc", null ],

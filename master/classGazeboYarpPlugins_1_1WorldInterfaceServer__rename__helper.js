@@ -1,9 +1,25 @@
 var classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper =
 [
+    [ "Command", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Command.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Command" ],
+    [ "Reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Reply.html", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper_1_1Reply" ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a3fdc2acddd60450ec056ba57209b54df", null ],
+    [ "funcptr_t", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a3fdc2acddd60450ec056ba57209b54df", null ],
+    [ "WorldInterfaceServer_rename_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a6341624a7336aafed4b111110a37c057", null ],
+    [ "WorldInterfaceServer_rename_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a1171eef32f77df32cdea35ed35b9b7bb", null ],
+    [ "WorldInterfaceServer_rename_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a6341624a7336aafed4b111110a37c057", null ],
     [ "WorldInterfaceServer_rename_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a1171eef32f77df32cdea35ed35b9b7bb", null ],
     [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a35de646338b6ab0fa8e188fc44c9ccec", null ],
     [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a272f99f82a68bbde992f5f28ce859313", null ],
-    [ "m_old_name", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a6a30c1f03da65136dd39d2edaef52b79", null ],
-    [ "m_new_name", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a060598e8a42ecd9f4fb2e4f36cb8e9c0", null ],
-    [ "s_return_helper", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a6d4a4de6189c11265d56ad5babf95223", null ]
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#afb4ebb692e62f0fae9370e6451bb839a", null ],
+    [ "write", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a35de646338b6ab0fa8e188fc44c9ccec", null ],
+    [ "read", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a272f99f82a68bbde992f5f28ce859313", null ],
+    [ "call", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#afb4ebb692e62f0fae9370e6451bb839a", null ],
+    [ "cmd", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#aa125582f281886b2b555978ddcf0f978", null ],
+    [ "reply", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#aad0235a397065411de5dd61799699ebd", null ],
+    [ "s_tag", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#aaf8b208e0a3d196cceca3af93f0ee678", null ],
+    [ "s_tag_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a64b198240a69d4c85249796e2f7cc368", null ],
+    [ "s_cmd_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a6a23504f02ad21ee3cfcbe9304776166", null ],
+    [ "s_reply_len", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#a5b641889ff7a1934a94df95d4c2587f6", null ],
+    [ "s_prototype", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#ac449f60b7dcbbc881d672bbb37fd5bdf", null ],
+    [ "s_help", "classGazeboYarpPlugins_1_1WorldInterfaceServer__rename__helper.html#ac40a1581799244d46a848b79536c1d31", null ]
 ];

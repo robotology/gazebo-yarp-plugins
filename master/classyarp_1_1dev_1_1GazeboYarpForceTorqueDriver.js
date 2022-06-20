@@ -12,5 +12,10 @@ var classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver =
     [ "calibrateSensor", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#a98d36522f70c7878c78b6f3da805df46", null ],
     [ "calibrateSensor", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#aa2bea9f0f4cdbf9082f412094b9f770c", null ],
     [ "calibrateChannel", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ae398917ce5aad2ac269080b2bbbc4919", null ],
+    [ "getNrOfSixAxisForceTorqueSensors", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#a9e1662250865c54821c234fc7c6c98bc", null ],
+    [ "getSixAxisForceTorqueSensorStatus", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ac72320acbd731713ea8f26246166c325", null ],
+    [ "getSixAxisForceTorqueSensorName", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#aaee1743c2b23350ab6c60b060bb40ef3", null ],
+    [ "getSixAxisForceTorqueSensorFrameName", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ad1d722418f1e6aaa9aaa229a874f51b8", null ],
+    [ "getSixAxisForceTorqueSensorMeasure", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ac09ba7c61831d8d48beefeaa3c4ce967", null ],
     [ "getLastInputStamp", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#af6dd40af97c835f73d0abd4fd4382555", null ]
 ];

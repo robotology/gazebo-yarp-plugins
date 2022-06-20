@@ -104,13 +104,13 @@ $(document).ready(function(){initNavTree('classyarp_1_1dev_1_1GazeboYarpForceTor
 <div class="dynheader">
 Inheritance diagram for yarp::dev::GazeboYarpForceTorqueDriver:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver__inherit__graph.svg" width="612" height="127"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver__inherit__graph.svg" width="455" height="206"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for yarp::dev::GazeboYarpForceTorqueDriver:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver__coll__graph.svg" width="612" height="127"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver__coll__graph.svg" width="455" height="206"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -142,6 +142,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa2bea9f0f4cdbf9082f412094b9f770c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae398917ce5aad2ac269080b2bbbc4919"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ae398917ce5aad2ac269080b2bbbc4919">calibrateChannel</a> (int channel)</td></tr>
 <tr class="separator:ae398917ce5aad2ac269080b2bbbc4919"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e1662250865c54821c234fc7c6c98bc"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#a9e1662250865c54821c234fc7c6c98bc">getNrOfSixAxisForceTorqueSensors</a> () const</td></tr>
+<tr class="separator:a9e1662250865c54821c234fc7c6c98bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac72320acbd731713ea8f26246166c325"><td class="memItemLeft" align="right" valign="top">virtual yarp::dev::MAS_status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ac72320acbd731713ea8f26246166c325">getSixAxisForceTorqueSensorStatus</a> (size_t sens_index) const</td></tr>
+<tr class="separator:ac72320acbd731713ea8f26246166c325"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaee1743c2b23350ab6c60b060bb40ef3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#aaee1743c2b23350ab6c60b060bb40ef3">getSixAxisForceTorqueSensorName</a> (size_t sens_index, std::string &amp;name) const</td></tr>
+<tr class="separator:aaee1743c2b23350ab6c60b060bb40ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1d722418f1e6aaa9aaa229a874f51b8"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ad1d722418f1e6aaa9aaa229a874f51b8">getSixAxisForceTorqueSensorFrameName</a> (size_t sens_index, std::string &amp;frameName) const</td></tr>
+<tr class="separator:ad1d722418f1e6aaa9aaa229a874f51b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac09ba7c61831d8d48beefeaa3c4ce967"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#ac09ba7c61831d8d48beefeaa3c4ce967">getSixAxisForceTorqueSensorMeasure</a> (size_t sens_index, yarp::sig::Vector &amp;out, double &amp;timestamp) const</td></tr>
+<tr class="separator:ac09ba7c61831d8d48beefeaa3c4ce967"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6dd40af97c835f73d0abd4fd4382555"><td class="memItemLeft" align="right" valign="top">virtual yarp::os::Stamp&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html#af6dd40af97c835f73d0abd4fd4382555">getLastInputStamp</a> ()</td></tr>
 <tr class="separator:af6dd40af97c835f73d0abd4fd4382555"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -459,6 +469,171 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a9e1662250865c54821c234fc7c6c98bc" name="a9e1662250865c54821c234fc7c6c98bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e1662250865c54821c234fc7c6c98bc">&#9670;&nbsp;</a></span>getNrOfSixAxisForceTorqueSensors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t GazeboYarpForceTorqueDriver::getNrOfSixAxisForceTorqueSensors </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac72320acbd731713ea8f26246166c325" name="ac72320acbd731713ea8f26246166c325"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac72320acbd731713ea8f26246166c325">&#9670;&nbsp;</a></span>getSixAxisForceTorqueSensorStatus()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorStatus </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sens_index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaee1743c2b23350ab6c60b060bb40ef3" name="aaee1743c2b23350ab6c60b060bb40ef3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaee1743c2b23350ab6c60b060bb40ef3">&#9670;&nbsp;</a></span>getSixAxisForceTorqueSensorName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sens_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad1d722418f1e6aaa9aaa229a874f51b8" name="ad1d722418f1e6aaa9aaa229a874f51b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1d722418f1e6aaa9aaa229a874f51b8">&#9670;&nbsp;</a></span>getSixAxisForceTorqueSensorFrameName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sens_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>frameName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac09ba7c61831d8d48beefeaa3c4ce967" name="ac09ba7c61831d8d48beefeaa3c4ce967"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac09ba7c61831d8d48beefeaa3c4ce967">&#9670;&nbsp;</a></span>getSixAxisForceTorqueSensorMeasure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorMeasure </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sens_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">yarp::sig::Vector &amp;&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>timestamp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="af6dd40af97c835f73d0abd4fd4382555" name="af6dd40af97c835f73d0abd4fd4382555"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af6dd40af97c835f73d0abd4fd4382555">&#9670;&nbsp;</a></span>getLastInputStamp()</h2>
 
@@ -494,7 +669,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceyarp.html">yarp</a></li><li class="navelem"><a class="el" href="namespaceyarp_1_1dev.html">dev</a></li><li class="navelem"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html">GazeboYarpForceTorqueDriver</a></li>
-    <li class="footer">Generated on Mon Jun 20 2022 07:34:53 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Mon Jun 20 2022 10:04:55 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 </body>

@@ -87,6 +87,11 @@ include(AddDebugMacro)
 # Enable all possible warning if CMAKE_BUILD_TYPE is debug
 include(AddDebugWarnings)
 
+# Suppress not relevant warnings
+if(MSVC)
+    add_compile_options("/wd4251")
+endif()
+
 #this is required for all plugins
 link_directories(${GAZEBO_LIBRARY_DIRS} ${SDFORMAT_LIBRARY_DIRS} ${PROTOBUF_LIBRARY_DIRS})
 

@@ -78,8 +78,8 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     std::string sensorScopedName(config.find(YarpIMUScopedName).asString());
     std::string sensorName(config.find("sensor_name").asString());
 
-    m_sensorName=sensorName;
-    m_frameName=sensorName;
+    m_sensorName = GazeboYarpPlugins::lastPartOfStringAfterSeparator(sensorName, "::");
+    m_frameName = GazeboYarpPlugins::lastPartOfStringAfterSeparator(sensorName, "::");
 
     m_parentSensor = dynamic_cast<gazebo::sensors::ImuSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));
 

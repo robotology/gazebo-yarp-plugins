@@ -7,6 +7,7 @@
 
 #include "ForceTorqueDriver.h"
 #include <GazeboYarpPlugins/Handler.hh>
+#include <GazeboYarpPlugins/common.h>
 
 #include <boost/bind/bind.hpp>
 #include <gazebo/sensors/ForceTorqueSensor.hh>
@@ -63,7 +64,7 @@ bool GazeboYarpForceTorqueDriver::open(yarp::os::Searchable& config)
     //Get gazebo pointers
     std::string sensorScopedName(config.find(YarpForceTorqueScopedName.c_str()).asString().c_str());
 
-    m_sensorName = config.find("sensor_name").asString();
+    m_sensorName = GazeboYarpPlugins::lastPartOfStringAfterSeparator(config.find("sensor_name").asString(), "::");
     m_frameName = m_sensorName;
 
     m_parentSensor = dynamic_cast<gazebo::sensors::ForceTorqueSensor*>(GazeboYarpPlugins::Handler::getHandler()->getSensor(sensorScopedName));

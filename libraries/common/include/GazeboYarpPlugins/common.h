@@ -57,6 +57,22 @@ namespace GazeboYarpPlugins {
             return false;
         }
     }
+
+    /**
+     * \brief Get last part of string after separator
+     * \param[in] fullString the full string
+     * \param[in] separator separator string
+     * \return lastPart the last part of the string, or the fullString if the seperator is not found
+     */
+    inline std::string lastPartOfStringAfterSeparator(std::string const &fullString, std::string const &separator)
+    {
+        auto pos = fullString.find_last_of(separator);
+        if (pos == std::string::npos) {
+            return fullString;
+        } else {
+            return fullString.substr(pos + separator.size() - 1); 
+        }
+    }
 }
 
 

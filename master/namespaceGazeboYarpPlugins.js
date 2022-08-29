@@ -39,6 +39,7 @@ var namespaceGazeboYarpPlugins =
     [ "convertDegreesToRadians", "namespaceGazeboYarpPlugins.html#a994561b574e4364f21440881b69d3b5c", null ],
     [ "convertRadiansToDegrees", "namespaceGazeboYarpPlugins.html#a1432c17a29be66efeae7e2d4baddc90f", null ],
     [ "hasEnding", "namespaceGazeboYarpPlugins.html#aa6880d46d58b3bf0bbf4d829402743fd", null ],
+    [ "lastPartOfStringAfterSeparator", "namespaceGazeboYarpPlugins.html#abcd3d1eb661197e11ff165c508b22099", null ],
     [ "splitString", "namespaceGazeboYarpPlugins.html#abe012817dc666e955ad2ffdafd34fe32", null ],
     [ "loadConfigModelPlugin", "namespaceGazeboYarpPlugins.html#a6452123f96b3d17f7694a2bd1724b29c", null ],
     [ "addGazeboEnviromentalVariablesModel", "namespaceGazeboYarpPlugins.html#a71413a3b592c221ef71e30f4c07b114f", null ],

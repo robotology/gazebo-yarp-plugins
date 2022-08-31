@@ -5,6 +5,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.5.1] - 2022-08-31
+
 ### Fixed
 - Fix behaviour of MultipleAnalogSensor `get**Name` methods in nested models (https://github.com/robotology/gazebo-yarp-plugins/pull/633).
 

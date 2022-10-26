@@ -24,7 +24,7 @@
 
 //#include <ignition/math.hh>
 //#include <ignition/math/gzmath.hh>
-#include <gazebo_sfm_plugin/PedestrianSFMPlugin.h>
+#include <PedestrianSFMPlugin/PedestrianSFMPlugin.h>
 
 #include <cstdio>
 #include <thread>

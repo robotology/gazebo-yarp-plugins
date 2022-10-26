@@ -10,7 +10,7 @@ add_subdirectory(inertialmtbPart)
 add_subdirectory(showmodelcom)
 add_subdirectory(multicamera)
 add_subdirectory(maissensor)
-add_subdirectory(pedetriansfm)
+add_subdirectory(pedestriansfm)
 
 if(GAZEBO_YARP_PLUGINS_HAS_OPENCV)
     add_subdirectory(videotexture)

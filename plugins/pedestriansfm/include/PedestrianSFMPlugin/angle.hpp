@@ -23,182 +23,166 @@
 #ifndef _ANGLE_HPP_
 #define _ANGLE_HPP_
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
-namespace utils
-{
-class Angle
-{
+namespace utils {
+class Angle {
 public:
-  enum AngleRange
-  {
-    // [0, 2*pi) or [0°, 360°)
-    PositiveOnlyRange,
-    // (-pi, +pi] or (-180°, 180°]
-    PositiveNegativeRange
-  };
+    enum AngleRange {
+        // [0, 2*pi) or [0°, 360°)
+        PositiveOnlyRange,
+        // (-pi, +pi] or (-180°, 180°]
+        PositiveNegativeRange
+    };
 
-
-  Angle() : value(0)
-  {
-  }
-  virtual ~Angle()
-  {
-  }
-
-  static Angle fromRadian(double value)
-  {
-    return Angle(value);
-  }
-
-  static Angle fromDegree(double value)
-  {
-    return Angle(value / 180 * M_PI);
-  }
-
-  double toRadian(AngleRange range = PositiveNegativeRange) const
-  {
-    if (range == PositiveNegativeRange)
+    Angle()
+        : value(0)
     {
-      return value;
     }
-    else
+    virtual ~Angle()
     {
-      return (value >= 0) ? value : (value + 2 * M_PI);
     }
-  }
 
-  double cos() const
-  {
-    return std::cos(value);
-  }
-
-  double sin() const
-  {
-    return std::sin(value);
-  }
-
-  double toDegree(AngleRange range = PositiveNegativeRange) const
-  {
-    double degreeValue = value * 180 / M_PI;
-    if (range == PositiveNegativeRange)
+    static Angle fromRadian(double value)
     {
-      return degreeValue;
+        return Angle(value);
     }
-    else
+
+    static Angle fromDegree(double value)
     {
-      return (degreeValue >= 0) ? degreeValue : (degreeValue + 360);
+        return Angle(value / 180 * M_PI);
     }
-  }
 
-  void setRadian(double value)
-  {
-    Angle::value = value;
-    normalize();
-  }
-
-  void setDegree(double value)
-  {
-    Angle::value = value / 180 * M_PI;
-    normalize();
-  }
-
-  int sign() const
-  {
-    if (value == 0)
+    double toRadian(AngleRange range = PositiveNegativeRange) const
     {
-      return 0;
+        if (range == PositiveNegativeRange) {
+            return value;
+        } else {
+            return (value >= 0) ? value : (value + 2 * M_PI);
+        }
     }
-    else if (value > 0)
+
+    double cos() const
     {
-      return 1;
+        return std::cos(value);
     }
-    else
+
+    double sin() const
     {
-      return -1;
+        return std::sin(value);
     }
-  }
 
-  Angle operator+(const Angle& other) const
-  {
-    return Angle(value + other.value);
-  }
+    double toDegree(AngleRange range = PositiveNegativeRange) const
+    {
+        double degreeValue = value * 180 / M_PI;
+        if (range == PositiveNegativeRange) {
+            return degreeValue;
+        } else {
+            return (degreeValue >= 0) ? degreeValue : (degreeValue + 360);
+        }
+    }
 
-  Angle operator-(const Angle& other) const
-  {
-    return Angle(value - other.value);
-  }
+    void setRadian(double value)
+    {
+        Angle::value = value;
+        normalize();
+    }
 
-  Angle& operator+=(const Angle& other)
-  {
-    value += other.value;
-    normalize();
-    return *this;
-  }
+    void setDegree(double value)
+    {
+        Angle::value = value / 180 * M_PI;
+        normalize();
+    }
 
-  Angle& operator-=(const Angle& other)
-  {
-    value -= other.value;
-    normalize();
-    return *this;
-  }
+    int sign() const
+    {
+        if (value == 0) {
+            return 0;
+        } else if (value > 0) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 
-  bool operator==(const Angle& other) const
-  {
-    return value == other.value;
-  }
+    Angle operator+(const Angle& other) const
+    {
+        return Angle(value + other.value);
+    }
 
-  bool operator!=(const Angle& other) const
-  {
-    return value != other.value;
-  }
+    Angle operator-(const Angle& other) const
+    {
+        return Angle(value - other.value);
+    }
 
-  bool operator<(const Angle& other) const
-  {
-    return value < other.value;
-  }
+    Angle& operator+=(const Angle& other)
+    {
+        value += other.value;
+        normalize();
+        return *this;
+    }
 
-  bool operator<=(const Angle& other) const
-  {
-    return value <= other.value;
-  }
+    Angle& operator-=(const Angle& other)
+    {
+        value -= other.value;
+        normalize();
+        return *this;
+    }
 
-  bool operator>(const Angle& other) const
-  {
-    return value > other.value;
-  }
+    bool operator==(const Angle& other) const
+    {
+        return value == other.value;
+    }
 
-  bool operator>=(const Angle& other) const
-  {
-    return value >= other.value;
-  }
+    bool operator!=(const Angle& other) const
+    {
+        return value != other.value;
+    }
 
+    bool operator<(const Angle& other) const
+    {
+        return value < other.value;
+    }
+
+    bool operator<=(const Angle& other) const
+    {
+        return value <= other.value;
+    }
+
+    bool operator>(const Angle& other) const
+    {
+        return value > other.value;
+    }
+
+    bool operator>=(const Angle& other) const
+    {
+        return value >= other.value;
+    }
 
 private:
-  Angle(double value)
-  {
-    Angle::value = value;
-    normalize();
-  }
+    Angle(double value)
+    {
+        Angle::value = value;
+        normalize();
+    }
 
-  void normalize()
-  {
-    while (value <= -M_PI)
-      value += 2 * M_PI;
-    while (value > M_PI)
-      value -= 2 * M_PI;
-  }
+    void normalize()
+    {
+        while (value <= -M_PI)
+            value += 2 * M_PI;
+        while (value > M_PI)
+            value -= 2 * M_PI;
+    }
 
-  double value;
+    double value;
 };
 }
-namespace std
-{
+namespace std {
 inline ostream& operator<<(ostream& stream, const utils::Angle& alpha)
 {
-  stream << alpha.toRadian();
-  return stream;
+    stream << alpha.toRadian();
+    return stream;
 }
 }
 

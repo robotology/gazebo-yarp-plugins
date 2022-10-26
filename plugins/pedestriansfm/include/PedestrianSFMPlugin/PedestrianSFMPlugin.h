@@ -41,108 +41,112 @@
 #include <yarp/os/Time.h>
 
 ////////////
-#include <gazebo/transport/transport.hh>
 #include <gazebo/msgs/msgs.hh>
-
+#include <gazebo/transport/transport.hh>
 
 namespace gazebo {
 class GZ_PLUGIN_VISIBLE PedestrianSFMPlugin : public ModelPlugin {
-  /// \brief Constructor
+    /// \brief Constructor
 public:
-  PedestrianSFMPlugin();
+    PedestrianSFMPlugin();
 
-  /// \brief Load the actor plugin.
-  /// \param[in] _model Pointer to the parent model.
-  /// \param[in] _sdf Pointer to the plugin's SDF elements.
+    /// \brief Load the actor plugin.
+    /// \param[in] _model Pointer to the parent model.
+    /// \param[in] _sdf Pointer to the plugin's SDF elements.
 public:
-  virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+    virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
-  // Documentation Inherited.
+    // Documentation Inherited.
 public:
-  virtual void Reset();
+    virtual void Reset();
 
-  /// \brief Function that is called every update cycle.
-  /// \param[in] _info Timing information
+    /// \brief Function that is called every update cycle.
+    /// \param[in] _info Timing information
 private:
-  void OnUpdate(const common::UpdateInfo &_info);
+    void OnUpdate(const common::UpdateInfo& _info);
 
-  // private: void InitializePedestrians();
+    // private: void InitializePedestrians();
 
-  /// \brief Helper function to detect the closest obstacles.
+    /// \brief Helper function to detect the closest obstacles.
 private:
-  void HandleObstacles();
+    void HandleObstacles();
 
-  /// \brief Helper function to detect the nearby pedestrians (other actors).
+    /// \brief Helper function to detect the nearby pedestrians (other actors).
 private:
-  void HandlePedestrians();
+    void HandlePedestrians();
 
-  //-------------------------------------------------
+    //-------------------------------------------------
 
-  /// \brief this actor as a SFM agent
+    /// \brief this actor as a SFM agent
 private:
-  sfm::Agent sfmActor;
+    sfm::Agent sfmActor;
 
-  /// \brief names of the other models in my walking group.
+    /// \brief names of the other models in my walking group.
 private:
-  std::vector<std::string> groupNames;
+    std::vector<std::string> groupNames;
 
-  /// \brief vector of pedestrians detected.
+    /// \brief vector of pedestrians detected.
 private:
-  std::vector<sfm::Agent> otherActors;
+    std::vector<sfm::Agent> otherActors;
 
-  /// \brief Maximum distance to detect nearby pedestrians.
+    /// \brief Maximum distance to detect nearby pedestrians.
 private:
-  double peopleDistance;
+    double peopleDistance;
 
-  /// \brief Pointer to the parent actor.
+    /// \brief Pointer to the parent actor.
 private:
-  physics::ActorPtr actor;
+    physics::ActorPtr actor;
 
-  /// \brief Pointer to the world, for convenience.
+    /// \brief Pointer to the world, for convenience.
 private:
-  physics::WorldPtr world;
+    physics::WorldPtr world;
 
-  /// \brief Pointer to the sdf element.
+    /// \brief Pointer to the sdf element.
 private:
-  sdf::ElementPtr sdf;
+    sdf::ElementPtr sdf;
 
-  /// \brief Velocity of the actor
+    /// \brief Velocity of the actor
 private:
-  ignition::math::Vector3d velocity;
+    ignition::math::Vector3d velocity;
 
-  /// \brief List of connections
+    /// \brief List of connections
 private:
-  std::vector<event::ConnectionPtr> connections;
+    std::vector<event::ConnectionPtr> connections;
 
-  /// \brief Time scaling factor. Used to coordinate translational motion
-  /// with the actor's walking animation.
+    /// \brief Time scaling factor. Used to coordinate translational motion
+    /// with the actor's walking animation.
 private:
-  double animationFactor = 1.0;
+    double animationFactor = 1.0;
 
-  /// \brief Time of the last update.
+    /// \brief Time of the last update.
 private:
-  common::Time lastUpdate;
+    common::Time lastUpdate;
 
-  /// \brief List of models to ignore. Used for vector field
+    /// \brief List of models to ignore. Used for vector field
 private:
-  std::vector<std::string> ignoreModels;
+    std::vector<std::string> ignoreModels;
 
-  /// \brief Animation name of this actor
+    /// \brief Animation name of this actor
 private:
-  std::string animationName;
+    std::string animationName;
 
-  /// \brief Custom trajectory info.
+    /// \brief Custom trajectory info.
 private:
-  physics::TrajectoryInfoPtr trajectoryInfo;
-  
-// YARP RPC
-private: yarp::os::Network yarp;
-private: yarp::os::RpcServer port;
-private: void rpcListener();
-private: std::thread thr;
+    physics::TrajectoryInfoPtr trajectoryInfo;
+
+    // YARP RPC
+private:
+    yarp::os::Network yarp;
+
+private:
+    yarp::os::RpcServer port;
+
+private:
+    void rpcListener();
+
+private:
+    std::thread thr;
 };
-
-
 
 } // namespace gazebo
 #endif

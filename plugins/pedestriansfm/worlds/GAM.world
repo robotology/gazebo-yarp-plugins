@@ -179,7 +179,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor1_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor1_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.9</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -216,7 +216,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor2_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor2_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>1.2</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -275,7 +275,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor4_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor4_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>1.0</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -314,7 +314,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor5_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor5_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.7</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -355,7 +355,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor6_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor6_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.9</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -401,7 +401,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor7_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor7_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.2</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -440,7 +440,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor8_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor8_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.2</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -479,7 +479,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor9_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor9_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.2</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -519,7 +519,7 @@
         <interpolate_x>true</interpolate_x>
       </animation>
 
-      <plugin name="actor10_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor10_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.2</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>
@@ -559,7 +559,7 @@
         <scale>1.000000</scale>
         <interpolate_x>true</interpolate_x>
       </animation>
-      <plugin name="actor11_plugin" filename="libPedestrianSFMPlugin.so">
+      <plugin name="actor11_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
         <velocity>0.0</velocity>
         <radius>0.4</radius>
         <animation_factor>5.1</animation_factor>

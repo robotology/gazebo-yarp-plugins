@@ -14,6 +14,8 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
+#include <ignition/math/Quaternion.hh>
+
 using namespace boost::placeholders;
 
 using namespace yarp::dev;
@@ -86,6 +88,10 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
     if (!m_parentSensor) {
         yError() << "GazeboYarpIMUDriver Error: IMU sensor was not found";
         return false;
+    }
+
+    if (config.check("useWorldReferenceOrientation")) {
+        m_parentSensor->SetWorldToReferenceOrientation(ignition::math::Quaterniond::Identity);
     }
 
     //Connect the driver to the gazebo simulation

@@ -5,7 +5,11 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
-### Fixed 
+### Added
+
+- Added a new `useWorldReferenceOrientation` config option in the `gazebo_imu` plugin to take account for any initial non-zero orientation of the sensor as measured via `yarp::dev::IOrientationSensors` (https://github.com/robotology/gazebo-yarp-plugins/pull/639).
+
+### Fixed
 
 - Fix wrong install include for gazebo_yarp_lib_common library (https://github.com/robotology/gazebo-yarp-plugins/pull/644).
 

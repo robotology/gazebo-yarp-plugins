@@ -1,0 +1,20 @@
+digraph "include"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_046a323c23a628228bfd2e9923a84f18 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="linkattacher", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_046a323c23a628228bfd2e9923a84f18.html",tooltip=""]
+  subgraph clusterdir_3fb9c5f9db813756a0a7e2599e0a4437 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey25", label="", fontname=FreeSans.ttf,fontsize=10 style="filled,bold", URL="dir_3fb9c5f9db813756a0a7e2599e0a4437.html",tooltip=""]
+    dir_3fb9c5f9db813756a0a7e2599e0a4437 [shape=plaintext, label="include"];
+  dir_f113398f996c80979c7ca584e3e5887b [label="gazebo", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_f113398f996c80979c7ca584e3e5887b.html",tooltip=""];
+  dir_93efb0eec63d7c473fb0c2791f8e5e59 [label="GazeboYarpPlugins", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_93efb0eec63d7c473fb0c2791f8e5e59.html",tooltip=""];
+  }
+  }
+  dir_bc0718b08fb2015b8e59c47b2805f60c [label="libraries", fillcolor="#e8e8fc", color="red", style="filled", URL="dir_bc0718b08fb2015b8e59c47b2805f60c.html",tooltip=""];
+  dir_f113398f996c80979c7ca584e3e5887b->dir_93efb0eec63d7c473fb0c2791f8e5e59 [headlabel="1", labeldistance=1.5 headhref="dir_000051_000066.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_93efb0eec63d7c473fb0c2791f8e5e59->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="2", labeldistance=1.5 headhref="dir_000066_000097.html" color="steelblue1" fontcolor="steelblue1"];
+}

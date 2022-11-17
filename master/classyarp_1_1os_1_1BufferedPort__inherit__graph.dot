@@ -1,0 +1,12 @@
+digraph "yarp::os::BufferedPort&lt; T &gt;"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="yarp::os::BufferedPort\< T \>",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="orange",style="dashed",label=" \< yarp::os::Bottle \>" ];
+  Node2 [label="yarp::os::BufferedPort\l\< yarp::os::Bottle \>",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classyarp_1_1os_1_1BufferedPort.html",tooltip=" "];
+  Node1 -> Node3 [dir="back",color="orange",style="dashed",label=" \< ImageType \>" ];
+  Node3 [label="yarp::os::BufferedPort\l\< ImageType \>",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classyarp_1_1os_1_1BufferedPort.html",tooltip=" "];
+}

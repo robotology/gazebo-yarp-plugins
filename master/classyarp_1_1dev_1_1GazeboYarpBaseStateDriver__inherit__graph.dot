@@ -1,0 +1,14 @@
+digraph "yarp::dev::GazeboYarpBaseStateDriver"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="yarp::dev::GazeboYarpBase\lStateDriver",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="YARP device driver to give the gazebo state information of a desired base link of the robot The state..."];
+  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="yarp::dev::IAnalogSensor",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node3 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="yarp::dev::DeviceDriver",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node4 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="yarp::dev::IPreciselyTimed",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+}

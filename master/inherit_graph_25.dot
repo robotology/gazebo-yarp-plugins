@@ -1,0 +1,23 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node0 [label="yarp::os::Wire",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node1 [label="GazeboYarpPlugins::\lClockServer",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1ClockServer.html",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="GazeboYarpPlugins::\lClockServerImpl",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1ClockServerImpl.html",tooltip=" "];
+  Node0 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="GazeboYarpPlugins::\lLinkAttacherServer",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1LinkAttacherServer.html",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="LinkAttacherServerImpl",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classLinkAttacherServerImpl.html",tooltip=" "];
+  Node0 -> Node5 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="GazeboYarpPlugins::\lWorldInterfaceServer",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1WorldInterfaceServer.html",tooltip=" "];
+  Node5 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="WorldInterfaceServerImpl",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classWorldInterfaceServerImpl.html",tooltip=" "];
+  Node5 -> Node7 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="WorldProxy",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classWorldProxy.html",tooltip=" "];
+}

@@ -1,0 +1,16 @@
+digraph "CMakeFiles"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_4fef79e7177ba769987a8da36c892c5f {
+    graph [ bgcolor="#e8e8fc", pencolor="grey25", label="build", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_4fef79e7177ba769987a8da36c892c5f.html",tooltip=""]
+  subgraph clusterdir_63772b626f2709090f0bdca0f40827b4 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey25", label="", fontname=FreeSans.ttf,fontsize=10 style="filled,bold", URL="dir_63772b626f2709090f0bdca0f40827b4.html",tooltip=""]
+    dir_63772b626f2709090f0bdca0f40827b4 [shape=plaintext, label="CMakeFiles"];
+  dir_d7b66968a82c161662fa136e3ce34537 [label="3.25.0", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_d7b66968a82c161662fa136e3ce34537.html",tooltip=""];
+  }
+  }
+}

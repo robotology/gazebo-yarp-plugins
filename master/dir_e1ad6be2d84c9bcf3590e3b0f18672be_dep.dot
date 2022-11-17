@@ -1,0 +1,12 @@
+digraph "gazebo"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_5eff8a23a528164089eefaf8f4f9a18b {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="include", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_5eff8a23a528164089eefaf8f4f9a18b.html",tooltip=""]
+  dir_e1ad6be2d84c9bcf3590e3b0f18672be [label="gazebo", fillcolor="#e8e8fc", color="grey25", style="filled,bold", URL="dir_e1ad6be2d84c9bcf3590e3b0f18672be.html",tooltip=""];
+  }
+}

@@ -1,7 +1,0 @@
-<map id="GazeboYarpPlugins::ClockServer_continueSimulation_helper" name="GazeboYarpPlugins::ClockServer_continueSimulation_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="564,21,797,77"/>
-<area shape="rect" id="node2" title=" " alt="" coords="294,5,430,32"/>
-<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1ClockServer__continueSimulation__helper_1_1Command.html" title=" " alt="" coords="245,56,479,112"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
-<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1ClockServer__continueSimulation__helper_1_1Reply.html" title=" " alt="" coords="245,136,479,192"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="GazeboYarpPlugins::WorldInterfaceServer_changeColor_helper" name="GazeboYarpPlugins::WorldInterfaceServer_changeColor_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="781,28,940,84"/>
-<area shape="rect" id="node2" title=" " alt="" coords="549,5,685,32"/>
-<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Command.html" title=" " alt="" coords="533,57,700,127"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,133,196,160"/>
-<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1Color.html" title=" " alt="" coords="270,126,423,167"/>
-<area shape="rect" id="node6" href="$classGazeboYarpPlugins_1_1WorldInterfaceServer__changeColor__helper_1_1Reply.html" title=" " alt="" coords="245,192,448,248"/>
-</map>

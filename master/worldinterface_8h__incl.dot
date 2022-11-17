@@ -1,0 +1,42 @@
+digraph "worldinterface.h"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="worldinterface.h",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [color="steelblue1",style="solid"];
+  Node2 [label="gazebo/gazebo.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node3 [color="steelblue1",style="solid"];
+  Node3 [label="worldinterfaceserverimpl.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$worldinterfaceserverimpl_8h.html",tooltip=" "];
+  Node3 -> Node4 [color="steelblue1",style="solid"];
+  Node4 [label="GazeboYarpPlugins/WorldInterface\lServer.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node3 -> Node5 [color="steelblue1",style="solid"];
+  Node5 [label="worldproxy.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$worldproxy_8h.html",tooltip=" "];
+  Node5 -> Node6 [color="steelblue1",style="solid"];
+  Node6 [label="gazebo/physics/Model.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node7 [color="steelblue1",style="solid"];
+  Node7 [label="gazebo/physics/World.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node8 [color="steelblue1",style="solid"];
+  Node8 [label="gazebo/physics/Joint.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node9 [color="steelblue1",style="solid"];
+  Node9 [label="gazebo/physics/PhysicsEngine.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node10 [color="steelblue1",style="solid"];
+  Node10 [label="gazebo/physics/Link.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node11 [color="steelblue1",style="solid"];
+  Node11 [label="yarp/os/Semaphore.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node4 [color="steelblue1",style="solid"];
+  Node5 -> Node12 [color="steelblue1",style="solid"];
+  Node12 [label="map",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node13 [color="steelblue1",style="solid"];
+  Node13 [label="mutex",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node5 -> Node14 [color="steelblue1",style="solid"];
+  Node14 [label="queue",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node5 [color="steelblue1",style="solid"];
+  Node1 -> Node15 [color="steelblue1",style="solid"];
+  Node15 [label="yarp/os/Network.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node16 [color="steelblue1",style="solid"];
+  Node16 [label="yarp/os/RpcServer.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node17 [color="steelblue1",style="solid"];
+  Node17 [label="yarp/os/Property.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+}

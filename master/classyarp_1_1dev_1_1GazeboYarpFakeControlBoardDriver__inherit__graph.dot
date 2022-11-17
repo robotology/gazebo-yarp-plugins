@@ -1,0 +1,45 @@
+digraph "yarp::dev::GazeboYarpFakeControlBoardDriver"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [label="yarp::dev::GazeboYarpFake\lControlBoardDriver",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="yarp::dev::DeviceDriver",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node3 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="IPositionControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node4 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="IVelocityControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node5 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="IAmplifierControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node6 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="IEncodersTimed",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node7 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="IControlCalibration2",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node8 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node8 [label="IControlLimits",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node9 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node9 [label="IInteractionMode",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node10 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node10 [label="DeviceResponder",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node11 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node11 [label="IControlMode",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node12 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node12 [label="ITorqueControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node13 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node13 [label="IPositionDirect",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node14 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node14 [label="IImpedanceControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node15 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node15 [label="IPWMControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node16 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node16 [label="ICurrentControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node17 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node17 [label="IPidControl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node18 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node18 [label="IRemoteVariables",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node19 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node19 [label="IAxisInfo",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+}

@@ -1,0 +1,55 @@
+digraph "CameraDriver.cpp"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="CameraDriver.cpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [color="steelblue1",style="solid"];
+  Node2 [label="CameraDriver.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$CameraDriver_8h.html",tooltip=" "];
+  Node2 -> Node3 [color="steelblue1",style="solid"];
+  Node3 [label="yarp/dev/DeviceDriver.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node4 [color="steelblue1",style="solid"];
+  Node4 [label="yarp/dev/FrameGrabberInterfaces.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node5 [color="steelblue1",style="solid"];
+  Node5 [label="yarp/os/Stamp.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node6 [color="steelblue1",style="solid"];
+  Node6 [label="yarp/dev/IPreciselyTimed.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node7 [color="steelblue1",style="solid"];
+  Node7 [label="yarp/os/Time.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node8 [color="steelblue1",style="solid"];
+  Node8 [label="boost/shared_ptr.hpp",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node9 [color="steelblue1",style="solid"];
+  Node9 [label="gazebo/rendering/Camera.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node10 [color="steelblue1",style="solid"];
+  Node10 [label="gazebo/sensors/CameraSensor.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node11 [color="steelblue1",style="solid"];
+  Node11 [label="mutex",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node12 [color="steelblue1",style="solid"];
+  Node12 [label="GazeboYarpPlugins/Handler.hh",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Handler_8hh.html",tooltip=" "];
+  Node12 -> Node13 [color="steelblue1",style="solid"];
+  Node13 [label="map",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node12 -> Node14 [color="steelblue1",style="solid"];
+  Node14 [label="sdf/sdf_config.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node12 -> Node8 [color="steelblue1",style="solid"];
+  Node12 -> Node11 [color="steelblue1",style="solid"];
+  Node12 -> Node15 [color="steelblue1",style="solid"];
+  Node15 [label="yarp/dev/PolyDriver.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node12 -> Node16 [color="steelblue1",style="solid"];
+  Node16 [label="yarp/dev/PolyDriverList.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node12 -> Node17 [color="steelblue1",style="solid"];
+  Node17 [label="gazebo/common/Events.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node18 [color="steelblue1",style="solid"];
+  Node18 [label="GazeboYarpPlugins/common.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$common_8h.html",tooltip=" "];
+  Node18 -> Node19 [color="steelblue1",style="solid"];
+  Node19 [label="string",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node18 -> Node20 [color="steelblue1",style="solid"];
+  Node20 [label="cmath",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node10 [color="steelblue1",style="solid"];
+  Node1 -> Node21 [color="steelblue1",style="solid"];
+  Node21 [label="yarp/os/Value.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node22 [color="steelblue1",style="solid"];
+  Node22 [label="yarp/os/Log.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node23 [color="steelblue1",style="solid"];
+  Node23 [label="yarp/os/LogStream.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+}

@@ -1,0 +1,21 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node0 [label="SensorPlugin",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node1 [label="gazebo::GazeboYarpForceTorque",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classgazebo_1_1GazeboYarpForceTorque.html",tooltip="Gazebo Plugin emulating the yarp device exposing a 6 axis force-torque sensor."];
+  Node0 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="gazebo::GazeboYarpIMU",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classgazebo_1_1GazeboYarpIMU.html",tooltip="Gazebo Plugin emulating the yarp imu device in Gazebo."];
+  Node0 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="gazebo::GazeboYarpInertialMTB",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classgazebo_1_1GazeboYarpInertialMTB.html",tooltip="Gazebo Plugin for the emulation of the yarp inertial MTB device in Gazebo."];
+  Node0 -> Node4 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="gazebo::GazeboYarpLaserSensor",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classgazebo_1_1GazeboYarpLaserSensor.html",tooltip="Gazebo Plugin emulating the yarp device exposing a 6 axis force-torque sensor."];
+  Node0 -> Node5 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="gazebo::MultiCameraPlugin",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classgazebo_1_1MultiCameraPlugin.html",tooltip=" "];
+  Node5 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="gazebo::GazeboYarpMultiCamera",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classgazebo_1_1GazeboYarpMultiCamera.html",tooltip="Gazebo Plugin reading from the Gazebo MultiCamera plugin."];
+}

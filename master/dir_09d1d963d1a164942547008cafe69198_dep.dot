@@ -1,0 +1,17 @@
+digraph "include"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_04c6088db7183ec7094cf602e61089db {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="clock", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_04c6088db7183ec7094cf602e61089db.html",tooltip=""]
+  subgraph clusterdir_09d1d963d1a164942547008cafe69198 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey25", label="", fontname=FreeSans.ttf,fontsize=10 style="filled,bold", URL="dir_09d1d963d1a164942547008cafe69198.html",tooltip=""]
+    dir_09d1d963d1a164942547008cafe69198 [shape=plaintext, label="include"];
+  dir_ef7fa5f8054cf82827c86bac12c3c4a6 [label="gazebo", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_ef7fa5f8054cf82827c86bac12c3c4a6.html",tooltip=""];
+  dir_c09d4ae401f9de444c767dd813222f9d [label="GazeboYarpPlugins", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_c09d4ae401f9de444c767dd813222f9d.html",tooltip=""];
+  }
+  }
+}

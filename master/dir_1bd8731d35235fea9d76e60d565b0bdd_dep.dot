@@ -1,0 +1,17 @@
+digraph "include"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_5c10839133bb912ed17a53c8f723f1e7 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="inertialmtbPart", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_5c10839133bb912ed17a53c8f723f1e7.html",tooltip=""]
+  subgraph clusterdir_1bd8731d35235fea9d76e60d565b0bdd {
+    graph [ bgcolor="#e8e8fc", pencolor="grey25", label="", fontname=FreeSans.ttf,fontsize=10 style="filled,bold", URL="dir_1bd8731d35235fea9d76e60d565b0bdd.html",tooltip=""]
+    dir_1bd8731d35235fea9d76e60d565b0bdd [shape=plaintext, label="include"];
+  dir_8c88ac79b71aef62b3b9fb4459303225 [label="gazebo", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_8c88ac79b71aef62b3b9fb4459303225.html",tooltip=""];
+  dir_818bd7ad0cf9364f860976895b0a68b9 [label="yarp", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_818bd7ad0cf9364f860976895b0a68b9.html",tooltip=""];
+  }
+  }
+}

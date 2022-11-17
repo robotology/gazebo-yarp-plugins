@@ -1,0 +1,47 @@
+digraph "ControlBoardDriverTrajectory.h"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="ControlBoardDriverTrajectory.h",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="ControlBoardDriver.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriver_8h.html",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="ControlBoard.cc",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoard_8cc.html",tooltip=" "];
+  Node2 -> Node4 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="ControlBoardDriver.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriver_8cpp.html",tooltip=" "];
+  Node2 -> Node5 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="ControlBoardDriverControl\lMode.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverControlMode_8cpp.html",tooltip=" "];
+  Node2 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="ControlBoardDriverCoupling.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverCoupling_8cpp.html",tooltip=" "];
+  Node2 -> Node7 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="ControlBoardDriverCurrent.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverCurrent_8cpp.html",tooltip=" "];
+  Node2 -> Node8 [dir="back",color="steelblue1",style="solid"];
+  Node8 [label="ControlBoardDriverDevice\lDriver.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverDeviceDriver_8cpp.html",tooltip=" "];
+  Node2 -> Node9 [dir="back",color="steelblue1",style="solid"];
+  Node9 [label="ControlBoardDriverEncoders.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverEncoders_8cpp.html",tooltip=" "];
+  Node2 -> Node10 [dir="back",color="steelblue1",style="solid"];
+  Node10 [label="ControlBoardDriverImpedance\lPositionControl.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverImpedancePositionControl_8cpp.html",tooltip=" "];
+  Node2 -> Node11 [dir="back",color="steelblue1",style="solid"];
+  Node11 [label="ControlBoardDriverInteraction\lMode.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverInteractionMode_8cpp.html",tooltip=" "];
+  Node2 -> Node12 [dir="back",color="steelblue1",style="solid"];
+  Node12 [label="ControlBoardDriverOthers.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverOthers_8cpp.html",tooltip=" "];
+  Node2 -> Node13 [dir="back",color="steelblue1",style="solid"];
+  Node13 [label="ControlBoardDriverPWM.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverPWM_8cpp.html",tooltip=" "];
+  Node2 -> Node14 [dir="back",color="steelblue1",style="solid"];
+  Node14 [label="ControlBoardDriverPidControl.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverPidControl_8cpp.html",tooltip=" "];
+  Node2 -> Node15 [dir="back",color="steelblue1",style="solid"];
+  Node15 [label="ControlBoardDriverPosition\lControl.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverPositionControl_8cpp.html",tooltip=" "];
+  Node2 -> Node16 [dir="back",color="steelblue1",style="solid"];
+  Node16 [label="ControlBoardDriverRemote\lVariables.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverRemoteVariables_8cpp.html",tooltip=" "];
+  Node2 -> Node17 [dir="back",color="steelblue1",style="solid"];
+  Node17 [label="ControlBoardDriverTorque\lControl.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverTorqueControl_8cpp.html",tooltip=" "];
+  Node2 -> Node18 [dir="back",color="steelblue1",style="solid"];
+  Node18 [label="ControlBoardDriverTrajectory.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverTrajectory_8cpp.html",tooltip=" "];
+  Node2 -> Node19 [dir="back",color="steelblue1",style="solid"];
+  Node19 [label="ControlBoardDriverVelocity\lControl.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverVelocityControl_8cpp.html",tooltip=" "];
+  Node2 -> Node20 [dir="back",color="steelblue1",style="solid"];
+  Node20 [label="ControlBoardDriverVirtual\lAnalogSensor.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardDriverVirtualAnalogSensor_8cpp.html",tooltip=" "];
+  Node1 -> Node18 [dir="back",color="steelblue1",style="solid"];
+}

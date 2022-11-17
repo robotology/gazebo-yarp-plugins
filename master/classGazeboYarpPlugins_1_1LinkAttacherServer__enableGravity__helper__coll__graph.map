@@ -1,7 +1,0 @@
-<map id="GazeboYarpPlugins::LinkAttacherServer_enableGravity_helper" name="GazeboYarpPlugins::LinkAttacherServer_enableGravity_helper">
-<area shape="rect" id="node1" title=" " alt="" coords="576,21,821,77"/>
-<area shape="rect" id="node2" title=" " alt="" coords="300,5,436,32"/>
-<area shape="rect" id="node3" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__enableGravity__helper_1_1Command.html" title=" " alt="" coords="245,56,491,112"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,112,196,139"/>
-<area shape="rect" id="node5" href="$classGazeboYarpPlugins_1_1LinkAttacherServer__enableGravity__helper_1_1Reply.html" title=" " alt="" coords="245,136,491,192"/>
-</map>

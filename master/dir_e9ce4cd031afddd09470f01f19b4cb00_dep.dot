@@ -1,0 +1,16 @@
+digraph "yarp"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_b6a09f68c4111d0d27b8bbb83b80891a {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="include", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_b6a09f68c4111d0d27b8bbb83b80891a.html",tooltip=""]
+  subgraph clusterdir_e9ce4cd031afddd09470f01f19b4cb00 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey25", label="", fontname=FreeSans.ttf,fontsize=10 style="filled,bold", URL="dir_e9ce4cd031afddd09470f01f19b4cb00.html",tooltip=""]
+    dir_e9ce4cd031afddd09470f01f19b4cb00 [shape=plaintext, label="yarp"];
+  dir_04e53ae19afb84609dc067000021f36b [label="dev", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_04e53ae19afb84609dc067000021f36b.html",tooltip=""];
+  }
+  }
+}

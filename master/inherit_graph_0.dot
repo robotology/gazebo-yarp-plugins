@@ -1,0 +1,27 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node0 [label="BaseCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classBaseCouplingHandler.html",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node1 [label="CerHandCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classCerHandCouplingHandler.html",tooltip=" "];
+  Node0 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="EyesCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classEyesCouplingHandler.html",tooltip=" "];
+  Node0 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="FingersAbductionCoupling\lHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classFingersAbductionCouplingHandler.html",tooltip=" "];
+  Node0 -> Node4 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="HandMk3CouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classHandMk3CouplingHandler.html",tooltip=" "];
+  Node0 -> Node5 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="HandMk4CouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classHandMk4CouplingHandler.html",tooltip=" "];
+  Node0 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="IndexCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classIndexCouplingHandler.html",tooltip=" "];
+  Node0 -> Node7 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="MiddleCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classMiddleCouplingHandler.html",tooltip=" "];
+  Node0 -> Node8 [dir="back",color="steelblue1",style="solid"];
+  Node8 [label="PinkyCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classPinkyCouplingHandler.html",tooltip=" "];
+  Node0 -> Node9 [dir="back",color="steelblue1",style="solid"];
+  Node9 [label="ThumbCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classThumbCouplingHandler.html",tooltip=" "];
+}

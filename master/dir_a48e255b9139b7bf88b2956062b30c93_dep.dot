@@ -1,0 +1,14 @@
+digraph "src"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_51774a750b40e0b65e413db1ee212277 {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="configurationoverride", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_51774a750b40e0b65e413db1ee212277.html",tooltip=""]
+  dir_aea0e3de9a8f3b474a42d76e40ec193a [label="include", fillcolor="#8888f0", color="red", style="filled", URL="dir_aea0e3de9a8f3b474a42d76e40ec193a.html",tooltip=""];
+  dir_a48e255b9139b7bf88b2956062b30c93 [label="src", fillcolor="#e8e8fc", color="grey25", style="filled,bold", URL="dir_a48e255b9139b7bf88b2956062b30c93.html",tooltip=""];
+  }
+  dir_a48e255b9139b7bf88b2956062b30c93->dir_aea0e3de9a8f3b474a42d76e40ec193a [headlabel="1", labeldistance=1.5 headhref="dir_000118_000076.html" color="steelblue1" fontcolor="steelblue1"];
+}

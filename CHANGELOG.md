@@ -5,6 +5,11 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.5.2] - 2022-11-17
+
+### Fixed
+- Fix compatibility with YARP 3.8 (https://github.com/robotology/gazebo-yarp-plugins/pull/640).
+
 ## [4.5.1] - 2022-08-31
 
 ### Fixed

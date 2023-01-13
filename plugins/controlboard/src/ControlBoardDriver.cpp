@@ -337,6 +337,12 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 m_coupling_handler.push_back(cpl);
                 yCInfo(GAZEBOCONTROLBOARD) << "using icub_left_hand_mk4";
             }
+            else if (coupling_bottle->get(0).asString()=="icub_hand_mk5")
+            {
+                BaseCouplingHandler* cpl = new HandMk5CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+                m_coupling_handler.push_back(cpl);
+                yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk5";
+            }
             else if (coupling_bottle->get(0).asString()=="none")
             {
                 yCDebug(GAZEBOCONTROLBOARD) << "Just for test";

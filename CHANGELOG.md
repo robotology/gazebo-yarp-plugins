@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [4.6.0] - 2023-01-13
+
 ### Added
-- In `gazebo_yarp_controlboard` add the `icub_hand_mk5` coupling that models the mk5 hand (https://github.com/robotology/gazebo-yarp-plugins/pull/641).
+
+- In `gazebo_yarp_controlboard` add the `icub_hand_mk5` coupling that models the iCub mk5 hand, that is used also in ergoCub 1 robot (https://github.com/robotology/gazebo-yarp-plugins/pull/641).
 
 ## [4.5.2] - 2022-11-17
 

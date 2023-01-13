@@ -610,14 +610,14 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
 {
     const double RAD2DEG = 180.0/atan2(0.0,-1.0);
     const double DEG2RAD = 1.0/RAD2DEG;
-    
+
     m_couplingSize = 11;
-    
+
     thumb_lut.resize(LUTSIZE);
     index_lut.resize(LUTSIZE);
-    
+
     std::vector<double> num(LUTSIZE);
-    
+
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
@@ -625,48 +625,48 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
     }
 
     // thumb
-    {        
+    {
         double L0x = -0.00555,          L0y = 0.00195+0.0009;
         double P1x =  0.020,            P1y = 0.0015;
         double L1x =  P1x-0.0055-0.003, L1y = P1y-0.002+0.0019;
-        
+
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
-        
+
         double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
-        
+
         for (double q1 = 0.0; q1 <= 85.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);
             double sq1 = sin(DEG2RAD*q1);
-            
+
             double P1xr = cq1*P1x-sq1*P1y;
             double P1yr = sq1*P1x+cq1*P1y;
-            
+
             double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
-            
+
             double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
-            
+
             double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
-            
+
             double q2 = alfa + beta - offset;
-            
+
             while (q2 <    0.0) q2 += 360.0;
             while (q2 >= 360.0) q2 -= 360.0;
-            
+
             double dindex = q2*10.0;
-            
+
             int iindex = int(dindex);
-            
+
             double w = dindex - double(iindex);
-            
+
             thumb_lut[iindex] += (1.0 - w)*q1;
             num[iindex] += (1.0 - w);
-            
+
             thumb_lut[iindex + 1] += w*q1;
             num[iindex + 1] += w;
         }
-        
+
         for (int n = 0; n < LUTSIZE; ++n)
         {
             if (num[n] > 0.0)
@@ -675,56 +675,56 @@ HandMk3CouplingHandler::HandMk3CouplingHandler(gazebo::physics::Model* model, ya
             }
         }
     }
-        
+
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         index_lut[n] = 0.0;
     }
-    
+
     // finger
-    {    
+    {
         double P1x =  0.0300, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;
         double L1x =  0.0240, L1y = 0.0008;
-        
+
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
-        
+
         double offset = RAD2DEG*atan2(L1y-P1y, L1x-P1x);
-        
+
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);
             double sq1 = sin(DEG2RAD*q1);
-            
+
             double P1xr = cq1*P1x-sq1*P1y;
             double P1yr = sq1*P1x+cq1*P1y;
-            
+
             double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
-            
+
             double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
-            
+
             double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
-            
+
             double q2 = alfa + beta - offset;
-            
+
             while (q2 <    0.0) q2 += 360.0;
             while (q2 >= 360.0) q2 -= 360.0;
-            
+
             // get decimal part of q2 to find out how to weigh index and index+1
             double dindex = q2*10.0;
             int iindex = int(dindex);
             double w = dindex - double(iindex);
-            
+
             // Construct LUT
             index_lut[iindex] += (1.0 - w)*q1;
             num[iindex] += (1.0 - w);
-            
+
             index_lut[iindex + 1] += w*q1;
             num[iindex + 1] += w;
         }
-        
+
         // divide each value in the LUT by the weight if it is greater than 0 to extract q1
         for (int n = 0; n < LUTSIZE; ++n)
         {
@@ -759,7 +759,7 @@ bool HandMk3CouplingHandler::decoupleVel (yarp::sig::Vector& current_vel)
 }
 
 bool HandMk3CouplingHandler::decoupleAcc (yarp::sig::Vector& current_acc)
-{	
+{
     if (m_coupledJoints.size()!=m_couplingSize) return false;
     current_acc[m_coupledJoints[2]] = current_acc[m_coupledJoints[2]] + current_acc[m_coupledJoints[3]];
     current_acc[m_coupledJoints[3]] = current_acc[m_coupledJoints[4]];
@@ -843,63 +843,63 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
 {
     const double RAD2DEG = 180.0/atan2(0.0,-1.0);
     const double DEG2RAD = 1.0/RAD2DEG;
-    
+
     m_couplingSize = 13;
-    
+
     thumb_lut.resize(LUTSIZE);
     index_lut.resize(LUTSIZE);
     pinkie_lut.resize(LUTSIZE);
-    
+
     std::vector<double> num(LUTSIZE);
-    
+
     // thumb
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         thumb_lut[n] = 0.0;
     }
-    {        
+    {
         double L0x = -0.00555,    L0y = 0.00285;
         double P1x =  0.02,       P1y = 0.0015;
         double L1x =  0.0115,     L1y = 0.0015;
-        
+
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
-        
+
         double offset = 180;
-        
+
         for (double q1 = 0.0; q1 <= 85.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);
             double sq1 = sin(DEG2RAD*q1);
-            
+
             double P1xr = cq1*P1x-sq1*P1y;
             double P1yr = sq1*P1x+cq1*P1y;
-            
+
             double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
-            
+
             double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
-            
+
             double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
-            
+
             double q2 = alfa + beta - offset;
-            
+
             while (q2 <    0.0) q2 += 360.0;
             while (q2 >= 360.0) q2 -= 360.0;
-            
+
             double dindex = q2*10.0;
-            
+
             int iindex = int(dindex);
-            
+
             double w = dindex - double(iindex);
-            
+
             thumb_lut[iindex] += (1.0 - w)*q1;
             num[iindex] += (1.0 - w);
-            
+
             thumb_lut[iindex + 1] += w*q1;
             num[iindex + 1] += w;
         }
-        
+
         for (int n = 0; n < LUTSIZE; ++n)
         {
             if (num[n] > 0.0)
@@ -909,54 +909,54 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
         }
     }
 
-    // index, middle, ring   
+    // index, middle, ring
     for (int n = 0; n < LUTSIZE; ++n)
     {
         num[n] = 0.0;
         index_lut[n] = 0.0;
     }
-    {    
+    {
         double P1x =  0.0300, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;
         double L1x =  0.0240, L1y = 0.0008;
-        
+
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
-        
+
         double offset = 173.35;
 
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);
             double sq1 = sin(DEG2RAD*q1);
-            
+
             double P1xr = cq1*P1x-sq1*P1y;
             double P1yr = sq1*P1x+cq1*P1y;
-            
+
             double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
-            
+
             double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
-            
+
             double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
-            
+
             double q2 = alfa + beta - offset;
-            
+
             while (q2 <    0.0) q2 += 360.0;
             while (q2 >= 360.0) q2 -= 360.0;
-            
+
             // get decimal part of q2 to find out how to weigh index and index+1
             double dindex = q2*10.0;
             int iindex = int(dindex);
             double w = dindex - double(iindex);
-            
+
             // Construct LUT
             index_lut[iindex] += (1.0 - w)*q1;
             num[iindex] += (1.0 - w);
-            
+
             index_lut[iindex + 1] += w*q1;
             num[iindex + 1] += w;
         }
-        
+
         // divide each value in the LUT by the weight if it is greater than 0 to extract q1
         for (int n = 0; n < LUTSIZE; ++n)
         {
@@ -973,47 +973,47 @@ HandMk4CouplingHandler::HandMk4CouplingHandler(gazebo::physics::Model* model, ya
         num[n] = 0.0;
         pinkie_lut[n] = 0.0;
     }
-    {    
+    {
         double P1x =  0.0250, P1y = 0.0015;
         double L0x = -0.0050, L0y = 0.0040;
         double L1x =  0.0190, L1y = 0.0005;
-        
+
         double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
         double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
-        
+
         double offset = 170.54;
         for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
         {
             double cq1 = cos(DEG2RAD*q1);
             double sq1 = sin(DEG2RAD*q1);
-            
+
             double P1xr = cq1*P1x-sq1*P1y;
             double P1yr = sq1*P1x+cq1*P1y;
-            
+
             double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
-            
+
             double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
-            
+
             double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
-            
+
             double q2 = alfa + beta - offset;
-            
+
             while (q2 <    0.0) q2 += 360.0;
             while (q2 >= 360.0) q2 -= 360.0;
-            
+
             // get decimal part of q2 to find out how to weigh index and index+1
             double dindex = q2*10.0;
             int iindex = int(dindex);
             double w = dindex - double(iindex);
-            
+
             // Construct LUT
             pinkie_lut[iindex] += (1.0 - w)*q1;
             num[iindex] += (1.0 - w);
-            
+
             pinkie_lut[iindex + 1] += w*q1;
             num[iindex + 1] += w;
         }
-        
+
         // divide each value in the LUT by the weight if it is greater than 0 to extract q1
         for (int n = 0; n < LUTSIZE; ++n)
         {
@@ -1048,7 +1048,7 @@ bool HandMk4CouplingHandler::decoupleVel (yarp::sig::Vector& current_vel)
 }
 
 bool HandMk4CouplingHandler::decoupleAcc (yarp::sig::Vector& current_acc)
-{	
+{
     if (m_coupledJoints.size()!=m_couplingSize) return false;
     current_acc[m_coupledJoints[2]] = current_acc[m_coupledJoints[2]] + current_acc[m_coupledJoints[3]];
     current_acc[m_coupledJoints[3]] = current_acc[m_coupledJoints[4]];
@@ -1128,3 +1128,300 @@ yarp::sig::Vector HandMk4CouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq
     out[m_coupledJoints[12]] = trq_ref[m_coupledJoints[6]] - out[m_coupledJoints[11]];
     return out;
 }
+
+//------------------------------------------------------------------------------------------------------------------
+// HandMk5CouplingHandler
+//------------------------------------------------------------------------------------------------------------------
+
+HandMk5CouplingHandler::HandMk5CouplingHandler(gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits)
+: BaseCouplingHandler(model, coupled_joints,coupled_joint_names, coupled_joint_limits), LUTSIZE(4096)
+{
+    const double RAD2DEG = 180.0/atan2(0.0,-1.0);
+    const double DEG2RAD = 1.0/RAD2DEG;
+
+    m_couplingSize = 12;
+
+    thumb_lut.resize(LUTSIZE);
+    index_lut.resize(LUTSIZE);
+    pinkie_lut.resize(LUTSIZE);
+
+    std::vector<double> num(LUTSIZE);
+
+    // thumb
+    for (int n = 0; n < LUTSIZE; ++n)
+    {
+        num[n] = 0.0;
+        thumb_lut[n] = 0.0;
+    }
+    {
+        double L0x = -0.00555,    L0y = 0.00285;
+        double P1x =  0.02,       P1y = 0.0015;
+        double L1x =  0.0115,     L1y = 0.0015;
+
+        double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
+        double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
+
+        double offset = 180;
+
+        for (double q1 = 0.0; q1 <= 85.5; q1 += 0.01)
+        {
+            double cq1 = cos(DEG2RAD*q1);
+            double sq1 = sin(DEG2RAD*q1);
+
+            double P1xr = cq1*P1x-sq1*P1y;
+            double P1yr = sq1*P1x+cq1*P1y;
+
+            double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
+
+            double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
+
+            double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
+
+            double q2 = alfa + beta - offset;
+
+            while (q2 <    0.0) q2 += 360.0;
+            while (q2 >= 360.0) q2 -= 360.0;
+
+            double dindex = q2*10.0;
+
+            int iindex = int(dindex);
+
+            double w = dindex - double(iindex);
+
+            thumb_lut[iindex] += (1.0 - w)*q1;
+            num[iindex] += (1.0 - w);
+
+            thumb_lut[iindex + 1] += w*q1;
+            num[iindex + 1] += w;
+        }
+
+        for (int n = 0; n < LUTSIZE; ++n)
+        {
+            if (num[n] > 0.0)
+            {
+                thumb_lut[n] /= num[n];
+            }
+        }
+    }
+
+
+    // index, middle, ring
+    for (int n = 0; n < LUTSIZE; ++n)
+    {
+        num[n] = 0.0;
+        index_lut[n] = 0.0;
+    }
+    {
+        double P1x =  0.0300, P1y = 0.0015;
+        double L0x = -0.0050, L0y = 0.0040;
+        double L1x =  0.0240, L1y = 0.0008;
+
+        double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
+        double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
+
+        double offset = 173.35;
+
+        for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
+        {
+            double cq1 = cos(DEG2RAD*q1);
+            double sq1 = sin(DEG2RAD*q1);
+
+            double P1xr = cq1*P1x-sq1*P1y;
+            double P1yr = sq1*P1x+cq1*P1y;
+
+            double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
+
+            double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
+
+            double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
+
+            double q2 = alfa + beta - offset;
+
+            while (q2 <    0.0) q2 += 360.0;
+            while (q2 >= 360.0) q2 -= 360.0;
+
+            // get decimal part of q2 to find out how to weigh index and index+1
+            double dindex = q2*10.0;
+            int iindex = int(dindex);
+            double w = dindex - double(iindex);
+
+            // Construct LUT
+            index_lut[iindex] += (1.0 - w)*q1;
+            num[iindex] += (1.0 - w);
+
+            index_lut[iindex + 1] += w*q1;
+            num[iindex + 1] += w;
+        }
+
+        // divide each value in the LUT by the weight if it is greater than 0 to extract q1
+        for (int n = 0; n < LUTSIZE; ++n)
+        {
+            if (num[n] > 0.0)
+            {
+                index_lut[n] /= num[n];
+            }
+        }
+    }
+
+    // pinkie
+    for (int n = 0; n < LUTSIZE; ++n)
+    {
+        num[n] = 0.0;
+        pinkie_lut[n] = 0.0;
+    }
+    {
+        double P1x =  0.0250, P1y = 0.0015;
+        double L0x = -0.0050, L0y = 0.0040;
+        double L1x =  0.0190, L1y = 0.0005;
+
+        double l2 = (P1x - L1x)*(P1x - L1x) + (P1y - L1y)*(P1y - L1y);
+        double k2 = (L1x - L0x)*(L1x - L0x) + (L1y - L0y)*(L1y - L0y);
+
+        double offset = 170.54;
+        for (double q1 = 0.0; q1 <= 95.5; q1 += 0.01)
+        {
+            double cq1 = cos(DEG2RAD*q1);
+            double sq1 = sin(DEG2RAD*q1);
+
+            double P1xr = cq1*P1x-sq1*P1y;
+            double P1yr = sq1*P1x+cq1*P1y;
+
+            double h2 = (P1xr - L0x)*(P1xr - L0x) + (P1yr - L0y)*(P1yr - L0y);
+
+            double alfa = RAD2DEG*atan2(L0y - P1yr, L0x - P1xr);
+
+            double beta = RAD2DEG*acos((h2 + l2 - k2)/(2.0*sqrt(h2*l2)));
+
+            double q2 = alfa + beta - offset;
+
+            while (q2 <    0.0) q2 += 360.0;
+            while (q2 >= 360.0) q2 -= 360.0;
+
+            // get decimal part of q2 to find out how to weigh index and index+1
+            double dindex = q2*10.0;
+            int iindex = int(dindex);
+            double w = dindex - double(iindex);
+
+            // Construct LUT
+            pinkie_lut[iindex] += (1.0 - w)*q1;
+            num[iindex] += (1.0 - w);
+
+            pinkie_lut[iindex + 1] += w*q1;
+            num[iindex + 1] += w;
+        }
+
+        // divide each value in the LUT by the weight if it is greater than 0 to extract q1
+        for (int n = 0; n < LUTSIZE; ++n)
+        {
+            if (num[n] > 0.0)
+            {
+                pinkie_lut[n] /= num[n];
+            }
+        }
+    }
+}
+
+bool HandMk5CouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
+{
+    if (m_coupledJoints.size()!=m_couplingSize) return false;
+    current_pos[m_coupledJoints[1]] = current_pos[m_coupledJoints[1]] + current_pos[m_coupledJoints[2]];
+    current_pos[m_coupledJoints[2]] = current_pos[m_coupledJoints[3]];
+    current_pos[m_coupledJoints[3]] = current_pos[m_coupledJoints[4]] + current_pos[m_coupledJoints[5]];
+    current_pos[m_coupledJoints[4]] = current_pos[m_coupledJoints[6]] + current_pos[m_coupledJoints[7]];
+    current_pos[m_coupledJoints[5]] = current_pos[m_coupledJoints[8]] + current_pos[m_coupledJoints[9]];
+    return true;
+}
+
+bool HandMk5CouplingHandler::decoupleVel (yarp::sig::Vector& current_vel)
+{
+    if (m_coupledJoints.size()!=m_couplingSize) return false;
+    current_vel[m_coupledJoints[1]] = current_vel[m_coupledJoints[1]] + current_vel[m_coupledJoints[2]];
+    current_vel[m_coupledJoints[2]] = current_vel[m_coupledJoints[3]];
+    current_vel[m_coupledJoints[3]] = current_vel[m_coupledJoints[4]] + current_vel[m_coupledJoints[5]];
+    current_vel[m_coupledJoints[4]] = current_vel[m_coupledJoints[6]] + current_vel[m_coupledJoints[7]];
+    current_vel[m_coupledJoints[5]] = current_vel[m_coupledJoints[8]] + current_vel[m_coupledJoints[9]];
+    return true;
+}
+
+bool HandMk5CouplingHandler::decoupleAcc (yarp::sig::Vector& current_acc)
+{
+    if (m_coupledJoints.size()!=m_couplingSize) return false;
+    current_acc[m_coupledJoints[1]] = current_acc[m_coupledJoints[1]] + current_acc[m_coupledJoints[2]];
+    current_acc[m_coupledJoints[2]] = current_acc[m_coupledJoints[3]];
+    current_acc[m_coupledJoints[3]] = current_acc[m_coupledJoints[4]] + current_acc[m_coupledJoints[5]];
+    current_acc[m_coupledJoints[4]] = current_acc[m_coupledJoints[6]] + current_acc[m_coupledJoints[7]];
+    current_acc[m_coupledJoints[5]] = current_acc[m_coupledJoints[8]] + current_acc[m_coupledJoints[9]];
+    return true;
+}
+
+bool HandMk5CouplingHandler::decoupleTrq (yarp::sig::Vector& current_trq)
+{
+    if (m_coupledJoints.size()!=m_couplingSize) return false;
+    return false;
+}
+
+double HandMk5CouplingHandler::decouple (double q2, std::vector<double>& lut)
+{
+
+    double dindex = q2*10.0;
+    int iindex = int(dindex);
+    // get decimal part of q2 to find out how to weigh index and index+1
+    double w = dindex - double(iindex);
+    // interpolate between index and the next with a convex combination weighting
+    return lut[iindex]*(1.0 - w) + lut[iindex + 1]*w;
+}
+
+yarp::sig::Vector HandMk5CouplingHandler::decoupleRefPos (yarp::sig::Vector& pos_ref)
+{
+    yarp::sig::Vector out = pos_ref;
+    if (m_coupledJoints.size()!=m_couplingSize) {yCError(GAZEBOCONTROLBOARD) << "HandMk5CouplingHandler: Invalid coupling vector"; return out;}
+    out[m_coupledJoints[1]]  = decouple(pos_ref[m_coupledJoints[1]], thumb_lut);
+    out[m_coupledJoints[2]]  = pos_ref[m_coupledJoints[1]] - out[m_coupledJoints[1]];
+    out[m_coupledJoints[3]]  = pos_ref[m_coupledJoints[2]];
+    out[m_coupledJoints[4]]  = decouple(pos_ref[m_coupledJoints[3]], index_lut);
+    out[m_coupledJoints[5]]  = pos_ref[m_coupledJoints[3]] - out[m_coupledJoints[4]];
+    out[m_coupledJoints[6]]  = decouple(pos_ref[m_coupledJoints[4]], index_lut);
+    out[m_coupledJoints[7]]  = pos_ref[m_coupledJoints[4]] - out[m_coupledJoints[6]];
+    out[m_coupledJoints[8]]  = decouple(pos_ref[m_coupledJoints[5]], index_lut);
+    out[m_coupledJoints[9]] = pos_ref[m_coupledJoints[5]] - out[m_coupledJoints[8]];
+    out[m_coupledJoints[10]] = decouple(pos_ref[m_coupledJoints[5]], pinkie_lut);;
+    out[m_coupledJoints[11]] = pos_ref[m_coupledJoints[5]] - out[m_coupledJoints[10]];
+    return out;
+}
+
+yarp::sig::Vector HandMk5CouplingHandler::decoupleRefVel (yarp::sig::Vector& vel_ref)
+{
+    yarp::sig::Vector out = vel_ref;
+    if (m_coupledJoints.size()!=m_couplingSize) {yCError(GAZEBOCONTROLBOARD) << "HandMk5CouplingHandler: Invalid coupling vector"; return out;}
+    out[m_coupledJoints[1]]  = decouple(vel_ref[m_coupledJoints[1]], thumb_lut);
+    out[m_coupledJoints[2]]  = vel_ref[m_coupledJoints[1]] - out[m_coupledJoints[1]];
+    out[m_coupledJoints[3]]  = vel_ref[m_coupledJoints[2]];
+    out[m_coupledJoints[4]]  = decouple(vel_ref[m_coupledJoints[3]], index_lut);
+    out[m_coupledJoints[5]]  = vel_ref[m_coupledJoints[3]] - out[m_coupledJoints[4]];
+    out[m_coupledJoints[6]]  = decouple(vel_ref[m_coupledJoints[4]], index_lut);
+    out[m_coupledJoints[7]]  = vel_ref[m_coupledJoints[4]] - out[m_coupledJoints[6]];
+    out[m_coupledJoints[8]]  = decouple(vel_ref[m_coupledJoints[5]], index_lut);
+    out[m_coupledJoints[9]] = vel_ref[m_coupledJoints[5]] - out[m_coupledJoints[8]];
+    out[m_coupledJoints[10]] = decouple(vel_ref[m_coupledJoints[5]], pinkie_lut);;
+    out[m_coupledJoints[11]] = vel_ref[m_coupledJoints[5]] - out[m_coupledJoints[10]];
+    return out;
+}
+
+yarp::sig::Vector HandMk5CouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq_ref)
+{
+    yarp::sig::Vector out =trq_ref;
+    if (m_coupledJoints.size()!=m_couplingSize) {yCError(GAZEBOCONTROLBOARD) << "HandMk5CouplingHandler: Invalid coupling vector"; return out;}
+    out[m_coupledJoints[1]]  = decouple(trq_ref[m_coupledJoints[1]], thumb_lut);
+    out[m_coupledJoints[2]]  = trq_ref[m_coupledJoints[1]] - out[m_coupledJoints[1]];
+    out[m_coupledJoints[3]]  = trq_ref[m_coupledJoints[2]];
+    out[m_coupledJoints[4]]  = decouple(trq_ref[m_coupledJoints[3]], index_lut);
+    out[m_coupledJoints[5]]  = trq_ref[m_coupledJoints[3]] - out[m_coupledJoints[4]];
+    out[m_coupledJoints[6]]  = decouple(trq_ref[m_coupledJoints[4]], index_lut);
+    out[m_coupledJoints[7]]  = trq_ref[m_coupledJoints[4]] - out[m_coupledJoints[6]];
+    out[m_coupledJoints[8]]  = decouple(trq_ref[m_coupledJoints[5]], index_lut);
+    out[m_coupledJoints[9]] = trq_ref[m_coupledJoints[5]] - out[m_coupledJoints[8]];
+    out[m_coupledJoints[10]] = decouple(trq_ref[m_coupledJoints[5]], pinkie_lut);;
+    out[m_coupledJoints[11]] = trq_ref[m_coupledJoints[5]] - out[m_coupledJoints[10]];
+    return out;
+}
+

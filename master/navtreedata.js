@@ -50,111 +50,114 @@ var NAVTREE =
     ] ],
     [ "Changelog", "md_CHANGELOG.html", [
       [ "[Unreleased]", "md_CHANGELOG.html#autotoc_md16", null ],
-      [ "[4.5.2] - 2022-11-17", "md_CHANGELOG.html#autotoc_md17", [
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md18", null ]
+      [ "[4.6.0] - 2023-01-13", "md_CHANGELOG.html#autotoc_md17", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md18", null ]
       ] ],
-      [ "[4.5.1] - 2022-08-31", "md_CHANGELOG.html#autotoc_md19", [
+      [ "[4.5.2] - 2022-11-17", "md_CHANGELOG.html#autotoc_md19", [
         [ "Fixed", "md_CHANGELOG.html#autotoc_md20", null ]
       ] ],
-      [ "[4.5.0] - 2022-08-23", "md_CHANGELOG.html#autotoc_md21", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md22", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md23", null ]
+      [ "[4.5.1] - 2022-08-31", "md_CHANGELOG.html#autotoc_md21", [
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md22", null ]
       ] ],
-      [ "[4.4.0] - 2022-05-31", "md_CHANGELOG.html#autotoc_md24", [
+      [ "[4.5.0] - 2022-08-23", "md_CHANGELOG.html#autotoc_md23", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md24", null ],
         [ "Fixed", "md_CHANGELOG.html#autotoc_md25", null ]
       ] ],
-      [ "[4.3.0] - 2022-04-04", "md_CHANGELOG.html#autotoc_md26", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md27", null ],
-        [ "Changed", "md_CHANGELOG.html#autotoc_md28", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md29", null ]
+      [ "[4.4.0] - 2022-05-31", "md_CHANGELOG.html#autotoc_md26", [
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md27", null ]
       ] ],
-      [ "[4.2.0] - 2022-02-28", "md_CHANGELOG.html#autotoc_md30", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md31", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md32", null ]
+      [ "[4.3.0] - 2022-04-04", "md_CHANGELOG.html#autotoc_md28", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md29", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md30", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md31", null ]
       ] ],
-      [ "[4.1.2] - 2022-01-19", "md_CHANGELOG.html#autotoc_md33", [
+      [ "[4.2.0] - 2022-02-28", "md_CHANGELOG.html#autotoc_md32", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md33", null ],
         [ "Fixed", "md_CHANGELOG.html#autotoc_md34", null ]
       ] ],
-      [ "[4.1.1] - 2022-01-13", "md_CHANGELOG.html#autotoc_md35", [
+      [ "[4.1.2] - 2022-01-19", "md_CHANGELOG.html#autotoc_md35", [
         [ "Fixed", "md_CHANGELOG.html#autotoc_md36", null ]
       ] ],
-      [ "[4.1.0] - 2021-12-23", "md_CHANGELOG.html#autotoc_md37", [
-        [ "Changed", "md_CHANGELOG.html#autotoc_md38", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md39", null ]
+      [ "[4.1.1] - 2022-01-13", "md_CHANGELOG.html#autotoc_md37", [
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md38", null ]
       ] ],
-      [ "[4.0.0] - 2021-09-03", "md_CHANGELOG.html#autotoc_md40", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md41", null ],
-        [ "Changed", "md_CHANGELOG.html#autotoc_md42", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md43", null ],
-        [ "Removed", "md_CHANGELOG.html#autotoc_md44", null ]
+      [ "[4.1.0] - 2021-12-23", "md_CHANGELOG.html#autotoc_md39", [
+        [ "Changed", "md_CHANGELOG.html#autotoc_md40", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md41", null ]
       ] ],
-      [ "[3.6.2] - 2021-08-27", "md_CHANGELOG.html#autotoc_md45", null ],
-      [ "Deprecated", "md_CHANGELOG.html#autotoc_md46", null ],
-      [ "[3.6.1] - 2021-05-19", "md_CHANGELOG.html#autotoc_md47", [
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md48", null ]
+      [ "[4.0.0] - 2021-09-03", "md_CHANGELOG.html#autotoc_md42", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md43", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md44", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md45", null ],
+        [ "Removed", "md_CHANGELOG.html#autotoc_md46", null ]
       ] ],
-      [ "[3.6.0] - 2021-02-24", "md_CHANGELOG.html#autotoc_md49", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md50", null ],
-        [ "Changed", "md_CHANGELOG.html#autotoc_md51", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md52", null ]
+      [ "[3.6.2] - 2021-08-27", "md_CHANGELOG.html#autotoc_md47", null ],
+      [ "Deprecated", "md_CHANGELOG.html#autotoc_md48", null ],
+      [ "[3.6.1] - 2021-05-19", "md_CHANGELOG.html#autotoc_md49", [
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md50", null ]
       ] ],
-      [ "[3.5.1] - 2020-10-05", "md_CHANGELOG.html#autotoc_md53", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md54", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md55", null ]
+      [ "[3.6.0] - 2021-02-24", "md_CHANGELOG.html#autotoc_md51", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md52", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md53", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md54", null ]
       ] ],
-      [ "[3.5.0] - 2020-08-26", "md_CHANGELOG.html#autotoc_md56", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md57", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md58", null ]
+      [ "[3.5.1] - 2020-10-05", "md_CHANGELOG.html#autotoc_md55", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md56", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md57", null ]
       ] ],
-      [ "[3.4.2] - 2020-08-25", "md_CHANGELOG.html#autotoc_md59", [
+      [ "[3.5.0] - 2020-08-26", "md_CHANGELOG.html#autotoc_md58", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md59", null ],
         [ "Fixed", "md_CHANGELOG.html#autotoc_md60", null ]
       ] ],
-      [ "[3.4.1] - 2020-08-24", "md_CHANGELOG.html#autotoc_md61", [
+      [ "[3.4.2] - 2020-08-25", "md_CHANGELOG.html#autotoc_md61", [
         [ "Fixed", "md_CHANGELOG.html#autotoc_md62", null ]
       ] ],
-      [ "[3.4.0] - 2020-05-19", "md_CHANGELOG.html#autotoc_md63", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md64", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md65", null ]
+      [ "[3.4.1] - 2020-08-24", "md_CHANGELOG.html#autotoc_md63", [
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md64", null ]
       ] ],
-      [ "[3.3.2] - 2020-05-08", "md_CHANGELOG.html#autotoc_md66", null ],
-      [ "[3.3.1] - 2020-03-05", "md_CHANGELOG.html#autotoc_md67", [
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md68", null ]
+      [ "[3.4.0] - 2020-05-19", "md_CHANGELOG.html#autotoc_md65", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md66", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md67", null ]
       ] ],
-      [ "[3.3.0] - 2019-12-13", "md_CHANGELOG.html#autotoc_md69", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md70", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md71", null ],
-        [ "Removed", "md_CHANGELOG.html#autotoc_md72", null ]
+      [ "[3.3.2] - 2020-05-08", "md_CHANGELOG.html#autotoc_md68", null ],
+      [ "[3.3.1] - 2020-03-05", "md_CHANGELOG.html#autotoc_md69", [
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md70", null ]
       ] ],
-      [ "[3.2.0] - 2019-07-01", "md_CHANGELOG.html#autotoc_md73", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md74", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md75", null ]
+      [ "[3.3.0] - 2019-12-13", "md_CHANGELOG.html#autotoc_md71", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md72", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md73", null ],
+        [ "Removed", "md_CHANGELOG.html#autotoc_md74", null ]
+      ] ],
+      [ "[3.2.0] - 2019-07-01", "md_CHANGELOG.html#autotoc_md75", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md76", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md77", null ]
       ] ]
     ] ],
     [ "Contributing", "contributing.html", [
-      [ "Contributing", "contributing.html#autotoc_md76", null ],
-      [ "Code style", "contributing.html#autotoc_md77", null ],
-      [ "Patches and features contribution", "contributing.html#autotoc_md78", null ],
-      [ "Repository structure and releases management.", "contributing.html#autotoc_md79", null ]
+      [ "Contributing", "contributing.html#autotoc_md78", null ],
+      [ "Code style", "contributing.html#autotoc_md79", null ],
+      [ "Patches and features contribution", "contributing.html#autotoc_md80", null ],
+      [ "Repository structure and releases management.", "contributing.html#autotoc_md81", null ]
     ] ],
     [ "Clock Plugin", "md_plugins_clock_README.html", null ],
     [ "ConfigurationOverride Plugin", "md_plugins_configurationoverride_README.html", null ],
     [ "ExternalWrench Plugin", "md_plugins_externalwrench_README.html", null ],
     [ "LinkAttacher Plugin", "md_plugins_linkattacher_README.html", null ],
     [ "gazebo_yarp_robotinterface", "md_plugins_robotinterface_README.html", [
-      [ "Usage", "md_plugins_robotinterface_README.html#autotoc_md91", [
-        [ "Add the plugin in the SDF model", "md_plugins_robotinterface_README.html#autotoc_md92", null ],
-        [ "Example of the robotinterface XML file", "md_plugins_robotinterface_README.html#autotoc_md93", null ],
-        [ "How to specify existing YARP devices to which to attach", "md_plugins_robotinterface_README.html#autotoc_md94", null ]
+      [ "Usage", "md_plugins_robotinterface_README.html#autotoc_md93", [
+        [ "Add the plugin in the SDF model", "md_plugins_robotinterface_README.html#autotoc_md94", null ],
+        [ "Example of the robotinterface XML file", "md_plugins_robotinterface_README.html#autotoc_md95", null ],
+        [ "How to specify existing YARP devices to which to attach", "md_plugins_robotinterface_README.html#autotoc_md96", null ]
       ] ]
     ] ],
     [ "gazebo-yarp-plugins <a href=\"https://travis-ci.org/robotology/gazebo-yarp-plugins\" ><img src=\"https://travis-ci.org/robotology/gazebo-yarp-plugins.svg?branch=master\" alt=\"Build Status\"/></a>", "md_README.html", [
-      [ "Quick start", "md_README.html#autotoc_md95", null ],
-      [ "Maintainers", "md_README.html#autotoc_md96", null ]
+      [ "Quick start", "md_README.html#autotoc_md97", null ],
+      [ "Maintainers", "md_README.html#autotoc_md98", null ]
     ] ],
     [ "Tutorial for plugin GazeboYarpModelPosePublisher", "md_tutorial_model_model_pose_publisher_README.html", [
-      [ "Setup the environment", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md98", null ],
-      [ "SDF model", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md99", null ],
-      [ "How to run the tutorial", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md100", null ]
+      [ "Setup the environment", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md100", null ],
+      [ "SDF model", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md101", null ],
+      [ "How to run the tutorial", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md102", null ]
     ] ],
     [ "Todo List", "todo.html", null ],
     [ "Namespaces", "namespaces.html", [
@@ -211,13 +214,13 @@ var NAVTREEINDEX =
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeCylinder__helper_1_1Command.html#ae727f552bca28d818e124c8a9555a485",
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Command.html#af0059f2c52490f28c6d01a308e97ca85",
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Command.html#ae6aa1e01ef29934c0830eea93d8470ec",
-"classTrapezoidalSpeedTrajectoryGenerator.html#a481ba208ebe1284bdae358bc21d59809",
-"classgazebo_1_1GazeboYarpMultiCamera.html#a93b4393fda29f45da32a612e71f7b854",
-"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#a345b2aa5d66a86f513eda1e2cc1159c8",
-"classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html#a25a2af31b30ce0d7df4b4b89e23c5e40",
-"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#ab631e2c720f981d0888fa6bcdf985325",
-"classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html#a73b6d9537ab2c4a629819e8352161192",
-"functions_func_v.html"
+"classTrajectoryGenerator.html#a052164d706c3e30a15ccdb6609d4add5",
+"classgazebo_1_1GazeboYarpMaisSensor.html#a3fa0f4511cbae9c42dceb246dadf7754",
+"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#a20e43200081cecbcc38d2ad135ac2a78",
+"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#af55525a0a3cb2c4fb87745d486e28a5d",
+"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#aa5bd629a962cd780c5b681783f09bab2",
+"classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a8f32cb45d00fa9f6535f6905a410a0cd",
+"functions.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -4,7 +4,7 @@ var searchData=
   ['pausesimulation_1',['pauseSimulation',['../classGazeboYarpPlugins_1_1ClockServerImpl.html#a647696e7d535922e0c1bc9519bc8c253',1,'GazeboYarpPlugins::ClockServerImpl::pauseSimulation()'],['../classGazeboYarpPlugins_1_1ClockServer.html#a274057b312e674a3997f8c56555bbdab',1,'GazeboYarpPlugins::ClockServer::pauseSimulation()'],['../classGazeboYarpPlugins_1_1ClockServer.html#ac14a94f55bcb8f269c0de100691ad84d',1,'GazeboYarpPlugins::ClockServer::pauseSimulation()']]],
   ['pi_2',['pi',['../main_8cpp.html#a43016d873124d39034edb8cd164794db',1,'pi():&#160;main.cpp'],['../namespaceGazeboYarpPlugins.html#aac8885810c891cd1d79979f17e108699',1,'GazeboYarpPlugins::pi()']]],
   ['pidcontroltypeenumhashfunction_3',['PidControlTypeEnumHashFunction',['../structyarp_1_1dev_1_1PidControlTypeEnumHashFunction.html',1,'yarp::dev']]],
-  ['pinkie_5flut_4',['pinkie_lut',['../classHandMk4CouplingHandler.html#a58246c1af9c3fdd0b08de627534f5d88',1,'HandMk4CouplingHandler']]],
+  ['pinkie_5flut_4',['pinkie_lut',['../classHandMk4CouplingHandler.html#a58246c1af9c3fdd0b08de627534f5d88',1,'HandMk4CouplingHandler::pinkie_lut()'],['../classHandMk5CouplingHandler.html#a08a44a3af588b12504839de2c270fe42',1,'HandMk5CouplingHandler::pinkie_lut()']]],
   ['pinkycouplinghandler_5',['PinkyCouplingHandler',['../classPinkyCouplingHandler.html',1,'PinkyCouplingHandler'],['../classPinkyCouplingHandler.html#a1dded801075cf7a59d44955edf279022',1,'PinkyCouplingHandler::PinkyCouplingHandler()']]],
   ['pitch_6',['pitch',['../classGazeboYarpPlugins_1_1Pose.html#ae3c73568980ff7607821ff842e98d376',1,'GazeboYarpPlugins::Pose']]],
   ['platform_5fid_7',['PLATFORM_ID',['../CMakeCXXCompilerId_8cpp.html#adbc5372f40838899018fadbc89bd588b',1,'CMakeCXXCompilerId.cpp']]],

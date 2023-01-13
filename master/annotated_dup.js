@@ -93,6 +93,7 @@ var annotated_dup =
     [ "GazeboYarpModelPosePublisherExample", "classGazeboYarpModelPosePublisherExample.html", "classGazeboYarpModelPosePublisherExample" ],
     [ "HandMk3CouplingHandler", "classHandMk3CouplingHandler.html", "classHandMk3CouplingHandler" ],
     [ "HandMk4CouplingHandler", "classHandMk4CouplingHandler.html", "classHandMk4CouplingHandler" ],
+    [ "HandMk5CouplingHandler", "classHandMk5CouplingHandler.html", "classHandMk5CouplingHandler" ],
     [ "IndexCouplingHandler", "classIndexCouplingHandler.html", "classIndexCouplingHandler" ],
     [ "LinkAttacherServerImpl", "classLinkAttacherServerImpl.html", "classLinkAttacherServerImpl" ],
     [ "MiddleCouplingHandler", "classMiddleCouplingHandler.html", "classMiddleCouplingHandler" ],

@@ -17,11 +17,13 @@ digraph "Graphical Class Hierarchy"
   Node0 -> Node5 [dir="back",color="steelblue1",style="solid"];
   Node5 [label="HandMk4CouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classHandMk4CouplingHandler.html",tooltip=" "];
   Node0 -> Node6 [dir="back",color="steelblue1",style="solid"];
-  Node6 [label="IndexCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classIndexCouplingHandler.html",tooltip=" "];
+  Node6 [label="HandMk5CouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classHandMk5CouplingHandler.html",tooltip=" "];
   Node0 -> Node7 [dir="back",color="steelblue1",style="solid"];
-  Node7 [label="MiddleCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classMiddleCouplingHandler.html",tooltip=" "];
+  Node7 [label="IndexCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classIndexCouplingHandler.html",tooltip=" "];
   Node0 -> Node8 [dir="back",color="steelblue1",style="solid"];
-  Node8 [label="PinkyCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classPinkyCouplingHandler.html",tooltip=" "];
+  Node8 [label="MiddleCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classMiddleCouplingHandler.html",tooltip=" "];
   Node0 -> Node9 [dir="back",color="steelblue1",style="solid"];
-  Node9 [label="ThumbCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classThumbCouplingHandler.html",tooltip=" "];
+  Node9 [label="PinkyCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classPinkyCouplingHandler.html",tooltip=" "];
+  Node0 -> Node10 [dir="back",color="steelblue1",style="solid"];
+  Node10 [label="ThumbCouplingHandler",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classThumbCouplingHandler.html",tooltip=" "];
 }

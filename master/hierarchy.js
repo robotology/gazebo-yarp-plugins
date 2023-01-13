@@ -6,6 +6,7 @@ var hierarchy =
       [ "FingersAbductionCouplingHandler", "classFingersAbductionCouplingHandler.html", null ],
       [ "HandMk3CouplingHandler", "classHandMk3CouplingHandler.html", null ],
       [ "HandMk4CouplingHandler", "classHandMk4CouplingHandler.html", null ],
+      [ "HandMk5CouplingHandler", "classHandMk5CouplingHandler.html", null ],
       [ "IndexCouplingHandler", "classIndexCouplingHandler.html", null ],
       [ "MiddleCouplingHandler", "classMiddleCouplingHandler.html", null ],
       [ "PinkyCouplingHandler", "classPinkyCouplingHandler.html", null ],

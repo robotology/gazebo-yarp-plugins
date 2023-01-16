@@ -5,6 +5,10 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Fixed 
+
+- Fix wrong install include for gazebo_yarp_lib_common library (https://github.com/robotology/gazebo-yarp-plugins/pull/644).
+
 ## [4.6.0] - 2023-01-13
 
 ### Added

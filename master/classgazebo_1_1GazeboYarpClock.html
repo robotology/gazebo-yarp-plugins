@@ -164,18 +164,18 @@ Public Member Functions</h2></td></tr>
 <li>It publishes the simulation time on a Yarp port <code>/clock</code></li>
 <li>It opens a Yarp RPC Port (<code>/clock/rpc</code>) to allows control of the simulation time.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md82"></a>
+<h3><a class="anchor" id="autotoc_md83"></a>
 How to launch it</h3>
 <p >The plugin should be launched as a system plugin:</p>
 <p ><code>gazebo -slibgazebo_yarp_clock.so</code></p>
-<h3><a class="anchor" id="autotoc_md83"></a>
+<h3><a class="anchor" id="autotoc_md84"></a>
 Plugin details</h3>
 <p >The RPC communication API is written in <a href="https://github.com/robotology/gazebo-yarp-plugins/blob/master/thrift/clock/clock_rpc.thrift">thrift</a> and a stub is automatically generated and can be used for remote procedure calls. The APIs allow to stop, resume and step the simulation.</p>
-<h4><a class="anchor" id="autotoc_md84"></a>
+<h4><a class="anchor" id="autotoc_md85"></a>
 Synchronize with the simulation</h4>
 <p >The features exposed by this plugin should be enough to cover most of the synchronization issues.</p>
 <p >If you need to implement synchronization in your module, you should use the RPC calls to properly step the simulation.</p>
-<p ><a class="anchor" id="autotoc_md85"></a> </p><h5>Already-implemented synchronization methods</h5>
+<p ><a class="anchor" id="autotoc_md86"></a> </p><h5>Already-implemented synchronization methods</h5>
 <p >At the current state, you can use the synchronization out-of-the-box in these two cases:</p>
 <h6>1) Yarp module</h6>
 <p >Yarp already supports the use of an external clock. In this case, the only thing that is needed is to set the environmental variable <code>YARP_CLOCK</code> to be equal to the clock port, e.g., <code>YARP_CLOCK=/clock</code>. We strongly advice you to <b>NOT</b> put the variable in your <code>.bashrc</code> but to do it explicitly for each module.</p>
@@ -475,7 +475,7 @@ Synchronize with the simulation</h4>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacegazebo.html">gazebo</a></li><li class="navelem"><a class="el" href="classgazebo_1_1GazeboYarpClock.html">GazeboYarpClock</a></li>
-    <li class="footer">Generated on Fri Jan 13 2023 15:02:17 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
+    <li class="footer">Generated on Sun Jan 29 2023 16:44:56 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5 </li>
   </ul>
 </div>
 </body>

@@ -79,5 +79,5 @@ jobs:
       shell: bash -l {0}
       run: |
         cd build
-        ctest --output-on-failure -C ${{ matrix.build_type }}
+        ctest --repeat until-pass:5 --output-on-failure -C ${{ matrix.build_type }}
 

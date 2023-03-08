@@ -90,7 +90,7 @@ bool GazeboYarpIMUDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (config.check("useWorldReferenceOrientation")) {
+    if (!config.check("useInitialSensorOrientationAsReference")) {
         m_parentSensor->SetWorldToReferenceOrientation(ignition::math::Quaterniond::Identity);
     }
 

@@ -5,9 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Added a new `useWorldReferenceOrientation` config option in the `gazebo_imu` plugin to take account for any initial non-zero orientation of the sensor as measured via `yarp::dev::IOrientationSensors` (https://github.com/robotology/gazebo-yarp-plugins/pull/639).
+- The `gazebo_imu` plugin used to output orientation measurements as if the sensor was zero-aligned with the world frame, regardless of the initial orientation of the part the sensor is attached to. To match most real-world IMUs, the default behavior was changed to allow measuring orientation with regard to the world frame at all times. The old behavior can be restored by setting the `useInitialSensorOrientationAsReference` config option (https://github.com/robotology/gazebo-yarp-plugins/pull/639).
 
 ### Fixed
 

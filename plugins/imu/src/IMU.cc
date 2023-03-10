@@ -152,6 +152,9 @@ void GazeboYarpIMU::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf)
                                           {"sensor_name", ::yarp::os::Value{_sensor->Name()}}
                                         };
 
+    if (m_parameters.check("useInitialSensorOrientationAsReference")) {
+        imu_properties.put("useInitialSensorOrientationAsReference", yarp::os::Value::getNullValue());
+    }
 
     //Open the driver
     if (!m_imuDriver.open(imu_properties)) {

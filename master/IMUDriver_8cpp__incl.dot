@@ -49,4 +49,6 @@ digraph "IMUDriver.cpp"
   Node21 [label="yarp/os/Log.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node1 -> Node22 [color="steelblue1",style="solid"];
   Node22 [label="yarp/os/LogStream.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node23 [color="steelblue1",style="solid"];
+  Node23 [label="ignition/math/Quaternion.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
 }

@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <!-- Model inspired from https://github.com/gazebosim/gazebo-classic/blob/gazebo11_11.12.0/worlds/force_torque_demo.world -->
+  <!-- to demonstrate force torque, we'll construct a model with
+  two bodies stacked vertically, with a fixed joint connecting them. -->
+  <model name="model_1">
+    <link name="link_1">
+      <inertial>
+        <pose>0 0 0.05 0 0 0</pose>
+        <inertia>
+          <ixx>0.020000</ixx>
+          <ixy>0.000000</ixy>
+          <ixz>0.000000</ixz>
+          <iyy>0.020000</iyy>
+          <iyz>0.000000</iyz>
+          <izz>0.020000</izz>
+        </inertia>
+        <mass>10.000000</mass>
+      </inertial>
+      <visual name="visual_cylinder">
+        <pose>0 0 0.05 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.100000</radius>
+            <length>0.100000</length>
+          </cylinder>
+        </geometry>
+      </visual>
+      <collision name="collision_cylinder">
+        <pose>0 0 0.05 0 0 0</pose>
+        <max_contacts>250</max_contacts>
+        <geometry>
+          <cylinder>
+            <radius>0.100000</radius>
+            <length>0.100000</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+    <link name="link_2">
+      <pose>0 0 0.15 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0.0 0 0 0</pose>
+        <inertia>
+          <ixx>0.020000</ixx>
+          <ixy>0.000000</ixy>
+          <ixz>0.000000</ixz>
+          <iyy>0.020000</iyy>
+          <iyz>0.000000</iyz>
+          <izz>0.020000</izz>
+        </inertia>
+        <mass>10.000000</mass>
+      </inertial>
+      <visual name="visual_box">
+        <pose>0 0 0.0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.1</size>
+          </box>
+        </geometry>
+      </visual>
+      <collision name="collision_box">
+        <pose>0 0 0.0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="joint_01" type="fixed">
+      <parent>world</parent>
+      <child>link_1</child>
+      <pose>0 0 0.0 0 0 0</pose>
+      <sensor name="force_torque" type="force_torque">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>30</update_rate>
+      </sensor>
+    </joint>
+    <joint name="joint_12" type="fixed">
+      <parent>link_1</parent>
+      <child>link_2</child>
+      <!-- joint_1 at origin of link_2 link frame -->
+      <!-- moement arm from link_2 inertial frame to joint_01 is 2m -->
+      <!-- moement arm from link_2 inertial frame to joint_12 is 0.5m -->
+      <pose>0 0 0 0 0 0</pose>
+      <sensor name="force_torque" type="force_torque">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>30</update_rate>
+        <!-- Create an instance the gazebo_yarp_forcetorque YARP device called "forcetorque_plugin_device"-->
+        <plugin name="forcetorque_plugin" filename="libgazebo_yarp_forcetorque.so">
+          <yarpConfigurationString>(yarpDeviceName forcetorque_plugin_device) (disableImplicitNetworkWrapper)</yarpConfigurationString>
+        </plugin>
+      </sensor>
+    </joint>
+    <!-- Launch the other YARP devices, in this case a multipleanalogsensorsclient to expose the forcetorque measured on a YARP port -->
+    <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
+        <yarpRobotInterfaceConfigurationFile>model://forcetorque/forcetorque_nws.xml</yarpRobotInterfaceConfigurationFile>
+    </plugin>
+  </model>
+</sdf>

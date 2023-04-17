@@ -7,5 +7,4 @@ digraph "GazeboYarpPlugins::ClockServer_resetSimulationState_helper"
   Node1 [label="GazeboYarpPlugins::\lClockServer_resetSimulation\lState_helper",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="yarp::os::Portable",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
 }

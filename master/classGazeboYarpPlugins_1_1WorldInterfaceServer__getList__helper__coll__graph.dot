@@ -8,14 +8,11 @@ digraph "GazeboYarpPlugins::WorldInterfaceServer_getList_helper"
   Node1 [label="GazeboYarpPlugins::\lWorldInterfaceServer\l_getList_helper",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="yarp::os::Portable",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node3 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" cmd" ];
   Node3 [label="GazeboYarpPlugins::\lWorldInterfaceServer\l_getList_helper::Command",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1WorldInterfaceServer__getList__helper_1_1Command.html",tooltip=" "];
   Node4 -> Node3 [dir="back",color="steelblue1",style="solid"];
   Node4 [label="yarp::os::idl::WirePortable",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node4 -> Node3 [dir="back",color="steelblue1",style="solid"];
   Node5 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" reply" ];
   Node5 [label="GazeboYarpPlugins::\lWorldInterfaceServer\l_getList_helper::Reply",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1WorldInterfaceServer__getList__helper_1_1Reply.html",tooltip=" "];
-  Node4 -> Node5 [dir="back",color="steelblue1",style="solid"];
   Node4 -> Node5 [dir="back",color="steelblue1",style="solid"];
 }

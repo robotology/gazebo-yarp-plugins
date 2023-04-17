@@ -10,6 +10,7 @@ digraph "model"
   subgraph clusterdir_185d199b29a968eb62ed419f8dbd074e {
     graph [ bgcolor="#e8e8fc", pencolor="grey25", label="", fontname=FreeSans.ttf,fontsize=10 style="filled,bold", URL="dir_185d199b29a968eb62ed419f8dbd074e.html",tooltip=""]
     dir_185d199b29a968eb62ed419f8dbd074e [shape=plaintext, label="model"];
+  dir_31d5e2cb7a5640d92c16b0024bfd5b86 [label="forcetorque", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_31d5e2cb7a5640d92c16b0024bfd5b86.html",tooltip=""];
   dir_40651447b58cb28af9ce245526070343 [label="model_pose_publisher", fillcolor="#8888f0", color="grey25", style="filled", URL="dir_40651447b58cb28af9ce245526070343.html",tooltip=""];
   }
   }

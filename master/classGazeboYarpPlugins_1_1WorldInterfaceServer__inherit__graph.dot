@@ -7,7 +7,6 @@ digraph "GazeboYarpPlugins::WorldInterfaceServer"
   Node1 [label="GazeboYarpPlugins::\lWorldInterfaceServer",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="yarp::os::Wire",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node1 -> Node3 [dir="back",color="steelblue1",style="solid"];
   Node3 [label="WorldInterfaceServerImpl",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classWorldInterfaceServerImpl.html",tooltip=" "];
   Node1 -> Node4 [dir="back",color="steelblue1",style="solid"];

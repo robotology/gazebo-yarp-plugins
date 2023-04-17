@@ -157,10 +157,11 @@ var NAVTREE =
       [ "Quick start", "md_README.html#autotoc_md99", null ],
       [ "Maintainers", "md_README.html#autotoc_md100", null ]
     ] ],
+    [ "Example of a model using a gazebo_yarp_forcetorque plugin", "md_tutorial_model_forcetorque_README.html", null ],
     [ "Tutorial for plugin GazeboYarpModelPosePublisher", "md_tutorial_model_model_pose_publisher_README.html", [
-      [ "Setup the environment", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md102", null ],
-      [ "SDF model", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md103", null ],
-      [ "How to run the tutorial", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md104", null ]
+      [ "Setup the environment", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md103", null ],
+      [ "SDF model", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md104", null ],
+      [ "How to run the tutorial", "md_tutorial_model_model_pose_publisher_README.html#autotoc_md105", null ]
     ] ],
     [ "Todo List", "todo.html", null ],
     [ "Namespaces", "namespaces.html", [
@@ -223,8 +224,8 @@ var NAVTREEINDEX =
 "classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#af55525a0a3cb2c4fb87745d486e28a5d",
 "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#aa5bd629a962cd780c5b681783f09bab2",
 "classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#a8f32cb45d00fa9f6535f6905a410a0cd",
-"functions.html",
-"worldproxy_8cpp.html#a54810070f1f52ab7702ac86240b171b5"
+"files.html",
+"worldproxy_8cpp.html#a30476b28db48af56e2aa7e751d9765fa"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

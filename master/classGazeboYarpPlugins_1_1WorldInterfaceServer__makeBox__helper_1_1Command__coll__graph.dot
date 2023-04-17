@@ -7,13 +7,10 @@ digraph "GazeboYarpPlugins::WorldInterfaceServer_makeBox_helper::Command"
   Node1 [label="GazeboYarpPlugins::\lWorldInterfaceServer\l_makeBox_helper::Command",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="yarp::os::idl::WirePortable",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node3 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" pose" ];
   Node3 [label="GazeboYarpPlugins::Pose",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1Pose.html",tooltip=" "];
   Node2 -> Node3 [dir="back",color="steelblue1",style="solid"];
-  Node2 -> Node3 [dir="back",color="steelblue1",style="solid"];
   Node4 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" color" ];
   Node4 [label="GazeboYarpPlugins::\lColor",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1Color.html",tooltip=" "];
-  Node2 -> Node4 [dir="back",color="steelblue1",style="solid"];
   Node2 -> Node4 [dir="back",color="steelblue1",style="solid"];
 }

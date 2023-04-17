@@ -9,5 +9,4 @@ digraph "GazeboYarpPlugins::ClockServerImpl"
   Node2 [label="GazeboYarpPlugins::\lClockServer",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1ClockServer.html",tooltip=" "];
   Node3 -> Node2 [dir="back",color="steelblue1",style="solid"];
   Node3 [label="yarp::os::Wire",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node3 -> Node2 [dir="back",color="steelblue1",style="solid"];
 }

@@ -1,0 +1,12 @@
+digraph "forcetorque"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
+  node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_185d199b29a968eb62ed419f8dbd074e {
+    graph [ bgcolor="#e8e8fc", pencolor="grey50", label="model", fontname=FreeSans.ttf,fontsize=10 style="filled,dashed", URL="dir_185d199b29a968eb62ed419f8dbd074e.html",tooltip=""]
+  dir_31d5e2cb7a5640d92c16b0024bfd5b86 [label="forcetorque", fillcolor="#e8e8fc", color="grey25", style="filled,bold", URL="dir_31d5e2cb7a5640d92c16b0024bfd5b86.html",tooltip=""];
+  }
+}

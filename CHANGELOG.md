@@ -8,10 +8,13 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Changed
 
 - The `gazebo_imu` plugin used to output orientation measurements as if the sensor was zero-aligned with the world frame, regardless of the initial orientation of the part the sensor is attached to. To match most real-world IMUs, the default behavior was changed to allow measuring orientation with regard to the world frame at all times. The old behavior can be restored by setting the `useInitialSensorOrientationAsReference` config option (https://github.com/robotology/gazebo-yarp-plugins/pull/639).
+- The `gazebo_yarp_controlboard` plugin is compiled using C++ 20 compiler features (https://github.com/robotology/gazebo-yarp-plugins/pull/650).
+- The `BaseCouplingHandler::decoupleVelRef()` methods within `gazebo_yarp_controlboard` provides an input argument containing the full joints position feedback, to be used to implement velocity decoupling laws that depend on the joints position.
 
 ### Fixed
 
 - Fix wrong install include for gazebo_yarp_lib_common library (https://github.com/robotology/gazebo-yarp-plugins/pull/644).
+- Fix wrong implementation of coupling handlers of ergoCub MK5 hands within the `gazebo_yarp_controlboard` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/650).
 
 ## [4.6.0] - 2023-01-13
 

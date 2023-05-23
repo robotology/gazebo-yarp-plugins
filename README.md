@@ -1,4 +1,4 @@
-gazebo-yarp-plugins [![Build Status](https://travis-ci.org/robotology/gazebo-yarp-plugins.svg?branch=master)](https://travis-ci.org/robotology/gazebo-yarp-plugins)
+gazebo-yarp-plugins
 ===================
 
 The gazebo-yarp-plugins are a set of [Gazebo plugins](http://gazebosim.org/) that expose [YARP interfaces](http://yarp.it/)

@@ -153,7 +153,7 @@ var NAVTREE =
         [ "How to specify existing YARP devices to which to attach", "md_plugins_robotinterface_README.html#autotoc_md98", null ]
       ] ]
     ] ],
-    [ "gazebo-yarp-plugins <a href=\"https://travis-ci.org/robotology/gazebo-yarp-plugins\" ><img src=\"https://travis-ci.org/robotology/gazebo-yarp-plugins.svg?branch=master\" alt=\"Build Status\"/></a>", "md_README.html", [
+    [ "gazebo-yarp-plugins", "md_README.html", [
       [ "Quick start", "md_README.html#autotoc_md99", null ],
       [ "Maintainers", "md_README.html#autotoc_md100", null ]
     ] ],

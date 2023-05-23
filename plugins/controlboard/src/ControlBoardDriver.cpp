@@ -646,7 +646,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         if (m_coupling_handler[cpl_cnt])
         {
             m_motReferencePositions = m_coupling_handler[cpl_cnt]->decoupleRefPos(m_jntReferencePositions);
-            m_motReferenceVelocities = m_coupling_handler[cpl_cnt]->decoupleRefVel(m_jntReferenceVelocities);
+            m_motReferenceVelocities = m_coupling_handler[cpl_cnt]->decoupleRefVel(m_jntReferenceVelocities, m_motPositions);
             m_motReferenceTorques = m_coupling_handler[cpl_cnt]->decoupleRefTrq(m_jntReferenceTorques);
         }
     }

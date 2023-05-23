@@ -134,8 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a94dd55da8936fd84cdb1cf79cd60b0b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b85bea04bf3252d9f26c82ce44bf40f"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk4CouplingHandler.html#a5b85bea04bf3252d9f26c82ce44bf40f">decoupleRefPos</a> (yarp::sig::Vector &amp;pos_ref)</td></tr>
 <tr class="separator:a5b85bea04bf3252d9f26c82ce44bf40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b679757397b90197dc82a5f90b63141"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk4CouplingHandler.html#a7b679757397b90197dc82a5f90b63141">decoupleRefVel</a> (yarp::sig::Vector &amp;vel_ref)</td></tr>
-<tr class="separator:a7b679757397b90197dc82a5f90b63141"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fe342f5e210f5fbe0d980ebf1744613"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk4CouplingHandler.html#a2fe342f5e210f5fbe0d980ebf1744613">decoupleRefVel</a> (yarp::sig::Vector &amp;vel_ref, const yarp::sig::Vector &amp;pos_feedback)</td></tr>
+<tr class="separator:a2fe342f5e210f5fbe0d980ebf1744613"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8e60998e746ebb9a275137c2691f9e8"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk4CouplingHandler.html#af8e60998e746ebb9a275137c2691f9e8">decoupleRefTrq</a> (yarp::sig::Vector &amp;trq_ref)</td></tr>
 <tr class="separator:af8e60998e746ebb9a275137c2691f9e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f22ae52607872d15852ac1e3a889eba"><td class="memItemLeft" align="right" valign="top">virtual yarp::sig::VectorOf&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba">getCoupledJoints</a> ()</td></tr>
@@ -359,8 +359,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a7b679757397b90197dc82a5f90b63141" name="a7b679757397b90197dc82a5f90b63141"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b679757397b90197dc82a5f90b63141">&#9670;&#160;</a></span>decoupleRefVel()</h2>
+<a id="a2fe342f5e210f5fbe0d980ebf1744613" name="a2fe342f5e210f5fbe0d980ebf1744613"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fe342f5e210f5fbe0d980ebf1744613">&#9670;&#160;</a></span>decoupleRefVel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -372,8 +372,18 @@ Protected Attributes</h2></td></tr>
           <td class="memname">yarp::sig::Vector HandMk4CouplingHandler::decoupleRefVel </td>
           <td>(</td>
           <td class="paramtype">yarp::sig::Vector &amp;&#160;</td>
-          <td class="paramname"><em>vel_ref</em></td><td>)</td>
+          <td class="paramname"><em>vel_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const yarp::sig::Vector &amp;&#160;</td>
+          <td class="paramname"><em>pos_feedback</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -383,7 +393,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classBaseCouplingHandler.html#a9213d7720ef88415cb7134f3df5dfd03">BaseCouplingHandler</a>.</p>
+<p>Implements <a class="el" href="classBaseCouplingHandler.html#a5d73e5a6d6b44a802ffb9de32b9fe0fa">BaseCouplingHandler</a>.</p>
 
 </div>
 </div>
@@ -843,7 +853,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classHandMk4CouplingHandler.html">HandMk4CouplingHandler</a></li>
-    <li class="footer">Generated on Mon Apr 17 2023 12:12:37 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
+    <li class="footer">Generated on Tue May 23 2023 07:22:58 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>
 </body>

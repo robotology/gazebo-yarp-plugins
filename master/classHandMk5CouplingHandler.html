@@ -98,8 +98,8 @@ $(document).ready(function(){initNavTree('classHandMk5CouplingHandler.html','');
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classHandMk5CouplingHandler-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">HandMk5CouplingHandler Class Reference</div></div>
@@ -134,8 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad684a3c77637c5c2e793210a69fc080a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6f1e4a02b62381d38cb9ca63b34b224"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#ae6f1e4a02b62381d38cb9ca63b34b224">decoupleRefPos</a> (yarp::sig::Vector &amp;pos_ref)</td></tr>
 <tr class="separator:ae6f1e4a02b62381d38cb9ca63b34b224"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e4050d4a3e53593ad50813fe7723119"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a5e4050d4a3e53593ad50813fe7723119">decoupleRefVel</a> (yarp::sig::Vector &amp;vel_ref)</td></tr>
-<tr class="separator:a5e4050d4a3e53593ad50813fe7723119"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80bddcca872d0115448f54a023b6e67d"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a80bddcca872d0115448f54a023b6e67d">decoupleRefVel</a> (yarp::sig::Vector &amp;vel_ref, const yarp::sig::Vector &amp;pos_feedback)</td></tr>
+<tr class="separator:a80bddcca872d0115448f54a023b6e67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58eb1ca1ca012f03112dc3d5ff4aaefd"><td class="memItemLeft" align="right" valign="top">yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a58eb1ca1ca012f03112dc3d5ff4aaefd">decoupleRefTrq</a> (yarp::sig::Vector &amp;trq_ref)</td></tr>
 <tr class="separator:a58eb1ca1ca012f03112dc3d5ff4aaefd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f22ae52607872d15852ac1e3a889eba"><td class="memItemLeft" align="right" valign="top">virtual yarp::sig::VectorOf&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba">getCoupledJoints</a> ()</td></tr>
@@ -149,21 +149,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae13be16d9f591f4d2fdeaa187d6b0b4a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#ae13be16d9f591f4d2fdeaa187d6b0b4a">getCoupledJointLimit</a> (int joint, double &amp;min, double &amp;max)</td></tr>
 <tr class="separator:ae13be16d9f591f4d2fdeaa187d6b0b4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a5fc9bc92669e093e60c27d3e7ab44fe0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a5fc9bc92669e093e60c27d3e7ab44fe0">decouple</a> (double q2, std::vector&lt; double &gt; &amp;lut)</td></tr>
-<tr class="separator:a5fc9bc92669e093e60c27d3e7ab44fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:ab0bb6068f2c0f8adf59ead3ee6cbf9be"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#ab0bb6068f2c0f8adf59ead3ee6cbf9be">LUTSIZE</a></td></tr>
-<tr class="separator:ab0bb6068f2c0f8adf59ead3ee6cbf9be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62547ce5371f1fd5a9fcdccf4ceb2981"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a62547ce5371f1fd5a9fcdccf4ceb2981">thumb_lut</a></td></tr>
-<tr class="separator:a62547ce5371f1fd5a9fcdccf4ceb2981"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b93892f8a7f7512a755bbb2797558cb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a8b93892f8a7f7512a755bbb2797558cb">index_lut</a></td></tr>
-<tr class="separator:a8b93892f8a7f7512a755bbb2797558cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08a44a3af588b12504839de2c270fe42"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHandMk5CouplingHandler.html#a08a44a3af588b12504839de2c270fe42">pinkie_lut</a></td></tr>
-<tr class="separator:a08a44a3af588b12504839de2c270fe42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef0f86f45e9b2575a76be3430c500483"><td class="memItemLeft" align="right" valign="top">gazebo::physics::Model *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#aef0f86f45e9b2575a76be3430c500483">m_robot</a></td></tr>
 <tr class="separator:aef0f86f45e9b2575a76be3430c500483"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a677e02c236dbfca4f1d76862a59af71b"><td class="memItemLeft" align="right" valign="top">yarp::sig::VectorOf&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a677e02c236dbfca4f1d76862a59af71b">m_coupledJoints</a></td></tr>
@@ -242,6 +229,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>ring_pinky_oc &lt;&ndash; pinkie_prox as, on the real robot, the coupled group composed of ring_prox, ring_dist, pinkie_prox and pinkie_dist is controlled using the encoder on the pinkie_prox as feedback</p>
 
 <p>Implements <a class="el" href="classBaseCouplingHandler.html#a57312958961d26749667ddbe1649cff6">BaseCouplingHandler</a>.</p>
 
@@ -270,6 +258,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>ring_pinky_oc &lt;&ndash; pinkie_prox as, on the real robot, the coupled group composed of ring_prox, ring_dist, pinkie_prox and pinkie_dist is controlled using the encoder on the pinkie_prox as feedback</p>
 
 <p>Implements <a class="el" href="classBaseCouplingHandler.html#a8494d8d72f985e331b34a5761d5ab3f5">BaseCouplingHandler</a>.</p>
 
@@ -298,6 +287,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Acceleration control not available for fingers on the real robot. Note: this method is never called within the controlboard plugin code.</p>
 
 <p>Implements <a class="el" href="classBaseCouplingHandler.html#ab05b0cc303f46a8c57d7c64d1c34070b">BaseCouplingHandler</a>.</p>
 
@@ -326,6 +316,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Torque control not available for fingers on the real robot.</p>
 
 <p>Implements <a class="el" href="classBaseCouplingHandler.html#a6e1e594d1def3376e70b49c15f105b48">BaseCouplingHandler</a>.</p>
 
@@ -359,8 +350,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a5e4050d4a3e53593ad50813fe7723119" name="a5e4050d4a3e53593ad50813fe7723119"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e4050d4a3e53593ad50813fe7723119">&#9670;&#160;</a></span>decoupleRefVel()</h2>
+<a id="a80bddcca872d0115448f54a023b6e67d" name="a80bddcca872d0115448f54a023b6e67d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80bddcca872d0115448f54a023b6e67d">&#9670;&#160;</a></span>decoupleRefVel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -372,8 +363,18 @@ Protected Attributes</h2></td></tr>
           <td class="memname">yarp::sig::Vector HandMk5CouplingHandler::decoupleRefVel </td>
           <td>(</td>
           <td class="paramtype">yarp::sig::Vector &amp;&#160;</td>
-          <td class="paramname"><em>vel_ref</em></td><td>)</td>
+          <td class="paramname"><em>vel_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const yarp::sig::Vector &amp;&#160;</td>
+          <td class="paramname"><em>pos_feedback</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -382,8 +383,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Extract the current position of proximal joints from pos_feedback.</p>
 
-<p>Implements <a class="el" href="classBaseCouplingHandler.html#a9213d7720ef88415cb7134f3df5dfd03">BaseCouplingHandler</a>.</p>
+<p>Implements <a class="el" href="classBaseCouplingHandler.html#a5d73e5a6d6b44a802ffb9de32b9fe0fa">BaseCouplingHandler</a>.</p>
 
 </div>
 </div>
@@ -412,42 +414,6 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classBaseCouplingHandler.html#a7f90c28aa7ea8eef2b1a9bf44936b814">BaseCouplingHandler</a>.</p>
-
-</div>
-</div>
-<a id="a5fc9bc92669e093e60c27d3e7ab44fe0" name="a5fc9bc92669e093e60c27d3e7ab44fe0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fc9bc92669e093e60c27d3e7ab44fe0">&#9670;&#160;</a></span>decouple()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double HandMk5CouplingHandler::decouple </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>q2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lut</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -613,94 +579,6 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab0bb6068f2c0f8adf59ead3ee6cbf9be" name="ab0bb6068f2c0f8adf59ead3ee6cbf9be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0bb6068f2c0f8adf59ead3ee6cbf9be">&#9670;&#160;</a></span>LUTSIZE</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int HandMk5CouplingHandler::LUTSIZE</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a62547ce5371f1fd5a9fcdccf4ceb2981" name="a62547ce5371f1fd5a9fcdccf4ceb2981"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62547ce5371f1fd5a9fcdccf4ceb2981">&#9670;&#160;</a></span>thumb_lut</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; HandMk5CouplingHandler::thumb_lut</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8b93892f8a7f7512a755bbb2797558cb" name="a8b93892f8a7f7512a755bbb2797558cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b93892f8a7f7512a755bbb2797558cb">&#9670;&#160;</a></span>index_lut</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; HandMk5CouplingHandler::index_lut</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a08a44a3af588b12504839de2c270fe42" name="a08a44a3af588b12504839de2c270fe42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08a44a3af588b12504839de2c270fe42">&#9670;&#160;</a></span>pinkie_lut</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; HandMk5CouplingHandler::pinkie_lut</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="aef0f86f45e9b2575a76be3430c500483" name="aef0f86f45e9b2575a76be3430c500483"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aef0f86f45e9b2575a76be3430c500483">&#9670;&#160;</a></span>m_robot</h2>
 
@@ -843,7 +721,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classHandMk5CouplingHandler.html">HandMk5CouplingHandler</a></li>
-    <li class="footer">Generated on Mon Apr 17 2023 12:12:37 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
+    <li class="footer">Generated on Tue May 23 2023 07:22:58 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>
 </body>

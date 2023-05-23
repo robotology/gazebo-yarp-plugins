@@ -134,8 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3451d8c622fb8168be1a1ce78217f5a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fb6a4be8ba7f4959da12b8c43da4d23"><td class="memItemLeft" align="right" valign="top">virtual yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a6fb6a4be8ba7f4959da12b8c43da4d23">decoupleRefPos</a> (yarp::sig::Vector &amp;pos_ref)=0</td></tr>
 <tr class="separator:a6fb6a4be8ba7f4959da12b8c43da4d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9213d7720ef88415cb7134f3df5dfd03"><td class="memItemLeft" align="right" valign="top">virtual yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a9213d7720ef88415cb7134f3df5dfd03">decoupleRefVel</a> (yarp::sig::Vector &amp;vel_ref)=0</td></tr>
-<tr class="separator:a9213d7720ef88415cb7134f3df5dfd03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d73e5a6d6b44a802ffb9de32b9fe0fa"><td class="memItemLeft" align="right" valign="top">virtual yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a5d73e5a6d6b44a802ffb9de32b9fe0fa">decoupleRefVel</a> (yarp::sig::Vector &amp;vel_ref, const yarp::sig::Vector &amp;pos_feedback)=0</td></tr>
+<tr class="separator:a5d73e5a6d6b44a802ffb9de32b9fe0fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f90c28aa7ea8eef2b1a9bf44936b814"><td class="memItemLeft" align="right" valign="top">virtual yarp::sig::Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a7f90c28aa7ea8eef2b1a9bf44936b814">decoupleRefTrq</a> (yarp::sig::Vector &amp;trq_ref)=0</td></tr>
 <tr class="separator:a7f90c28aa7ea8eef2b1a9bf44936b814"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a822fc5f1889007a60cc89e38b31de1bd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBaseCouplingHandler.html#a822fc5f1889007a60cc89e38b31de1bd">setCoupledJointLimit</a> (int joint, const double &amp;min, const double &amp;max)</td></tr>
@@ -455,8 +455,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a9213d7720ef88415cb7134f3df5dfd03" name="a9213d7720ef88415cb7134f3df5dfd03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9213d7720ef88415cb7134f3df5dfd03">&#9670;&#160;</a></span>decoupleRefVel()</h2>
+<a id="a5d73e5a6d6b44a802ffb9de32b9fe0fa" name="a5d73e5a6d6b44a802ffb9de32b9fe0fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d73e5a6d6b44a802ffb9de32b9fe0fa">&#9670;&#160;</a></span>decoupleRefVel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -468,8 +468,18 @@ Protected Attributes</h2></td></tr>
           <td class="memname">virtual yarp::sig::Vector BaseCouplingHandler::decoupleRefVel </td>
           <td>(</td>
           <td class="paramtype">yarp::sig::Vector &amp;&#160;</td>
-          <td class="paramname"><em>vel_ref</em></td><td>)</td>
+          <td class="paramname"><em>vel_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const yarp::sig::Vector &amp;&#160;</td>
+          <td class="paramname"><em>pos_feedback</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -479,7 +489,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classEyesCouplingHandler.html#ae2e4f65f6791b562402264309e28aa5f">EyesCouplingHandler</a>, <a class="el" href="classThumbCouplingHandler.html#a0c499258fa8ab44253e25ad0d49b02f8">ThumbCouplingHandler</a>, <a class="el" href="classIndexCouplingHandler.html#a17b0636720b7402e57adb0652e7ef078">IndexCouplingHandler</a>, <a class="el" href="classMiddleCouplingHandler.html#ad09c433ec5d86d63a8e07cec85093b4d">MiddleCouplingHandler</a>, <a class="el" href="classPinkyCouplingHandler.html#afbc1788e1925d3e5d1184e0112dd226a">PinkyCouplingHandler</a>, <a class="el" href="classFingersAbductionCouplingHandler.html#a94a53b66a3bf1ba730aed6a7de7c4c2d">FingersAbductionCouplingHandler</a>, <a class="el" href="classCerHandCouplingHandler.html#aa5d3d5dda79b2644c45ca20125957c6f">CerHandCouplingHandler</a>, <a class="el" href="classHandMk3CouplingHandler.html#a0d0c7bed66c9bf7b39c60a0c73c3de19">HandMk3CouplingHandler</a>, <a class="el" href="classHandMk4CouplingHandler.html#a7b679757397b90197dc82a5f90b63141">HandMk4CouplingHandler</a>, and <a class="el" href="classHandMk5CouplingHandler.html#a5e4050d4a3e53593ad50813fe7723119">HandMk5CouplingHandler</a>.</p>
+<p>Implemented in <a class="el" href="classEyesCouplingHandler.html#a903186ea0b3f667e9afb4b4fa158e817">EyesCouplingHandler</a>, <a class="el" href="classThumbCouplingHandler.html#a3d3b22ef05518e73fab67e65ba1defe6">ThumbCouplingHandler</a>, <a class="el" href="classIndexCouplingHandler.html#a1619a93725ccc1e49933684bc1cd61f4">IndexCouplingHandler</a>, <a class="el" href="classMiddleCouplingHandler.html#ab2f9c2cf1d457ff5318db13d66730120">MiddleCouplingHandler</a>, <a class="el" href="classPinkyCouplingHandler.html#adfb6e534cb5998b99170f16b15457a03">PinkyCouplingHandler</a>, <a class="el" href="classFingersAbductionCouplingHandler.html#a8be1e1208a44c0fdf64c186cc596a5c1">FingersAbductionCouplingHandler</a>, <a class="el" href="classCerHandCouplingHandler.html#a8e0df8aade631ebeb01e290498430a7f">CerHandCouplingHandler</a>, <a class="el" href="classHandMk3CouplingHandler.html#ab45265665253877447456c45cdc6f62f">HandMk3CouplingHandler</a>, <a class="el" href="classHandMk4CouplingHandler.html#a2fe342f5e210f5fbe0d980ebf1744613">HandMk4CouplingHandler</a>, and <a class="el" href="classHandMk5CouplingHandler.html#a80bddcca872d0115448f54a023b6e67d">HandMk5CouplingHandler</a>.</p>
 
 </div>
 </div>
@@ -738,7 +748,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classBaseCouplingHandler.html">BaseCouplingHandler</a></li>
-    <li class="footer">Generated on Mon Apr 17 2023 12:12:37 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
+    <li class="footer">Generated on Tue May 23 2023 07:22:58 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>
 </body>

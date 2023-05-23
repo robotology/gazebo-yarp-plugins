@@ -6,7 +6,7 @@ var classMiddleCouplingHandler =
     [ "decoupleAcc", "classMiddleCouplingHandler.html#ae7d5cb2e83a8276e4e8287a0557abc80", null ],
     [ "decoupleTrq", "classMiddleCouplingHandler.html#a827e617f1c3980cf10c1a279aa37dcdc", null ],
     [ "decoupleRefPos", "classMiddleCouplingHandler.html#a22092990e8976e3a822270dd41660c05", null ],
-    [ "decoupleRefVel", "classMiddleCouplingHandler.html#ad09c433ec5d86d63a8e07cec85093b4d", null ],
+    [ "decoupleRefVel", "classMiddleCouplingHandler.html#ab2f9c2cf1d457ff5318db13d66730120", null ],
     [ "decoupleRefTrq", "classMiddleCouplingHandler.html#afb08b1c1f334a018a03ede315e610bec", null ],
     [ "getCoupledJoints", "classMiddleCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],
     [ "getCoupledJointName", "classMiddleCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],

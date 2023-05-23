@@ -6,7 +6,7 @@ var classThumbCouplingHandler =
     [ "decoupleAcc", "classThumbCouplingHandler.html#a28f9cafff3af416825fe4bf91b98c923", null ],
     [ "decoupleTrq", "classThumbCouplingHandler.html#a405e8605b8658071641d1449e27b3533", null ],
     [ "decoupleRefPos", "classThumbCouplingHandler.html#a1254992b57ad47e51b76e68e36ebc362", null ],
-    [ "decoupleRefVel", "classThumbCouplingHandler.html#a0c499258fa8ab44253e25ad0d49b02f8", null ],
+    [ "decoupleRefVel", "classThumbCouplingHandler.html#a3d3b22ef05518e73fab67e65ba1defe6", null ],
     [ "decoupleRefTrq", "classThumbCouplingHandler.html#abf86421188e23707d5860e01e80905de", null ],
     [ "getCoupledJoints", "classThumbCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],
     [ "getCoupledJointName", "classThumbCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],

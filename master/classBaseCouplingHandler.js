@@ -10,7 +10,7 @@ var classBaseCouplingHandler =
     [ "getCoupledJointName", "classBaseCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],
     [ "checkJointIsCoupled", "classBaseCouplingHandler.html#a3451d8c622fb8168be1a1ce78217f5a7", null ],
     [ "decoupleRefPos", "classBaseCouplingHandler.html#a6fb6a4be8ba7f4959da12b8c43da4d23", null ],
-    [ "decoupleRefVel", "classBaseCouplingHandler.html#a9213d7720ef88415cb7134f3df5dfd03", null ],
+    [ "decoupleRefVel", "classBaseCouplingHandler.html#a5d73e5a6d6b44a802ffb9de32b9fe0fa", null ],
     [ "decoupleRefTrq", "classBaseCouplingHandler.html#a7f90c28aa7ea8eef2b1a9bf44936b814", null ],
     [ "setCoupledJointLimit", "classBaseCouplingHandler.html#a822fc5f1889007a60cc89e38b31de1bd", null ],
     [ "getCoupledJointLimit", "classBaseCouplingHandler.html#ae13be16d9f591f4d2fdeaa187d6b0b4a", null ],

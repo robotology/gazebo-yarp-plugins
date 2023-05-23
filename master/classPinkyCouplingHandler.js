@@ -6,7 +6,7 @@ var classPinkyCouplingHandler =
     [ "decoupleAcc", "classPinkyCouplingHandler.html#a946c87df6350ef989b76a01892fda225", null ],
     [ "decoupleTrq", "classPinkyCouplingHandler.html#abfd278096d2e0df2bf1d330cbf54da98", null ],
     [ "decoupleRefPos", "classPinkyCouplingHandler.html#a4d55f98577122e2aa4ce6631b083b2c4", null ],
-    [ "decoupleRefVel", "classPinkyCouplingHandler.html#afbc1788e1925d3e5d1184e0112dd226a", null ],
+    [ "decoupleRefVel", "classPinkyCouplingHandler.html#adfb6e534cb5998b99170f16b15457a03", null ],
     [ "decoupleRefTrq", "classPinkyCouplingHandler.html#aab43e73f01a4b999e3042ca26ce1283e", null ],
     [ "getCoupledJoints", "classPinkyCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],
     [ "getCoupledJointName", "classPinkyCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],

@@ -108,11 +108,14 @@ $(document).ready(function(){initNavTree('md_CHANGELOG.html',''); initResizable(
 Changed</h2>
 <ul>
 <li>The <code>gazebo_imu</code> plugin used to output orientation measurements as if the sensor was zero-aligned with the world frame, regardless of the initial orientation of the part the sensor is attached to. To match most real-world IMUs, the default behavior was changed to allow measuring orientation with regard to the world frame at all times. The old behavior can be restored by setting the <code>useInitialSensorOrientationAsReference</code> config option (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/639">https://github.com/robotology/gazebo-yarp-plugins/pull/639</a>).</li>
+<li>The <code>gazebo_yarp_controlboard</code> plugin is compiled using C++ 20 compiler features (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/650">https://github.com/robotology/gazebo-yarp-plugins/pull/650</a>).</li>
+<li>The <code>BaseCouplingHandler::decoupleVelRef()</code> methods within <code>gazebo_yarp_controlboard</code> provides an input argument containing the full joints position feedback, to be used to implement velocity decoupling laws that depend on the joints position.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md18"></a>
 Fixed</h2>
 <ul>
 <li>Fix wrong install include for gazebo_yarp_lib_common library (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/644">https://github.com/robotology/gazebo-yarp-plugins/pull/644</a>).</li>
+<li>Fix wrong implementation of coupling handlers of ergoCub MK5 hands within the <code>gazebo_yarp_controlboard</code> plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/650">https://github.com/robotology/gazebo-yarp-plugins/pull/650</a>).</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md19"></a>
 [4.6.0] - 2023-01-13</h1>
@@ -392,7 +395,7 @@ Fixed</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Apr 17 2023 12:12:37 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
+    <li class="footer">Generated on Tue May 23 2023 07:22:58 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>
 </body>

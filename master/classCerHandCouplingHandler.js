@@ -6,7 +6,7 @@ var classCerHandCouplingHandler =
     [ "decoupleAcc", "classCerHandCouplingHandler.html#ac844382a217f1d57ba50fd9f58f4715c", null ],
     [ "decoupleTrq", "classCerHandCouplingHandler.html#a31b58325286f854b424ad2e00ac479f8", null ],
     [ "decoupleRefPos", "classCerHandCouplingHandler.html#a3fc57f07e835f25b7a87f61da2c5c4b3", null ],
-    [ "decoupleRefVel", "classCerHandCouplingHandler.html#aa5d3d5dda79b2644c45ca20125957c6f", null ],
+    [ "decoupleRefVel", "classCerHandCouplingHandler.html#a8e0df8aade631ebeb01e290498430a7f", null ],
     [ "decoupleRefTrq", "classCerHandCouplingHandler.html#a1358edd8bcb76c13ce758d569bdcc477", null ],
     [ "getCoupledJoints", "classCerHandCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],
     [ "getCoupledJointName", "classCerHandCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],

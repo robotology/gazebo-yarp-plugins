@@ -6,7 +6,7 @@ var classEyesCouplingHandler =
     [ "decoupleAcc", "classEyesCouplingHandler.html#aa379b259b7285640498d16600aaffe4e", null ],
     [ "decoupleTrq", "classEyesCouplingHandler.html#a25cc0d6a62523904fd8ce4ded3adca31", null ],
     [ "decoupleRefPos", "classEyesCouplingHandler.html#ad3f3b37801d7bdc31f806c4177b6496c", null ],
-    [ "decoupleRefVel", "classEyesCouplingHandler.html#ae2e4f65f6791b562402264309e28aa5f", null ],
+    [ "decoupleRefVel", "classEyesCouplingHandler.html#a903186ea0b3f667e9afb4b4fa158e817", null ],
     [ "decoupleRefTrq", "classEyesCouplingHandler.html#a05e38fe890c251d4f99b86753910c7ea", null ],
     [ "getCoupledJoints", "classEyesCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],
     [ "getCoupledJointName", "classEyesCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],

@@ -6,7 +6,7 @@ var classHandMk4CouplingHandler =
     [ "decoupleAcc", "classHandMk4CouplingHandler.html#a3ff267e1f32ae3529ee3616e6777ac48", null ],
     [ "decoupleTrq", "classHandMk4CouplingHandler.html#a94dd55da8936fd84cdb1cf79cd60b0b8", null ],
     [ "decoupleRefPos", "classHandMk4CouplingHandler.html#a5b85bea04bf3252d9f26c82ce44bf40f", null ],
-    [ "decoupleRefVel", "classHandMk4CouplingHandler.html#a7b679757397b90197dc82a5f90b63141", null ],
+    [ "decoupleRefVel", "classHandMk4CouplingHandler.html#a2fe342f5e210f5fbe0d980ebf1744613", null ],
     [ "decoupleRefTrq", "classHandMk4CouplingHandler.html#af8e60998e746ebb9a275137c2691f9e8", null ],
     [ "decouple", "classHandMk4CouplingHandler.html#abd78cedb115155120b3329f1c7e3fcef", null ],
     [ "getCoupledJoints", "classHandMk4CouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],

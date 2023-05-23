@@ -6,7 +6,7 @@ var classFingersAbductionCouplingHandler =
     [ "decoupleAcc", "classFingersAbductionCouplingHandler.html#a2feeab84b8d32bd1cac06c937644ff96", null ],
     [ "decoupleTrq", "classFingersAbductionCouplingHandler.html#a474f2e88fb21f34e9d19d34d5a002e81", null ],
     [ "decoupleRefPos", "classFingersAbductionCouplingHandler.html#af35cfbf3e73c9f536b405b8adeaebac4", null ],
-    [ "decoupleRefVel", "classFingersAbductionCouplingHandler.html#a94a53b66a3bf1ba730aed6a7de7c4c2d", null ],
+    [ "decoupleRefVel", "classFingersAbductionCouplingHandler.html#a8be1e1208a44c0fdf64c186cc596a5c1", null ],
     [ "decoupleRefTrq", "classFingersAbductionCouplingHandler.html#af8e3323b8d182e483cfa34c56a9cbe73", null ],
     [ "getCoupledJoints", "classFingersAbductionCouplingHandler.html#a1f22ae52607872d15852ac1e3a889eba", null ],
     [ "getCoupledJointName", "classFingersAbductionCouplingHandler.html#a224e7dd1b99a0587a495b00d626253fe", null ],

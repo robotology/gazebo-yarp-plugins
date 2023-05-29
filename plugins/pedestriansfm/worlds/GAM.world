@@ -107,7 +107,7 @@
         <uri>model://cer_no_collisions_20m</uri>
       </include>
     </model>
-    
+
     <gravity>0 0 -9.81</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
@@ -166,11 +166,11 @@
 
 <!--    agents    -->
   <!--    main hall    -->
-  
+
     <actor name="actor1">
       <pose>-1 -1 1 0 0 0</pose>
       <skin>
-        <filename>walk.dae</filename>
+        <filename>walk-red.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -192,10 +192,6 @@
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
-        <ignore_obstacles>
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>0.5 5 1</waypoint>
@@ -207,11 +203,11 @@
     <actor name="actor2">
       <pose>1 -1 1 0 0 0</pose>
       <skin>
-        <filename>walk-blue.dae</filename> 
+        <filename>walk-blue.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
-        <filename>walk-blue.dae</filename> 
+        <filename>walk-blue.dae</filename>
         <scale>1.000000</scale>
         <interpolate_x>true</interpolate_x>
       </animation>
@@ -224,14 +220,10 @@
         <people_distance>6.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
-        <ignore_obstacles>
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>0 7 1</waypoint>
@@ -241,32 +233,28 @@
     </actor>
 
     <actor name="actor3">
-      <pose>0.5 1.5 1 0 0 0</pose>
       <skin>
-        <filename>stand.dae</filename>
+        <filename>moonwalk.dae</filename>
         <scale>1.0</scale>
       </skin>
-      <animation name="stand">
+      <animation name="standing">
         <filename>stand.dae</filename>
-        <scale>1.000000</scale>
-        <interpolate_x>true</interpolate_x>
       </animation>
-      <!--<plugin name="actor3_plugin" filename="libActorPlugin.so">
-        <target>3 2 1</target>
-        <target_weight>1.15</target_weight>
-        <obstacle_weight>1.8</obstacle_weight>
-        <animation_factor>5.1</animation_factor>
-        <ignore_obstacles>
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
-      </plugin>-->
+      <script>
+        <trajectory type="standing" id="3">
+          <waypoint>
+            <time>5</time>
+            <pose>-1 1.5 1 0 0 0</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+      <pose>-1 1.5 1 0 0 0</pose>
     </actor>
-  
+
     <actor name="actor4">
       <pose>1 2 1 0 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -283,17 +271,13 @@
         <people_distance>6.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor5</model>
         </group>
-        <ignore_obstacles>
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>0 6 1</waypoint>
@@ -305,7 +289,7 @@
     <actor name="actor5">
       <pose>-1 10 1 0 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -322,17 +306,13 @@
         <people_distance>6.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor4</model>
         </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>0.4 0.8 1</waypoint>
@@ -340,13 +320,11 @@
         </trajectory>
       </plugin>
     </actor>
-    
-    
-    
+
     <actor name="actor6">
       <pose>3.6 1.8 1 0 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -363,17 +341,13 @@
         <people_distance>5.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor4</model>
         </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>3 0.8 1</waypoint>
@@ -383,16 +357,11 @@
     </actor>
 
 
-
-
-
-
-
   <!-- POI 1 -->
-      <actor name="actor7">
+    <actor name="actor7">
       <pose>-6 -4 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -409,17 +378,13 @@
         <people_distance>5.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor7</model>
         </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>-6 -4 0 0</waypoint>
@@ -427,11 +392,11 @@
         </trajectory>
       </plugin>
     </actor>
-    
-      <actor name="actor8">
+
+    <actor name="actor8">
       <pose>-7 -5 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -448,17 +413,13 @@
         <people_distance>5.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor7</model>
         </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>-6 -4 0 0</waypoint>
@@ -467,10 +428,10 @@
       </plugin>
     </actor>
 
-      <actor name="actor9">
+    <actor name="actor9">
       <pose>-6 -6 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -487,17 +448,13 @@
         <people_distance>5.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor7</model>
         </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>-6 -6 0 0</waypoint>
@@ -507,10 +464,10 @@
 
 
   <!-- first corridor -->
-      <actor name="actor10">
+    <actor name="actor10">
       <pose>-6 1 0 0</pose>
       <skin>
-        <filename>walk.dae</filename> 
+        <filename>walk.dae</filename>
         <scale>1.0</scale>
       </skin>
       <animation name="walking">
@@ -527,64 +484,42 @@
         <people_distance>5.0</people_distance>
         <goal_weight>2.0</goal_weight>
         <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
+        <social_weight>15.0</social_weight>
         <group_gaze_weight>3.0</group_gaze_weight>
         <group_coh_weight>2.0</group_coh_weight>
         <group_rep_weight>1.0</group_rep_weight>
         <group>
             <model>actor10</model>
         </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
         <trajectory>
           <cyclic>true</cyclic>
           <waypoint>-5 1 0</waypoint>
-	  <waypoint>-18 1 0</waypoint>
+      <waypoint>-18 1 0</waypoint>
         </trajectory>
       </plugin>
     </actor>
-    
-    
+
+
   <!-- POI2 -->
     <actor name="actor11">
-      <pose>-13 -2 1 0 0 3.14</pose>
       <skin>
         <filename>stand.dae</filename>
         <scale>1.0</scale>
       </skin>
-      <animation name="walking">
-        <filename>walk.dae</filename>
-        <scale>1.000000</scale>
-        <interpolate_x>true</interpolate_x>
+      <animation name="stand">
+        <filename>stand.dae</filename>
       </animation>
-      <plugin name="actor11_plugin" filename="libgazebo_yarp_PedestrianSFMPlugin.so">
-        <velocity>0.0</velocity>
-        <radius>0.4</radius>
-        <animation_factor>5.1</animation_factor>
-        <animation_name>walking</animation_name>
-        <people_distance>5.0</people_distance>
-        <goal_weight>2.0</goal_weight>
-        <obstacle_weight>80.0</obstacle_weight>
-        <social_weight>15.0</social_weight> 
-        <group_gaze_weight>3.0</group_gaze_weight>
-        <group_coh_weight>2.0</group_coh_weight>
-        <group_rep_weight>1.0</group_rep_weight>
-        <group>
-            <model>actor11</model>
-        </group>
-        <ignore_obstacles> 
-          <model>cafe</model>
-          <model>ground_plane</model>
-        </ignore_obstacles>
-        <trajectory>
-          <cyclic>true</cyclic>
-          <waypoint>-13 -2 1</waypoint>
+      <script>
+        <trajectory type="stand" id="11">
+          <waypoint>
+            <time>5</time>
+            <pose>-13 -2 1 0 0 3.14</pose>
+          </waypoint>
         </trajectory>
-      </plugin>
+      </script>
+      <pose>-13 -2 1 0 0 3.14</pose>
     </actor>
-    
-    
+
+
   </world>
 </sdf>

@@ -46,7 +46,7 @@ public:
     virtual bool checkJointIsCoupled(int joint);
 
     virtual yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref) = 0;
-    virtual yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref) = 0;
+    virtual yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback) = 0;
     virtual yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref) = 0;
 
     virtual void setCoupledJointLimit(int joint, const double& min, const double& max);
@@ -66,7 +66,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -83,7 +83,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -100,7 +100,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -117,7 +117,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -134,7 +134,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -151,7 +151,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -168,7 +168,7 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
 };
 
@@ -185,9 +185,9 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
-    
+
 protected:
     double decouple (double q2, std::vector<double>& lut);
 
@@ -210,9 +210,9 @@ public:
     bool decoupleTrq (yarp::sig::Vector& current_trq);
 
     yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
-    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
     yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
-    
+
 protected:
     double decouple (double q2, std::vector<double>& lut);
 
@@ -221,6 +221,144 @@ protected:
     std::vector<double> thumb_lut;
     std::vector<double> index_lut;
     std::vector<double> pinkie_lut;
+};
+
+class HandMk5CouplingHandler : public BaseCouplingHandler
+{
+
+public:
+    HandMk5CouplingHandler (gazebo::physics::Model* model, yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<Range> coupled_joint_limits);
+
+public:
+    bool decouplePos (yarp::sig::Vector& current_pos);
+    bool decoupleVel (yarp::sig::Vector& current_vel);
+    bool decoupleAcc (yarp::sig::Vector& current_acc);
+    bool decoupleTrq (yarp::sig::Vector& current_trq);
+
+    yarp::sig::Vector decoupleRefPos (yarp::sig::Vector& pos_ref);
+    yarp::sig::Vector decoupleRefVel (yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback);
+    yarp::sig::Vector decoupleRefTrq (yarp::sig::Vector& trq_ref);
+
+private:
+    /**
+     * Parameters from https://icub-tech-iit.github.io/documentation/hands/hands_mk5_coupling
+     */
+    struct FingerParameters
+    {
+        double L0x;
+        double L0y;
+        double L1x;
+        double L1y;
+        double q2bias;
+        double q1off;
+        double k;
+        double d;
+        double l;
+        double b;
+    };
+
+    const FingerParameters mParamsThumb =
+    {
+        .L0x = -0.00555,
+        .L0y = 0.00285,
+        .q2bias = 180.0,
+        .q1off = 4.29,
+        .k = 0.0171,
+        .d = 0.02006,
+        .l = 0.0085,
+        .b = 0.00624
+    };
+
+    const FingerParameters mParamsIndex =
+    {
+        .L0x = -0.0050,
+        .L0y = 0.0040,
+        .q2bias = 173.35,
+        .q1off = 2.86,
+        .k = 0.02918,
+        .d = 0.03004,
+        .l = 0.00604,
+        .b = 0.0064
+    };
+
+    const FingerParameters mParamsPinky =
+    {
+        .L0x = -0.0050,
+        .L0y = 0.0040,
+        .q2bias = 170.54,
+        .q1off = 3.43,
+        .k = 0.02425,
+        .d = 0.02504,
+        .l = 0.00608,
+        .b = 0.0064
+    };
+
+    /*
+     * This method implements the law q2 = q2(q1) from
+     * https://icub-tech-iit.github.io/documentation/hands/hands_mk5_coupling,
+     * i.e., the absolute angle of the distal joint q2 with respect to the palm.
+     *
+     * The inputs q1 and the return value of the function are in degrees.
+     */
+    double evaluateCoupledJoint(const double& q1, const FingerParameters& parameters);
+
+    /*
+     * This method evalutes the relative angle between the proximal and distal joints of the thumb finger.
+     *
+     * The input q1 and the return value of the function are in degrees.
+     */
+    double evaluateCoupledJointThumb(const double& q1);
+
+    /*
+     * This method evalutes the relative angle between the proximal and distal joints of the index finger.
+     * This is also valid for the middle and ring fingers.
+     *
+     * The input q1 and the return value of the function are in degrees.
+     */
+    double evaluateCoupledJointIndex(const double& q1);
+
+    /*
+     * This method evalutes the relative angle between the proximal and distal joints of the pinky finger.
+     *
+     * The input q1 and the return value of the function are in degrees.
+     */
+    double evaluateCoupledJointPinky(const double& q1);
+
+    /*
+     * This method implements the law \frac{\partial{q2}}{\partial{q1}} from
+     * https://icub-tech-iit.github.io/documentation/hands/hands_mk5_coupling,
+     * i.e., the jacobian of the absolute angle of the distal joint q2 measured from the palm,
+     * with respect to the proximal joint q1.
+     *
+     * The input q1 is in degrees.
+     */
+    double evaluateCoupledJointJacobian(const double& q1, const FingerParameters& parameters);
+
+    /*
+     * This method evalutes the jacobian of the relative angle between the proximal and distal joints of the thumb finger
+     * with respect to the proximal joint.
+     *
+     * The input q1 is in degrees.
+     */
+    double evaluateCoupledJointJacobianThumb(const double& q1);
+
+    /*
+     * This method evalutes the jacobian of the relative angle between the proximal and distal joints of the index finger
+     * with respect to the proximal joint.
+     *
+     * This is also valid for the middle and ring fingers.
+     *
+     * The input q1 is in degrees.
+     */
+    double evaluateCoupledJointJacobianIndex(const double& q1);
+
+    /*
+     * This method evalutes the jacobian of the relative angle between the proximal and distal joints of the pinky finger
+     * with respect to the proximal joint.
+     *
+     * The input q1 is in degrees.
+     */
+    double evaluateCoupledJointJacobianPinky(const double& q1);
 };
 
 #endif //GAZEBOYARP_COUPLING_H

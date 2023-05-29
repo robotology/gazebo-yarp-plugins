@@ -5,6 +5,28 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Changed
+
+- The `gazebo_imu` plugin used to output orientation measurements as if the sensor was zero-aligned with the world frame, regardless of the initial orientation of the part the sensor is attached to. To match most real-world IMUs, the default behavior was changed to allow measuring orientation with regard to the world frame at all times. The old behavior can be restored by setting the `useInitialSensorOrientationAsReference` config option (https://github.com/robotology/gazebo-yarp-plugins/pull/639).
+- The `gazebo_yarp_controlboard` plugin is compiled using C++ 20 compiler features (https://github.com/robotology/gazebo-yarp-plugins/pull/650).
+- The `BaseCouplingHandler::decoupleVelRef()` methods within `gazebo_yarp_controlboard` provides an input argument containing the full joints position feedback, to be used to implement velocity decoupling laws that depend on the joints position.
+
+### Fixed
+
+- Fix wrong install include for gazebo_yarp_lib_common library (https://github.com/robotology/gazebo-yarp-plugins/pull/644).
+- Fix wrong implementation of coupling handlers of ergoCub MK5 hands within the `gazebo_yarp_controlboard` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/650).
+
+## [4.6.0] - 2023-01-13
+
+### Added
+
+- In `gazebo_yarp_controlboard` add the `icub_hand_mk5` coupling that models the iCub mk5 hand, that is used also in ergoCub 1 robot (https://github.com/robotology/gazebo-yarp-plugins/pull/641).
+
+## [4.5.2] - 2022-11-17
+
+### Fixed
+- Fix compatibility with YARP 3.8 (https://github.com/robotology/gazebo-yarp-plugins/pull/640).
+
 ## [4.5.1] - 2022-08-31
 
 ### Fixed
@@ -15,7 +37,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 ### Added
 - The `gazebo_yarp_forcetorque` plugin now exposes also the `yarp::dev::ISixAxisForceTorqueSensors` interface, so it can be used with ` multipleanalogsensorsserver`, `multipleanalogsensorsremapper` and `multipleanalogsensorsclient` devices (https://github.com/robotology/gazebo-yarp-plugins/issues/384, https://github.com/robotology/gazebo-yarp-plugins/pull/628).
 
-### Fixed 
+### Fixed
 - Fix YARP 3.8 compatibility (https://github.com/robotology/gazebo-yarp-plugins/pull/627).
 
 ## [4.4.0] - 2022-05-31
@@ -28,12 +50,12 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Added
 - In `gazebo_yarp_camera` parse the `yarpDeviceName` option to enable its use with `gazebo_yarp_robotinterface` (https://github.com/robotology/gazebo-yarp-plugins/pull/614).
-- In `gazebo_yarp_controlboard` add the `icub_left_hand_mk4` coupling that models the iCub mk4 left hand (https://github.com/robotology/gazebo-yarp-plugins/pull/620). 
+- In `gazebo_yarp_controlboard` add the `icub_left_hand_mk4` coupling that models the iCub mk4 left hand (https://github.com/robotology/gazebo-yarp-plugins/pull/620).
 
 ### Changed
-- Migrate the example models under the tutorial directory to avoid the use of implicit network wrapper servers, and use the `gazebo_yarp_robotinterface` plugin to spawn their network wrapper servers (https://github.com/robotology/gazebo-yarp-plugins/pull/615 and https://github.com/robotology/gazebo-yarp-plugins/pull/616). 
+- Migrate the example models under the tutorial directory to avoid the use of implicit network wrapper servers, and use the `gazebo_yarp_robotinterface` plugin to spawn their network wrapper servers (https://github.com/robotology/gazebo-yarp-plugins/pull/615 and https://github.com/robotology/gazebo-yarp-plugins/pull/616).
 
-### Fixed 
+### Fixed
 - It is now possible to remove and add again to the simulation models that use `gazebo_yarp_robotinterface` without any crash (https://github.com/robotology/gazebo-yarp-plugins/pull/618, https://github.com/robotology/gazebo-yarp-plugins/pull/619).
 - Fixed value returned by getDeviceStatus method in `gazebo_yarp_laser` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/617).
 
@@ -51,12 +73,12 @@ disable any network wrapper server that the plugin created, by just creating the
 
 ## [4.1.2] - 2022-01-19
 
-### Fixed 
+### Fixed
 - Fix compilation against YARP 3.7 (https://github.com/robotology/gazebo-yarp-plugins/pull/607, https://github.com/robotology/gazebo-yarp-plugins/issues/608).
 
 ## [4.1.1] - 2022-01-13
 
-### Fixed 
+### Fixed
 - Fix compilation against Gazebo 11.10.0 (https://github.com/robotology/gazebo-yarp-plugins/pull/605, https://github.com/robotology/gazebo-yarp-plugins/issues/606).
 
 ## [4.1.0] - 2021-12-23

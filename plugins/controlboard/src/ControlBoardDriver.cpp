@@ -337,6 +337,12 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 m_coupling_handler.push_back(cpl);
                 yCInfo(GAZEBOCONTROLBOARD) << "using icub_left_hand_mk4";
             }
+            else if (coupling_bottle->get(0).asString()=="icub_hand_mk5")
+            {
+                BaseCouplingHandler* cpl = new HandMk5CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+                m_coupling_handler.push_back(cpl);
+                yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk5";
+            }
             else if (coupling_bottle->get(0).asString()=="none")
             {
                 yCDebug(GAZEBOCONTROLBOARD) << "Just for test";
@@ -640,7 +646,7 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
         if (m_coupling_handler[cpl_cnt])
         {
             m_motReferencePositions = m_coupling_handler[cpl_cnt]->decoupleRefPos(m_jntReferencePositions);
-            m_motReferenceVelocities = m_coupling_handler[cpl_cnt]->decoupleRefVel(m_jntReferenceVelocities);
+            m_motReferenceVelocities = m_coupling_handler[cpl_cnt]->decoupleRefVel(m_jntReferenceVelocities, m_motPositions);
             m_motReferenceTorques = m_coupling_handler[cpl_cnt]->decoupleRefTrq(m_jntReferenceTorques);
         }
     }

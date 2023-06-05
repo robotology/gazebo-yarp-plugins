@@ -5,7 +5,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
-## [4.7.0] - 2023-05-23
+## [4.7.0] - 2023-06-05
 
 ### Changed
 

@@ -51,7 +51,8 @@ class yarp::dev::GazeboYarpForceTorqueDriver:
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver,
-    public yarp::dev::ISixAxisForceTorqueSensors
+    public yarp::dev::ISixAxisForceTorqueSensors,
+    public yarp::dev::ITemperatureSensors
 {
 public:
     GazeboYarpForceTorqueDriver();
@@ -82,6 +83,14 @@ public:
     virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const;
     virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const;
     virtual bool getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const;
+
+    // TEMPERATURE SENSORS
+    virtual size_t getNrOfTemperatureSensors() const;
+    virtual yarp::dev::MAS_status getTemperatureSensorStatus(size_t sens_index) const;
+    virtual bool getTemperatureSensorName(size_t sens_index, std::string &name) const;
+    virtual bool getTemperatureSensorFrameName(size_t sens_index, std::string &frameName) const;
+    virtual bool getTemperatureSensorMeasure(size_t sens_index, double& out, double& timestamp) const;
+    virtual bool getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const;
 
     //PRECISELY TIMED
     virtual yarp::os::Stamp getLastInputStamp();

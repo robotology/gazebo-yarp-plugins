@@ -154,7 +154,7 @@ size_t GazeboYarpForceTorqueDriver::getNrOfSixAxisForceTorqueSensors() const
 
 yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorStatus(size_t sens_index) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return MAS_UNKNOWN;
     }
@@ -164,7 +164,7 @@ yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorSt
 
 bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return false;
     }
@@ -175,7 +175,7 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName(size_t sens_in
 
 bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return false;
     }
@@ -186,7 +186,7 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName(size_t se
 
 bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return false;
     }
@@ -214,7 +214,7 @@ size_t GazeboYarpForceTorqueDriver::getNrOfTemperatureSensors() const
 
 yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getTemperatureSensorStatus(size_t sens_index) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return MAS_UNKNOWN;
     }
@@ -224,7 +224,7 @@ yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getTemperatureSensorStatus(si
 
 bool GazeboYarpForceTorqueDriver::getTemperatureSensorName(size_t sens_index, std::string &name) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return false;
     }
@@ -235,7 +235,7 @@ bool GazeboYarpForceTorqueDriver::getTemperatureSensorName(size_t sens_index, st
 
 bool GazeboYarpForceTorqueDriver::getTemperatureSensorFrameName(size_t sens_index, std::string &frameName) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return false;
     }
@@ -246,7 +246,7 @@ bool GazeboYarpForceTorqueDriver::getTemperatureSensorFrameName(size_t sens_inde
 
 bool GazeboYarpForceTorqueDriver::getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
-    if (sens_index >= 1)
+    if (sens_index >= 2)
     {
         return false;
     }
@@ -255,9 +255,8 @@ bool GazeboYarpForceTorqueDriver::getTemperatureSensorMeasure(size_t sens_index,
        out.resize(YarpTemperatureChannelsNumber);
    }
 
-    std::lock_guard<std::mutex> lock(m_dataMutex);
     // No need for a Mutex here since we are just setting a value
-    out = fakeTemperatureValue;
+    out[0] = fakeTemperatureValue;
     timestamp = m_lastTimestamp.getTime();
 
     return true;

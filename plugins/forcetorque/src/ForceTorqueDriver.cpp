@@ -24,6 +24,7 @@ const std::string YarpForceTorqueScopedName = "sensorScopedName";
 const unsigned YarpTemperatureChannelsNumber = 1; //The Temperature sensor has 1 fixed channel
 const double fakeTemperatureValue = 25.0;
 
+GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver() {}
 GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
 
 /**

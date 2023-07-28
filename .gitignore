@@ -8,3 +8,5 @@ build*/
 .cproject
 .settings/
 .vscode/
+**/compile_commands.json
+**/.cache

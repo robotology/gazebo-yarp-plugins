@@ -7,6 +7,10 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [4.7.0] - 2023-06-05
 
+### Added
+
+- The `gazebo_yarp_forcetorque` plugin now exposes also the `yarp::dev::ITemperatureSensors` interface, so it can stream fake temperature values (https://github.com/robotology/gazebo-yarp-plugins/pull/656).
+
 ### Changed
 
 - The `gazebo_imu` plugin used to output orientation measurements as if the sensor was zero-aligned with the world frame, regardless of the initial orientation of the part the sensor is attached to. To match most real-world IMUs, the default behavior was changed to allow measuring orientation with regard to the world frame at all times. The old behavior can be restored by setting the `useInitialSensorOrientationAsReference` config option (https://github.com/robotology/gazebo-yarp-plugins/pull/639).

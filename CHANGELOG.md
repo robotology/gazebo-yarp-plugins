@@ -5,6 +5,10 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Added
+
+- The `gazebo_yarp_forcetorque` plugin now exposes also the `yarp::dev::ITemperatureSensors` interface, so it can stream fake temperature values (https://github.com/robotology/gazebo-yarp-plugins/pull/656).
+
 ## [4.7.0] - 2023-06-05
 
 ### Changed

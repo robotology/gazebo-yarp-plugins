@@ -21,6 +21,9 @@ using namespace yarp::dev;
 const unsigned YarpForceTorqueChannelsNumber = 6; //The ForceTorque sensor has 6 fixed channels
 const std::string YarpForceTorqueScopedName = "sensorScopedName";
 
+const unsigned YarpTemperatureChannelsNumber = 1; //The Temperature sensor has 1 fixed channel
+const double fakeTemperatureValue = 25.0;
+
 GazeboYarpForceTorqueDriver::GazeboYarpForceTorqueDriver() {}
 GazeboYarpForceTorqueDriver::~GazeboYarpForceTorqueDriver() {}
 
@@ -166,6 +169,7 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorName(size_t sens_in
         return false;
     }
 
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     name = m_sensorName;
     return true;
 }
@@ -177,6 +181,7 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorFrameName(size_t se
         return false;
     }
 
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     frameName = m_frameName;
     return true;
 }
@@ -198,6 +203,78 @@ bool GazeboYarpForceTorqueDriver::getSixAxisForceTorqueSensorMeasure(size_t sens
 
     std::lock_guard<std::mutex> lock(m_dataMutex);
     out = m_forceTorqueData;
+    timestamp = m_lastTimestamp.getTime();
+
+    return true;
+}
+
+// TEMPERATURE SENSORS
+size_t GazeboYarpForceTorqueDriver::getNrOfTemperatureSensors() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status GazeboYarpForceTorqueDriver::getTemperatureSensorStatus(size_t sens_index) const
+{
+    if (sens_index >= 1)
+    {
+        return MAS_UNKNOWN;
+    }
+
+    return MAS_OK;
+}
+
+bool GazeboYarpForceTorqueDriver::getTemperatureSensorName(size_t sens_index, std::string &name) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+    name = m_sensorName;
+    return true;
+}
+
+bool GazeboYarpForceTorqueDriver::getTemperatureSensorFrameName(size_t sens_index, std::string &frameName) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+    frameName = m_frameName;
+    return true;
+}
+
+bool GazeboYarpForceTorqueDriver::getTemperatureSensorMeasure(size_t sens_index, double& out, double& timestamp) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+    out = fakeTemperatureValue;
+    timestamp = m_lastTimestamp.getTime();
+
+    return true;
+}
+
+bool GazeboYarpForceTorqueDriver::getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+   if (out.size() != YarpTemperatureChannelsNumber) {
+       out.resize(YarpTemperatureChannelsNumber);
+   }
+
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+    out[0] = fakeTemperatureValue;
     timestamp = m_lastTimestamp.getTime();
 
     return true;

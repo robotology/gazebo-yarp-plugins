@@ -51,7 +51,8 @@ class yarp::dev::GazeboYarpForceTorqueDriver:
     public yarp::dev::IAnalogSensor,
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::DeviceDriver,
-    public yarp::dev::ISixAxisForceTorqueSensors
+    public yarp::dev::ISixAxisForceTorqueSensors,
+    public yarp::dev::ITemperatureSensors
 {
 public:
     GazeboYarpForceTorqueDriver();
@@ -64,27 +65,35 @@ public:
      */
 
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
 
     //ANALOG SENSOR
-    virtual int read(yarp::sig::Vector& out);
-    virtual int getState(int channel);
-    virtual int getChannels();
-    virtual int calibrateChannel(int channel, double v);
-    virtual int calibrateSensor();
-    virtual int calibrateSensor(const yarp::sig::Vector& value);
-    virtual int calibrateChannel(int channel);
+    virtual int read(yarp::sig::Vector& out) override;
+    virtual int getState(int channel) override;
+    virtual int getChannels() override;
+    virtual int calibrateChannel(int channel, double v) override;
+    virtual int calibrateSensor() override;
+    virtual int calibrateSensor(const yarp::sig::Vector& value) override;
+    virtual int calibrateChannel(int channel) override;
 
     // SIX AXIS FORCE TORQUE SENSORS
-    virtual size_t getNrOfSixAxisForceTorqueSensors() const;
-    virtual yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(size_t sens_index) const ;
-    virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const;
-    virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const;
-    virtual bool getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const;
+    virtual size_t getNrOfSixAxisForceTorqueSensors() const override;
+    virtual yarp::dev::MAS_status getSixAxisForceTorqueSensorStatus(size_t sens_index) const override;
+    virtual bool getSixAxisForceTorqueSensorName(size_t sens_index, std::string &name) const override;
+    virtual bool getSixAxisForceTorqueSensorFrameName(size_t sens_index, std::string &frameName) const override;
+    virtual bool getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    // TEMPERATURE SENSORS
+    virtual size_t getNrOfTemperatureSensors() const override;
+    virtual yarp::dev::MAS_status getTemperatureSensorStatus(size_t sens_index) const override;
+    virtual bool getTemperatureSensorName(size_t sens_index, std::string &name) const override;
+    virtual bool getTemperatureSensorFrameName(size_t sens_index, std::string &frameName) const override;
+    virtual bool getTemperatureSensorMeasure(size_t sens_index, double& out, double& timestamp) const override;
+    virtual bool getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
     //PRECISELY TIMED
-    virtual yarp::os::Stamp getLastInputStamp();
+    virtual yarp::os::Stamp getLastInputStamp() override;
 
 
 private:

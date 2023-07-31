@@ -134,6 +134,9 @@ var hierarchy =
     [ "yarp::dev::ISixAxisForceTorqueSensors", null, [
       [ "yarp::dev::GazeboYarpForceTorqueDriver", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html", null ]
     ] ],
+    [ "yarp::dev::ITemperatureSensors", null, [
+      [ "yarp::dev::GazeboYarpForceTorqueDriver", "classyarp_1_1dev_1_1GazeboYarpForceTorqueDriver.html", null ]
+    ] ],
     [ "yarp::dev::IThreeAxisGyroscopes", null, [
       [ "yarp::dev::GazeboYarpIMUDriver", "classyarp_1_1dev_1_1GazeboYarpIMUDriver.html", null ]
     ] ],

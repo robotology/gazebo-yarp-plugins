@@ -4,9 +4,9 @@ digraph "LinkAttacherServer.h"
   bgcolor="transparent";
   edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
   node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
-  Node1 [label="LinkAttacherServer.h",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
-  Node1 -> Node2 [color="steelblue1",style="solid"];
-  Node2 [label="yarp/os/Wire.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node3 [color="steelblue1",style="solid"];
-  Node3 [label="yarp/os/idl/WireTypes.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 [id="Node000001",label="LinkAttacherServer.h",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge1_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="yarp/os/Wire.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node3 [id="edge2_Node000001_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="yarp/os/idl/WireTypes.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
 }

@@ -5,5 +5,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
   node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
   rankdir="LR";
-  Node0 [label="SynchronizationHelper",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classSynchronizationHelper.html",tooltip=" "];
+  Node0 [id="Node000000",label="SynchronizationHelper",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classSynchronizationHelper.html",tooltip=" "];
 }

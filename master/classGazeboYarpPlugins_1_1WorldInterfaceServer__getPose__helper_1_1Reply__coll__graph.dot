@@ -4,10 +4,10 @@ digraph "GazeboYarpPlugins::WorldInterfaceServer_getPose_helper::Reply"
   bgcolor="transparent";
   edge [fontname=FreeSans.ttf,fontsize=10,labelfontname=FreeSans.ttf,labelfontsize=10];
   node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
-  Node1 [label="GazeboYarpPlugins::\lWorldInterfaceServer\l_getPose_helper::Reply",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
-  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
-  Node2 [label="yarp::os::idl::WirePortable",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
-  Node3 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" return_helper" ];
-  Node3 [label="GazeboYarpPlugins::Pose",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1Pose.html",tooltip=" "];
-  Node2 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node1 [id="Node000001",label="GazeboYarpPlugins::\lWorldInterfaceServer\l_getPose_helper::Reply",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node2 -> Node1 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="yarp::os::idl::WirePortable",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node3 -> Node1 [id="edge2_Node000001_Node000003",dir="back",color="darkorchid3",style="dashed",tooltip=" ",label=" return_helper",fontcolor="grey" ];
+  Node3 [id="Node000003",label="GazeboYarpPlugins::Pose",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1Pose.html",tooltip=" "];
+  Node2 -> Node3 [id="edge3_Node000003_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
 }

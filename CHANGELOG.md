@@ -5,6 +5,9 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Fixed
+- Fix installation of import libraries on Windows (https://github.com/robotology/gazebo-yarp-plugins/pull/657).
+
 ## [4.7.0] - 2023-06-05
 
 ### Changed

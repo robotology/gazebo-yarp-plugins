@@ -1139,6 +1139,39 @@ HandMk5CouplingHandler::HandMk5CouplingHandler(gazebo::physics::Model* model, ya
     m_couplingSize = 12;
 }
 
+bool HandMk5CouplingHandler::parseFingerParameters(yarp::os::Bottle& hand_params)
+{
+    auto L0x    = hand_params.findGroup("L0x");
+    auto L0y    = hand_params.findGroup("L0y");
+    auto q2bias = hand_params.findGroup("q2bias");
+    auto q1off  = hand_params.findGroup("q1off");
+    auto k      = hand_params.findGroup("k");
+    auto d      = hand_params.findGroup("d");
+    auto l      = hand_params.findGroup("l");
+    auto b      = hand_params.findGroup("b");
+
+    constexpr int nFingers = 5;
+    // All the +1 is because the first element of the bottle is the name of the group
+    if(L0x.size()!=nFingers+1 || L0y.size()!=nFingers+1 || q2bias.size()!=nFingers+1 ||
+       q1off.size()!=nFingers+1 || k.size()!=nFingers+1 || d.size()!=nFingers+1 ||
+       l.size()!=nFingers+1 || b.size()!=nFingers+1 )
+    {
+        yError()<<"HandMk5CouplingHandler: invalid hand parameters, check your configuration file";
+        return false;
+    }
+
+
+    const std::array<std::string,5> names = {"thumb", "index", "middle", "ring", "pinky"};
+    for (std::size_t i = 0; i < names.size(); i++)
+    {
+        mFingerParameters.insert({names.at(i), {L0x.get(i+1).asFloat32(), L0y.get(i+1).asFloat32(), q2bias.get(i+1).asFloat32(),
+                                  q1off.get(i+1).asFloat32(), k.get(i+1).asFloat32(), d.get(i+1).asFloat32(),
+                                  l.get(i+1).asFloat32(), b.get(i+1).asFloat32()}});
+    }
+
+    return true;
+}
+
 bool HandMk5CouplingHandler::decouplePos (yarp::sig::Vector& current_pos)
 {
     if (m_coupledJoints.size()!=m_couplingSize) return false;
@@ -1219,25 +1252,25 @@ yarp::sig::Vector HandMk5CouplingHandler::decoupleRefPos (yarp::sig::Vector& pos
     /* thumb_prox <-- thumb_oc */
     out[1] = pos_ref[m_coupledJoints[1]];
     /* thumb_dist <-- coupling_law(thumb_prox) */
-    out[2] = evaluateCoupledJointThumb(out[1]);
+    out[2] = evaluateCoupledJoint(out[1], "thumb");
     /* index_add <-- index_add */
     out[3] = pos_ref[m_coupledJoints[2]];
     /* index_prox <-- index_oc */
     out[4] = pos_ref[m_coupledJoints[3]];
     /* index_dist <-- coupling_law(index_prox) */
-    out[5] = evaluateCoupledJointIndex(out[4]);
+    out[5] = evaluateCoupledJoint(out[4], "index");
     /* middle_prox <-- middle_oc */
     out[6] = pos_ref[m_coupledJoints[4]];
     /* middle_dist <-- coupling_law(middle_prox) */
-    out[7] = evaluateCoupledJointIndex(out[6]);
+    out[7] = evaluateCoupledJoint(out[6], "middle");
     /* ring_prox <-- ring_pinky_oc */
     out[8] = pos_ref[m_coupledJoints[5]];
     /* ring_dist <-- coupling_law(ring_prox) */
-    out[9] = evaluateCoupledJointIndex(out[8]);
+    out[9] = evaluateCoupledJoint(out[8], "ring");
     /* pinky_prox <-- ring_pinky_oc */
     out[10] = pos_ref[m_coupledJoints[5]];
     /* pinky_dist <-- coupling_law(pinky_prox) */
-    out[11] = evaluateCoupledJointPinky(out[10]);
+    out[11] = evaluateCoupledJoint(out[10], "pinky");
 
     return out;
 }
@@ -1268,25 +1301,25 @@ yarp::sig::Vector HandMk5CouplingHandler::decoupleRefVel (yarp::sig::Vector& vel
     /* thumb_prox <-- thumb_oc */
     out[1] = vel_ref[m_coupledJoints[1]];
     /* thumb_dist <-- coupling_law_jacobian(thumb_prox_position) * thumb_prox */
-    out[2] = evaluateCoupledJointJacobianThumb(lastThumbProx) * out[1];
+    out[2] = evaluateCoupledJointJacobian(lastThumbProx, "thumb") * out[1];
     /* index_add <-- index_add */
     out[3] = vel_ref[m_coupledJoints[2]];
     /* index_prox <-- index_oc */
     out[4] = vel_ref[m_coupledJoints[3]];
     /* index_dist <-- coupling_law_jacobian(index_prox_position) * index_prox */
-    out[5] = evaluateCoupledJointJacobianIndex(lastIndexProx) * out[4];
+    out[5] = evaluateCoupledJointJacobian(lastIndexProx, "index") * out[4];
     /* middle_prox <-- middle_oc */
     out[6] = vel_ref[m_coupledJoints[4]];
     /* middle_dist <-- coupling_law_jacobian(middle_prox_position) * middle_prox */
-    out[7] = evaluateCoupledJointJacobianIndex(lastMiddleProx) * out[6];
+    out[7] = evaluateCoupledJointJacobian(lastMiddleProx, "middle") * out[6];
     /* ring_prox <-- ring_pinky_oc */
     out[8] = vel_ref[m_coupledJoints[5]];
     /* ring_dist <-- coupling_law_jacobian(ring_prox_position) * ring_prox */
-    out[9] = evaluateCoupledJointJacobianIndex(lastRingProx) * out[8];
+    out[9] = evaluateCoupledJointJacobian(lastRingProx, "ring") * out[8];
     /* pinky_prox <-- ring_pinky_oc */
     out[10] = vel_ref[m_coupledJoints[5]];
     /* pinky_dist <-- coupling_law(pinky_prox) */
-    out[11] = evaluateCoupledJointJacobianPinky(lastPinkyProx) * out[10];
+    out[11] = evaluateCoupledJointJacobian(lastPinkyProx, "pinky") * out[10];
 
     return out;
 }
@@ -1299,12 +1332,12 @@ yarp::sig::Vector HandMk5CouplingHandler::decoupleRefTrq (yarp::sig::Vector& trq
     return trq_ref;
 }
 
-double HandMk5CouplingHandler::evaluateCoupledJoint(const double& q1, const FingerParameters& params)
+double HandMk5CouplingHandler::evaluateCoupledJoint(const double& q1, const std::string& finger_name)
 {
     /**
      * Coupling law taken from from https://icub-tech-iit.github.io/documentation/hands/hands_mk5_coupling
      */
-
+    auto params = mFingerParameters.at(finger_name);
     double q1_rad = q1 * M_PI / 180.0;
     double q1off_rad = params.q1off * M_PI / 180.0;
     double q2bias_rad = params.q2bias * M_PI / 180.0;
@@ -1319,44 +1352,17 @@ double HandMk5CouplingHandler::evaluateCoupledJoint(const double& q1, const Fing
 
     double q2 = atan2(P1y_q1 - params.L0y, P1x_q1 - params.L0x) + \
         acos((h_sq + l_sq - k_sq) / (2.0 * params.l * h)) + \
-        q2bias_rad - M_PI;
+        -q2bias_rad - M_PI;
 
     return q2 * 180.0 / M_PI;
 }
 
-double HandMk5CouplingHandler::evaluateCoupledJointThumb(const double& q1)
-{
-    /**
-     * The value of q1 is subtracted from the result as evaluateCoupledJoint
-     * provides the absolute angle of the coupled distal joint with respect to the palm.
-     */
-    return evaluateCoupledJoint(q1, mParamsThumb) - q1;
-}
-
-double HandMk5CouplingHandler::evaluateCoupledJointIndex(const double& q1)
-{
-    /**
-     * The value of q1 is subtracted from the result as evaluateCoupledJoint
-     * provides the absolute angle of the coupled distal joint with respect to the palm.
-     */
-    return evaluateCoupledJoint(q1, mParamsIndex) - q1;
-}
-
-double HandMk5CouplingHandler::evaluateCoupledJointPinky(const double& q1)
-{
-    /**
-     * The value of q1 is subtracted from the result as evaluateCoupledJoint
-     * provides the absolute angle of the coupled distal joint with respect to the palm.
-     */
-    return evaluateCoupledJoint(q1, mParamsPinky) - q1;
-}
-
-double HandMk5CouplingHandler::evaluateCoupledJointJacobian(const double& q1, const FingerParameters& params)
+double HandMk5CouplingHandler::evaluateCoupledJointJacobian(const double& q1, const std::string& finger_name)
 {
     /**
      * Coupling law jacobian taken from from https://icub-tech-iit.github.io/documentation/hands/hands_mk5_coupling
      */
-
+    auto params = mFingerParameters.at(finger_name);
     double q1_rad = q1 * M_PI / 180.0;
     double q1off_rad = params.q1off * M_PI / 180.0;
 
@@ -1375,31 +1381,4 @@ double HandMk5CouplingHandler::evaluateCoupledJointJacobian(const double& q1, co
     double dq2_dq1 = dq2_dq1_11 / dq2_dq1_21 + dq2_dq1_12 / dq2_dq1_22;
 
     return dq2_dq1;
-}
-
-double HandMk5CouplingHandler::evaluateCoupledJointJacobianThumb(const double& q1)
-{
-    /**
-     * The value of 1 is subtracted from the result as evaluateCoupledJointJacobian
-     * provides the jacobian of the absolute angle of the coupled distal joint.
-     */
-    return evaluateCoupledJointJacobian(q1, mParamsThumb) - 1;
-}
-
-double HandMk5CouplingHandler::evaluateCoupledJointJacobianIndex(const double& q1)
-{
-    /**
-     * The value of 1 is subtracted from the result as evaluateCoupledJointJacobian
-     * provides the jacobian of the absolute angle of the coupled distal joint.
-     */
-    return evaluateCoupledJointJacobian(q1, mParamsIndex) - 1;
-}
-
-double HandMk5CouplingHandler::evaluateCoupledJointJacobianPinky(const double& q1)
-{
-    /**
-     * The value of 1 is subtracted from the result as evaluateCoupledJointJacobian
-     * provides the jacobian of the absolute angle of the coupled distal joint.
-     */
-    return evaluateCoupledJointJacobian(q1, mParamsPinky) - 1;
 }

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['gazebo_2dyarp_2dplugins_0',['gazebo-yarp-plugins',['../index.html',1,'(Global Namespace)'],['../md_README.html',1,'(Global Namespace)']]],
-  ['gazebo_5fyarp_5frobotinterface_1',['gazebo_yarp_robotinterface',['../md_plugins_2robotinterface_2README.html',1,'']]]
+  ['example_20of_20a_20model_20using_20a_20gazebo_5fyarp_5fforcetorque_20plugin_0',['Example of a model using a gazebo_yarp_forcetorque plugin',['../md_tutorial_2model_2forcetorque_2README.html',1,'']]],
+  ['externalwrench_20plugin_1',['ExternalWrench Plugin',['../md_plugins_2externalwrench_2README.html',1,'']]]
 ];

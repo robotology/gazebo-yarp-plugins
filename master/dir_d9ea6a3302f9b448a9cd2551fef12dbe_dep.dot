@@ -15,6 +15,6 @@ digraph "imu"
   }
   }
   dir_bc0718b08fb2015b8e59c47b2805f60c [label="libraries", fillcolor="#e8e8fc", color="red", style="filled", URL="dir_bc0718b08fb2015b8e59c47b2805f60c.html",tooltip=""];
-  dir_84b2ead98ac30e932b637c103bb4fd4c->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="5", labeldistance=1.5 headhref="dir_000126_000098.html" color="steelblue1" fontcolor="steelblue1"];
-  dir_84b2ead98ac30e932b637c103bb4fd4c->dir_df1a660f142921a9b097fa578174f3d9 [headlabel="3", labeldistance=1.5 headhref="dir_000126_000084.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_84b2ead98ac30e932b637c103bb4fd4c->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="5", labeldistance=1.5 headhref="dir_000126_000098.html" href="dir_000126_000098.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_84b2ead98ac30e932b637c103bb4fd4c->dir_df1a660f142921a9b097fa578174f3d9 [headlabel="3", labeldistance=1.5 headhref="dir_000126_000084.html" href="dir_000126_000084.html" color="steelblue1" fontcolor="steelblue1"];
 }

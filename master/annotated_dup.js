@@ -1,7 +1,6 @@
 var annotated_dup =
 [
     [ "gazebo", "namespacegazebo.html", [
-      [ "ApplyExternalWrench", "classgazebo_1_1ApplyExternalWrench.html", "classgazebo_1_1ApplyExternalWrench" ],
       [ "ConfigurationOverride", "classgazebo_1_1ConfigurationOverride.html", "classgazebo_1_1ConfigurationOverride" ],
       [ "GazeboYarpBaseState", "classgazebo_1_1GazeboYarpBaseState.html", "classgazebo_1_1GazeboYarpBaseState" ],
       [ "GazeboYarpCamera", "classgazebo_1_1GazeboYarpCamera.html", "classgazebo_1_1GazeboYarpCamera" ],

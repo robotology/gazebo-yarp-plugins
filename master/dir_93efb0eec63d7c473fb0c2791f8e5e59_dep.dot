@@ -10,5 +10,5 @@ digraph "GazeboYarpPlugins"
   dir_93efb0eec63d7c473fb0c2791f8e5e59 [label="GazeboYarpPlugins", fillcolor="#e8e8fc", color="grey25", style="filled,bold", URL="dir_93efb0eec63d7c473fb0c2791f8e5e59.html",tooltip=""];
   }
   dir_bc0718b08fb2015b8e59c47b2805f60c [label="libraries", fillcolor="#e8e8fc", color="red", style="filled", URL="dir_bc0718b08fb2015b8e59c47b2805f60c.html",tooltip=""];
-  dir_93efb0eec63d7c473fb0c2791f8e5e59->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="2", labeldistance=1.5 headhref="dir_000067_000098.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_93efb0eec63d7c473fb0c2791f8e5e59->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="2", labeldistance=1.5 headhref="dir_000067_000098.html" href="dir_000067_000098.html" color="steelblue1" fontcolor="steelblue1"];
 }

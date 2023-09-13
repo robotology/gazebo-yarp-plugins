@@ -16,7 +16,6 @@ var namespacegazebo =
       [ "NodePtr", "namespacegazebo_1_1transport.html#a1e99cf97e60f77b2b6b69c432da354d0", null ],
       [ "PublisherPtr", "namespacegazebo_1_1transport.html#af91919d46ce9d0aabd672bcb6e025d83", null ]
     ] ],
-    [ "ApplyExternalWrench", "classgazebo_1_1ApplyExternalWrench.html", "classgazebo_1_1ApplyExternalWrench" ],
     [ "ConfigurationOverride", "classgazebo_1_1ConfigurationOverride.html", "classgazebo_1_1ConfigurationOverride" ],
     [ "GazeboYarpBaseState", "classgazebo_1_1GazeboYarpBaseState.html", "classgazebo_1_1GazeboYarpBaseState" ],
     [ "GazeboYarpCamera", "classgazebo_1_1GazeboYarpCamera.html", "classgazebo_1_1GazeboYarpCamera" ],

@@ -28,25 +28,25 @@ var NAVTREE =
     [ "gazebo-yarp-plugins", "index.html#autotoc_md9", [
       [ "Quick start", "index.html#autotoc_md10", null ]
     ] ],
-    [ "Use the gazebo-yarp-plugins in Gazebo Models", "md_doc_2embed__plugins.html", [
-      [ "Use the gazebo-yarp-plugins in Gazebo Models", "md_doc_2embed__plugins.html#autotoc_md0", [
-        [ "Plugins exposing functionalities available on real robots", "md_doc_2embed__plugins.html#autotoc_md1", null ],
-        [ "Plugins exposing simulation-specific functionalities", "md_doc_2embed__plugins.html#autotoc_md2", null ],
-        [ "Using the plugins in Gazebo Models", "md_doc_2embed__plugins.html#autotoc_md3", null ],
-        [ "Example models", "md_doc_2embed__plugins.html#autotoc_md4", null ]
+    [ "Use the gazebo-yarp-plugins in Gazebo Models", "embed_plugins.html", [
+      [ "Use the gazebo-yarp-plugins in Gazebo Models", "embed_plugins.html#autotoc_md0", [
+        [ "Plugins exposing functionalities available on real robots", "embed_plugins.html#autotoc_md1", null ],
+        [ "Plugins exposing simulation-specific functionalities", "embed_plugins.html#autotoc_md2", null ],
+        [ "Using the plugins in Gazebo Models", "embed_plugins.html#autotoc_md3", null ],
+        [ "Example models", "embed_plugins.html#autotoc_md4", null ]
       ] ]
     ] ],
-    [ "Downloading and Installing gazebo-yarp-plugins", "md_doc_2install.html", [
-      [ "Downloading and Installing gazebo-yarp-plugins", "md_doc_2install.html#autotoc_md5", null ]
+    [ "Downloading and Installing gazebo-yarp-plugins", "install.html", [
+      [ "Downloading and Installing gazebo-yarp-plugins", "install.html#autotoc_md5", null ]
     ] ],
-    [ "Troubleshooting", "md_doc_2troubleshooting.html", [
-      [ "Troubleshooting", "md_doc_2troubleshooting.html#autotoc_md11", [
-        [ "General", "md_doc_2troubleshooting.html#autotoc_md12", null ],
-        [ "Old Gazebo Versions", "md_doc_2troubleshooting.html#autotoc_md13", null ]
+    [ "Troubleshooting", "troubleshooting.html", [
+      [ "Troubleshooting", "troubleshooting.html#autotoc_md11", [
+        [ "General", "troubleshooting.html#autotoc_md12", null ],
+        [ "Old Gazebo Versions", "troubleshooting.html#autotoc_md13", null ]
       ] ]
     ] ],
-    [ "Use the gazebo-yarp-plugins as a C++ library using CMake", "md_doc_2use__as__library.html", [
-      [ "Use the gazebo-yarp-plugins as a C++ library using CMake", "md_doc_2use__as__library.html#autotoc_md14", null ]
+    [ "Use the gazebo-yarp-plugins as a C++ library using CMake", "use_as_library.html", [
+      [ "Use the gazebo-yarp-plugins as a C++ library using CMake", "use_as_library.html#autotoc_md14", null ]
     ] ],
     [ "Changelog", "md_CHANGELOG.html", [
       [ "[Unreleased]", "md_CHANGELOG.html#autotoc_md16", null ],
@@ -141,11 +141,11 @@ var NAVTREE =
         [ "Fixed", "md_CHANGELOG.html#autotoc_md83", null ]
       ] ]
     ] ],
-    [ "Contributing", "md_CONTRIBUTING.html", [
-      [ "Contributing", "md_CONTRIBUTING.html#autotoc_md84", null ],
-      [ "Code style", "md_CONTRIBUTING.html#autotoc_md85", null ],
-      [ "Patches and features contribution", "md_CONTRIBUTING.html#autotoc_md86", null ],
-      [ "Repository structure and releases management.", "md_CONTRIBUTING.html#autotoc_md87", null ]
+    [ "Contributing", "contributing.html", [
+      [ "Contributing", "contributing.html#autotoc_md84", null ],
+      [ "Code style", "contributing.html#autotoc_md85", null ],
+      [ "Patches and features contribution", "contributing.html#autotoc_md86", null ],
+      [ "Repository structure and releases management.", "contributing.html#autotoc_md87", null ]
     ] ],
     [ "Clock Plugin", "md_plugins_2clock_2README.html", null ],
     [ "ConfigurationOverride Plugin", "md_plugins_2configurationoverride_2README.html", null ],
@@ -224,13 +224,13 @@ var NAVTREEINDEX =
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Command.html#ae9c71b9401b7f5ed2263dfe9e00849ad",
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Command.html#ae6aa1e01ef29934c0830eea93d8470ec",
 "classTrajectoryGenerator.html#a2ef785325913b45cbcd25afe92b42c17",
-"classgazebo_1_1GazeboYarpMaisSensor.html#ab572d91e52eb3998f08a31676b0410ec",
-"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#a20f0f9a3013f7e3b4e47396fbab32531",
-"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#af5d2c73311729755f7c7080b54eba578",
-"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#aa5fa5db3b1f84303ee94776b3704d97d",
-"classyarp_1_1dev_1_1GazeboYarpInertialMTBPartDriver.html#ae2758198cb1c889093cc539461418024",
-"functions.html",
-"structRange.html#a318fce28b983827722508a0387ddf282"
+"classgazebo_1_1GazeboYarpMultiCamera.html#a45de9a03f3f2e306e3b0cc69efbccf4b",
+"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#a3192cb58e4f8c8dfd11e66bb9279f6a6",
+"classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html#a1f9c11625e73bc727ed56d0380292a1c",
+"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#ab0d9784bc466f1ae80d5c5048cbe6191",
+"classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#abba871ac0d26d9cfd713365c81a3824f",
+"functions_f.html",
+"worldproxy_8h.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

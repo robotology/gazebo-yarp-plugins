@@ -10,5 +10,5 @@ digraph "gazebo"
   dir_12f2d07aa1c001191bcb48ebc473fb4e [label="gazebo", fillcolor="#e8e8fc", color="grey25", style="filled,bold", URL="dir_12f2d07aa1c001191bcb48ebc473fb4e.html",tooltip=""];
   }
   dir_bc0718b08fb2015b8e59c47b2805f60c [label="libraries", fillcolor="#e8e8fc", color="red", style="filled", URL="dir_bc0718b08fb2015b8e59c47b2805f60c.html",tooltip=""];
-  dir_12f2d07aa1c001191bcb48ebc473fb4e->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="3", labeldistance=1.5 headhref="dir_000038_000098.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_12f2d07aa1c001191bcb48ebc473fb4e->dir_bc0718b08fb2015b8e59c47b2805f60c [headlabel="3", labeldistance=1.5 headhref="dir_000038_000098.html" href="dir_000038_000098.html" color="steelblue1" fontcolor="steelblue1"];
 }

@@ -9,4 +9,5 @@ digraph "WorldProxy"
   Node2 [id="Node000002",label="GazeboYarpPlugins::\lWorldInterfaceServer",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classGazeboYarpPlugins_1_1WorldInterfaceServer.html",tooltip=" "];
   Node3 -> Node2 [id="edge2_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="yarp::os::Wire",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",tooltip=" "];
+  Node3 -> Node2 [id="edge3_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
 }

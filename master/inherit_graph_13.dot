@@ -6,10 +6,10 @@ digraph "Graphical Class Hierarchy"
   node [fontname=FreeSans.ttf,fontsize=10,shape=box,height=0.2,width=0.4];
   rankdir="LR";
   Node0 [id="Node000000",label="TrajectoryGenerator",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classTrajectoryGenerator.html",tooltip=" "];
-  Node0 -> Node1 [id="edge33_Node000000_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node0 -> Node1 [id="edge32_Node000000_Node000001",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node1 [id="Node000001",label="ConstSpeedTrajectoryGenerator",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classConstSpeedTrajectoryGenerator.html",tooltip=" "];
-  Node0 -> Node2 [id="edge34_Node000000_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node0 -> Node2 [id="edge33_Node000000_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 [id="Node000002",label="MinJerkTrajectoryGenerator",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classMinJerkTrajectoryGenerator.html",tooltip=" "];
-  Node0 -> Node3 [id="edge35_Node000000_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node0 -> Node3 [id="edge34_Node000000_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="TrapezoidalSpeedTrajectory\lGenerator",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classTrapezoidalSpeedTrajectoryGenerator.html",tooltip=" "];
 }

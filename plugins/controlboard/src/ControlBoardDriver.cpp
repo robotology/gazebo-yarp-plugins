@@ -339,7 +339,20 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             }
             else if (coupling_bottle->get(0).asString()=="icub_hand_mk5")
             {
+                yarp::os::Bottle& coupling_group_bottle = m_pluginParameters.findGroup("COUPLING_PARAMS");
+
+                if(coupling_group_bottle.isNull())
+                {
+                    yCError(GAZEBOCONTROLBOARD) << "Missing param in COUPLING_PARAMS section";
+                    return false;
+                }
+
                 BaseCouplingHandler* cpl = new HandMk5CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+                if (! static_cast<HandMk5CouplingHandler*>(cpl)->parseFingerParameters(coupling_group_bottle))
+                {
+                    yCError(GAZEBOCONTROLBOARD) << "Error parsing coupling parameter, wrong size of the finger parameters list";
+                    return false;
+                }
                 m_coupling_handler.push_back(cpl);
                 yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk5";
             }

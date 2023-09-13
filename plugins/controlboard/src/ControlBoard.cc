@@ -43,12 +43,12 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
             m_wrapper.close();
         }
 
-        if (m_iVirtAnalogSensorWrap) 
+        if (m_iVirtAnalogSensorWrap)
         {
             m_iVirtAnalogSensorWrap->detachAll();
             m_iVirtAnalogSensorWrap = nullptr;
         }
-        
+
         if (m_virtAnalogSensorWrapper.isValid())
         {
             m_virtAnalogSensorWrapper.close();
@@ -110,15 +110,15 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
         }
         #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
         bool disable_wrapper = m_parameters.check("disableImplicitNetworkWrapper");
-        
+
         if (disable_wrapper && !m_parameters.check("yarpDeviceName"))
         {
             yError() << "GazeboYarpControlBoard : missing yarpDeviceName parameter for one device in robot " << m_robotName;
             return;
         }
-        
-        
-        if (!disable_wrapper) 
+
+
+        if (!disable_wrapper)
         {
             yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
             if(wrapper_group.isNull())
@@ -166,8 +166,8 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 virt_group.append(yarp::os::Bottle(networks));
             }
 
-       
-        
+
+
             yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
 
             if (netList->isNull()) {
@@ -175,9 +175,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                 m_wrapper.close();
                 return;
             }
-        
 
-            
+
+
             for (int n = 0; n < netList->size(); n++)
             {
                 yarp::dev::PolyDriverDescriptor newPoly;
@@ -201,9 +201,9 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     scopedDeviceName = m_robotName + "::" + m_parameters.find("yarpDeviceName").asString();
                     m_scopedDeviceName = scopedDeviceName;
                 }
-            
+
                 newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(scopedDeviceName);
-            
+
                 if( newPoly.poly != NULL)
                 {
                     // device already exists, use it, setting it againg to increment the usage counter.
@@ -276,7 +276,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpControlBoard)
                     return;
                 }
             }
-        
+
             if (!m_iWrap || !m_iWrap->attachAll(m_controlBoards))
             {
                 yCError(GAZEBOCONTROLBOARD) << "error while attaching wrapper to device.";

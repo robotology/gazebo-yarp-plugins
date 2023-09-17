@@ -9,6 +9,7 @@
 #include <GazeboYarpPlugins/common.h>
 
 #include <ControlBoardDriverCoupling.h>
+#include <array>
 #include <cstdio>
 #include <cmath>
 #include <gazebo/physics/Model.hh>

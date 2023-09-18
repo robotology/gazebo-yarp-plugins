@@ -1355,7 +1355,9 @@ double HandMk5CouplingHandler::evaluateCoupledJoint(const double& q1, const std:
         acos((h_sq + l_sq - k_sq) / (2.0 * params.l * h)) + \
         -q2bias_rad - M_PI;
 
-    return q2 * 180.0 / M_PI;
+    // The value of q1 is subtracted from the result as the formula provides
+    // the absolute angle of the coupled distal joint with respect to the palm.
+    return q2 * 180.0 / M_PI - q1;
 }
 
 double HandMk5CouplingHandler::evaluateCoupledJointJacobian(const double& q1, const std::string& finger_name)
@@ -1381,5 +1383,7 @@ double HandMk5CouplingHandler::evaluateCoupledJointJacobian(const double& q1, co
     double dq2_dq1_22 = 2 * params.l * h * h_sq * std::sqrt(1 - std::pow((l_sq - k_sq + h_sq) / (2 * params.l * h), 2));
     double dq2_dq1 = dq2_dq1_11 / dq2_dq1_21 + dq2_dq1_12 / dq2_dq1_22;
 
-    return dq2_dq1;
+    // The value of 1 is subtracted from the result as evaluateCoupledJointJacobian provides
+    // the jacobian of the absolute angle of the coupled distal joint.
+    return dq2_dq1 - 1;
 }

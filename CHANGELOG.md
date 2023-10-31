@@ -5,6 +5,8 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+## [4.9.0] - 2023-10-31
+
 ### Changed
 - The `icub_hand_mk5` coupling handler has been refactored, it now requires the group `COUPLING_PARAMS` that allows to differentiate between the coupling mk5.0 and mk5.1(https://github.com/robotology/gazebo-yarp-plugins/pull/662).
 

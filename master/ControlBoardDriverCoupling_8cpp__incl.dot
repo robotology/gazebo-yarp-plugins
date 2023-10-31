@@ -73,13 +73,15 @@ digraph "ControlBoardDriverCoupling.cpp"
   Node32 [id="Node000032",label="cmath",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node1 -> Node24 [id="edge36_Node000001_Node000024",color="steelblue1",style="solid",tooltip=" "];
   Node1 -> Node33 [id="edge37_Node000001_Node000033",color="steelblue1",style="solid",tooltip=" "];
-  Node33 [id="Node000033",label="cstdio",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node32 [id="edge38_Node000001_Node000032",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node22 [id="edge39_Node000001_Node000022",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node34 [id="edge40_Node000001_Node000034",color="steelblue1",style="solid",tooltip=" "];
-  Node34 [id="Node000034",label="ControlBoardLog.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardLog_8h.html",tooltip=" "];
-  Node34 -> Node35 [id="edge41_Node000034_Node000035",color="steelblue1",style="solid",tooltip=" "];
-  Node35 [id="Node000035",label="yarp/os/LogComponent.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node34 -> Node36 [id="edge42_Node000034_Node000036",color="steelblue1",style="solid",tooltip=" "];
-  Node36 [id="Node000036",label="yarp/os/LogStream.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node33 [id="Node000033",label="array",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node34 [id="edge38_Node000001_Node000034",color="steelblue1",style="solid",tooltip=" "];
+  Node34 [id="Node000034",label="cstdio",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node32 [id="edge39_Node000001_Node000032",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node22 [id="edge40_Node000001_Node000022",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node35 [id="edge41_Node000001_Node000035",color="steelblue1",style="solid",tooltip=" "];
+  Node35 [id="Node000035",label="ControlBoardLog.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ControlBoardLog_8h.html",tooltip=" "];
+  Node35 -> Node36 [id="edge42_Node000035_Node000036",color="steelblue1",style="solid",tooltip=" "];
+  Node36 [id="Node000036",label="yarp/os/LogComponent.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node35 -> Node37 [id="edge43_Node000035_Node000037",color="steelblue1",style="solid",tooltip=" "];
+  Node37 [id="Node000037",label="yarp/os/LogStream.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
 }

@@ -1,6 +1,7 @@
 var classHandMk5CouplingHandler =
 [
     [ "HandMk5CouplingHandler", "classHandMk5CouplingHandler.html#a8432a4499f983b688aff84389851175e", null ],
+    [ "parseFingerParameters", "classHandMk5CouplingHandler.html#a4b3ade8bfbc0406192dee5bd186ee1ed", null ],
     [ "decouplePos", "classHandMk5CouplingHandler.html#a017a8dc27981bd46d52164e26f8b1fbb", null ],
     [ "decoupleVel", "classHandMk5CouplingHandler.html#a401176bda5dfb2c09282a44418406001", null ],
     [ "decoupleAcc", "classHandMk5CouplingHandler.html#add4871e3660bbf36b03056de8abdb688", null ],

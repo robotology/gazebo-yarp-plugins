@@ -18,6 +18,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IInteractionMode.h>
+#include <yarp/dev/IJointCoupling.h>
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/sig/Vector.h>
@@ -414,6 +415,9 @@ private:
     std::vector<RampFilter*> m_speed_ramp_handler;
     std::vector<Watchdog*> m_velocity_watchdog;
     std::vector<Watchdog*> m_velocityControl;
+
+    yarp::dev::IJointCoupling* m_ijointcoupling{nullptr};
+    yarp::dev::PolyDriver m_coupling_driver;
 
 
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */

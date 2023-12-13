@@ -337,24 +337,26 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 m_coupling_handler.push_back(cpl);
                 yCInfo(GAZEBOCONTROLBOARD) << "using icub_left_hand_mk4";
             }
-            else if (coupling_bottle->get(0).asString()=="icub_hand_mk5")
+            else if (coupling_bottle->check("device") && coupling_bottle->find("device").asString()=="couplingXCubHandMk5")
             {
-                yarp::os::Bottle& coupling_group_bottle = m_pluginParameters.findGroup("COUPLING_PARAMS");
+                yarp::os::Property coupling_handler_conf;
 
-                if(coupling_group_bottle.isNull())
+                coupling_handler_conf.put("device", "couplingXCubHandMk5");
+                coupling_handler_conf.put("options_as_str", m_pluginParameters.toString());
+
+                if(!m_coupling_driver.open(coupling_handler_conf))
                 {
-                    yCError(GAZEBOCONTROLBOARD) << "Missing param in COUPLING_PARAMS section";
+                    yCError(GAZEBOCONTROLBOARD) << "Failed to open coupling device";
+                    yCDebug(GAZEBOCONTROLBOARD) << "CONF:" << coupling_handler_conf.toString();
                     return false;
                 }
 
-                BaseCouplingHandler* cpl = new HandMk5CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                if (! static_cast<HandMk5CouplingHandler*>(cpl)->parseFingerParameters(coupling_group_bottle))
+                if(!m_coupling_driver.view(m_ijointcoupling))
                 {
-                    yCError(GAZEBOCONTROLBOARD) << "Error parsing coupling parameter, wrong size of the finger parameters list";
+                    yCError(GAZEBOCONTROLBOARD) << "Failed to view IJointCoupling interface";
                     return false;
                 }
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk5";
+                yCInfo(GAZEBOCONTROLBOARD) << "using coupling_xcub_hand_mk5";
             }
             else if (coupling_bottle->get(0).asString()=="none")
             {
@@ -479,10 +481,17 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
                 initial_positions.push_back(convertGazeboToUser(i, gazeboPos));
         }
 
-        for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
-            if (m_coupling_handler[cpl_cnt])
-                m_coupling_handler[cpl_cnt]->decouplePos(initial_positions);
+        if(m_ijointcoupling){
+            // TODO
         }
+        else {
+            for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
+                if (m_coupling_handler[cpl_cnt])
+                    m_coupling_handler[cpl_cnt]->decouplePos(initial_positions);
+            }
+        }
+
+
 
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
             if (isValidUserDOF(i)) {
@@ -576,14 +585,19 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_motPositions=m_positions;
     m_motVelocities=m_velocities;
     //measurements decoupling
-    for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
-    {
-        if (m_coupling_handler[cpl_cnt])
+    if(m_ijointcoupling){
+            // TODO
+    }
+    else {
+        for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
         {
-            m_coupling_handler[cpl_cnt]->decouplePos(m_positions);
-            m_coupling_handler[cpl_cnt]->decoupleVel(m_velocities);
-            //m_coupling_handler[cpl_cnt]->decoupleAcc(m_accelerations); //missing
-            m_coupling_handler[cpl_cnt]->decoupleTrq(m_torques);
+            if (m_coupling_handler[cpl_cnt])
+            {
+                m_coupling_handler[cpl_cnt]->decouplePos(m_positions);
+                m_coupling_handler[cpl_cnt]->decoupleVel(m_velocities);
+                //m_coupling_handler[cpl_cnt]->decoupleAcc(m_accelerations); //missing
+                m_coupling_handler[cpl_cnt]->decoupleTrq(m_torques);
+            }
         }
     }
 
@@ -654,13 +668,19 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_motReferencePositions=m_jntReferencePositions;
     m_motReferenceVelocities=m_jntReferenceVelocities;
     m_motReferenceTorques=m_jntReferenceTorques;
-    for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
-    {
-        if (m_coupling_handler[cpl_cnt])
+
+    if(m_ijointcoupling){
+            // TODO
+    }
+    else {
+        for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
         {
-            m_motReferencePositions = m_coupling_handler[cpl_cnt]->decoupleRefPos(m_jntReferencePositions);
-            m_motReferenceVelocities = m_coupling_handler[cpl_cnt]->decoupleRefVel(m_jntReferenceVelocities, m_motPositions);
-            m_motReferenceTorques = m_coupling_handler[cpl_cnt]->decoupleRefTrq(m_jntReferenceTorques);
+            if (m_coupling_handler[cpl_cnt])
+            {
+                m_motReferencePositions = m_coupling_handler[cpl_cnt]->decoupleRefPos(m_jntReferencePositions);
+                m_motReferenceVelocities = m_coupling_handler[cpl_cnt]->decoupleRefVel(m_jntReferenceVelocities, m_motPositions);
+                m_motReferenceTorques = m_coupling_handler[cpl_cnt]->decoupleRefTrq(m_jntReferenceTorques);
+            }
         }
     }
 

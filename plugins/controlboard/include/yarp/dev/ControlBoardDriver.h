@@ -373,6 +373,9 @@ private:
     std::vector<Range> m_jointPosLimits;
     std::vector<Range> m_jointVelLimits;
 
+    std::vector<Range> m_actuatedAxesPosLimits;
+    std::vector<Range> m_actuatedAxesVelLimits;
+
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
      * i.e. getEncoder(j)=m_zeroPosition+gazebo.getEncoder(j);

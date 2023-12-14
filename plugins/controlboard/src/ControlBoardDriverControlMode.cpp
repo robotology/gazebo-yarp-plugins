@@ -72,18 +72,41 @@ bool GazeboYarpControlBoardDriver::setControlMode(const int j, const int mode)
         return false;
     }
 
-    for (size_t cpl_i = 0; cpl_i < m_coupling_handler.size(); ++cpl_i)
-    {
-        if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
-        {
-            yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
-            for (size_t coupled_j = 0; coupled_j < coupling_vector.size(); ++coupled_j)
+    if (m_ijointcoupling) {
+        // TODO
+        yarp::sig::VectorOf<size_t> coupled_actuated_axes;
+        bool ok = m_ijointcoupling->getCoupledActuatedAxes(coupled_actuated_axes);
+        if(!ok) {
+            yCError(GAZEBOCONTROLBOARD) << "error while getting coupled actuated axes";
+            return false;
+        }
+        bool joint_is_coupled = find(coupled_actuated_axes.begin(), coupled_actuated_axes.end(), j) != coupled_actuated_axes.end();
+        if(joint_is_coupled) {
+            for (size_t coupled_j = 0; coupled_j < coupled_actuated_axes.size(); ++coupled_j)
             {
-                changeControlMode(coupling_vector[coupled_j], mode);
+                changeControlMode(coupled_actuated_axes[coupled_j], mode);
             }
             return true;
         }
+
     }
+    else{
+        for (size_t cpl_i = 0; cpl_i < m_coupling_handler.size(); ++cpl_i)
+        {
+            if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
+            {
+                yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
+                for (size_t coupled_j = 0; coupled_j < coupling_vector.size(); ++coupled_j)
+                {
+                    changeControlMode(coupling_vector[coupled_j], mode);
+                }
+                return true;
+            }
+        }
+
+    }
+
+
     changeControlMode(j,mode);
     return true;
 }

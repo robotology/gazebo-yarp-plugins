@@ -475,36 +475,53 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
     else
     {
         yCDebug(GAZEBOCONTROLBOARD) << "Initializing Trajectory Generator with current values";
-        yarp::sig::Vector initial_positions;
+        yarp::sig::Vector initialPositionPhys;
         for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
                 double gazeboPos = m_jointPointers[i]->Position(0);
-                initial_positions.push_back(convertGazeboToUser(i, gazeboPos));
+                initialPositionPhys.push_back(convertGazeboToUser(i, gazeboPos));
         }
+        yarp::sig::Vector initialPositionAct;
 
         if(m_ijointcoupling){
             // TODO check if this is correct
-            bool ok = m_ijointcoupling->convertFromPhysicalJointsToActuatedAxesPos(initial_positions, initial_positions);
-        }
-        else {
-            for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
-                if (m_coupling_handler[cpl_cnt])
-                    m_coupling_handler[cpl_cnt]->decouplePos(initial_positions);
+            size_t nrOfActuatedAxes{0};
+            bool ok = m_ijointcoupling->getNrOfActuatedAxes(nrOfActuatedAxes);
+            initialPositionAct.resize(nrOfActuatedAxes);
+            ok &= m_ijointcoupling->convertFromPhysicalJointsToActuatedAxesPos(initialPositionPhys, initialPositionAct);
+            if (!ok)
+            {
+                yCError(GAZEBOCONTROLBOARD) << "Failed to convert from physical joints to actuated axes";
+                return;
             }
-        }
-
-
-
-        for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
-            if (isValidUserDOF(i)) {
-
+            for (unsigned int i = 0; i < nrOfActuatedAxes; ++i) {
                 double limit_min, limit_max;
                 getUserDOFLimit(i, limit_min, limit_max);
                 m_trajectory_generator[i]->setLimits(limit_min, limit_max);
 
-                m_trajectory_generator[i]->initTrajectory(initial_positions[i],
-                                                          initial_positions[i],
-                                                          m_trajectoryGenerationReferenceSpeed[i],
-                                                          m_trajectoryGenerationReferenceAcceleration[i]);
+                m_trajectory_generator[i]->initTrajectory(initialPositionAct[i],
+                                                            initialPositionAct[i],
+                                                            m_trajectoryGenerationReferenceSpeed[i],
+                                                            m_trajectoryGenerationReferenceAcceleration[i]);
+            }
+        }
+        else {
+            initialPositionAct = initialPositionPhys;
+            for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
+                if (m_coupling_handler[cpl_cnt])
+                    m_coupling_handler[cpl_cnt]->decouplePos(initialPositionAct);
+            }
+            for (unsigned int i = 0; i < m_numberOfJoints; ++i) {
+                if (isValidUserDOF(i)) {
+
+                    double limit_min, limit_max;
+                    getUserDOFLimit(i, limit_min, limit_max);
+                    m_trajectory_generator[i]->setLimits(limit_min, limit_max);
+
+                    m_trajectory_generator[i]->initTrajectory(initialPositionAct[i],
+                                                            initialPositionAct[i],
+                                                            m_trajectoryGenerationReferenceSpeed[i],
+                                                            m_trajectoryGenerationReferenceAcceleration[i]);
+                }
             }
         }
     }

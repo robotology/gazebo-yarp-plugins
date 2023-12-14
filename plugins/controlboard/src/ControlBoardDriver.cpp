@@ -341,8 +341,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             {
                 yarp::os::Property coupling_handler_conf;
 
+                coupling_handler_conf.fromString(m_pluginParameters.toString());
                 coupling_handler_conf.put("device", "couplingXCubHandMk5");
-                coupling_handler_conf.put("options_as_str", m_pluginParameters.toString());
 
                 if(!m_coupling_driver.open(coupling_handler_conf))
                 {
@@ -482,7 +482,8 @@ void GazeboYarpControlBoardDriver::resetPositionsAndTrajectoryGenerators()
         }
 
         if(m_ijointcoupling){
-            // TODO
+            // TODO check if this is correct
+            bool ok = m_ijointcoupling->convertFromPhysicalJointsToActuatedAxesPos(initial_positions, initial_positions);
         }
         else {
             for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++) {
@@ -586,7 +587,9 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_motVelocities=m_velocities;
     //measurements decoupling
     if(m_ijointcoupling){
-            // TODO
+        // TODO check if this is correct
+        bool ok = m_ijointcoupling->convertFromPhysicalJointsToActuatedAxesPos(m_positions, m_positions);
+        ok     &= m_ijointcoupling->convertFromPhysicalJointsToActuatedAxesVel(m_positions, m_velocities, m_velocities);
     }
     else {
         for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)
@@ -670,7 +673,9 @@ void GazeboYarpControlBoardDriver::onUpdate(const gazebo::common::UpdateInfo& _i
     m_motReferenceTorques=m_jntReferenceTorques;
 
     if(m_ijointcoupling){
-            // TODO
+        // TODO check if it is correct
+        bool ok = m_ijointcoupling->convertFromActuatedAxesToPhysicalJointsPos(m_jntReferencePositions, m_motReferencePositions);
+        ok     &= m_ijointcoupling->convertFromActuatedAxesToPhysicalJointsVel(m_motPositions, m_jntReferenceVelocities, m_motReferenceVelocities);
     }
     else {
         for (size_t cpl_cnt = 0; cpl_cnt < m_coupling_handler.size(); cpl_cnt++)

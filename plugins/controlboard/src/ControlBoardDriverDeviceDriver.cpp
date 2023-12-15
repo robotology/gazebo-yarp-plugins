@@ -48,13 +48,10 @@ bool GazeboYarpControlBoardDriver::close()
         }
     }
 
-    for (size_t i = 0; i < m_coupling_handler.size(); i++)
+    if (m_coupling_handler)
     {
-        if (m_coupling_handler[i])
-        {
-            delete m_coupling_handler[i];
-            m_coupling_handler[i] = 0;
-        }
+        delete m_coupling_handler;
+        m_coupling_handler = nullptr;
     }
 
     for (size_t i = 0; i < m_speed_ramp_handler.size(); i++)

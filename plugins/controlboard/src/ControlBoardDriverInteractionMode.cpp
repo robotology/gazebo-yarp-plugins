@@ -118,17 +118,14 @@ bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::Interact
 
     }
     else {
-        for (size_t cpl_i=0; cpl_i < m_coupling_handler.size(); cpl_i++)
+        if (m_coupling_handler && m_coupling_handler->checkJointIsCoupled(j))
         {
-            if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
+            yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler->getCoupledJoints();
+            for (size_t coupled_j=0; coupled_j < coupling_vector.size(); coupled_j++)
             {
-                yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
-                for (size_t coupled_j=0; coupled_j < coupling_vector.size(); coupled_j++)
-                {
-                    changeInteractionMode(coupling_vector[coupled_j], mode);
-                }
-                return true;
+                changeInteractionMode(coupling_vector[coupled_j], mode);
             }
+            return true;
         }
     }
 

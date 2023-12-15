@@ -414,8 +414,7 @@ private:
 
     //trajectory generator
     std::vector<TrajectoryGenerator*> m_trajectory_generator;
-    // TODO make this a simple pointer, we handle one coupling per time
-    std::vector<BaseCouplingHandler*>  m_coupling_handler;
+    BaseCouplingHandler*     m_coupling_handler{nullptr};
     std::vector<RampFilter*> m_speed_ramp_handler;
     std::vector<Watchdog*> m_velocity_watchdog;
     std::vector<Watchdog*> m_velocityControl;

@@ -209,19 +209,20 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
         yCDebug(GAZEBOCONTROLBOARD) << "Requested couplings:" << coupling_group_bottle.toString();
         yCDebug(GAZEBOCONTROLBOARD) << "Size: " << coupling_group_bottle.size();
 
-        for (int cnt=1; cnt<coupling_group_bottle.size(); cnt++)
-        {
-            yarp::os::Bottle* coupling_bottle = coupling_group_bottle.get(cnt).asList();
+        yarp::os::Bottle* coupling_bottle = coupling_group_bottle.get(1).asList();
+        yarp::sig::VectorOf<int> coupled_joints;
+        std::vector<std::string> coupled_joint_names;
+        std::vector<Range> coupled_joint_limits;
+        // Only the legacy coupling handler requires this kind of parsing
+        // In the "new" one is made by the device itself
+        yCDebug(GAZEBOCONTROLBOARD) <<coupling_bottle->toString();
+        if (!coupling_bottle->check("device")) {
 
             if (coupling_bottle == 0 || (coupling_bottle->size() != 3 && coupling_bottle->size() != 5))
             {
                 yCError(GAZEBOCONTROLBOARD) << "Error parsing coupling parameter"; return false;
             }
-            //yCDebug(GAZEBOCONTROLBOARD) << "Requested coupling:" << cnt << " / " << coupling_bottle->size();
-            //yCDebug(GAZEBOCONTROLBOARD) << "Requested coupling:" << coupling_bottle->toString();
 
-            yarp::sig::VectorOf<int> coupled_joints;
-            std::vector<std::string> coupled_joint_names;
             Bottle* b = coupling_bottle->get(1).asList();
             if (b==0 || b->size()==0) {
                 yCError(GAZEBOCONTROLBOARD) << "Error parsing coupling parameter, wrong size of the joints numbers list";
@@ -246,7 +247,6 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             }
 
             // Fill limits for coupled joints
-            std::vector<Range> coupled_joint_limits;
             if (coupling_bottle->size() == 5)
             {
                 // Min limits of coupled joints.
@@ -283,129 +283,130 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                     coupled_joint_limits.push_back(m_jointPosLimits[coupled_joints[i]]);
             }
 
-            if (coupling_bottle->get(0).asString()=="eyes_vergence_control")
-            {
-                BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using eyes_vergence_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="fingers_abduction_control")
-            {
-                BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using fingers_abduction_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="thumb_control")
-            {
-                BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using thumb_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="index_control")
-            {
-                BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using index_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="middle_control")
-            {
-                BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using middle_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="pinky_control")
-            {
-                BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using pinky_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="cer_hand")
-            {
-                BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using cer_hand_control";
-            }
-            else if (coupling_bottle->get(0).asString()=="icub_hand_mk3")
-            {
-                BaseCouplingHandler* cpl = new HandMk3CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk3";
-            }
-            else if (coupling_bottle->get(0).asString()=="icub_left_hand_mk4")
-            {
-                BaseCouplingHandler* cpl = new HandMk4CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
-                m_coupling_handler.push_back(cpl);
-                yCInfo(GAZEBOCONTROLBOARD) << "using icub_left_hand_mk4";
-            }
-            else if (coupling_bottle->check("device") && coupling_bottle->find("device").asString()=="couplingXCubHandMk5")
-            {
-                yarp::os::Property coupling_handler_conf;
+        }
 
-                coupling_handler_conf.fromString(m_pluginParameters.toString());
-                coupling_handler_conf.put("device", "couplingXCubHandMk5");
+        if (coupling_bottle->get(0).asString()=="eyes_vergence_control")
+        {
+            BaseCouplingHandler* cpl = new EyesCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using eyes_vergence_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="fingers_abduction_control")
+        {
+            BaseCouplingHandler* cpl = new FingersAbductionCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using fingers_abduction_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="thumb_control")
+        {
+            BaseCouplingHandler* cpl = new ThumbCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using thumb_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="index_control")
+        {
+            BaseCouplingHandler* cpl = new IndexCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using index_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="middle_control")
+        {
+            BaseCouplingHandler* cpl = new MiddleCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using middle_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="pinky_control")
+        {
+            BaseCouplingHandler* cpl = new PinkyCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using pinky_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="cer_hand")
+        {
+            BaseCouplingHandler* cpl = new CerHandCouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using cer_hand_control";
+        }
+        else if (coupling_bottle->get(0).asString()=="icub_hand_mk3")
+        {
+            BaseCouplingHandler* cpl = new HandMk3CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using icub_hand_mk3";
+        }
+        else if (coupling_bottle->get(0).asString()=="icub_left_hand_mk4")
+        {
+            BaseCouplingHandler* cpl = new HandMk4CouplingHandler(m_robot,coupled_joints, coupled_joint_names, coupled_joint_limits);
+            m_coupling_handler.push_back(cpl);
+            yCInfo(GAZEBOCONTROLBOARD) << "using icub_left_hand_mk4";
+        }
+        else if (coupling_bottle->check("device") && coupling_bottle->find("device").asString()=="couplingXCubHandMk5")
+        {
+            yarp::os::Property coupling_handler_conf;
 
-                if(!m_coupling_driver.open(coupling_handler_conf))
-                {
-                    yCError(GAZEBOCONTROLBOARD) << "Failed to open coupling device";
-                    yCDebug(GAZEBOCONTROLBOARD) << "CONF:" << coupling_handler_conf.toString();
-                    return false;
-                }
+            coupling_handler_conf.fromString(m_pluginParameters.toString());
+            coupling_handler_conf.put("device", "couplingXCubHandMk5");
 
-                if(!m_coupling_driver.view(m_ijointcoupling))
-                {
-                    yCError(GAZEBOCONTROLBOARD) << "Failed to view IJointCoupling interface";
-                    return false;
-                }
-                // TODO This part should be common between different coupling handlers
-                yCInfo(GAZEBOCONTROLBOARD) << "using coupling_xcub_hand_mk5";
-                size_t nrOfActuatedAxes{0};
-                bool ok = m_ijointcoupling->getNrOfActuatedAxes(nrOfActuatedAxes);
-                if(!ok)
-                {
-                    yCError(GAZEBOCONTROLBOARD) << "Failed to get number of actuated axes";
-                    return false;
-                }
-                m_actuatedAxesPosLimits.resize(nrOfActuatedAxes);
-                // TODO this should be done in a better way
-                m_actuatedAxesVelLimits = m_jointVelLimits;
-                yarp::os::Bottle& actuated_axis_pos_limit_min = coupling_group_bottle.findGroup("actuatedAxesMin");
-                if (!actuated_axis_pos_limit_min.isNull() && static_cast<size_t>(actuated_axis_pos_limit_min.size()) == nrOfActuatedAxes+1)
-                {
-                    for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
-                    {
-                        m_actuatedAxesPosLimits[i].min = actuated_axis_pos_limit_min.get(i+1).asFloat64();
-                    }
-                }
-                else
-                {
-                    yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes min limits";
-                    return false;
-                }
-                yarp::os::Bottle& actuated_axis_pos_limit_max = coupling_group_bottle.findGroup("actuatedAxesMax");
-                if (!actuated_axis_pos_limit_max.isNull() && static_cast<size_t>(actuated_axis_pos_limit_max.size()) == nrOfActuatedAxes+1)
-                {
-                    for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
-                    {
-                        m_actuatedAxesPosLimits[i].max = actuated_axis_pos_limit_max.get(i+1).asFloat64();
-                    }
-                }
-                else
-                {
-                    yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes min limits";
-                    return false;
-                }
-            }
-            else if (coupling_bottle->get(0).asString()=="none")
+            if(!m_coupling_driver.open(coupling_handler_conf))
             {
-                yCDebug(GAZEBOCONTROLBOARD) << "Just for test";
-            }
-            else
-            {
-                yCError(GAZEBOCONTROLBOARD) << "Unknown coupling type";
+                yCError(GAZEBOCONTROLBOARD) << "Failed to open coupling device";
+                yCDebug(GAZEBOCONTROLBOARD) << "CONF:" << coupling_handler_conf.toString();
                 return false;
             }
 
+            if(!m_coupling_driver.view(m_ijointcoupling))
+            {
+                yCError(GAZEBOCONTROLBOARD) << "Failed to view IJointCoupling interface";
+                return false;
+            }
+            // TODO This part should be common between different coupling handlers
+            size_t nrOfActuatedAxes{0};
+            bool ok = m_ijointcoupling->getNrOfActuatedAxes(nrOfActuatedAxes);
+            if(!ok)
+            {
+                yCError(GAZEBOCONTROLBOARD) << "Failed to get number of actuated axes";
+                return false;
+            }
+            m_actuatedAxesPosLimits.resize(nrOfActuatedAxes);
+            // TODO this should be done in a better way
+            m_actuatedAxesVelLimits = m_jointVelLimits;
+            yarp::os::Bottle& actuated_axis_pos_limit_min = coupling_group_bottle.findGroup("actuatedAxesPosMin");
+            if (!actuated_axis_pos_limit_min.isNull() && static_cast<size_t>(actuated_axis_pos_limit_min.size()) == nrOfActuatedAxes+1)
+            {
+                for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
+                {
+                    m_actuatedAxesPosLimits[i].min = actuated_axis_pos_limit_min.get(i+1).asFloat64();
+                }
+            }
+            else
+            {
+                yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes min limits";
+                return false;
+            }
+            yarp::os::Bottle& actuated_axis_pos_limit_max = coupling_group_bottle.findGroup("actuatedAxesPosMax");
+            if (!actuated_axis_pos_limit_max.isNull() && static_cast<size_t>(actuated_axis_pos_limit_max.size()) == nrOfActuatedAxes+1)
+            {
+                for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
+                {
+                    m_actuatedAxesPosLimits[i].max = actuated_axis_pos_limit_max.get(i+1).asFloat64();
+                }
+            }
+            else
+            {
+                yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes min limits";
+                return false;
+            }
+            yCInfo(GAZEBOCONTROLBOARD) << "using coupling_xcub_hand_mk5";
         }
+        else if (coupling_bottle->get(0).asString()=="none")
+        {
+            yCDebug(GAZEBOCONTROLBOARD) << "Just for test";
+        }
+        else
+        {
+            yCError(GAZEBOCONTROLBOARD) << "Unknown coupling type";
+            return false;
+        }
+
     }
 
     if (!setMinMaxVel())

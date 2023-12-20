@@ -5,6 +5,10 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
+### Changed
+
+- `controlBoard` plugin now uses a dinamically loaded plugin for handling the coupling of the hand mk5 (see https://github.com/icub-tech-iit/ergocub-software/pull/178)
+
 ## [4.9.0] - 2023-10-31
 
 ### Changed

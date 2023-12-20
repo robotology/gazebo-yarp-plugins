@@ -15,7 +15,6 @@ bool GazeboYarpControlBoardDriver::getAxisName(int axis, std::string& name)
     if (axis < 0 || static_cast<size_t>(axis) >= m_numberOfJoints) return false;
 
     if (m_ijointcoupling) {
-        // TODO
         bool ok = m_ijointcoupling->getActuatedAxisName(axis, name);
         return ok;
     }

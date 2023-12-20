@@ -101,7 +101,6 @@ bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::Interact
     if (j < 0 || static_cast<size_t>(j) >= m_numberOfJoints) return false;
 
     if (m_ijointcoupling) {
-        // TODO
         yarp::sig::VectorOf<size_t> coupled_actuated_axes;
         bool ok = m_ijointcoupling->getCoupledActuatedAxes(coupled_actuated_axes);
         if(!ok) {

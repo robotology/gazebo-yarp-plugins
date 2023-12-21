@@ -10,7 +10,6 @@ var ControlBoardDriverCoupling_8h =
     [ "CerHandCouplingHandler", "classCerHandCouplingHandler.html", "classCerHandCouplingHandler" ],
     [ "HandMk3CouplingHandler", "classHandMk3CouplingHandler.html", "classHandMk3CouplingHandler" ],
     [ "HandMk4CouplingHandler", "classHandMk4CouplingHandler.html", "classHandMk4CouplingHandler" ],
-    [ "HandMk5CouplingHandler", "classHandMk5CouplingHandler.html", "classHandMk5CouplingHandler" ],
     [ "CouplingType", "ControlBoardDriverCoupling_8h.html#af38dbcff8a590ac1cf5694b1aaeb498a", [
       [ "COUPLING_NONE", "ControlBoardDriverCoupling_8h.html#af38dbcff8a590ac1cf5694b1aaeb498aa37c1ae15c41b0fdc609be19579fb8d62", null ]
     ] ]

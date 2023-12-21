@@ -100,9 +100,9 @@ $(document).ready(function(){initNavTree('md_plugins_2configurationoverride_2REA
   <div class="headertitle"><div class="title">ConfigurationOverride Plugin</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md94"></a>The ConfigurationOverride is a Gazebo <em>model plugin</em>. It can be attached to a model in order to override the <a href="http://sdformat.org/spec"><code>sdf</code></a> configuration of any other plugin that is attached to the same model. Each ConfigurationOverride plugin points to a plugin and can override the values of multiple configuration parameters. The parameters that are not pointed in the ConfigurationOverride will remain untouched. If the desired parameter is not found in the plugin, it is created accordingly to <code>configurationOverride</code>.</p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md96"></a>The ConfigurationOverride is a Gazebo <em>model plugin</em>. It can be attached to a model in order to override the <a href="http://sdformat.org/spec"><code>sdf</code></a> configuration of any other plugin that is attached to the same model. Each ConfigurationOverride plugin points to a plugin and can override the values of multiple configuration parameters. The parameters that are not pointed in the ConfigurationOverride will remain untouched. If the desired parameter is not found in the plugin, it is created accordingly to <code>configurationOverride</code>.</p>
 <p>N.B. If a parameter is defined multiple times inside a plugin, only the first occurence will be overritten accordingly to the element retreived with <a href="http://osrf-distributions.s3.amazonaws.com/sdformat/api/3.0/classsdf_1_1Element.html#a29fa74bb6bf29701e82b6353e732d31d"><code>GetElement()</code></a>. Currently, this doesn't represent a problem since also the plugins are reading the configurations with <code>GetElement()</code>.</p>
-<h2><a class="anchor" id="autotoc_md95"></a>
+<h2><a class="anchor" id="autotoc_md97"></a>
 Usage</h2>
 <p>Add the ConfigurationOverride plugin to the model sdf before the overriden plugin declaration (i.e. before the <code>&lt;include&gt;</code>) and define the <code>plugin_name</code> as the <code>name</code> of the plugin that will be modified. The properties of the ConfigurationOverride plugin will be then used in order to override the properties of the desired plugin.</p>
 <p>e.g. If you are using the model from <a href="https://github.com/robotology/icub-gazebo"><code>icub-gazebo</code></a> and you wanto to change the <code>&lt;initialConfiguration&gt;</code> of the <code>ControlBoard</code> (<code>controlboard_right_arm</code>), the model can be defined as follow: </p><div class="fragment"><div class="line"><span class="comment">&lt;!-- iCub --&gt;</span></div>
@@ -122,7 +122,7 @@ Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Nov 16 2023 12:45:41 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Thu Dec 21 2023 10:55:02 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

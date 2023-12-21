@@ -18,6 +18,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IInteractionMode.h>
+#include <yarp/dev/IJointCoupling.h>
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/sig/Vector.h>
@@ -372,6 +373,9 @@ private:
     std::vector<Range> m_jointPosLimits;
     std::vector<Range> m_jointVelLimits;
 
+    std::vector<Range> m_actuatedAxesPosLimits;
+    std::vector<Range> m_actuatedAxesVelLimits;
+
     /**
      * The zero position is the position of the GAZEBO joint that will be read as the starting one
      * i.e. getEncoder(j)=m_zeroPosition+gazebo.getEncoder(j);
@@ -410,10 +414,13 @@ private:
 
     //trajectory generator
     std::vector<TrajectoryGenerator*> m_trajectory_generator;
-    std::vector<BaseCouplingHandler*>  m_coupling_handler;
+    BaseCouplingHandler*     m_coupling_handler{nullptr};
     std::vector<RampFilter*> m_speed_ramp_handler;
     std::vector<Watchdog*> m_velocity_watchdog;
     std::vector<Watchdog*> m_velocityControl;
+
+    yarp::dev::IJointCoupling* m_ijointcoupling{nullptr};
+    yarp::dev::PolyDriver m_coupling_driver;
 
 
     yarp::sig::Vector m_trajectoryGenerationReferencePosition; /**< reference position for trajectory generation in position mode [Degrees] */

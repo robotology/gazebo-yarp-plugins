@@ -46,7 +46,7 @@ if(GAZEBO_YARP_PLUGINS_HAS_YARP_ROBOTINTERFACE)
     list(APPEND YARP_ADDITIONAL_COMPONENTS_REQUIRED "robotinterface")
 endif()
 
-find_package(YARP 3.6 REQUIRED COMPONENTS os sig dev math idl_tools ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
+find_package(YARP 3.9 REQUIRED COMPONENTS os sig dev math idl_tools ${YARP_ADDITIONAL_COMPONENTS_REQUIRED})
 find_package(Gazebo REQUIRED)
 if (Gazebo_VERSION_MAJOR LESS 11.0)
     message(status "Gazebo version : " ${Gazebo_VERSION_MAJOR}.${Gazebo_VERSION_MINOR}.${Gazebo_VERSION_PATCH})
@@ -60,7 +60,7 @@ if(MSVC)
     # It is tipically better to use target_include_directories in place of
     # global include_directories, but in this case it is more compact to use include_directories
     include_directories(${OGRE_Paging_INCLUDE_DIRS})
-    
+
     # Workaround for https://github.com/robotology/gazebo-yarp-plugins/issues/482
     add_definitions(-D__TBB_NO_IMPLICIT_LINKAGE=1)
 endif()

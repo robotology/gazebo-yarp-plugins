@@ -100,12 +100,26 @@ bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::Interact
 {
     if (j < 0 || static_cast<size_t>(j) >= m_numberOfJoints) return false;
 
+    if (m_ijointcoupling) {
+        yarp::sig::VectorOf<size_t> coupled_actuated_axes;
+        bool ok = m_ijointcoupling->getCoupledActuatedAxes(coupled_actuated_axes);
+        if(!ok) {
+            return false;
+        }
+        bool joint_is_coupled = find(coupled_actuated_axes.begin(), coupled_actuated_axes.end(), j) != coupled_actuated_axes.end();
+        if(joint_is_coupled) {
+            for (size_t coupled_j = 0; coupled_j < coupled_actuated_axes.size(); ++coupled_j)
+            {
+                changeInteractionMode(coupled_actuated_axes[coupled_j], mode);
+            }
+            return true;
+        }
 
-    for (size_t cpl_i=0; cpl_i < m_coupling_handler.size(); cpl_i++)
-    {
-        if (m_coupling_handler[cpl_i] && m_coupling_handler[cpl_i]->checkJointIsCoupled(j))
+    }
+    else {
+        if (m_coupling_handler && m_coupling_handler->checkJointIsCoupled(j))
         {
-            yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler[cpl_i]->getCoupledJoints();
+            yarp::sig::VectorOf<int> coupling_vector = m_coupling_handler->getCoupledJoints();
             for (size_t coupled_j=0; coupled_j < coupling_vector.size(); coupled_j++)
             {
                 changeInteractionMode(coupling_vector[coupled_j], mode);
@@ -113,6 +127,7 @@ bool GazeboYarpControlBoardDriver::setInteractionMode(int j, yarp::dev::Interact
             return true;
         }
     }
+
     changeInteractionMode(j,mode);
 
     return true;

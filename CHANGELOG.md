@@ -5,9 +5,12 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ## [Unreleased]
 
-### Changed
+### Added
+- The `gazebo_yarp_controlboard` plugin gained support to load at runtime arbitrary couplings specified by a yarp device that exposes the [`yarp::dev::IJointCoupling`](https://github.com/robotology/yarp/blob/v3.9.0/src/libYARP_dev/src/yarp/dev/IJointCoupling.h#L16) interface. The name of the yarp device used to load the coupling is passed via the `device` parameter in the `COUPLING` group. For an example of PR that uses this new feature, check https://github.com/icub-tech-iit/ergocub-software/pull/178 .
 
-- `controlBoard` plugin now uses a dinamically loaded plugin for handling the coupling of the hand mk5 (see https://github.com/icub-tech-iit/ergocub-software/pull/178)
+### Removed
+
+- The support for passing the `icub_hand_mk5` parameter in the `COUPLING` the `gazebo_yarp_controlboard` plugin was removed. This breaks compatibility with models contained in ergocub-software <= 0.6.0, to use those models use a newer version of ergocub-software. 
 
 ## [4.9.0] - 2023-10-31
 

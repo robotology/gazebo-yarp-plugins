@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['thumbcouplinghandler_0',['ThumbCouplingHandler',['../classThumbCouplingHandler.html',1,'']]],
-  ['trajectorygenerator_1',['TrajectoryGenerator',['../classTrajectoryGenerator.html',1,'']]],
-  ['trapezoidalspeedtrajectorygenerator_2',['TrapezoidalSpeedTrajectoryGenerator',['../classTrapezoidalSpeedTrajectoryGenerator.html',1,'']]]
+  ['showmodelcom_0',['ShowModelCoM',['../classgazebo_1_1ShowModelCoM.html',1,'gazebo']]],
+  ['synchronizationhelper_1',['SynchronizationHelper',['../classSynchronizationHelper.html',1,'']]]
 ];

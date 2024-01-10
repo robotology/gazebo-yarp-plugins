@@ -230,12 +230,13 @@ var NAVTREEINDEX =
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__makeSphere__helper_1_1Command.html#ae9c71b9401b7f5ed2263dfe9e00849ad",
 "classGazeboYarpPlugins_1_1WorldInterfaceServer__setPose__helper_1_1Command.html#ae6aa1e01ef29934c0830eea93d8470ec",
 "classTrapezoidalSpeedTrajectoryGenerator.html#a2b76016397d90b14ab8999deb06d2789",
-"classgazebo_1_1GazeboYarpRobotInterface.html#a3d1c5f37189a75977750377ece7ecd36",
-"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#a3da78b5c7a25cccb51997dc76287b7aa",
-"classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html#a54e66dcafbf4f8ffa3d00e4732d31f25",
-"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#abefe56e5b17855c35b1852647486036e",
-"classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html#ae9a08234260bbcd62fbb2578dcacccb0",
-"functions_func_w.html"
+"classgazebo_1_1GazeboYarpMultiCamera.html#a8eb49a1e26ee913ca6f568a7079d2343",
+"classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html#a340a3953bf62d7d52f5b7c49dcad4d1c",
+"classyarp_1_1dev_1_1GazeboYarpDepthCameraDriver.html#a22b9f425b99079f7980cdb01c672c457",
+"classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html#ab6241899e300c19424f30240c3da20a3",
+"classyarp_1_1dev_1_1GazeboYarpLaserSensorDriver.html#adf4b3f87668e716154bbd7a075e47069",
+"functions_func_c.html",
+"worldproxy_8h.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

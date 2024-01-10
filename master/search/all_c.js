@@ -1,7 +1,7 @@
 var searchData=
 [
   ['b_0',['b',['../classGazeboYarpPlugins_1_1Color.html#a6ae5d8dd912d98a1ba8eaabe9a4a84e0',1,'GazeboYarpPlugins::Color']]],
-  ['basecouplinghandler_1',['basecouplinghandler',['../classBaseCouplingHandler.html',1,'BaseCouplingHandler'],['../classBaseCouplingHandler.html#ac232d8f529a7243910d2d4db7c710735',1,'BaseCouplingHandler::BaseCouplingHandler()']]],
+  ['basecouplinghandler_1',['BaseCouplingHandler',['../classBaseCouplingHandler.html',1,'BaseCouplingHandler'],['../classBaseCouplingHandler.html#ac232d8f529a7243910d2d4db7c710735',1,'BaseCouplingHandler::BaseCouplingHandler()']]],
   ['basestate_2ecc_2',['BaseState.cc',['../BaseState_8cc.html',1,'']]],
   ['basestate_2ehh_3',['BaseState.hh',['../BaseState_8hh.html',1,'']]],
   ['basestatedriver_2ecpp_4',['BaseStateDriver.cpp',['../BaseStateDriver_8cpp.html',1,'']]],

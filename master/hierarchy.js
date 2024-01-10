@@ -166,6 +166,7 @@ var hierarchy =
       [ "gazebo::WorldInterface", "classgazebo_1_1WorldInterface.html", null ]
     ] ],
     [ "ModelPlugin", null, [
+      [ "gazebo::ApplyExternalWrench", "classgazebo_1_1ApplyExternalWrench.html", null ],
       [ "gazebo::ConfigurationOverride", "classgazebo_1_1ConfigurationOverride.html", null ],
       [ "gazebo::GazeboYarpBaseState", "classgazebo_1_1GazeboYarpBaseState.html", null ],
       [ "gazebo::GazeboYarpContactLoadCellArray", "classgazebo_1_1GazeboYarpContactLoadCellArray.html", null ],

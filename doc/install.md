@@ -33,7 +33,7 @@ mkdir build
 You can use CMake to generate the necessary file for the compilation, and compile gazebo-yarp-plugins using make. The plugins should be install in the directory specified by `CMAKE_INSTALL_PREFIX` (by default `/usr/local`):
 ```
 cd build
-cmake -DCMAKE_BUILD_TYPE="Release "../ -DCMAKE_INSTALL_PREFIX=/path/to/the/install/folder
+cmake -DCMAKE_BUILD_TYPE="Release" ../ -DCMAKE_INSTALL_PREFIX=/path/to/the/install/folder
 cmake --config Release --build . --target install
 ```
 

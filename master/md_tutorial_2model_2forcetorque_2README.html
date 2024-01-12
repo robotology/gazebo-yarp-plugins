@@ -104,11 +104,13 @@ $(function(){initNavTree('md_tutorial_2model_2forcetorque_2README.html',''); ini
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="autotoc_md109"></a> This directory contains the example of a model using the <code>gazebo_yarp_forcetorque</code> plugin.</p>
 <p>For more information on simulation of Force/Torque sensors in Gazebo Classic, see <a href="https://classic.gazebosim.org/tutorials?tut=force_torque_sensor&amp;cat=sensors">https://classic.gazebosim.org/tutorials?tut=force_torque_sensor&amp;cat=sensors</a>.</p>
-<p>To run this example, first of all run <code>yarpserver</code> in a terminal, then make sure to have added <code>gazebo-yarp-plugins/tutorial/model</code> directory to <code>GAZEBO_MODEL_PATH</code> as documented in the "Example models" section of the <code><a class="el" href="embed__plugins_8md.html">doc/embed_plugins.md</a></code> documentation and then run the world: </p><div class="fragment"><div class="line">gazebo --verbose forcetorque_world.world</div>
+<p>To run this example, first of all run <code>yarpserver</code> in a terminal, then make sure to have added <code>gazebo-yarp-plugins/tutorial/model</code> directory to <code>GAZEBO_MODEL_PATH</code> as documented in the "Example models" section of the <code><a class="el" href="embed__plugins_8md.html">doc/embed_plugins.md</a></code> documentation and then run the world.</p>
+<p>Then: </p><div class="fragment"><div class="line">cd &lt;gazebo-yarp-plugins-path&gt;/tutorial/model/forcetorque</div>
+<div class="line">gazebo --verbose forcetorque_world.world</div>
 </div><!-- fragment --><p>If the simulation starts correctly, you should see a model composed by a cylinder and a box. The FT sensor measures the force exchanged between the cylinder and the box. To check if the YARP plugin works as expected, open a new terminal and type: </p><div class="fragment"><div class="line">yarp name list</div>
 </div><!-- fragment --><p>To list all the YARP ports open. You should see the port <code>/forcetorque/measures:o</code>, that is the one opened by the plugin.</p>
-<p>You can then read the measures from the the <code>/forcetorque/measures:o</code> with the command: </p><div class="fragment"><div class="line">traversaro@IITICUBLAP257:~$ yarp read ... /forcetorque/measures:o</div>
-<div class="line">[INFO] |yarp.os.Port|/tmp/port/1| Port /tmp/port/1 active at tcp://172.22.196.221:10004/</div>
+<p>You can then read the measures from the the <code>/forcetorque/measures:o</code> with the command: </p><div class="fragment"><div class="line">yarp read ... /forcetorque/measures:o</div>
+</div><!-- fragment --><p>As output you should see: </p><div class="fragment"><div class="line">[INFO] |yarp.os.Port|/tmp/port/1| Port /tmp/port/1 active at tcp://172.22.196.221:10004/</div>
 <div class="line">[INFO] |yarp.os.impl.PortCoreInputUnit|/tmp/port/1| Receiving input from /forcetorque/measures:o to /tmp/port/1 using tcp</div>
 <div class="line">() () () () () (((0.0 0.0 -98.0000000000000568434 0.0 0.0 0.0) 59.0670000000000001705)) () () () ()</div>
 <div class="line">() () () () () (((0.0 0.0 -97.9999999999999573674 0.0 0.0 0.0) 59.542999999999999261)) () () () ()</div>
@@ -124,7 +126,7 @@ $(function(){initNavTree('md_tutorial_2model_2forcetorque_2README.html',''); ini
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Jan 10 2024 15:27:17 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Fri Jan 12 2024 15:01:47 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>

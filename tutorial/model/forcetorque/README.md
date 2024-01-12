@@ -5,8 +5,11 @@ This directory contains the example of a model using the `gazebo_yarp_forcetorqu
 For more information on simulation of Force/Torque sensors in Gazebo Classic, see [https://classic.gazebosim.org/tutorials?tut=force_torque_sensor&cat=sensors](https://classic.gazebosim.org/tutorials?tut=force_torque_sensor&cat=sensors).
 
 
-To run this example, first of all run `yarpserver` in a terminal, then make sure to have added `gazebo-yarp-plugins/tutorial/model` directory to `GAZEBO_MODEL_PATH` as documented in the "Example models" section of the `doc/embed_plugins.md` documentation and then run the world:
+To run this example, first of all run `yarpserver` in a terminal, then make sure to have added `gazebo-yarp-plugins/tutorial/model` directory to `GAZEBO_MODEL_PATH` as documented in the "Example models" section of the `doc/embed_plugins.md` documentation and then run the world.
+
+Then:
 ~~~
+cd <gazebo-yarp-plugins-path>/tutorial/model/forcetorque
 gazebo --verbose forcetorque_world.world
 ~~~
 
@@ -19,7 +22,11 @@ To list all the YARP ports open. You should see the port `/forcetorque/measures:
 
 You can then read the measures from the the `/forcetorque/measures:o` with the command:
 ~~~
-traversaro@IITICUBLAP257:~$ yarp read ... /forcetorque/measures:o
+yarp read ... /forcetorque/measures:o
+~~~
+
+As output you should see:
+~~~
 [INFO] |yarp.os.Port|/tmp/port/1| Port /tmp/port/1 active at tcp://172.22.196.221:10004/
 [INFO] |yarp.os.impl.PortCoreInputUnit|/tmp/port/1| Receiving input from /forcetorque/measures:o to /tmp/port/1 using tcp
 () () () () () (((0.0 0.0 -98.0000000000000568434 0.0 0.0 0.0) 59.0670000000000001705)) () () () ()

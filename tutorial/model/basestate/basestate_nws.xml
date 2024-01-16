@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="basestate" portprefix="basestate" build="0"  xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <device name="basestate_nws_yarp" type="analogServer">
+            <!-- See https://www.yarp.it/git-master/classAnalogWrapper.html#details for parameter documentation -->
+            <param name="name"> /basestate </param>
+            <param name="period"> 50 </param>
+            <action phase="startup" level="5" type="attach">
+                <!-- This is the same name that we passed with the yarpDeviceName to the camera plugin -->
+                <param name="device"> basestate_plugin_device </param>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+    </devices>
+</robot>

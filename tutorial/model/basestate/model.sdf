@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="basestate_model">
+    <pose>0 0 0.1 0 0 0</pose>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.1</size>
+          </box>
+        </geometry>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+    <!-- Launch the other YARP devices, in this case a baseState_nws_yarp to expose the baseState on a YARP port -->
+    <plugin name="basestate" filename="libgazebo_yarp_basestate.so">
+          <yarpConfigurationString>(yarpDeviceName basestate_plugin_device) (baseLink link) (disableImplicitNetworkWrapper)</yarpConfigurationString>
+    </plugin>
+    <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">
+        <yarpRobotInterfaceConfigurationFile>model://basestate/basestate_nws.xml</yarpRobotInterfaceConfigurationFile>
+    </plugin>
+  </model>
+</sdf>

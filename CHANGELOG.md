@@ -7,6 +7,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 ### Added
 - The `gazebo_yarp_controlboard` plugin gained support to load at runtime arbitrary couplings specified by a yarp device that exposes the [`yarp::dev::IJointCoupling`](https://github.com/robotology/yarp/blob/v3.9.0/src/libYARP_dev/src/yarp/dev/IJointCoupling.h#L16) interface. The name of the yarp device used to load the coupling is passed via the `device` parameter in the `COUPLING` group. For an example of PR that uses this new feature, check https://github.com/icub-tech-iit/ergocub-software/pull/178 .
+- The `gazebo_yarp_basestate` has been modified to be aligned w.r.t. of plugins in gazebo-yarp-plugins, supporting `disableImplicitNetworkWrapper` and `yarpDeviceName` parameters, and by supporting the use of `gazebo_yarp_robotinterface` plugin (https://github.com/robotology/gazebo-yarp-plugins/pull/675).
 
 ### Removed
 

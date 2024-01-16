@@ -88,3 +88,4 @@ Furthermore if the `GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS` optio
 | `gazebo_yarp_multicamera`  | This plugin can create a YARP device that exposes a multicamera interface. |
 | `gazebo_yarp_imu`  | This plugin can create a YARP device that exposes a imu interface. |
 | `gazebo_yarp_forcetorque`  | This plugin can create a YARP device that exposes a force-torque interface. |
+| `gazebo_yarp_basestate`  | This plugin can create a YARP device that expose the position, velocity and acceleration of the specified link. |

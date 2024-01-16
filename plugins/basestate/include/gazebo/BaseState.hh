@@ -47,7 +47,9 @@ namespace gazebo
         yarp::dev::IMultipleWrapper* m_networkWrapper;  ///< Interface to attach device driver to network device
         std::string m_robot;                            ///< name of robot model
         yarp::os::Property m_config;                    ///< Property to read configuration
-               
+
+        bool m_deviceRegistered{false};
+        std::string m_scopedDeviceName;
     };
 }
 

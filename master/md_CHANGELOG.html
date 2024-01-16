@@ -110,6 +110,7 @@ $(function(){initNavTree('md_CHANGELOG.html',''); initResizable(); });
 Added</h2>
 <ul>
 <li>The <code>gazebo_yarp_controlboard</code> plugin gained support to load at runtime arbitrary couplings specified by a yarp device that exposes the <a href="https://github.com/robotology/yarp/blob/v3.9.0/src/libYARP_dev/src/yarp/dev/IJointCoupling.h#L16"><code>yarp::dev::IJointCoupling</code></a> interface. The name of the yarp device used to load the coupling is passed via the <code>device</code> parameter in the <code>COUPLING</code> group. For an example of PR that uses this new feature, check <a href="https://github.com/icub-tech-iit/ergocub-software/pull/178">https://github.com/icub-tech-iit/ergocub-software/pull/178</a> .</li>
+<li>The <code>gazebo_yarp_basestate</code> has been modified to be aligned w.r.t. of plugins in gazebo-yarp-plugins, supporting <code>disableImplicitNetworkWrapper</code> and <code>yarpDeviceName</code> parameters, and by supporting the use of <code>gazebo_yarp_robotinterface</code> plugin (<a href="https://github.com/robotology/gazebo-yarp-plugins/pull/675">https://github.com/robotology/gazebo-yarp-plugins/pull/675</a>).</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md18"></a>
 Removed</h2>
@@ -428,7 +429,7 @@ Fixed</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 12 2024 15:01:47 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Tue Jan 16 2024 20:38:21 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>

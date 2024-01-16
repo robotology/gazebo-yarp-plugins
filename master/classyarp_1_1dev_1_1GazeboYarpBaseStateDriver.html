@@ -162,6 +162,23 @@ This device can be used by adding the following line in the SDF file of your rob
 <div class="line">&lt;/plugin&gt;</div>
 </div><!-- fragment --></li>
 </ul>
+<p>For configuration, the device supports two style. The first one, that is activated if disableImplicitNetworkWrapper parameter is given, is the following:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">Parameter name   </th><th class="markdownTableHeadCenter">Type   </th><th class="markdownTableHeadCenter">Units   </th><th class="markdownTableHeadCenter">Default Value   </th><th class="markdownTableHeadCenter">Required   </th><th class="markdownTableHeadCenter">Description   </th><th class="markdownTableHeadCenter">Notes    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter">yarpDeviceName   </td><td class="markdownTableBodyCenter">string   </td><td class="markdownTableBodyCenter"></td><td class="markdownTableBodyCenter"></td><td class="markdownTableBodyCenter">Yes   </td><td class="markdownTableBodyCenter">name of the device used to identify the device instance in the gazebo_yarp_robotinterface plugin   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter">baseLink   </td><td class="markdownTableBodyCenter">string   </td><td class="markdownTableBodyCenter">-   </td><td class="markdownTableBodyCenter">-   </td><td class="markdownTableBodyCenter">Yes   </td><td class="markdownTableBodyCenter">name of the floating base link   </td><td class="markdownTableBodyCenter"></td></tr>
+</table>
+<p>An example configuration file might look like:</p>
+<div class="fragment"><div class="line">disableImplicitNetworkWrapper</div>
+<div class="line">yarpDeviceName basestate_device</div>
+<div class="line">baseLink torso_link</div>
+</div><!-- fragment --><p>the same options can be passed via yarpConfigurationString tag to pass the configuration as a string, as in: </p><div class="fragment"><div class="line">&lt;plugin name=<span class="stringliteral">&quot;basestate&quot;</span> filename=<span class="stringliteral">&quot;libgazebo_yarp_basestate.so&quot;</span>&gt;</div>
+<div class="line">    &lt;yarpConfigurationString&gt;(disableImplicitNetworkWrapper) (yarpDeviceName basestate_device) (baseLink torso_link)&lt;/yarpConfigurationFile&gt;</div>
+<div class="line">&lt;/plugin&gt;</div>
+</div><!-- fragment --><p>Alternatively, if disableImplicitNetworkWrapper parameter is not given, the following DEPRECATED style is used:</p>
 <p>The configuration file must contain two groups [WRAPPER] and [DRIVER]</p>
 <p>Parameters accepted in the config argument of the open method for [WRAPPER]:</p>
 <table class="markdownTable">
@@ -192,7 +209,8 @@ This device can be used by adding the following line in the SDF file of your rob
 <div class="line">[DRIVER]</div>
 <div class="line">device gazebo_basestate</div>
 <div class="line">baseLink torso_link</div>
-</div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><!-- fragment --><p>This style is going to be removed in a future release of gazebo-yarp-plugins. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac2c9fb58207b45cdd73cd44755d7b166" name="ac2c9fb58207b45cdd73cd44755d7b166"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2c9fb58207b45cdd73cd44755d7b166">&#9670;&#160;</a></span>GazeboYarpBaseStateDriver()</h2>
 
@@ -519,7 +537,7 @@ This device can be used by adding the following line in the SDF file of your rob
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceyarp.html">yarp</a></li><li class="navelem"><a class="el" href="namespaceyarp_1_1dev.html">dev</a></li><li class="navelem"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpBaseStateDriver.html">GazeboYarpBaseStateDriver</a></li>
-    <li class="footer">Generated on Fri Jan 12 2024 15:01:47 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Tue Jan 16 2024 20:38:21 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>

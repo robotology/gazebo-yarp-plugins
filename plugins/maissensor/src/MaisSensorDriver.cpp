@@ -150,14 +150,14 @@ void GazeboYarpMaisSensorDriver::onUpdate(const gazebo::common::UpdateInfo& _inf
 
 bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
 {
-    yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
+    bool paramOk = GazeboYarpPlugins::readVectorFromConfigFile(m_pluginParameters, "jointNames", controlboard_joint_names);
 
-    if (joint_names_bottle.isNull()) {
-        yError() << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." ;
+    if (!paramOk) {
+        yError() << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames parameter." ;
         return false;
     }
 
-    int nr_of_joints = joint_names_bottle.size()-1;
+    int nr_of_joints = controlboard_joint_names.size();
 
     m_jointNames.resize(nr_of_joints);
     m_jointPointers.resize(nr_of_joints);
@@ -173,10 +173,8 @@ bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
         //yDebug() << " size of gazebo_models_joints: " <<gazebo_models_joints.size();
     }
 
-    controlboard_joint_names.clear();
     for (unsigned int i = 0; i < m_jointNames.size(); i++) {
         bool joint_found = false;
-        controlboard_joint_names.push_back(joint_names_bottle.get(i+1).asString().c_str());
 
         for (unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++)
         {
@@ -197,7 +195,7 @@ bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
         if (!joint_found) {
             yError() << "GazeboYarpControlBoardDriver::setJointNames(): cannot find joint '" << controlboard_joint_names[i]
                      << "' (" << i+1 << " of " << nr_of_joints << ") " << "\n";
-            yError() << "jointNames are " << joint_names_bottle.toString() << "\n";
+            yError() << "jointNames are " << GazeboYarpPlugins::vectorToString(controlboard_joint_names)  << "\n";
             m_jointNames.resize(0);
             m_jointPointers.resize(0);
             return false;

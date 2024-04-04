@@ -55,9 +55,16 @@ digraph "BaseStateDriver.cpp"
   Node25 [id="Node000025",label="string",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node24 -> Node26 [id="edge25_Node000024_Node000026",color="steelblue1",style="solid",tooltip=" "];
   Node26 [id="Node000026",label="cmath",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node2 -> Node20 [id="edge26_Node000002_Node000020",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node27 [id="edge27_Node000001_Node000027",color="steelblue1",style="solid",tooltip=" "];
-  Node27 [id="Node000027",label="yarp/os/Log.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node28 [id="edge28_Node000001_Node000028",color="steelblue1",style="solid",tooltip=" "];
+  Node24 -> Node27 [id="edge26_Node000024_Node000027",color="steelblue1",style="solid",tooltip=" "];
+  Node27 [id="Node000027",label="vector",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node24 -> Node28 [id="edge27_Node000024_Node000028",color="steelblue1",style="solid",tooltip=" "];
   Node28 [id="Node000028",label="yarp/os/LogStream.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node24 -> Node29 [id="edge28_Node000024_Node000029",color="steelblue1",style="solid",tooltip=" "];
+  Node29 [id="Node000029",label="yarp/os/Searchable.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node24 -> Node30 [id="edge29_Node000024_Node000030",color="steelblue1",style="solid",tooltip=" "];
+  Node30 [id="Node000030",label="yarp/os/Value.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node2 -> Node20 [id="edge30_Node000002_Node000020",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node31 [id="edge31_Node000001_Node000031",color="steelblue1",style="solid",tooltip=" "];
+  Node31 [id="Node000031",label="yarp/os/Log.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node28 [id="edge32_Node000001_Node000028",color="steelblue1",style="solid",tooltip=" "];
 }

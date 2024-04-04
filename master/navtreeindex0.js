@@ -90,7 +90,8 @@ var NAVTREEINDEX0 =
 "ControlBoardDriverVelocityControl_8cpp.html":[18,0,3,5,1,16],
 "ControlBoardDriverVirtualAnalogSensor_8cpp.html":[18,0,3,5,1,17],
 "ControlBoardDriver_8cpp.html":[18,0,3,5,1,1],
-"ControlBoardDriver_8cpp.html#ad43675dac090e874d6abe01dabd4f931":[18,0,3,5,1,1,0],
+"ControlBoardDriver_8cpp.html#a182d756c32fcaa4a411e2434230a22a9":[18,0,3,5,1,1,1],
+"ControlBoardDriver_8cpp.html#abe6f6ae380f5a24f0f0b95a015120429":[18,0,3,5,1,1,0],
 "ControlBoardDriver_8h.html":[18,0,3,5,0,1,0,0],
 "ControlBoardDriver_8h.html#a1500a58c600d34ecf9a209cd97b2cba8":[18,0,3,5,0,1,0,0,2],
 "ControlBoardDriver_8h.html#a1b05590730395db6236617126d6175f2":[18,0,3,5,0,1,0,0,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "classConstSpeedTrajectoryGenerator.html#a6ce2732b2c0e484b4069e97b685dcfdd":[17,0,5,1],
 "classConstSpeedTrajectoryGenerator.html#a6d4b4a06a5d4b2f0b8df44b27a71bd8f":[17,0,5,12],
 "classConstSpeedTrajectoryGenerator.html#a72f5f474bd4770e3f70afb8304f5cf04":[17,0,5,8],
-"classConstSpeedTrajectoryGenerator.html#a75bfe1a7d2ab87694f8459d24b0a43b9":[17,0,5,2],
-"classConstSpeedTrajectoryGenerator.html#a7a13cfd4a9c19f04e12665c60c9d370d":[17,0,5,10]
+"classConstSpeedTrajectoryGenerator.html#a75bfe1a7d2ab87694f8459d24b0a43b9":[17,0,5,2]
 };

@@ -60,10 +60,16 @@ digraph "DepthCameraDriver.cpp"
   Node25 -> Node26 [id="edge29_Node000025_Node000026",color="steelblue1",style="solid",tooltip=" "];
   Node26 [id="Node000026",label="string",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node25 -> Node12 [id="edge30_Node000025_Node000012",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node9 [id="edge31_Node000001_Node000009",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node11 [id="edge32_Node000001_Node000011",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node27 [id="edge33_Node000001_Node000027",color="steelblue1",style="solid",tooltip=" "];
-  Node27 [id="Node000027",label="gazebo/rendering/Distortion.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node28 [id="edge34_Node000001_Node000028",color="steelblue1",style="solid",tooltip=" "];
-  Node28 [id="Node000028",label="ignition/math/Angle.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node25 -> Node27 [id="edge31_Node000025_Node000027",color="steelblue1",style="solid",tooltip=" "];
+  Node27 [id="Node000027",label="vector",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node25 -> Node16 [id="edge32_Node000025_Node000016",color="steelblue1",style="solid",tooltip=" "];
+  Node25 -> Node28 [id="edge33_Node000025_Node000028",color="steelblue1",style="solid",tooltip=" "];
+  Node28 [id="Node000028",label="yarp/os/Searchable.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node25 -> Node17 [id="edge34_Node000025_Node000017",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node9 [id="edge35_Node000001_Node000009",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node11 [id="edge36_Node000001_Node000011",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node29 [id="edge37_Node000001_Node000029",color="steelblue1",style="solid",tooltip=" "];
+  Node29 [id="Node000029",label="gazebo/rendering/Distortion.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node30 [id="edge38_Node000001_Node000030",color="steelblue1",style="solid",tooltip=" "];
+  Node30 [id="Node000030",label="ignition/math/Angle.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
 }

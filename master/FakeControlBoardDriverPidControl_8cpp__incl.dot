@@ -46,8 +46,15 @@ digraph "FakeControlBoardDriverPidControl.cpp"
   Node20 -> Node16 [id="edge20_Node000020_Node000016",color="steelblue1",style="solid",tooltip=" "];
   Node20 -> Node21 [id="edge21_Node000020_Node000021",color="steelblue1",style="solid",tooltip=" "];
   Node21 [id="Node000021",label="cmath",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node22 [id="edge22_Node000001_Node000022",color="steelblue1",style="solid",tooltip=" "];
-  Node22 [id="Node000022",label="gazebo/physics/Joint.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node23 [id="edge23_Node000001_Node000023",color="steelblue1",style="solid",tooltip=" "];
-  Node23 [id="Node000023",label="gazebo/transport/Publisher.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node20 -> Node17 [id="edge22_Node000020_Node000017",color="steelblue1",style="solid",tooltip=" "];
+  Node20 -> Node22 [id="edge23_Node000020_Node000022",color="steelblue1",style="solid",tooltip=" "];
+  Node22 [id="Node000022",label="yarp/os/LogStream.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node20 -> Node23 [id="edge24_Node000020_Node000023",color="steelblue1",style="solid",tooltip=" "];
+  Node23 [id="Node000023",label="yarp/os/Searchable.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node20 -> Node24 [id="edge25_Node000020_Node000024",color="steelblue1",style="solid",tooltip=" "];
+  Node24 [id="Node000024",label="yarp/os/Value.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node25 [id="edge26_Node000001_Node000025",color="steelblue1",style="solid",tooltip=" "];
+  Node25 [id="Node000025",label="gazebo/physics/Joint.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node26 [id="edge27_Node000001_Node000026",color="steelblue1",style="solid",tooltip=" "];
+  Node26 [id="Node000026",label="gazebo/transport/Publisher.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
 }

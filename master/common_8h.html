@@ -108,6 +108,10 @@ $(function(){initNavTree('common_8h.html',''); initResizable(); });
 <div class="contents">
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;yarp/os/LogStream.h&gt;</code><br />
+<code>#include &lt;yarp/os/Searchable.h&gt;</code><br />
+<code>#include &lt;yarp/os/Value.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for common.h:</div>
 <div class="dyncontent">
@@ -138,6 +142,23 @@ Functions</h2></td></tr>
 <tr class="memitem:abcd3d1eb661197e11ff165c508b22099" id="r_abcd3d1eb661197e11ff165c508b22099"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGazeboYarpPlugins.html#abcd3d1eb661197e11ff165c508b22099">GazeboYarpPlugins::lastPartOfStringAfterSeparator</a> (std::string const &amp;fullString, std::string const &amp;separator)</td></tr>
 <tr class="memdesc:abcd3d1eb661197e11ff165c508b22099"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last part of string after separator.  <br /></td></tr>
 <tr class="separator:abcd3d1eb661197e11ff165c508b22099"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb60c8d7b41a5bb85d887145afef7324" id="r_abb60c8d7b41a5bb85d887145afef7324"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:abb60c8d7b41a5bb85d887145afef7324"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceGazeboYarpPlugins.html#abb60c8d7b41a5bb85d887145afef7324">GazeboYarpPlugins::readElementFromValue</a> (yarp::os::Value &amp;val)</td></tr>
+<tr class="separator:abb60c8d7b41a5bb85d887145afef7324"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acacc0a21c1e260bf89cdbe8e3492e4f6" id="r_acacc0a21c1e260bf89cdbe8e3492e4f6"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:acacc0a21c1e260bf89cdbe8e3492e4f6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceGazeboYarpPlugins.html#acacc0a21c1e260bf89cdbe8e3492e4f6">GazeboYarpPlugins::readElementFromValue&lt; double &gt;</a> (yarp::os::Value &amp;val)</td></tr>
+<tr class="separator:acacc0a21c1e260bf89cdbe8e3492e4f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37d35d0cede0e57460b844efe9940014" id="r_a37d35d0cede0e57460b844efe9940014"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:a37d35d0cede0e57460b844efe9940014"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceGazeboYarpPlugins.html#a37d35d0cede0e57460b844efe9940014">GazeboYarpPlugins::readElementFromValue&lt; std::string &gt;</a> (yarp::os::Value &amp;val)</td></tr>
+<tr class="separator:a37d35d0cede0e57460b844efe9940014"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3437d105c4260464c90dff5c17a0f483" id="r_a3437d105c4260464c90dff5c17a0f483"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a3437d105c4260464c90dff5c17a0f483"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceGazeboYarpPlugins.html#a3437d105c4260464c90dff5c17a0f483">GazeboYarpPlugins::readVectorFromConfigFile</a> (const yarp::os::Searchable &amp;params, const std::string &amp;listName, std::vector&lt; T &gt; &amp;outputList)</td></tr>
+<tr class="memdesc:a3437d105c4260464c90dff5c17a0f483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vector from a parameter, using both the recommended style: nameOfList (elem1 elem2 elem3) or the deprecated (since YARP 3.10): nameOfList elem1 elem2 elem3.  <br /></td></tr>
+<tr class="separator:a3437d105c4260464c90dff5c17a0f483"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73af720b4ca148d86384c8bf76c22129" id="r_a73af720b4ca148d86384c8bf76c22129"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a73af720b4ca148d86384c8bf76c22129"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceGazeboYarpPlugins.html#a73af720b4ca148d86384c8bf76c22129">GazeboYarpPlugins::vectorToString</a> (std::vector&lt; T &gt; &amp;outputList)</td></tr>
+<tr class="memdesc:a73af720b4ca148d86384c8bf76c22129"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a vector to a string for printing.  <br /></td></tr>
+<tr class="separator:a73af720b4ca148d86384c8bf76c22129"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -153,7 +174,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bc0718b08fb2015b8e59c47b2805f60c.html">libraries</a></li><li class="navelem"><a class="el" href="dir_468f50b028e1e94ed0441083f377df37.html">common</a></li><li class="navelem"><a class="el" href="dir_09afb69cf3f50004f558d1b5bd58d008.html">include</a></li><li class="navelem"><a class="el" href="dir_3d3bda6767a01c3f7f2d799c2f892596.html">GazeboYarpPlugins</a></li><li class="navelem"><a class="el" href="common_8h.html">common.h</a></li>
-    <li class="footer">Generated on Thu Feb 29 2024 08:58:36 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Thu Apr 4 2024 14:35:25 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>

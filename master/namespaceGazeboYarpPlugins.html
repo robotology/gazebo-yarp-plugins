@@ -197,6 +197,23 @@ Functions</h2></td></tr>
 <tr class="memitem:abcd3d1eb661197e11ff165c508b22099" id="r_abcd3d1eb661197e11ff165c508b22099"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcd3d1eb661197e11ff165c508b22099">lastPartOfStringAfterSeparator</a> (std::string const &amp;fullString, std::string const &amp;separator)</td></tr>
 <tr class="memdesc:abcd3d1eb661197e11ff165c508b22099"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last part of string after separator.  <br /></td></tr>
 <tr class="separator:abcd3d1eb661197e11ff165c508b22099"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb60c8d7b41a5bb85d887145afef7324" id="r_abb60c8d7b41a5bb85d887145afef7324"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:abb60c8d7b41a5bb85d887145afef7324"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abb60c8d7b41a5bb85d887145afef7324">readElementFromValue</a> (yarp::os::Value &amp;val)</td></tr>
+<tr class="separator:abb60c8d7b41a5bb85d887145afef7324"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acacc0a21c1e260bf89cdbe8e3492e4f6" id="r_acacc0a21c1e260bf89cdbe8e3492e4f6"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:acacc0a21c1e260bf89cdbe8e3492e4f6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acacc0a21c1e260bf89cdbe8e3492e4f6">readElementFromValue&lt; double &gt;</a> (yarp::os::Value &amp;val)</td></tr>
+<tr class="separator:acacc0a21c1e260bf89cdbe8e3492e4f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37d35d0cede0e57460b844efe9940014" id="r_a37d35d0cede0e57460b844efe9940014"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
+<tr class="memitem:a37d35d0cede0e57460b844efe9940014"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a37d35d0cede0e57460b844efe9940014">readElementFromValue&lt; std::string &gt;</a> (yarp::os::Value &amp;val)</td></tr>
+<tr class="separator:a37d35d0cede0e57460b844efe9940014"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3437d105c4260464c90dff5c17a0f483" id="r_a3437d105c4260464c90dff5c17a0f483"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a3437d105c4260464c90dff5c17a0f483"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a3437d105c4260464c90dff5c17a0f483">readVectorFromConfigFile</a> (const yarp::os::Searchable &amp;params, const std::string &amp;listName, std::vector&lt; T &gt; &amp;outputList)</td></tr>
+<tr class="memdesc:a3437d105c4260464c90dff5c17a0f483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vector from a parameter, using both the recommended style: nameOfList (elem1 elem2 elem3) or the deprecated (since YARP 3.10): nameOfList elem1 elem2 elem3.  <br /></td></tr>
+<tr class="separator:a3437d105c4260464c90dff5c17a0f483"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73af720b4ca148d86384c8bf76c22129" id="r_a73af720b4ca148d86384c8bf76c22129"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a73af720b4ca148d86384c8bf76c22129"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a73af720b4ca148d86384c8bf76c22129">vectorToString</a> (std::vector&lt; T &gt; &amp;outputList)</td></tr>
+<tr class="memdesc:a73af720b4ca148d86384c8bf76c22129"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a vector to a string for printing.  <br /></td></tr>
+<tr class="separator:a73af720b4ca148d86384c8bf76c22129"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe012817dc666e955ad2ffdafd34fe32" id="r_abe012817dc666e955ad2ffdafd34fe32"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe012817dc666e955ad2ffdafd34fe32">splitString</a> (const std::string &amp;s, const std::string &amp;delim)</td></tr>
 <tr class="memdesc:abe012817dc666e955ad2ffdafd34fe32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Split a string in a vector of string given a (single char) delimiter.  <br /></td></tr>
 <tr class="separator:abe012817dc666e955ad2ffdafd34fe32"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -371,6 +388,155 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>lastPart the last part of the string, or the fullString if the seperator is not found </dd></dl>
+
+</div>
+</div>
+<a id="abb60c8d7b41a5bb85d887145afef7324" name="abb60c8d7b41a5bb85d887145afef7324"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb60c8d7b41a5bb85d887145afef7324">&#9670;&#160;</a></span>readElementFromValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T GazeboYarpPlugins::readElementFromValue </td>
+          <td>(</td>
+          <td class="paramtype">yarp::os::Value &amp;</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acacc0a21c1e260bf89cdbe8e3492e4f6" name="acacc0a21c1e260bf89cdbe8e3492e4f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acacc0a21c1e260bf89cdbe8e3492e4f6">&#9670;&#160;</a></span>readElementFromValue&lt; double &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="#abb60c8d7b41a5bb85d887145afef7324">GazeboYarpPlugins::readElementFromValue</a>&lt; double &gt; </td>
+          <td>(</td>
+          <td class="paramtype">yarp::os::Value &amp;</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a37d35d0cede0e57460b844efe9940014" name="a37d35d0cede0e57460b844efe9940014"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37d35d0cede0e57460b844efe9940014">&#9670;&#160;</a></span>readElementFromValue&lt; std::string &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string <a class="el" href="#abb60c8d7b41a5bb85d887145afef7324">GazeboYarpPlugins::readElementFromValue</a>&lt; std::string &gt; </td>
+          <td>(</td>
+          <td class="paramtype">yarp::os::Value &amp;</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3437d105c4260464c90dff5c17a0f483" name="a3437d105c4260464c90dff5c17a0f483"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3437d105c4260464c90dff5c17a0f483">&#9670;&#160;</a></span>readVectorFromConfigFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GazeboYarpPlugins::readVectorFromConfigFile </td>
+          <td>(</td>
+          <td class="paramtype">const yarp::os::Searchable &amp;</td>          <td class="paramname"><span class="paramname"><em>params</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>listName</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>outputList</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a vector from a parameter, using both the recommended style: nameOfList (elem1 elem2 elem3) or the deprecated (since YARP 3.10): nameOfList elem1 elem2 elem3. </p>
+<p>Get vector from YARP configuration </p><dl class="section return"><dt>Returns</dt><dd>true if the parsing was successful, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a73af720b4ca148d86384c8bf76c22129" name="a73af720b4ca148d86384c8bf76c22129"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73af720b4ca148d86384c8bf76c22129">&#9670;&#160;</a></span>vectorToString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string GazeboYarpPlugins::vectorToString </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>outputList</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert a vector to a string for printing. </p>
 
 </div>
 </div>
@@ -647,7 +813,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceGazeboYarpPlugins.html">GazeboYarpPlugins</a></li>
-    <li class="footer">Generated on Thu Feb 29 2024 08:58:36 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Thu Apr 4 2024 14:35:26 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>

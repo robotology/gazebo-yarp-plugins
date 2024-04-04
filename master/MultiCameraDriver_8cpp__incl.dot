@@ -53,12 +53,18 @@ digraph "MultiCameraDriver.cpp"
   Node23 [id="Node000023",label="string",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node22 -> Node24 [id="edge25_Node000022_Node000024",color="steelblue1",style="solid",tooltip=" "];
   Node24 [id="Node000024",label="cmath",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node11 [id="edge26_Node000001_Node000011",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node25 [id="edge27_Node000001_Node000025",color="steelblue1",style="solid",tooltip=" "];
-  Node25 [id="Node000025",label="gazebo/rendering/Distortion.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node26 [id="edge28_Node000001_Node000026",color="steelblue1",style="solid",tooltip=" "];
-  Node26 [id="Node000026",label="yarp/os/Value.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node1 -> Node15 [id="edge29_Node000001_Node000015",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node27 [id="edge30_Node000001_Node000027",color="steelblue1",style="solid",tooltip=" "];
-  Node27 [id="Node000027",label="algorithm",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node22 -> Node25 [id="edge26_Node000022_Node000025",color="steelblue1",style="solid",tooltip=" "];
+  Node25 [id="Node000025",label="vector",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node22 -> Node15 [id="edge27_Node000022_Node000015",color="steelblue1",style="solid",tooltip=" "];
+  Node22 -> Node26 [id="edge28_Node000022_Node000026",color="steelblue1",style="solid",tooltip=" "];
+  Node26 [id="Node000026",label="yarp/os/Searchable.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node22 -> Node27 [id="edge29_Node000022_Node000027",color="steelblue1",style="solid",tooltip=" "];
+  Node27 [id="Node000027",label="yarp/os/Value.h",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node11 [id="edge30_Node000001_Node000011",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node28 [id="edge31_Node000001_Node000028",color="steelblue1",style="solid",tooltip=" "];
+  Node28 [id="Node000028",label="gazebo/rendering/Distortion.hh",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node1 -> Node27 [id="edge32_Node000001_Node000027",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node15 [id="edge33_Node000001_Node000015",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node29 [id="edge34_Node000001_Node000029",color="steelblue1",style="solid",tooltip=" "];
+  Node29 [id="Node000029",label="algorithm",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
 }

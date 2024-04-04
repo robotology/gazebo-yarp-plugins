@@ -25,25 +25,44 @@ GazeboYarpControlBoardDriver::GazeboYarpControlBoardDriver() : m_deviceName(""),
 
 GazeboYarpControlBoardDriver::~GazeboYarpControlBoardDriver() {}
 
-
-//generic function that check is key1 is present in input bottle and that the result has size elements
+// generic function that check is key1 is present in input bottle and that the result has size elements
 // return true/false
-bool validate(Bottle &input, Bottle &out, const std::string &key1, const std::string &txt, int size)
+bool getVectorFromConf(Bottle &input, std::vector<double> &out, const std::string &key1, const std::string &txt, int expectedSize)
 {
-    Bottle &tmp=input.findGroup(key1.c_str(), txt.c_str());
-    if (tmp.isNull())
+    bool vecOk = GazeboYarpPlugins::readVectorFromConfigFile(input, key1, out);
+
+    if (!vecOk)
     {
         yCError(GAZEBOCONTROLBOARD) << key1.c_str() << "not found";
         return false;
     }
-    if(tmp.size()!=size)
+    if(out.size()!=expectedSize)
     {
         yCError(GAZEBOCONTROLBOARD) << key1.c_str() << "incorrect number of entries";
         return false;
     }
-    out=tmp;
     return true;
 }
+
+bool getVectorFromConf(Bottle &input, yarp::sig::Vector&out, const std::string &key1, const std::string &txt, int expectedSize)
+{
+    std::vector<double> tempVec;
+    bool vecOk = GazeboYarpPlugins::readVectorFromConfigFile(input, key1, tempVec);
+
+    if (!vecOk)
+    {
+        return false;
+    }
+
+    out.resize(tempVec.size());
+    for (size_t i=0; i < tempVec.size(); i++)
+    {
+        out[i] = tempVec[i];
+    }
+
+    return true;
+}
+
 
 bool GazeboYarpControlBoardDriver::gazebo_init()
 {
@@ -133,10 +152,10 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
     yarp::os::Bottle& traj_bottle = m_pluginParameters.findGroup("TRAJECTORY_GENERATION");
     if (!traj_bottle.isNull())
     {
-        yarp::os::Bottle& traj_type = traj_bottle.findGroup("trajectory_type");
-        if (!traj_type.isNull())
+        yarp::os::Value trajTypeVal = traj_bottle.find("trajectory_type");
+        if (!trajTypeVal.isNull() && trajTypeVal.isString())
         {
-            std::string traj_type_s = traj_type.get(1).asString();
+            std::string traj_type_s = trajTypeVal.asString();
             if      (traj_type_s == "constant_speed")    {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_CONST_SPEED;}}
             else if (traj_type_s == "trapezoidal_speed") {for (size_t i = 0; i < m_numberOfJoints; ++i) {trajectory_generator_type[i] = yarp::dev::TRAJECTORY_TYPE_TRAP_SPEED;}}
             else if (traj_type_s == "minimum_jerk")      {/* default */}
@@ -368,12 +387,13 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             m_actuatedAxesPosLimits.resize(nrOfActuatedAxes);
             // TODO this should be done in a better way
             m_actuatedAxesVelLimits = m_jointVelLimits;
-            yarp::os::Bottle& actuated_axis_pos_limit_min = coupling_group_bottle.findGroup("actuatedAxesPosMin");
-            if (!actuated_axis_pos_limit_min.isNull() && static_cast<size_t>(actuated_axis_pos_limit_min.size()) == nrOfActuatedAxes+1)
+            std::vector<double> actuated_axis_pos_limit_min;
+            bool vecOk = getVectorFromConf(coupling_group_bottle, actuated_axis_pos_limit_min, "actuatedAxesPosMin", "Actuated axes max position", nrOfActuatedAxes);
+            if (vecOk)
             {
                 for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
                 {
-                    m_actuatedAxesPosLimits[i].min = actuated_axis_pos_limit_min.get(i+1).asFloat64();
+                    m_actuatedAxesPosLimits[i].min = actuated_axis_pos_limit_min[i];
                 }
             }
             else
@@ -381,12 +401,14 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
                 yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes min limits";
                 return false;
             }
-            yarp::os::Bottle& actuated_axis_pos_limit_max = coupling_group_bottle.findGroup("actuatedAxesPosMax");
-            if (!actuated_axis_pos_limit_max.isNull() && static_cast<size_t>(actuated_axis_pos_limit_max.size()) == nrOfActuatedAxes+1)
+
+            std::vector<double> actuated_axis_pos_limit_max;
+            vecOk = getVectorFromConf(coupling_group_bottle, actuated_axis_pos_limit_min, "actuatedAxesPosMax", "Actuated axes max position", nrOfActuatedAxes);
+            if (!vecOk)
             {
                 for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
                 {
-                    m_actuatedAxesPosLimits[i].max = actuated_axis_pos_limit_max.get(i+1).asFloat64();
+                    m_actuatedAxesPosLimits[i].max = actuated_axis_pos_limit_max[i];
                 }
             }
             else
@@ -822,12 +844,14 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
     yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
     if (!limits_bottle.isNull())
     {
-        yarp::os::Bottle& pos_limit_max = limits_bottle.findGroup("jntPosMax");
-        if (!pos_limit_max.isNull() && static_cast<size_t>(pos_limit_max.size()) == m_numberOfJoints+1)
+        std::vector<double> pos_limit_max;
+        bool vecOk = getVectorFromConf(limits_bottle, pos_limit_max, "jntPosMax", "Joint max position", m_numberOfJoints);
+
+        if (vecOk)
         {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
             {
-                m_jointPosLimits[i].max = pos_limit_max.get(i+1).asFloat64();
+                m_jointPosLimits[i].max = pos_limit_max[i];
 
             }
         }
@@ -836,12 +860,15 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
             yCError(GAZEBOCONTROLBOARD) << "Failed to parse jntPosMax parameter";
             return false;
         }
-        yarp::os::Bottle& pos_limit_min = limits_bottle.findGroup("jntPosMin");
-        if (!pos_limit_min.isNull() && static_cast<size_t>(pos_limit_min.size()) == m_numberOfJoints+1)
+
+        std::vector<double> pos_limit_min;
+        vecOk = getVectorFromConf(limits_bottle, pos_limit_min, "jntPosMin", "Joint min position", m_numberOfJoints);
+
+        if (vecOk)
         {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
             {
-                m_jointPosLimits[i].min = pos_limit_min.get(i+1).asFloat64();
+                m_jointPosLimits[i].min = pos_limit_min[i];
             }
         }
         else
@@ -871,12 +898,15 @@ bool GazeboYarpControlBoardDriver::setMinMaxVel()
     yarp::os::Bottle& limits_bottle = m_pluginParameters.findGroup("LIMITS");
     if (!limits_bottle.isNull())
     {
-        yarp::os::Bottle& vel_limits = limits_bottle.findGroup("jntVelMax");
-        if (!vel_limits.isNull())
+
+        std::vector<double> vel_limit_max;
+        bool vecOk = getVectorFromConf(limits_bottle, vel_limit_max, "jntVelMax", "Joint max velocity", m_numberOfJoints);
+
+        if (vecOk)
         {
             for(size_t i = 0; i < m_numberOfJoints; ++i)
             {
-                m_jointVelLimits[i].max = vel_limits.get(i+1).asFloat64();
+                m_jointVelLimits[i].max = vel_limit_max[i];
                 m_jointVelLimits[i].min = 0;
             }
         }
@@ -915,39 +945,25 @@ bool GazeboYarpControlBoardDriver::setTrajectoryReferences()
 
     if (!traj_bottle.isNull())
     {
-        yarp::os::Bottle& refSpeeds = traj_bottle.findGroup("refSpeed");
+        std::vector<double> refSpeeds;
+        bool vecOk = getVectorFromConf(traj_bottle, refSpeeds, "refSpeed", "Reference speed", m_numberOfJoints);
 
-        if (!refSpeeds.isNull())
+        if (vecOk)
         {
-            if (static_cast<size_t>(refSpeeds.size()) - 1 == m_numberOfJoints)
+            for (size_t j = 0; j < m_numberOfJoints; ++j)
             {
-                for (size_t j = 0; j < m_numberOfJoints; ++j)
-                {
-                    m_trajectoryGenerationReferenceSpeed[j] = refSpeeds.get(j + 1).asFloat64();
-                }
-            }
-            else
-            {
-                yCError(GAZEBOCONTROLBOARD) << "Invalid number of refSpeed params";
-                return false;
+                m_trajectoryGenerationReferenceSpeed[j] = refSpeeds[j];
             }
         }
 
-        yarp::os::Bottle& refAccelerations = traj_bottle.findGroup("refAcceleration");
+        std::vector<double> refAccelerations;
+        vecOk = getVectorFromConf(traj_bottle, refAccelerations, "refAcceleration", "Reference acceleration", m_numberOfJoints);
 
-        if (!refAccelerations.isNull())
+        if (vecOk)
         {
-            if (static_cast<size_t>(refAccelerations.size()) - 1 == m_numberOfJoints)
+            for (size_t j = 0; j < m_numberOfJoints; ++j)
             {
-                for (size_t j = 0; j < m_numberOfJoints; ++j)
-                {
-                    m_trajectoryGenerationReferenceAcceleration[j] = refAccelerations.get(j + 1).asFloat64();
-                }
-            }
-            else
-            {
-                yCError(GAZEBOCONTROLBOARD) << "Invalid number of refAcceleration params";
-                return false;
+                m_trajectoryGenerationReferenceAcceleration[j] = refAccelerations[j];
             }
         }
     }
@@ -961,32 +977,29 @@ bool GazeboYarpControlBoardDriver::setTrajectoryReferences()
         }
     }
 
-    yCDebug(GAZEBOCONTROLBOARD) << "refSpeed: [ " << m_trajectoryGenerationReferenceSpeed.toString() << " ] ";
-    yCDebug(GAZEBOCONTROLBOARD) << "refAcceleration: [ " << m_trajectoryGenerationReferenceAcceleration.toString() << " ] ";
-
     return true;
 }
 
+
+
 bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
 {
-    yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
+    bool paramOk = GazeboYarpPlugins::readVectorFromConfigFile(m_pluginParameters, "jointNames", controlboard_joint_names);
 
-    if (joint_names_bottle.isNull()) {
-        yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames." ;
+    if (!paramOk) {
+        yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames parameter." ;
         return false;
     }
 
-    int nr_of_joints = joint_names_bottle.size()-1;
+    int nr_of_joints = controlboard_joint_names.size();
 
     m_jointNames.resize(nr_of_joints);
     m_jointPointers.resize(nr_of_joints);
 
     const gazebo::physics::Joint_V & gazebo_models_joints = m_robot->GetJoints();
 
-    controlboard_joint_names.clear();
     for (size_t i = 0; i < m_jointNames.size(); i++) {
         bool joint_found = false;
-        controlboard_joint_names.push_back(joint_names_bottle.get(i+1).asString().c_str());
 
         for (size_t gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++) {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
@@ -1001,7 +1014,7 @@ bool GazeboYarpControlBoardDriver::setJointNames()  //WORKS
         if (!joint_found) {
             yCError(GAZEBOCONTROLBOARD) << "GazeboYarpControlBoardDriver::setJointNames(): cannot find joint '" << controlboard_joint_names[i]
             << "' (" << i+1 << " of " << nr_of_joints << ") " << "\n";
-            yCError(GAZEBOCONTROLBOARD) << "jointNames are " << joint_names_bottle.toString() << "\n";
+            yCError(GAZEBOCONTROLBOARD) << "jointNames are " << GazeboYarpPlugins::vectorToString(controlboard_joint_names) << "\n";
             m_jointNames.resize(0);
             m_jointPointers.resize(0);
             return false;
@@ -1058,16 +1071,15 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
     yarp::os::Property prop;
     if (m_pluginParameters.check("POSITION_CONTROL"))
     {
-        Bottle xtmp;
         Bottle pidGroup = m_pluginParameters.findGroup("POSITION_CONTROL");
 
         //control units block
         enum units_type {metric=0, si=1} c_units=metric;
-        xtmp = pidGroup.findGroup("controlUnits");
-        if (!xtmp.isNull())
+        yarp::os::Value unitVal = pidGroup.find("controlUnits");
+        if (!unitVal.isNull() && unitVal.isString())
         {
-            if      (xtmp.get(1).asString()==std::string("metric_units"))  {c_units=metric;}
-            else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+            if      (unitVal.asString()==std::string("metric_units"))  {c_units=metric;}
+            else if (unitVal.asString()==std::string("si_units"))      {c_units=si;}
             else    {yCError(GAZEBOCONTROLBOARD) << "invalid controlUnits value"; return false;}
         }
         else
@@ -1077,10 +1089,10 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
         }
 
         //control law block
-        xtmp = pidGroup.findGroup("controlLaw");
-        if (!xtmp.isNull())
+        yarp::os::Value controlLawVal = pidGroup.find("controlLaw");
+        if (!controlLawVal.isNull() && controlLawVal.isString())
         {
-            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+            if (controlLawVal.asString()==std::string("joint_pid_gazebo_v1"))
             {
                 for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
             }
@@ -1098,67 +1110,68 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_POSITION(std::vector<std::str
         size_t j=0;
 
         //control parameters
-        if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1)) {
+        std::vector<double> tempVec;
+        if (!getVectorFromConf(pidGroup, tempVec, "kp", "Pid kp parameter", m_numberOfJoints)) {
             error = true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].kp = xtmp.get(j+1).asFloat64();
+                yarpPid[j].kp = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1)) {
+        if (!getVectorFromConf(pidGroup, tempVec, "kd", "Pid kd parameter", m_numberOfJoints)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].kd = xtmp.get(j+1).asFloat64();
+                yarpPid[j].kd =  tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1)) {
+        if (!getVectorFromConf(pidGroup, tempVec, "ki", "Pid kp parameter", m_numberOfJoints)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].ki = xtmp.get(j+1).asFloat64();
+                yarpPid[j].ki = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1)) {
+        if (!getVectorFromConf(pidGroup, tempVec, "maxInt", "Pid maxInt parameter", m_numberOfJoints)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].max_int = xtmp.get(j+1).asFloat64();
+                yarpPid[j].max_int = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1)) {
+        if (!getVectorFromConf(pidGroup, tempVec, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].max_output = xtmp.get(j+1).asFloat64();
+                yarpPid[j].max_output = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1)){
+        if (!getVectorFromConf(pidGroup, tempVec, "shift", "Pid shift parameter", m_numberOfJoints)){
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].scale = xtmp.get(j+1).asFloat64();
+                yarpPid[j].scale = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1)){
+        if (!getVectorFromConf(pidGroup, tempVec, "ko", "Pid ko parameter", m_numberOfJoints)){
             error = true;
         } else {
             for (j = 0; j < m_numberOfJoints; ++j) {
-                yarpPid[j].offset = xtmp.get(j + 1).asFloat64();
+                yarpPid[j].offset = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "stictionUp", "Pid stictionUp", m_numberOfJoints+1)){
+        if (!getVectorFromConf(pidGroup, tempVec, "stictionUp", "Pid stictionUp", m_numberOfJoints)){
             error=true;
         } else {
             for (j = 0; j < m_numberOfJoints; j++) {
-                yarpPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
+                yarpPid[j].stiction_up_val = tempVec[j];
             }
         }
-        if (!validate(pidGroup, xtmp, "stictionDwn", "Pid stictionDwn", m_numberOfJoints+1)) {
+        if (!getVectorFromConf(pidGroup, tempVec, "stictionDwn", "Pid stictionDwn", m_numberOfJoints)) {
             error=true;
         } else {
             for (j=0; j<m_numberOfJoints; j++) {
-                yarpPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
+                yarpPid[j].stiction_down_val = tempVec[j];
             }
         }
 
@@ -1204,7 +1217,6 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
     yarp::os::Property prop;
     if (m_pluginParameters.check("VELOCITY_CONTROL"))
     {
-        Bottle xtmp;
         Bottle pidGroup = m_pluginParameters.findGroup("VELOCITY_CONTROL");
 
         // Check velocityControlImplementationType value
@@ -1229,12 +1241,12 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
         if (m_velocity_control_type == DirectVelocityPID) {
             // control units block
             enum units_type {metric=0, si=1} c_units=metric;
-            xtmp = pidGroup.findGroup("controlUnits");
-            if (!xtmp.isNull())
+            yarp::os::Value controlUnitsVal = pidGroup.find("controlUnits");
+            if (!controlUnitsVal.isNull() && controlUnitsVal.isString())
             {
-                if      (xtmp.get(1).asString()==std::string("metric_units"))  {
+                if      (controlUnitsVal.asString()==std::string("metric_units"))  {
                     c_units=metric;
-                } else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+                } else if (controlUnitsVal.asString()==std::string("si_units"))      {c_units=si;}
                 else    {yCError(GAZEBOCONTROLBOARD) << "invalid controlUnits value"; return false;}
             }
             else
@@ -1244,10 +1256,10 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
             }
 
             //control law block
-            xtmp = pidGroup.findGroup("controlLaw");
-            if (!xtmp.isNull())
+            yarp::os::Value controlLawVal = pidGroup.find("controlLaw");
+            if (!controlLawVal.isNull() && controlLawVal.isString())
             {
-                if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+                if      (controlLawVal.asString()==std::string("joint_pid_gazebo_v1"))
                 {
                     for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
                 }
@@ -1264,13 +1276,14 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_VELOCITY(std::vector<std::str
             size_t j=0;
 
             //control parameters
-            if (!validate(pidGroup, xtmp, "kp", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = xtmp.get(j+1).asFloat64();}
-            if (!validate(pidGroup, xtmp, "kd", "Pid kd parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = xtmp.get(j+1).asFloat64();}
-            if (!validate(pidGroup, xtmp, "ki", "Pid kp parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = xtmp.get(j+1).asFloat64();}
-            if (!validate(pidGroup, xtmp, "maxInt", "Pid maxInt parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = xtmp.get(j+1).asFloat64();}
-            if (!validate(pidGroup, xtmp, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints+1))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = xtmp.get(j+1).asFloat64();}
-            if (!validate(pidGroup, xtmp, "shift", "Pid shift parameter", m_numberOfJoints+1))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = xtmp.get(j+1).asFloat64();}
-            if (!validate(pidGroup, xtmp, "ko", "Pid ko parameter", m_numberOfJoints+1))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = xtmp.get(j+1).asFloat64();}
+            std::vector<double> tempVec;
+            if (!getVectorFromConf(pidGroup, tempVec, "kp", "Pid kp parameter", m_numberOfJoints))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kp = tempVec[j];}
+            if (!getVectorFromConf(pidGroup, tempVec, "kd", "Pid kd parameter", m_numberOfJoints))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].kd = tempVec[j];}
+            if (!getVectorFromConf(pidGroup, tempVec, "ki", "Pid kp parameter", m_numberOfJoints))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].ki = tempVec[j];}
+            if (!getVectorFromConf(pidGroup, tempVec, "maxInt", "Pid maxInt parameter", m_numberOfJoints))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_int = tempVec[j];}
+            if (!getVectorFromConf(pidGroup, tempVec, "maxOutput", "Pid maxOutput parameter", m_numberOfJoints))   {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].max_output = tempVec[j];}
+            if (!getVectorFromConf(pidGroup, tempVec, "shift", "Pid shift parameter", m_numberOfJoints))     {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].scale = tempVec[j];}
+            if (!getVectorFromConf(pidGroup, tempVec, "ko", "Pid ko parameter", m_numberOfJoints))           {error=true;} else {for (j=0; j<m_numberOfJoints; j++) yarpPid[j].offset = tempVec[j];}
 
             if (error)
             {
@@ -1316,16 +1329,15 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
     yarp::os::Property prop;
     if (m_pluginParameters.check("IMPEDANCE_CONTROL"))
     {
-        Bottle xtmp;
         Bottle pidGroup = m_pluginParameters.findGroup("IMPEDANCE_CONTROL");
 
         //control units block
         enum units_type {metric=0, si=1} c_units=metric;
-        xtmp = pidGroup.findGroup("controlUnits");
-        if (!xtmp.isNull())
+        yarp::os::Value unitVal = pidGroup.find("controlUnits");
+        if (!unitVal.isNull() && unitVal.isString())
         {
-            if      (xtmp.get(1).asString()==std::string("metric_units"))  {c_units=metric;}
-            else if (xtmp.get(1).asString()==std::string("si_units"))      {c_units=si;}
+            if      (unitVal.asString()==std::string("metric_units"))  {c_units=metric;}
+            else if (unitVal.asString()==std::string("si_units"))      {c_units=si;}
             else    {yCError(GAZEBOCONTROLBOARD) << "invalid controlUnits value"; return false;}
         }
         else
@@ -1335,10 +1347,10 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
         }
 
         //control law block
-        xtmp = pidGroup.findGroup("controlLaw");
-        if (!xtmp.isNull())
+        yarp::os::Value controlLawVal = pidGroup.find("controlLaw");
+        if (!controlLawVal.isNull() && controlLawVal.isString())
         {
-            if      (xtmp.get(1).asString()==std::string("joint_pid_gazebo_v1"))
+            if      (controlLawVal.asString()==std::string("joint_pid_gazebo_v1"))
             {
                 for(unsigned int i=0; i<m_numberOfJoints; i++) control_law[i]="joint_pid_gazebo_v1";
             }
@@ -1356,8 +1368,9 @@ bool GazeboYarpControlBoardDriver::setPIDsForGroup_IMPEDANCE(std::vector<std::st
         size_t j=0;
 
         //control parameters
-        if (!validate(pidGroup, xtmp, "stiffness", "stiffness", m_numberOfJoints+1))    {error=true;} else {for (j=0; j<m_numberOfJoints; j++) stiffness[j] = xtmp.get(j+1).asFloat64();}
-        if (!validate(pidGroup, xtmp, "damping", "damping", m_numberOfJoints+1))        {error=true;} else {for (j=0; j<m_numberOfJoints; j++) damping[j] = xtmp.get(j+1).asFloat64();}
+        std::vector<double> tempVec;
+        if (!getVectorFromConf(pidGroup, tempVec, "stiffness", "stiffness", m_numberOfJoints))    {error=true;} else {for (j=0; j<m_numberOfJoints; j++) stiffness[j] = tempVec[j];}
+        if (!getVectorFromConf(pidGroup, tempVec, "damping", "damping", m_numberOfJoints))        {error=true;} else {for (j=0; j<m_numberOfJoints; j++) damping[j] = tempVec[j];}
 
         if (error)
         {
@@ -1436,22 +1449,14 @@ bool GazeboYarpControlBoardDriver::setPositionsToleranceLinear()
         return true;
     }
 
-    yarp::os::Bottle& positionToleranceLinear_bot = kin_chain_bot.findGroup("positionToleranceLinear");
-    if (static_cast<size_t>(positionToleranceLinear_bot.size()) != 2) {
-        yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params:positionToleranceLinear:"<<static_cast<size_t>(positionToleranceLinear_bot.size());
-        return false;
-    }
-
-    yarp::os::Value tmp=positionToleranceLinear_bot.get(1);
-    if (!tmp.isFloat64())
+    yarp::os::Value positionToleranceLinear_val = kin_chain_bot.find("positionToleranceLinear");
+    if (positionToleranceLinear_val.isNull() || !positionToleranceLinear_val.isFloat64())
     {
         yCError(GAZEBOCONTROLBOARD)<<"Invalid param type:positionToleranceLinear";
         return false;
     }
 
-    m_robotPositionToleranceLinear=tmp.asFloat64();
-
-    yCDebug(GAZEBOCONTROLBOARD)<<"positionToleranceLinear: [ "<<m_robotPositionToleranceLinear<<" ]";
+    m_robotPositionToleranceLinear=positionToleranceLinear_val.asFloat64();
 
     return true;
 }
@@ -1467,22 +1472,15 @@ bool GazeboYarpControlBoardDriver::setPositionsToleranceRevolute()
         return true;
     }
 
-    yarp::os::Bottle& positionToleranceRevolute_bot = kin_chain_bot.findGroup("positionToleranceRevolute");
-    if (static_cast<size_t>(positionToleranceRevolute_bot.size()) != 2) {
-        yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params:positionToleranceRevolute:"<<static_cast<size_t>(positionToleranceRevolute_bot.size());
-        return false;
-    }
-
-    yarp::os::Value tmp=positionToleranceRevolute_bot.get(1);
-    if (!tmp.isFloat64())
+    yarp::os::Value positionToleranceRevolute_val = kin_chain_bot.find("positionToleranceRevolute");
+    if (positionToleranceRevolute_val.isNull() || !positionToleranceRevolute_val.isFloat64())
     {
         yCError(GAZEBOCONTROLBOARD)<<"Invalid param type:positionToleranceRevolute";
         return false;
     }
 
-    m_robotPositionToleranceRevolute=tmp.asFloat64();
+    m_robotPositionToleranceLinear=positionToleranceRevolute_val.asFloat64();
 
-    yCDebug(GAZEBOCONTROLBOARD)<<"positionToleranceRevolute: [ "<<m_robotPositionToleranceRevolute<<" ]";
     return true;
 }
 
@@ -1493,17 +1491,17 @@ bool GazeboYarpControlBoardDriver::setMaxTorques()
         return false;
 
     if (kin_chain_bot.check("max_torques")) {
-        yCInfo(GAZEBOCONTROLBOARD)<<"max_torques param found!";
-        yarp::os::Bottle& max_torque_bot = kin_chain_bot.findGroup("max_torques");
-        if(static_cast<size_t>(max_torque_bot.size()) - 1 == m_numberOfJoints) {
-            for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_maxTorques[i] = max_torque_bot.get(i+1).asFloat64();
-        } else
-            yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params";
-    } else
-        yCWarning(GAZEBOCONTROLBOARD)<<"No max torques value found in ini file, default one will be used!";
 
-    yCDebug(GAZEBOCONTROLBOARD)<<"max_torques: [ "<<m_maxTorques.toString()<<" ]";
+        bool vecOk = getVectorFromConf(kin_chain_bot, m_maxTorques, "max_torques", "Maximum value of torques or forces", m_numberOfJoints);
+
+        if (!vecOk)
+        {
+            yCError(GAZEBOCONTROLBOARD)<< "Impossible to parse max_torques param";
+        }
+
+    } else {
+        yCWarning(GAZEBOCONTROLBOARD)<<"No max torques value found in ini file, default one will be used!";
+    }
 
     return true;
 }
@@ -1515,54 +1513,50 @@ bool GazeboYarpControlBoardDriver::setMinMaxImpedance()
         return false;
 
     if (kin_chain_bot.check("min_stiffness")) {
-        yCInfo(GAZEBOCONTROLBOARD)<<"min_stiffness param found!";
-        yarp::os::Bottle& min_stiff_bot = kin_chain_bot.findGroup("min_stiffness");
-        if(static_cast<size_t>(min_stiff_bot.size()) - 1 == m_numberOfJoints) {
-            for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_minStiffness[i] = min_stiff_bot.get(i+1).asFloat64();
-        } else
-            yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params";
-    } else
+        bool vecOk = getVectorFromConf(kin_chain_bot, m_minStiffness, "min_stiffness", "Minimum value of stiffness", m_numberOfJoints);
+
+        if (!vecOk)
+        {
+            yCError(GAZEBOCONTROLBOARD)<< "Impossible to parse min_stiffness param";
+        }
+    } else {
         yCWarning(GAZEBOCONTROLBOARD)<<"No minimum stiffness value found in ini file, default one will be used!";
+    }
 
     if (kin_chain_bot.check("max_stiffness")) {
-        yCInfo(GAZEBOCONTROLBOARD)<<"max_stiffness param found!";
-        yarp::os::Bottle& max_stiff_bot = kin_chain_bot.findGroup("max_stiffness");
-        if (static_cast<size_t>(max_stiff_bot.size())-1 == m_numberOfJoints) {
-            for (size_t i = 0; i < m_numberOfJoints; ++i)
-                m_maxStiffness[i] = max_stiff_bot.get(i+1).asFloat64();
-        } else
-            yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params";
+        bool vecOk = getVectorFromConf(kin_chain_bot, m_maxStiffness, "max_stiffness", "Maximum value of stiffness", m_numberOfJoints);
+
+        if (!vecOk)
+        {
+            yCError(GAZEBOCONTROLBOARD)<< "Impossible to parse max_stiffness param";
+        }
     }
-    else
+    else {
         yCWarning(GAZEBOCONTROLBOARD)<<"No maximum stiffness value found in ini file, default one will be used!";
+    }
 
     if (kin_chain_bot.check("min_damping")) {
-        yCInfo(GAZEBOCONTROLBOARD)<<"min_damping param found!";
-        yarp::os::Bottle& min_damping_bot = kin_chain_bot.findGroup("min_damping");
-        if(static_cast<size_t>(min_damping_bot.size())-1 == m_numberOfJoints) {
-            for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_minDamping[i] = min_damping_bot.get(i+1).asFloat64();
-        } else
-            yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params";
-    } else
+        bool vecOk = getVectorFromConf(kin_chain_bot, m_minDamping, "min_damping", "Minimum value of damping", m_numberOfJoints);
+
+        if (!vecOk)
+        {
+            yCError(GAZEBOCONTROLBOARD)<< "Impossible to parse min_damping param";
+        }
+    } else {
         yCWarning(GAZEBOCONTROLBOARD)<<"No minimum dampings value found in ini file, default one will be used!";
+    }
 
     if(kin_chain_bot.check("max_damping")) {
-        yCInfo(GAZEBOCONTROLBOARD)<<"max_damping param found!";
-        yarp::os::Bottle& max_damping_bot = kin_chain_bot.findGroup("max_damping");
-        if (static_cast<size_t>(max_damping_bot.size()) - 1 == m_numberOfJoints) {
-            for(size_t i = 0; i < m_numberOfJoints; ++i)
-                m_maxDamping[i] = max_damping_bot.get(i+1).asFloat64();
-        } else
-            yCError(GAZEBOCONTROLBOARD)<<"Invalid number of params";
-    } else
-        yCWarning(GAZEBOCONTROLBOARD)<<"No maximum damping value found in ini file, default one will be used!";
+        bool vecOk = getVectorFromConf(kin_chain_bot, m_maxDamping, "max_damping", "Maximum value of damping", m_numberOfJoints);
 
-    yCDebug(GAZEBOCONTROLBOARD)<<"min_stiffness: [ "<<m_minStiffness.toString()<<" ]";
-    yCDebug(GAZEBOCONTROLBOARD)<<"max_stiffness: [ "<<m_maxStiffness.toString()<<" ]";
-    yCDebug(GAZEBOCONTROLBOARD)<<"min_damping: [ "<<m_minDamping.toString()<<" ]";
-    yCDebug(GAZEBOCONTROLBOARD)<<"max_damping: [ "<<m_maxDamping.toString()<<" ]";
+        if (!vecOk)
+        {
+            yCError(GAZEBOCONTROLBOARD)<< "Impossible to parse max_damping param";
+        }
+    } else {
+        yCWarning(GAZEBOCONTROLBOARD)<<"No maximum damping value found in ini file, default one will be used!";
+    }
+
     return true;
 }
 
@@ -1639,13 +1633,13 @@ bool GazeboYarpControlBoardDriver::setPIDs()
     if (m_pluginParameters.check("SIMULATION"))
     {
         Bottle& simGroup = m_pluginParameters.findGroup("SIMULATION");
-        Bottle xtmp;
-        if (!validate(simGroup, xtmp, "kPWM", "kPWM parameter", m_numberOfJoints+1))  {
+        std::vector<double> tempVec;
+        if (!getVectorFromConf(simGroup, tempVec, "kPWM", "kPWM parameter", m_numberOfJoints))  {
             yCError(GAZEBOCONTROLBOARD) << "Missing kPWM parameter";
             return false;
         } else {
             for (size_t j=0; j<m_numberOfJoints; j++) {
-                m_kPWM[j]=xtmp.get(j+1).asFloat64();
+                m_kPWM[j]=tempVec[j];
             }
         }
     }

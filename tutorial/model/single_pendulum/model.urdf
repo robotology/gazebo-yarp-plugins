@@ -65,7 +65,7 @@
     <!-- Create an instance the gazebo_controlboard YARP device called "controlboard_plugin_device"-->
     <plugin name="controlboard" filename="libgazebo_yarp_controlboard.so">
         <yarpConfigurationFile>model://single_pendulum/conf/gazebo_controlboard.ini</yarpConfigurationFile>
-        <initialConfiguration>0.0 0.0</initialConfiguration>
+        <initialConfiguration>0.0</initialConfiguration>
     </plugin>
     <!-- Launch the other YARP devices, in this case a controlBoard_nws_yarp to expose the controlboard functionalities via YARP ports -->
     <plugin name="robotinterface" filename="libgazebo_yarp_robotinterface.so">

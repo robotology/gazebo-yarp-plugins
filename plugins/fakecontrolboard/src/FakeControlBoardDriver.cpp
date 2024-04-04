@@ -27,20 +27,18 @@ bool GazeboYarpFakeControlBoardDriver::open(yarp::os::Searchable& config)
 {
     m_pluginParameters.fromString(config.toString().c_str());
 
-    yarp::os::Bottle joint_names_bottle = m_pluginParameters.findGroup("jointNames");
+    bool paramOk = GazeboYarpPlugins::readVectorFromConfigFile(m_pluginParameters, "jointNames", m_jointNames);
 
-    if (joint_names_bottle.isNull()) {
-        yError() << "GazeboYarpFakeControlBoardDriver::open(): Error cannot find jointNames." ;
+    if (!paramOk) {
+        yError() << "GazeboYarpControlBoardDriver::setJointNames(): Error cannot find jointNames parameter." ;
         return false;
     }
 
-    m_numberOfJoints = joint_names_bottle.size()-1;
+    m_numberOfJoints = m_jointNames.size();
 
-    m_jointNames.resize(m_numberOfJoints);
     m_jointTypes.resize(m_numberOfJoints);
     
     for (unsigned int i = 0; i < m_jointNames.size(); i++) {
-         m_jointNames[i] = joint_names_bottle.get(i+1).asString().c_str();
          m_jointTypes[i] = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
     }
    

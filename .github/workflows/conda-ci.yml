@@ -36,7 +36,7 @@ jobs:
         # Compilation related dependencies
         mamba install cmake compilers make ninja pkg-config
         # Actual dependencies
-        mamba install -c conda-forge yarp gazebo 
+        mamba install -c conda-forge yarp gazebo "libboost==1.84.0=*_1"
 
     # Additional dependencies useful only on Linux
     - name: Dependencies [Conda/Linux]

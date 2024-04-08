@@ -388,7 +388,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             // TODO this should be done in a better way
             m_actuatedAxesVelLimits = m_jointVelLimits;
             std::vector<double> actuated_axis_pos_limit_min;
-            bool vecOk = getVectorFromConf(coupling_group_bottle, actuated_axis_pos_limit_min, "actuatedAxesPosMin", "Actuated axes max position", nrOfActuatedAxes);
+            bool vecOk = getVectorFromConf(coupling_group_bottle, actuated_axis_pos_limit_min, "actuatedAxesPosMin", "Actuated axes min position", nrOfActuatedAxes);
             if (vecOk)
             {
                 for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
@@ -403,8 +403,8 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             }
 
             std::vector<double> actuated_axis_pos_limit_max;
-            vecOk = getVectorFromConf(coupling_group_bottle, actuated_axis_pos_limit_min, "actuatedAxesPosMax", "Actuated axes max position", nrOfActuatedAxes);
-            if (!vecOk)
+            vecOk = getVectorFromConf(coupling_group_bottle, actuated_axis_pos_limit_max, "actuatedAxesPosMax", "Actuated axes max position", nrOfActuatedAxes);
+            if (vecOk)
             {
                 for(size_t i = 0; i < m_actuatedAxesPosLimits.size(); ++i)
                 {
@@ -413,7 +413,7 @@ bool GazeboYarpControlBoardDriver::gazebo_init()
             }
             else
             {
-                yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes min limits";
+                yCError(GAZEBOCONTROLBOARD) << "Failed to get actuated axes max limits";
                 return false;
             }
             yCInfo(GAZEBOCONTROLBOARD) << "using coupling_xcub_hand_mk5";

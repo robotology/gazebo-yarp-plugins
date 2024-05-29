@@ -75,7 +75,7 @@ namespace yarp
  * the same options can be passed via yarpConfigurationString tag to pass the configuration as a string, as in:
  * ```
  *      <plugin name="basestate" filename="libgazebo_yarp_basestate.so">
- *          <yarpConfigurationString>(disableImplicitNetworkWrapper) (yarpDeviceName basestate_device) (baseLink torso_link)</yarpConfigurationFile>
+ *          <yarpConfigurationString>(disableImplicitNetworkWrapper) (yarpDeviceName basestate_device) (baseLink torso_link)</yarpConfigurationString>
  *      </plugin>
  * ```
  *

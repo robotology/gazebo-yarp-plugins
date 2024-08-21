@@ -882,6 +882,17 @@ bool GazeboYarpControlBoardDriver::setMinMaxPos()
         yCWarning(GAZEBOCONTROLBOARD) << "Missing LIMITS section";
     }
 
+    // Check if the limits have sense
+    for (size_t i = 0; i < m_numberOfJoints; ++i)
+    {   
+        if(m_jointPosLimits[i].min > m_jointPosLimits[i].max)
+        {
+            yCError(GAZEBOCONTROLBOARD) << "Joint " << m_jointNames[i] << " has inconsistent min " << m_jointPosLimits[i].min 
+                                        << " and max " << m_jointPosLimits[i].max << " position limits (min should be lower than max)." ;
+            return false;
+        }
+    }
+
     return true;
 }
 

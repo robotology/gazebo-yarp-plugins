@@ -36,7 +36,7 @@ jobs:
         # Compilation related dependencies
         mamba install cmake compilers make ninja pkg-config
         # Actual dependencies
-        mamba install -c conda-forge yarp gazebo 
+        mamba install -c conda-forge "yarp>=3.9.0" gazebo 
 
     # Additional dependencies useful only on Linux
     - name: Dependencies [Conda/Linux]

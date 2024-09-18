@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v3
       with:
         miniforge-variant: Mambaforge
         miniforge-version: latest
@@ -34,9 +34,7 @@ jobs:
         # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/186
         conda config --remove channels defaults
         # Compilation related dependencies
-        mamba install cmake compilers make ninja pkg-config
-        # Actual dependencies
-        mamba install -c conda-forge yarp gazebo 
+        conda install cmake compilers make ninja pkg-config "yarp>=3.9.0" gazebo 
 
     # Additional dependencies useful only on Linux
     - name: Dependencies [Conda/Linux]
@@ -45,7 +43,7 @@ jobs:
       run: |
         # Additional dependencies only useful on Linux
         # See https://github.com/robotology/robotology-superbuild/issues/477
-        mamba install expat-cos7-x86_64 libselinux-cos7-x86_64 libxau-cos7-x86_64 libxcb-cos7-x86_64 libxdamage-cos7-x86_64 libxext-cos7-x86_64 libxfixes-cos7-x86_64 libxxf86vm-cos7-x86_64 mesa-libgl-devel-cos7-x86_64 libxshmfence-cos7-x86_64 libxshmfence-devel-cos7-x86_64
+        conda install expat-cos7-x86_64 libselinux-cos7-x86_64 libxau-cos7-x86_64 libxcb-cos7-x86_64 libxdamage-cos7-x86_64 libxext-cos7-x86_64 libxfixes-cos7-x86_64 libxxf86vm-cos7-x86_64 mesa-libgl-devel-cos7-x86_64 libxshmfence-cos7-x86_64 libxshmfence-devel-cos7-x86_64
 
     - name: Configure [Linux&macOS]
       if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')

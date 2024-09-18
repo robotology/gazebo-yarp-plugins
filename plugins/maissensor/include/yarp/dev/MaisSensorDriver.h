@@ -130,6 +130,7 @@ private:
     std::vector<std::string> controlboard_joint_names;
     std::vector<gazebo::physics::JointPtr> m_jointPointers; /* pointers for each joint, avoiding several calls to getJoint(joint_name) */
     gazebo::transport::NodePtr m_gazeboNode;
+    std::string m_encoderArrayName{"gazebo_yarp_maisdriver_default_sensor_name"};
 
 
     bool started;
@@ -150,7 +151,7 @@ private:
     virtual int calibrateSensor(const yarp::sig::Vector& value);
     virtual int calibrateChannel(int ch);
     virtual int calibrateChannel(int ch, double value);
-    
+
     /**
      * \brief convert data read from Gazebo to user unit sistem,
      *  e.g. degrees for revolute joints and meters for prismatic joints

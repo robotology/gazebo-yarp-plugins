@@ -55,6 +55,19 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
 
     if (!setJointNames()) return false;      // this function also fills in the m_jointPointers vector
 
+    // Force users to set the sensorName parameter to specify the value returned by the getEncoderArrayName,
+    // as in this case we do not have a SDF sensor corresponding to the mais sensor, so we can't get the name from the URDF/SDF model
+    if (m_pluginParameters.check("disableImplicitNetworkWrapper") && !m_pluginParameters.check("sensorName"))
+    {
+        yError() << "GazeboYarpMaisSensor: Missing parameter sensorName (it is the value returned by the getEncoderArrayName method).";
+        return false;
+    }
+
+    if (m_pluginParameters.check("sensorName"))
+    {
+        m_encoderArrayName = m_pluginParameters.find("sensorName").asString();
+    }
+
     m_channels_num = 15;
     m_numberOfJoints = m_jointNames.size();
 
@@ -351,9 +364,8 @@ bool GazeboYarpMaisSensorDriver::getEncoderArrayName(size_t sens_index, std::str
         return false;
     }
 
-    // TODO(traversaro): we need to understand which name to return
-    name = "";
-    return false;
+    name = m_encoderArrayName;
+    return true;
 }
 
 bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const 
@@ -370,7 +382,7 @@ bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure(size_t sens_index, yarp:
     return true;
 }
 
-size_t GazeboYarpMaisSensorDriver::getEncoderArraySize(size_t sens_index) const 
+size_t GazeboYarpMaisSensorDriver::getEncoderArraySize(size_t sens_index) const
 {
     if (sens_index >= 1)
     {

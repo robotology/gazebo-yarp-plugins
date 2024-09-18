@@ -179,11 +179,7 @@ bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
         for (unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++)
         {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
-            
-            //char buff[1000];
-            //sprintf(buff, "full:'%s' sub:'%s'", gazebo_joint_name.c_str(),controlboard_joint_names[i].c_str());
-            //yDebug() << "***" << buff;
-            
+
             if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_names[i]))
             {
                 joint_found = true;
@@ -305,7 +301,7 @@ int GazeboYarpMaisSensorDriver::calibrateSensor()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     // not implemented
-    return 0; 
+    return 0;
 }
 
 int GazeboYarpMaisSensorDriver::calibrateSensor(const yarp::sig::Vector& value)
@@ -333,14 +329,14 @@ int GazeboYarpMaisSensorDriver::calibrateChannel(int ch, double value)
 
 // start yarp::dev::IEncoderArrays methods
 
-size_t GazeboYarpMaisSensorDriver::getNrOfEncoderArrays() const 
+size_t GazeboYarpMaisSensorDriver::getNrOfEncoderArrays() const
 {
     return 1;
 }
 
-yarp::dev::MAS_status GazeboYarpMaisSensorDriver::getEncoderArrayStatus(size_t sens_index) const 
+yarp::dev::MAS_status GazeboYarpMaisSensorDriver::getEncoderArrayStatus(size_t sens_index) const
 {
-    if (sens_index >= 1) 
+    if (sens_index >= 1)
     {
         return yarp::dev::MAS_UNKNOWN;
     }
@@ -348,9 +344,9 @@ yarp::dev::MAS_status GazeboYarpMaisSensorDriver::getEncoderArrayStatus(size_t s
     return yarp::dev::MAS_OK;
 }
 
-bool GazeboYarpMaisSensorDriver::getEncoderArrayName(size_t sens_index, std::string &name) const 
+bool GazeboYarpMaisSensorDriver::getEncoderArrayName(size_t sens_index, std::string &name) const
 {
-    if (sens_index >= 1) 
+    if (sens_index >= 1)
     {
         return false;
     }
@@ -362,7 +358,7 @@ bool GazeboYarpMaisSensorDriver::getEncoderArrayName(size_t sens_index, std::str
 
 bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const 
 {
-    if (sens_index >= 1) 
+    if (sens_index >= 1)
     {
         return false;
     }
@@ -376,7 +372,7 @@ bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure(size_t sens_index, yarp:
 
 size_t GazeboYarpMaisSensorDriver::getEncoderArraySize(size_t sens_index) const 
 {
-    if (sens_index >= 1) 
+    if (sens_index >= 1)
     {
         return 0;
     }

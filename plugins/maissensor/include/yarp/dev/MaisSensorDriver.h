@@ -13,6 +13,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Stamp.h>
@@ -61,7 +62,8 @@ namespace gazebo {
 class yarp::dev::GazeboYarpMaisSensorDriver:
     public DeviceDriver,
     public DeviceResponder,
-    public IAnalogSensor
+    public IAnalogSensor,
+    public IEncoderArrays
 {
 public:
 
@@ -83,6 +85,12 @@ public:
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
+    // yarp::dev::IEncoderArrays
+    virtual size_t getNrOfEncoderArrays() const override;
+    virtual yarp::dev::MAS_status getEncoderArrayStatus(size_t sens_index) const override;
+    virtual bool getEncoderArrayName(size_t sens_index, std::string &name) const override;
+    virtual bool getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+    virtual size_t getEncoderArraySize(size_t sens_index) const override;
 
 private:
 
@@ -114,7 +122,7 @@ private:
 
     yarp::os::Stamp m_lastTimestamp; /**< timestamp, updated with simulation time at each onUpdate call */
 
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
     yarp::sig::VectorOf<JointType> m_jointTypes;
 
     int m_channels_num;

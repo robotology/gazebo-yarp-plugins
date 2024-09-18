@@ -280,6 +280,7 @@ double * GazeboYarpMaisSensorDriver::convertUserToGazebo(double *values)
     return values;
 }
 
+// start yarp::dev::IAnalogSensor methods
 
 int GazeboYarpMaisSensorDriver::read(yarp::sig::Vector &out)
 {
@@ -327,3 +328,61 @@ int GazeboYarpMaisSensorDriver::calibrateChannel(int ch, double value)
     // not implemented
     return 0;
 }
+
+// end yarp::dev::IAnalogSensor methods
+
+// start yarp::dev::IEncoderArrays methods
+
+size_t GazeboYarpMaisSensorDriver::getNrOfEncoderArrays() const 
+{
+    return 1;
+}
+
+yarp::dev::MAS_status GazeboYarpMaisSensorDriver::getEncoderArrayStatus(size_t sens_index) const 
+{
+    if (sens_index >= 1) 
+    {
+        return yarp::dev::MAS_UNKNOWN;
+    }
+
+    return yarp::dev::MAS_OK;
+}
+
+bool GazeboYarpMaisSensorDriver::getEncoderArrayName(size_t sens_index, std::string &name) const 
+{
+    if (sens_index >= 1) 
+    {
+        return false;
+    }
+
+    // TODO(traversaro): we need to understand which name to return
+    name = "";
+    return false;
+}
+
+bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const 
+{
+    if (sens_index >= 1) 
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+    timestamp = m_lastTimestamp.getTime();
+    out.resize(m_positions.size());
+    out = m_positions;
+    return true;
+}
+
+size_t GazeboYarpMaisSensorDriver::getEncoderArraySize(size_t sens_index) const 
+{
+    if (sens_index >= 1) 
+    {
+        return 0;
+    }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_positions.size();
+}
+
+// end yarp::dev::IEncoderArrays methods

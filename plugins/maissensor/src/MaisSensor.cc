@@ -25,7 +25,7 @@ GZ_REGISTER_MODEL_PLUGIN(GazeboYarpMaisSensor)
 
 GazeboYarpMaisSensor::GazeboYarpMaisSensor() : m_iWrap(0)
 {
-  
+
 }
 
 GazeboYarpMaisSensor::~GazeboYarpMaisSensor()
@@ -38,7 +38,17 @@ GazeboYarpMaisSensor::~GazeboYarpMaisSensor()
     if (m_wrapper.isValid())
         m_wrapper.close();
 
-    GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_sensorName);
+    if (m_deviceRegistered)
+    {
+        if (m_parameters.check("disableImplicitNetworkWrapper"))
+        {
+            GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_scopedDeviceName);
+        }
+        else
+        {
+            GazeboYarpPlugins::Handler::getHandler()->removeDevice(m_sensorName);
+        }
+    }
     GazeboYarpPlugins::Handler::getHandler()->removeRobot(m_robotName);
 
     yarp::os::Network::fini();
@@ -74,101 +84,139 @@ void GazeboYarpMaisSensor::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
         return;
     }
 
-    yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
-    if(wrapper_group.isNull())
+    bool disable_wrapper = m_parameters.check("disableImplicitNetworkWrapper");
+
+    if (disable_wrapper && !m_parameters.check("yarpDeviceName"))
     {
-        yError("GazeboYarpMaisSensor : [WRAPPER] group not found in config file\n");
+        yError() << "GazeboYarpMaisSensor : missing yarpDeviceName parameter for one device in robot " << m_robotName;
         return;
     }
 
-    if(m_parameters.check("ROS"))
+    if (!disable_wrapper)
     {
-        std::string ROS;
-        ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
-        wrapper_group.append(yarp::os::Bottle(ROS));
-    }
-    
-    //Open the wrapper
-    if( m_wrapper.open(wrapper_group) )
-    {
-    }
-    else
-    {
-        yError()<<"GazeboYarpMaisSensor Plugin failed: error in opening yarp driver wrapper";
-        return;
-    }
-
-    
-    yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
-
-    if (netList->isNull())
-    {
-        yError("GazeboYarpMaisSensor : net list to attach to was not found, load failed.");
-        m_wrapper.close();
-        return;
-    }
-        
-    //---------------------------------------------
-    yarp::dev::PolyDriverDescriptor newPoly;
-    
-    if (netList->size()!=1)
-    {
-        yError("GazeboYarpMaisSensor: size of 'networks' parameter cannot be != 1");
-    }
-        
-    newPoly.key = netList->get(0).asString();
-    m_sensorName = m_robotName + "::" + newPoly.key.c_str();
-    newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(m_sensorName);
-
-    yarp::os::Bottle driver_group;
-    if( newPoly.poly != NULL)
-    {
-        // device already exists, use it, setting it againg to increment the usage counter.
-        yError("mais %s already opened", newPoly.key.c_str());
-    }
-    else
-    {
-        driver_group = m_parameters.findGroup(newPoly.key.c_str());
-        if (driver_group.isNull())
+        yarp::os::Bottle wrapper_group = m_parameters.findGroup("WRAPPER");
+        if(wrapper_group.isNull())
         {
-            yError("GazeboYarpMaisSensor::Load  Error: [%s] group not found in config file. Closing wrapper for device [%s].", newPoly.key.c_str(), m_sensorName.c_str());
+            yError("GazeboYarpMaisSensor : [WRAPPER] group not found in config file\n");
             return;
         }
 
-        m_parameters.put("name", newPoly.key.c_str());
-        m_parameters.fromString(driver_group.toString(), false);
+        if(m_parameters.check("ROS"))
+        {
+            std::string ROS;
+            ROS = std::string ("(") + m_parameters.findGroup("ROS").toString() + std::string (")");
+            wrapper_group.append(yarp::os::Bottle(ROS));
+        }
+
+        //Open the wrapper
+        if( m_wrapper.open(wrapper_group) )
+        {
+        }
+        else
+        {
+            yError()<<"GazeboYarpMaisSensor Plugin failed: error in opening yarp driver wrapper";
+            return;
+        }
+
+        yarp::os::Bottle *netList = wrapper_group.find("networks").asList();
+
+        if (netList->isNull())
+        {
+            yError("GazeboYarpMaisSensor : net list to attach to was not found, load failed.");
+            m_wrapper.close();
+            return;
+        }
+
+        //---------------------------------------------
+        yarp::dev::PolyDriverDescriptor newPoly;
+
+        if (netList->size()!=1)
+        {
+            yError("GazeboYarpMaisSensor: size of 'networks' parameter cannot be != 1");
+        }
+
+        newPoly.key = netList->get(0).asString();
+        m_sensorName = m_robotName + "::" + newPoly.key.c_str();
+        newPoly.poly = GazeboYarpPlugins::Handler::getHandler()->getDevice(m_sensorName);
+
+        yarp::os::Bottle driver_group;
+        if( newPoly.poly != NULL)
+        {
+            // device already exists, use it, setting it againg to increment the usage counter.
+            yError("mais %s already opened", newPoly.key.c_str());
+        }
+        else
+        {
+            driver_group = m_parameters.findGroup(newPoly.key.c_str());
+            if (driver_group.isNull())
+            {
+                yError("GazeboYarpMaisSensor::Load  Error: [%s] group not found in config file. Closing wrapper for device [%s].", newPoly.key.c_str(), m_sensorName.c_str());
+                return;
+            }
+
+            m_parameters.put("name", newPoly.key.c_str());
+            m_parameters.fromString(driver_group.toString(), false);
+            m_parameters.put("robotScopedName", m_robotName);
+            m_parameters.put("device","gazebo_maissensor");
+
+            newPoly.poly = new yarp::dev::PolyDriver;
+            if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
+            {
+                yError() << "mais <" << newPoly.key << "> did not open!!";
+                newPoly.poly->close();
+                return;
+            }
+        }
+        GazeboYarpPlugins::Handler::getHandler()->setDevice(m_sensorName, newPoly.poly);
+
+        //------------------
+        if (!m_wrapper.isValid())
+        {
+            yError("GazeboYarpMaisSensor: wrapper did not open");
+        }
+
+        if (!m_wrapper.view(m_iWrap))
+        {
+            yError("Wrapper interface not found");
+        }
+
+        //Attach the driver to the wrapper
+        yarp::dev::PolyDriverList driver_list;
+
+        m_deviceRegistered = true;
+        yInfo() << "GazeboYarpMaisSensor: Registered YARP device with instance name:" << m_sensorName;
+        driver_list.push(newPoly.poly,"dummy");
+
+        if( m_iWrap->attachAll(driver_list) ) {
+        } else {
+            yError() << "GazeboYarpMaisSensor : error in connecting wrapper and device ";
+        }
+    }
+    else
+    {
+        m_yarpDeviceName = m_parameters.find("yarpDeviceName").asString();
+        m_scopedDeviceName = m_robotName + "::" + m_yarpDeviceName;
+
+        m_parameters.put("name", m_scopedDeviceName);
         m_parameters.put("robotScopedName", m_robotName);
         m_parameters.put("device","gazebo_maissensor");
 
-        newPoly.poly = new yarp::dev::PolyDriver;
-        if(! newPoly.poly->open(m_parameters) || ! newPoly.poly->isValid())
+        if (!m_maisEncodersDriver.open(m_parameters) || ! m_maisEncodersDriver.isValid())
         {
-            yError() << "mais <" << newPoly.key << "> did not open!!";
-            newPoly.poly->close();
+            yError() << "mais <" << m_yarpDeviceName.c_str() << "> did not open.";
+            m_maisEncodersDriver.close();
             return;
         }
-    }
-    GazeboYarpPlugins::Handler::getHandler()->setDevice(m_sensorName, newPoly.poly);
-    
-    //------------------
-    if (!m_wrapper.isValid())
-    {
-        yError("GazeboYarpMaisSensor: wrapper did not open");
-    }
 
-    if (!m_wrapper.view(m_iWrap))
-    {
-        yError("Wrapper interface not found");
-    }
- 
-    //Attach the driver to the wrapper
-    yarp::dev::PolyDriverList driver_list;
-    
-    driver_list.push(newPoly.poly,"dummy");
-        
-    if( m_iWrap->attachAll(driver_list) ) {
-    } else {
-        yError() << "GazeboYarpForceTorque : error in connecting wrapper and device ";
+        //Register the device with the given name
+        if(!GazeboYarpPlugins::Handler::getHandler()->setDevice(m_scopedDeviceName, &m_maisEncodersDriver))
+        {
+            yError() << "GazeboYarpMaisSensor: failed setting scopedDeviceName(=" << m_scopedDeviceName << ")";
+            return;
+        }
+        m_deviceRegistered = true;
+        yInfo() << "GazeboYarpMaisSensor: Registered YARP device with instance name:" << m_scopedDeviceName;
+
     }
 }
 

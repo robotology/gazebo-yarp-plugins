@@ -9,7 +9,6 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IRangefinder2D.h>
-#include <yarp/dev/LaserMeasurementData.h>
 #include <yarp/dev/Lidar2DDeviceBase.h>
 #include <yarp/os/Stamp.h>
 #include <boost/shared_ptr.hpp>

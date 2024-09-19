@@ -73,6 +73,9 @@ var hierarchy =
       [ "yarp::dev::GazeboYarpControlBoardDriver", "classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html", null ],
       [ "yarp::dev::GazeboYarpFakeControlBoardDriver", "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html", null ]
     ] ],
+    [ "IEncoderArrays", null, [
+      [ "yarp::dev::GazeboYarpMaisSensorDriver", "classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html", null ]
+    ] ],
     [ "IEncodersTimed", null, [
       [ "yarp::dev::GazeboYarpControlBoardDriver", "classyarp_1_1dev_1_1GazeboYarpControlBoardDriver.html", null ],
       [ "yarp::dev::GazeboYarpFakeControlBoardDriver", "classyarp_1_1dev_1_1GazeboYarpFakeControlBoardDriver.html", null ]

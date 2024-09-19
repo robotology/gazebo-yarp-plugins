@@ -134,6 +134,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a139c3ea54f71694cc497db677323702f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d50b4a15a0413266dfc59535a96ae0a" id="r_a4d50b4a15a0413266dfc59535a96ae0a"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d50b4a15a0413266dfc59535a96ae0a">close</a> ()</td></tr>
 <tr class="separator:a4d50b4a15a0413266dfc59535a96ae0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5f900f2085cc3dfba912b959f1736a1" id="r_aa5f900f2085cc3dfba912b959f1736a1"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5f900f2085cc3dfba912b959f1736a1">getNrOfEncoderArrays</a> () const override</td></tr>
+<tr class="separator:aa5f900f2085cc3dfba912b959f1736a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad438cc3bb43b3f991da45ec1178feaba" id="r_ad438cc3bb43b3f991da45ec1178feaba"><td class="memItemLeft" align="right" valign="top">virtual yarp::dev::MAS_status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad438cc3bb43b3f991da45ec1178feaba">getEncoderArrayStatus</a> (size_t sens_index) const override</td></tr>
+<tr class="separator:ad438cc3bb43b3f991da45ec1178feaba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79bc1ee471347e0592e9ad2586d619fe" id="r_a79bc1ee471347e0592e9ad2586d619fe"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79bc1ee471347e0592e9ad2586d619fe">getEncoderArrayName</a> (size_t sens_index, std::string &amp;name) const override</td></tr>
+<tr class="separator:a79bc1ee471347e0592e9ad2586d619fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4d4a85bd63b22a57210e9cda3e58167" id="r_ad4d4a85bd63b22a57210e9cda3e58167"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4d4a85bd63b22a57210e9cda3e58167">getEncoderArrayMeasure</a> (size_t sens_index, yarp::sig::Vector &amp;out, double &amp;timestamp) const override</td></tr>
+<tr class="separator:ad4d4a85bd63b22a57210e9cda3e58167"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f7e37ed3a00fe4b56e52a0811506ee2" id="r_a2f7e37ed3a00fe4b56e52a0811506ee2"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f7e37ed3a00fe4b56e52a0811506ee2">getEncoderArraySize</a> (size_t sens_index) const override</td></tr>
+<tr class="separator:a2f7e37ed3a00fe4b56e52a0811506ee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a73b6d9537ab2c4a629819e8352161192" name="a73b6d9537ab2c4a629819e8352161192"></a>
@@ -267,6 +277,144 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="aa5f900f2085cc3dfba912b959f1736a1" name="aa5f900f2085cc3dfba912b959f1736a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5f900f2085cc3dfba912b959f1736a1">&#9670;&#160;</a></span>getNrOfEncoderArrays()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t GazeboYarpMaisSensorDriver::getNrOfEncoderArrays </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad438cc3bb43b3f991da45ec1178feaba" name="ad438cc3bb43b3f991da45ec1178feaba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad438cc3bb43b3f991da45ec1178feaba">&#9670;&#160;</a></span>getEncoderArrayStatus()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">yarp::dev::MAS_status GazeboYarpMaisSensorDriver::getEncoderArrayStatus </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>sens_index</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a79bc1ee471347e0592e9ad2586d619fe" name="a79bc1ee471347e0592e9ad2586d619fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79bc1ee471347e0592e9ad2586d619fe">&#9670;&#160;</a></span>getEncoderArrayName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GazeboYarpMaisSensorDriver::getEncoderArrayName </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>sens_index</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad4d4a85bd63b22a57210e9cda3e58167" name="ad4d4a85bd63b22a57210e9cda3e58167"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4d4a85bd63b22a57210e9cda3e58167">&#9670;&#160;</a></span>getEncoderArrayMeasure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>sens_index</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">yarp::sig::Vector &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;</td>          <td class="paramname"><span class="paramname"><em>timestamp</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2f7e37ed3a00fe4b56e52a0811506ee2" name="a2f7e37ed3a00fe4b56e52a0811506ee2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f7e37ed3a00fe4b56e52a0811506ee2">&#9670;&#160;</a></span>getEncoderArraySize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t GazeboYarpMaisSensorDriver::getEncoderArraySize </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>sens_index</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="MaisSensorDriver_8h.html">MaisSensorDriver.h</a></li>
 <li><a class="el" href="MaisSensorDeviceDriver_8cpp.html">MaisSensorDeviceDriver.cpp</a></li>
@@ -278,7 +426,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceyarp.html">yarp</a></li><li class="navelem"><a class="el" href="namespaceyarp_1_1dev.html">dev</a></li><li class="navelem"><a class="el" href="classyarp_1_1dev_1_1GazeboYarpMaisSensorDriver.html">GazeboYarpMaisSensorDriver</a></li>
-    <li class="footer">Generated on Wed Sep 18 2024 14:02:24 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Thu Sep 19 2024 07:29:14 for gazebo-yarp-plugins by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>

@@ -36,6 +36,11 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
 private:
+    yarp::dev::PolyDriver m_maisEncodersDriver;
+    bool m_deviceRegistered{false};
+    std::string m_scopedDeviceName;
+    std::string m_yarpDeviceName;
+
     yarp::dev::PolyDriver m_wrapper;
     yarp::dev::IMultipleWrapper* m_iWrap;
 

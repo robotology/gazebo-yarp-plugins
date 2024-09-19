@@ -55,6 +55,19 @@ bool GazeboYarpMaisSensorDriver::gazebo_init()
 
     if (!setJointNames()) return false;      // this function also fills in the m_jointPointers vector
 
+    // Force users to set the sensorName parameter to specify the value returned by the getEncoderArrayName,
+    // as in this case we do not have a SDF sensor corresponding to the mais sensor, so we can't get the name from the URDF/SDF model
+    if (m_pluginParameters.check("disableImplicitNetworkWrapper") && !m_pluginParameters.check("sensorName"))
+    {
+        yError() << "GazeboYarpMaisSensor: Missing parameter sensorName (it is the value returned by the getEncoderArrayName method).";
+        return false;
+    }
+
+    if (m_pluginParameters.check("sensorName"))
+    {
+        m_encoderArrayName = m_pluginParameters.find("sensorName").asString();
+    }
+
     m_channels_num = 15;
     m_numberOfJoints = m_jointNames.size();
 
@@ -179,11 +192,7 @@ bool GazeboYarpMaisSensorDriver::setJointNames()  //WORKS
         for (unsigned int gazebo_joint = 0; gazebo_joint < gazebo_models_joints.size() && !joint_found; gazebo_joint++)
         {
             std::string gazebo_joint_name = gazebo_models_joints[gazebo_joint]->GetName();
-            
-            //char buff[1000];
-            //sprintf(buff, "full:'%s' sub:'%s'", gazebo_joint_name.c_str(),controlboard_joint_names[i].c_str());
-            //yDebug() << "***" << buff;
-            
+
             if (GazeboYarpPlugins::hasEnding(gazebo_joint_name,controlboard_joint_names[i]))
             {
                 joint_found = true;
@@ -280,6 +289,7 @@ double * GazeboYarpMaisSensorDriver::convertUserToGazebo(double *values)
     return values;
 }
 
+// start yarp::dev::IAnalogSensor methods
 
 int GazeboYarpMaisSensorDriver::read(yarp::sig::Vector &out)
 {
@@ -304,7 +314,7 @@ int GazeboYarpMaisSensorDriver::calibrateSensor()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     // not implemented
-    return 0; 
+    return 0;
 }
 
 int GazeboYarpMaisSensorDriver::calibrateSensor(const yarp::sig::Vector& value)
@@ -327,3 +337,60 @@ int GazeboYarpMaisSensorDriver::calibrateChannel(int ch, double value)
     // not implemented
     return 0;
 }
+
+// end yarp::dev::IAnalogSensor methods
+
+// start yarp::dev::IEncoderArrays methods
+
+size_t GazeboYarpMaisSensorDriver::getNrOfEncoderArrays() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status GazeboYarpMaisSensorDriver::getEncoderArrayStatus(size_t sens_index) const
+{
+    if (sens_index >= 1)
+    {
+        return yarp::dev::MAS_UNKNOWN;
+    }
+
+    return yarp::dev::MAS_OK;
+}
+
+bool GazeboYarpMaisSensorDriver::getEncoderArrayName(size_t sens_index, std::string &name) const
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    name = m_encoderArrayName;
+    return true;
+}
+
+bool GazeboYarpMaisSensorDriver::getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const 
+{
+    if (sens_index >= 1)
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+    timestamp = m_lastTimestamp.getTime();
+    out.resize(m_positions.size());
+    out = m_positions;
+    return true;
+}
+
+size_t GazeboYarpMaisSensorDriver::getEncoderArraySize(size_t sens_index) const
+{
+    if (sens_index >= 1)
+    {
+        return 0;
+    }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_positions.size();
+}
+
+// end yarp::dev::IEncoderArrays methods

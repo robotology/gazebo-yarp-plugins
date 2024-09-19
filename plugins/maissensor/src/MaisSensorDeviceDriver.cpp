@@ -22,7 +22,7 @@ bool GazeboYarpMaisSensorDriver::open(yarp::os::Searchable& config)
 
     std::string robotName;
     robotName = m_pluginParameters.find("robotScopedName").asString().c_str();
-	
+
     if (robotName == "")
     {
         yError() << "GazeboYarpMaisSensorDriver error: 'robotName' parameter not found'";

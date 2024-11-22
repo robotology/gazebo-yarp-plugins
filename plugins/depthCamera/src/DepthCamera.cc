@@ -57,7 +57,7 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
 
     #ifndef GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
-                                                ("gazebo_depthCamera", "RGBDSensorWrapper", "GazeboYarpDepthCameraDriver"));
+                                                ("gazebo_depthCamera", "rgbdSensor_nws_yarp", "GazeboYarpDepthCameraDriver"));
     #else
     ::yarp::dev::Drivers::factory().add(new ::yarp::dev::DriverCreatorOf< ::yarp::dev::GazeboYarpDepthCameraDriver>
                                                 ("gazebo_depthCamera", "", "GazeboYarpDepthCameraDriver"));
@@ -98,11 +98,11 @@ void GazeboYarpDepthCamera::Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sd
     if (!disable_wrapper)
     {
         ///////////////////////////
-        //Open the wrapper, forcing it to be a "RGBDSensorWrapper"
-        wrapper_properties.put("device","RGBDSensorWrapper");
+        //Open the wrapper, forcing it to be a "rgbdSensor_nws_yarp"
+        wrapper_properties.put("device","rgbdSensor_nws_yarp");
         if(wrapper_properties.check("subdevice"))
         {
-            yCError(GAZEBODEPTH) << "RGBDSensorWrapper:  Do not use 'subdevice' keyword here since the only supported subdevice is <gazebo_depthCamera>. \
+            yCError(GAZEBODEPTH) << "GazeboYarpDepthCamera:  Do not use 'subdevice' keyword here since the only supported subdevice is <gazebo_depthCamera>. \
                      Please remove the line 'subdevice " << wrapper_properties.find("subdevice").asString().c_str() << "' from your config file before proceeding";
             return;
         }

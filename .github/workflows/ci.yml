@@ -17,11 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [Release, Debug]
-        os: [ubuntu-20.04]
+        os: [ubuntu-22.04]
         yarp_version: [master]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
         
     # Print environment variables to simplify development and debugging
     - name: Environment Variables

@@ -114,36 +114,36 @@ bool GazeboYarpLaserSensorDriver::acquireDataFromHW()
     return true;
 }
 
-bool GazeboYarpLaserSensorDriver::setDistanceRange (double min, double max)
+YARP_DEV_RETURN_VALUE_TYPE_CH312 GazeboYarpLaserSensorDriver::setDistanceRange (double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCError(GAZEBOLASER) << "setDistanceRange() Not yet implemented";
-    return false;
+    return YARP_DEV_RETURN_VALUE_ERROR_NOT_IMPLEMENTED_BY_DEVICE_CH312;
 }
 
-bool GazeboYarpLaserSensorDriver::setScanLimits (double min, double max)
+YARP_DEV_RETURN_VALUE_TYPE_CH312 GazeboYarpLaserSensorDriver::setScanLimits (double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCError(GAZEBOLASER) << "setScanLimits() Not yet implemented";
-    return false;
+    return YARP_DEV_RETURN_VALUE_ERROR_NOT_IMPLEMENTED_BY_DEVICE_CH312;
 }
 
-bool GazeboYarpLaserSensorDriver::setHorizontalResolution (double step)
+YARP_DEV_RETURN_VALUE_TYPE_CH312 GazeboYarpLaserSensorDriver::setHorizontalResolution (double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCError(GAZEBOLASER) << "setHorizontalResolution() Not yet implemented";
-    return false;
+    return YARP_DEV_RETURN_VALUE_ERROR_NOT_IMPLEMENTED_BY_DEVICE_CH312;
 }
 
-bool GazeboYarpLaserSensorDriver::setScanRate (double rate)
+YARP_DEV_RETURN_VALUE_TYPE_CH312 GazeboYarpLaserSensorDriver::setScanRate (double rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     if (rate<0)
     {
       yCError(GAZEBOLASER) << "Invalid setScanRate";
-      return false;
+      return YARP_DEV_RETURN_VALUE_ERROR_METHOD_FAILED_CH312;
     }
     m_parentSensor->SetUpdateRate(rate);
     m_scan_rate = rate;
-    return true;
+    return YARP_DEV_RETURN_VALUE_OK_CH312;
 }

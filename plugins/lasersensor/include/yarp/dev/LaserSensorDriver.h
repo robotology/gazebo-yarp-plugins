@@ -15,6 +15,8 @@
 
 #include <gazebo/common/Plugin.hh>
 
+#include <GazeboYarpPlugins/YarpDevReturnValueCompat.h>
+
 #include <mutex>
 
 namespace yarp {
@@ -45,7 +47,7 @@ class yarp::dev::GazeboYarpLaserSensorDriver:
 public:
     GazeboYarpLaserSensorDriver();
     virtual ~GazeboYarpLaserSensorDriver();
-    
+
     void onUpdate(const gazebo::common::UpdateInfo& /*_info*/);
 
     /**
@@ -57,15 +59,15 @@ public:
     virtual bool close() override;
 
     //IRangefinder2D
-    virtual bool setDistanceRange (double min, double max) override;
-    virtual bool setScanLimits (double min, double max) override;
-    virtual bool setHorizontalResolution (double step) override;
-    virtual bool setScanRate (double rate) override;
+    virtual YARP_DEV_RETURN_VALUE_TYPE_CH312 setDistanceRange (double min, double max) override;
+    virtual YARP_DEV_RETURN_VALUE_TYPE_CH312 setScanLimits (double min, double max) override;
+    virtual YARP_DEV_RETURN_VALUE_TYPE_CH312 setHorizontalResolution (double step) override;
+    virtual YARP_DEV_RETURN_VALUE_TYPE_CH312 setScanRate (double rate) override;
 
 public:
     //Lidar2DDeviceBase
     bool acquireDataFromHW() override final;
-    
+
 private:
     double m_gazebo_max_angle;
     double m_gazebo_min_angle;
@@ -75,7 +77,7 @@ private:
     size_t m_gazebo_samples;
     double m_gazebo_scan_rate;
     bool   m_first_run;
-    
+
     gazebo::sensors::RaySensor* m_parentSensor;
     gazebo::event::ConnectionPtr m_updateConnection;
 

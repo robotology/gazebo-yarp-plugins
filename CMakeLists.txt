@@ -2,7 +2,7 @@
 # Authors: Enrico Mingo, Alessio Rocchi, Mirko Ferrati, Silvio Traversaro, Alessandro Settimi and Francesco Romano
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5...3.22)
 PROJECT(GazeboYARPPlugins)
 option(GAZEBO_YARP_PLUGINS_DISABLE_IMPLICIT_NETWORK_WRAPPERS "if enabled removes default wrappers in doublelaser, lasersensor, controlboard, depthcamera and multicamera" OFF)
 

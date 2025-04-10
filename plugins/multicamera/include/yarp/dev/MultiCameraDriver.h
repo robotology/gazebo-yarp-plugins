@@ -8,7 +8,7 @@
 #define GAZEBOYARP_MULTICAMERADRIVER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IRgbVisualParams.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>

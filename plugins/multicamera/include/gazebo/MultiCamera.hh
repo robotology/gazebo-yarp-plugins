@@ -12,7 +12,7 @@
 #include <gazebo/plugins/MultiCameraPlugin.hh>
 #include <yarp/dev/PolyDriver.h>
 
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 #include <string>
 
@@ -44,7 +44,7 @@ namespace gazebo
         virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr _sdf);
 
     private:
-        yarp::os::Property m_parameters; 
+        yarp::os::Property m_parameters;
         yarp::dev::PolyDriver m_cameraDriver;
         std::string m_sensorName;
         sensors::MultiCameraSensor *m_sensor;

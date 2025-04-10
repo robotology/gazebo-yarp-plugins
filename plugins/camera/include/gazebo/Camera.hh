@@ -13,7 +13,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 #include <string>
 
@@ -51,7 +51,7 @@ namespace gazebo
 
     private:
         yarp::os::Network m_yarp;
-        yarp::os::Property m_parameters; 
+        yarp::os::Property m_parameters;
         yarp::dev::PolyDriver m_cameraDriver;
         std::string m_sensorName;
         sensors::CameraSensor *m_sensor;

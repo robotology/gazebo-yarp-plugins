@@ -15,7 +15,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 
 namespace yarp {

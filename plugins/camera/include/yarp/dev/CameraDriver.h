@@ -8,7 +8,7 @@
 #define GAZEBOYARP_CAMERADRIVER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Time.h>
@@ -117,7 +117,7 @@ private:
     gazebo::sensors::CameraSensor* m_parentSensor;
     gazebo::rendering::CameraPtr m_camera;
     gazebo::event::ConnectionPtr m_updateConnection;
-    
+
     struct txt_type
     {
        char data[16];
